@@ -14,4 +14,5 @@ Version 1.1.0
 .add HashCache api 完善
 .add ListCache api 完善
 .fix 捕捉jedis 操作异常，从 pool 中移除
+.fix 事务 api 调用异常
 
