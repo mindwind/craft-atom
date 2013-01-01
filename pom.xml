@@ -1,0 +1,123 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.craft.atom</groupId>
+	<artifactId>craft-atom</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>${project.artifactId}</name>
+
+	<modules>
+		<module>craft-atom-nio</module>
+		<module>craft-atom-util</module>
+		<module>craft-atom-cache</module>
+		<module>craft-atom-protocol</module>
+		<module>craft-atom-lock</module>
+	</modules>
+
+	<properties>
+		<project.encoding>utf-8</project.encoding>
+		<v.plugin.assembly>2.3</v.plugin.assembly>
+		<v.plugin.compiler>2.5.1</v.plugin.compiler>
+		<v.plugin.resources>2.6</v.plugin.resources>
+		<v.plugin.source>2.2</v.plugin.source>
+		<v.jdk>1.6</v.jdk>
+
+		<v.commons.logging>1.1.1</v.commons.logging>
+		<v.log4j>1.2.17</v.log4j>
+		<v.junit>4.8.2</v.junit>
+		<v.jedis>2.1.0</v.jedis>
+		<v.craft.atom.cache>1.1.0-SNAPSHOT</v.craft.atom.cache>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${v.junit}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>${v.commons.logging}</version>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${v.log4j}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>redis.clients</groupId>
+				<artifactId>jedis</artifactId>
+				<version>${v.jedis}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.craft.atom</groupId>
+				<artifactId>craft-atom-cache</artifactId>
+				<version>${v.craft.atom.cache}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${v.plugin.compiler}</version>
+				<configuration>
+					<source>${v.jdk}</source>
+					<target>${v.jdk}</target>
+					<encoding>${project.encoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>${v.plugin.resources}</version>
+				<configuration>
+					<encoding>${project.encoding}</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>${v.plugin.assembly}</version>
+				<configuration>
+					<descriptors>
+						<descriptor>src/main/assembly/assembly.xml</descriptor>
+					</descriptors>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>${v.plugin.source}</version>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<distributionManagement>
+		<repository>
+			<id>jd.repository.snapshots</id>
+			<name>jd.repository.snapshots</name>
+			<url>http://artifactory.360buy-develop.com/libs-snapshots-local</url>
+		</repository>
+	</distributionManagement>
+
+</project>
