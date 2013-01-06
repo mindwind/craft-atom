@@ -39,7 +39,8 @@ public interface HashCache extends Cache {
 	 * @param key
 	 * @param field
 	 * @param value
-	 * @return
+	 * @return 1 if field is a new field in the hash and value was set.<br>
+	 *         0 if field already exists in the hash and no operation was performed.
 	 */
 	Long hsetnx(String key, String field, String value);
 

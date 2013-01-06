@@ -279,7 +279,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	}
 	
 	@Override
-	public Boolean persist(String key) {
+	public Long persist(String key) {
 		AbstractTransaction rt = getTransaction();
 		if (rt != null) {
 			rt.getDelegate().persist(key);
@@ -289,11 +289,11 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		}
 	}
 	
-	private Boolean persistN(String key) {
+	private Long persistN(String key) {
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			// TODO ShardedJedis should provide this API directly.
-			return sj.getShard(key).persist(key) == 1 ? true : false;
+			return sj.getShard(key).persist(key);
 		} catch (Exception e) {
 			shardedPool.returnBrokenResource(sj);
 			throw new RuntimeException(e);
@@ -302,10 +302,10 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		}
 	}
 	
-	private Boolean persist1(String key) {
+	private Long persist1(String key) {
 		Jedis j = pool.getResource();
 		try {
-			return j.persist(key) == 1 ? true : false;
+			return j.persist(key);
 		} catch (Exception e) {
 			pool.returnBrokenResource(j);
 			throw new RuntimeException(e);

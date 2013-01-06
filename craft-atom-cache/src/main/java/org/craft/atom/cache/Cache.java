@@ -67,9 +67,10 @@ public interface Cache {
 	 * Undo {@link #expire(String, int) expire}.
 	 * 
 	 * @param key
-	 * @return
+	 * @return 1 if the timeout was removed.<br>
+     *         0 if key does not exist or does not have an associated timeout.
 	 */
-	Boolean persist(String key);
+	Long persist(String key);
 	
 	/**
 	 * Returns if key exists.
