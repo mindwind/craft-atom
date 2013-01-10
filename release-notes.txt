@@ -1,0 +1,29 @@
+Version 1.0.0
+-----------------------------------------------------------------------------------------------------------------------
+.启动原子组件项目
+
+
+Version 1.1.0
+-----------------------------------------------------------------------------------------------------------------------
+.fix 统一所有子模块版本，采用 maven release 插件发布
+
+craft-atom-cache
+  .fix redis cache transaction 调用的并发导致的响应数据错误问题
+  .add SortedSetCache 接口 
+  .add HashCache api 完善
+  .add ListCache api 完善
+  .fix 捕捉jedis 操作异常，从 pool 中移除
+  .fix 事务 api 调用异常
+
+craft-atom-lock
+  .add 基于redis2.4服务端版本实现的分布式锁机制
+  
+craft-atom-nio
+  .add 提供更简单和干净的 nio 网络编程模型
+  
+craft-atom-protocol
+  .add 提供简单、干净、且独立的协议实现封装
+  .add 提供 textline（文本换行）的协议解析
+  
+craft-atom-util
+  .add 常用工具类补充
