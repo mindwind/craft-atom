@@ -4,7 +4,7 @@
 
 	<groupId>org.craft.atom</groupId>
 	<artifactId>craft-atom</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 
@@ -113,10 +113,15 @@
 	</build>
 
 	<distributionManagement>
-		<repository>
+		<snapshotRepository>
 			<id>jd.repository.snapshots</id>
 			<name>jd.repository.snapshots</name>
 			<url>http://artifactory.360buy-develop.com/libs-snapshots-local</url>
+		</snapshotRepository>
+		<repository>
+			<id>jd.repository</id>
+			<name>jd.repository</name>
+			<url>http://artifactory.360buy-develop.com/libs-releases-local</url>
 		</repository>
 	</distributionManagement>
 
