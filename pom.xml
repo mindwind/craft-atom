@@ -33,7 +33,6 @@
 		<v.log4j>1.2.17</v.log4j>
 		<v.junit>4.8.2</v.junit>
 		<v.jedis>2.1.0</v.jedis>
-		<v.craft.atom.cache>1.1.0-SNAPSHOT</v.craft.atom.cache>
 	</properties>
 
 	<dependencies>
@@ -62,12 +61,6 @@
 				<groupId>redis.clients</groupId>
 				<artifactId>jedis</artifactId>
 				<version>${v.jedis}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.craft.atom</groupId>
-				<artifactId>craft-atom-cache</artifactId>
-				<version>${v.craft.atom.cache}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
