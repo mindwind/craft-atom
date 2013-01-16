@@ -48,7 +48,7 @@ public interface Transaction {
 	 * This method will commit the underlying transaction if and only if the
 	 * underlying transaction was initiated by this object.
 	 * 
-	 * @return all results of operations in this transaction by execution sequence, if commit failed return <tt>null</tt>.
+	 * @return all results of operations in this transaction by execution sequence, if commit failed return empty list.
 	 */
 	List<Object> commit();
 	

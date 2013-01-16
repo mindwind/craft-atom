@@ -60,14 +60,29 @@ public interface SortedSetCache extends Cache {
 	 * If stop is larger than the end of the sorted set which will be treated it like it is the last element of the sorted set.
 	 * <p>
 	 * <b>TIP:</b><br>
-	 * start and end should not overflow integer scope in transaction contex.
+	 * start and end should not overflow integer scope in transaction context.
 	 * 
 	 * @param key
 	 * @param start
 	 * @param end
-	 * @return list of elements in the specified range or <tt>null</tt> if has no element in the range.
+	 * @return list of elements in the specified range or empty set if has no element in the range.
 	 */
 	Set<String> zrange(String key, long start, long end);
+	
+	/**
+	 * Time complexity: O(log(N)+M) with N being the number of elements in the sorted set and M the number of elements returned.
+	 * <br>
+	 * 
+	 * <b>TIP:</b><br>
+	 * start and end should not overflow integer scope in transaction context.
+	 * 
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return map object, the key is element and value is the score, empty map if has no element int the range. 
+	 * @see #zrange(String, long, long)
+	 */
+	Map<String, Double> zrangeWithScores(String key, long start, long end);
 	
 	/**
 	 * Time complexity: O(M*log(N)) with N being the number of elements in the sorted set and M the number of elements to be removed.
@@ -88,4 +103,60 @@ public interface SortedSetCache extends Cache {
 	 * @return he cardinality (number of elements) of the sorted set, or 0 if key does not exist.
 	 */
 	Long zcard(String key);
+	
+	/**
+	 * Time complexity: O(log(N)+M) with N being the number of elements in the sorted set and M being the number of elements between min and max.
+	 * <br>
+	 * The min and max arguments have the same semantic as described for {@link #zcount(String, String, String)}
+	 * 
+	 * @param key
+	 * @param min min score inclusive
+	 * @param max max score inclusive
+	 * @return  the number of elements in the specified score range.
+	 */
+	Long zcount(String key, double min, double max);
+	
+	/**
+	 * Time complexity: O(log(N)+M) with N being the number of elements in the sorted set and M being the number of elements between min and max.
+	 * <br>
+	 * min and max can be -inf and +inf, so that you are not required to know the highest or lowest score in the sorted set to get all elements from or up to a certain score.
+	 * By default, the interval specified by min and max is closed (inclusive). 
+	 * It is possible to specify an open interval (exclusive) by prefixing the score with the character '('.
+	 * <br>
+	 * For example: 
+	 * {@link #zcount("test", "(5", "(10")}
+	 * Will return all the elements with 5 < score < 10 (5 and 10 excluded).
+	 * 
+	 * <b>NOTE<b><br>
+	 * Transaction unsupported now!
+	 * 
+	 * @param key
+	 * @param min
+	 * @param max
+	 * @return the number of elements in the specified score range.
+	 */
+	Long zcount(String key, String min, String max);
+	
+	/**
+	 * Returns the score of member in the sorted set at key.
+	 * If member does not exist in the sorted set, or key does not exist, <tt>null</tt> is returned.
+	 * 
+	 * @param key
+	 * @param member
+	 * @return the score of member (a double precision floating point number).
+	 */
+	Double zscore(String key, String member);
+	
+	/**
+	 * Time complexity: O(log(N))
+	 * <br>
+	 * Returns the rank of member in the sorted set stored at key, with the scores ordered from low to high. 
+	 * The rank (or index) is 0-based, which means that the member with the lowest score has rank 0.
+	 * 
+	 * @param key
+	 * @param member
+	 * @return If member exists in the sorted set, return the rank of member.<br>
+	 *         If member does not exist in the sorted set or key does not exist, return <tt>null</tt>.
+	 */
+	Long zrank(String key, String member);
 }

@@ -66,7 +66,7 @@ public interface HashCache extends Cache {
 	 * Time complexity: O(N) where N is the number of fields being requested.
 	 * <p>
 	 * Returns the values associated with the specified fields in the hash stored at key.<br>
-	 * For every field that does not exist in the hash, a <tt>null</tt> value is returned.
+	 * For every field that does not exist in the hash, a empty list is returned.
 	 * 
 	 * @param key
 	 * @param fields
