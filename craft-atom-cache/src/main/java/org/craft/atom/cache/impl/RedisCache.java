@@ -1641,7 +1641,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 			pool.returnResource(j);
 		}
 	}
-	
+
 	@Override
 	public Map<String, Double> zrangeWithScores(String key, long start, long end) {
 		AbstractTransaction rt = getTransaction();
