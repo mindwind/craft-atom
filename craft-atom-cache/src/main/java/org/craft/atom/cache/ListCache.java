@@ -87,7 +87,7 @@ public interface ListCache extends Cache {
 	 * @param key
 	 * @param start
 	 * @param end
-	 * @return list of elements in the specified range or <tt>null</tt> if has no element in the range.
+	 * @return list of elements in the specified range or empty list if has no element in the range.
 	 */
 	List<String> lrange(String key, long start, long end);
 

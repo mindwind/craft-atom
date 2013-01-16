@@ -1,5 +1,6 @@
 package org.craft.atom.cache.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.craft.atom.cache.Transaction;
@@ -21,8 +22,8 @@ abstract public class AbstractTransaction implements Transaction {
 		}
 		
 		List<Object> list = delegate.exec();
-		if (list != null && list.size() == 0) {
-			list = null;
+		if (list == null) {
+			list = Collections.emptyList();
 		}
 		
 		return list;

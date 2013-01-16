@@ -63,7 +63,7 @@ public class RedisDLock24 implements DLock {
 			tx = redisCache.beginTransaction(lockKey);
 			redisCache.setex(lockKey, ttlSeconds, "1");
 			List<Object> result = tx.commit();
-			return result != null;
+			return result != null && result.size() > 0;
 		} finally {
 			if (tx != null) {
 				tx.close();

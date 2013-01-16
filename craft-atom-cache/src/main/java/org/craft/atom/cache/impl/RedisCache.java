@@ -1,6 +1,8 @@
 package org.craft.atom.cache.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,6 +21,7 @@ import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisShardInfo;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
+import redis.clients.jedis.Tuple;
 
 /**
  * @author Hu Feng
@@ -684,7 +687,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 			rt.getDelegate().mget(keys);
 			return null;
 		} else {
-			return isShard ? mgetN(keys) : mget1(keys);
+			return isShard ? returnList(mgetN(keys)) : returnList(mget1(keys));
 		}
 	}
 	
@@ -730,7 +733,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 			rt.getDelegate().mset(keysvalues);
 			return null;
 		} else {
-			return isShard ? msetN(keysvalues) : mset1(keysvalues);
+			return isShard ? returnList(msetN(keysvalues)) : returnList(mset1(keysvalues));
 		}
 	}
 	
@@ -882,8 +885,6 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		if (rt != null) {
 			// TODO jedis api has bugs, fix later
 			throw new UnsupportedOperationException();
-//			rt.getDelegate().hdel(key, field);
-//			return 0L;
 		} else {
 			return isShard ? hdelN(key, fields) : hdel1(key, fields);
 		}
@@ -927,7 +928,11 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	private List<String> hmgetN(String key, String... fields) {
 		ShardedJedis sj = shardedPool.getResource();
 		try {
-			return sj.hmget(key, fields);
+			List<String> list = sj.hmget(key, fields);
+			if (list == null) {
+				list = Collections.emptyList();
+			}
+			return list;
 		} catch (Exception e) {
 			shardedPool.returnBrokenResource(sj);
 			throw new RuntimeException(e);
@@ -939,7 +944,11 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	private List<String> hmget1(String key, String... fields) {
 		Jedis j = pool.getResource();
 		try {
-			return j.hmget(key, fields);
+			List<String> list = j.hmget(key, fields);
+			if (list == null) {
+				list = Collections.emptyList();
+			}
+			return list;
 		} catch (Exception e) {
 			pool.returnBrokenResource(j);
 			throw new RuntimeException(e);
@@ -1098,7 +1107,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 			rt.getDelegate().hgetAll(key);
 			return null;
 		} else {
-			return isShard ? hgetAllN(key) : hgetAll1(key);
+			return isShard ? returnMap(hgetAllN(key)) : returnMap(hgetAll1(key));
 		}
 	}
 	
@@ -1140,7 +1149,11 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	private Set<String> hkeysN(String key) {
 		ShardedJedis sj = shardedPool.getResource();
 		try {
-			return sj.hkeys(key);
+			Set<String> set = sj.hkeys(key);
+			if (set == null) {
+				set = Collections.emptySet();
+			}
+			return set;
 		} catch (Exception e) {
 			shardedPool.returnBrokenResource(sj);
 			throw new RuntimeException(e);
@@ -1152,7 +1165,11 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	private Set<String> hkeys1(String key) {
 		Jedis j = pool.getResource();
 		try {
-			return j.hkeys(key);
+			Set<String> set = j.hkeys(key);
+			if (set == null) {
+				set = Collections.emptySet();
+			}
+			return set;
 		} catch (Exception e) {
 			pool.returnBrokenResource(j);
 			throw new RuntimeException(e);
@@ -1200,10 +1217,10 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	public List<String> hvals(String key) {
 		AbstractTransaction rt = getTransaction();
 		if (rt != null) {
-			rt.getDelegate().hlen(key);
+			rt.getDelegate().hvals(key);
 			return null;
 		} else {
-			return isShard ? hvalsN(key) : hvals1(key);
+			return isShard ? returnList(hvalsN(key)) : returnList(hvals1(key));
 		}
 	}
 	
@@ -1239,8 +1256,6 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		if (rt != null) {
 			// TODO jedis api bugs
 			throw new UnsupportedOperationException();
-//			rt.getDelegate().sadd(key, values);
-//			return null;
 		} else {
 			return isShard ? saddN(key, values) : sadd1(key, values);
 		}
@@ -1311,8 +1326,6 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		if (rt != null) {
 			// TODO
 			throw new UnsupportedOperationException();
-//			rt.getDelegate().srem(key, values);
-//			return 0;
 		} else {
 			return isShard ? sremN(key, values) : srem1(key, values);
 		}
@@ -1349,7 +1362,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 			rt.getDelegate().smembers(key);
 			return null;
 		} else {
-			return isShard ? smembersN(key) : smembers1(key);
+			return isShard ? returnSet(smembersN(key)) : returnSet(smembers1(key));
 		}
 	}
 	
@@ -1379,7 +1392,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 
 	@Override
 	public Set<String> sinter(String... keys) {
-		return isShard ? sinterN(keys) : sinter1(keys);
+		return isShard ? returnSet(sinterN(keys)) : returnSet(sinter1(keys));
 	}
 	
 	private Set<String> sinterN(String... keys) {
@@ -1556,8 +1569,6 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		if (rt != null) {
 			// TODO jedis api has bugs, fix later
 			throw new UnsupportedOperationException();
-//			rt.getDelegate().zadd(key, score, member);
-//			return null;
 		} else {
 			return isShard ? zaddN(key, scoreMembers) : zadd1(key, scoreMembers);
 		}
@@ -1595,14 +1606,18 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 			rt.getDelegate().zrange(key, (int) start, (int) end);
 			return null;
 		} else {
-			return isShard ? zrangeN(key, start, end) : zrange1(key, start, end);
+			return isShard ? returnSet(zrangeN(key, start, end)) : returnSet(zrange1(key, start, end));
 		}
 	}
 	
 	private Set<String> zrangeN(String key, long start, long end) {
 		ShardedJedis sj = shardedPool.getResource();
 		try {
-			return sj.zrange(key, start, end);
+			Set<String> set = sj.zrange(key, start, end);
+			if (set == null) {
+				set = Collections.emptySet();
+			}
+			return set;
 		} catch (Exception e) {
 			shardedPool.returnBrokenResource(sj);
 			throw new RuntimeException(e);
@@ -1614,7 +1629,11 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	private Set<String> zrange1(String key, long start, long end) {
 		Jedis j = pool.getResource();
 		try {
-			return j.zrange(key, start, end);
+			Set<String> set = j.zrange(key, start, end);
+			if (set == null) {
+				set = Collections.emptySet();
+			}
+			return set;
 		} catch (Exception e) {
 			pool.returnBrokenResource(j);
 			throw new RuntimeException(e);
@@ -1623,6 +1642,196 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		}
 	}
 	
+	@Override
+	public Map<String, Double> zrangeWithScores(String key, long start, long end) {
+		AbstractTransaction rt = getTransaction();
+		if (rt != null) {
+			// TODO jedis api bugs, have to convert to int.
+			rt.getDelegate().zrangeWithScores(key, (int) start, (int) end);
+			return null;
+		} else {
+			return isShard ? returnMap(zrangeWithScoresN(key, start, end)) : returnMap(zrangeWithScores1(key, start, end));
+		}
+	}
+	
+	private Map<String, Double> zrangeWithScoresN(String key, long start, long end) {
+		ShardedJedis sj = shardedPool.getResource();
+		try {
+			Set<Tuple> set = sj.zrangeWithScores(key, start, end);
+			Map<String, Double> map = new HashMap<String, Double>();
+			if (set != null) {
+				for (Tuple tuple : set) {
+					map.put(tuple.getElement(), tuple.getScore());
+				}
+			}
+			return map;
+		} catch (Exception e) {
+			shardedPool.returnBrokenResource(sj);
+			throw new RuntimeException(e);
+		} finally {
+			shardedPool.returnResource(sj);
+		}
+	}
+	
+	private Map<String, Double> zrangeWithScores1(String key, long start, long end) {
+		Jedis j = pool.getResource();
+		try {
+			Set<Tuple> set = j.zrangeWithScores(key, start, end);
+			Map<String, Double> map = new HashMap<String, Double>();
+			if (set != null) {
+				for (Tuple tuple : set) {
+					map.put(tuple.getElement(), tuple.getScore());
+				}
+			}
+			return map;
+		} catch (Exception e) {
+			pool.returnBrokenResource(j);
+			throw new RuntimeException(e);
+		} finally {
+			pool.returnResource(j);
+		}
+	}
+
+	@Override
+	public Long zcount(String key, double min, double max) {
+		AbstractTransaction rt = getTransaction();
+		if (rt != null) {
+			rt.getDelegate().zcount(key, min, max);
+			return null;
+		} else {
+			return isShard ? zcountN(key, min, max) : zcount1(key, min, max);
+		}
+	}
+	
+	private Long zcountN(String key, double min, double max) {
+		ShardedJedis sj = shardedPool.getResource();
+		try {
+			return sj.zcount(key, min, max);
+		} catch (Exception e) {
+			shardedPool.returnBrokenResource(sj);
+			throw new RuntimeException(e);
+		} finally {
+			shardedPool.returnResource(sj);
+		}
+	}
+	
+	private Long zcount1(String key, double min, double max) {
+		Jedis j = pool.getResource();
+		try {
+			return j.zcount(key, min, max);
+		} catch (Exception e) {
+			pool.returnBrokenResource(j);
+			throw new RuntimeException(e);
+		} finally {
+			pool.returnResource(j);
+		}
+	}
+
+	@Override
+	public Long zcount(String key, String min, String max) {
+		AbstractTransaction rt = getTransaction();
+		if (rt != null) {
+			// TODO jedis api bug
+			throw new UnsupportedOperationException();
+		} else {
+			return isShard ? zcountN(key, min, max) : zcount1(key, min, max);
+		}
+	}
+	
+	private Long zcountN(String key, String min, String max) {
+		ShardedJedis sj = shardedPool.getResource();
+		try {
+			return sj.zcount(key, min, max);
+		} catch (Exception e) {
+			shardedPool.returnBrokenResource(sj);
+			throw new RuntimeException(e);
+		} finally {
+			shardedPool.returnResource(sj);
+		}
+	}
+	
+	private Long zcount1(String key, String min, String max) {
+		Jedis j = pool.getResource();
+		try {
+			return j.zcount(key, min, max);
+		} catch (Exception e) {
+			pool.returnBrokenResource(j);
+			throw new RuntimeException(e);
+		} finally {
+			pool.returnResource(j);
+		}
+	}
+
+	@Override
+	public Double zscore(String key, String member) {
+		AbstractTransaction rt = getTransaction();
+		if (rt != null) {
+			rt.getDelegate().zscore(key, member);
+			return null;
+		} else {
+			return isShard ? zscoreN(key, member) : zscore1(key, member);
+		}
+	}
+	
+	private Double zscoreN(String key, String member) {
+		ShardedJedis sj = shardedPool.getResource();
+		try {
+			return sj.zscore(key, member);
+		} catch (Exception e) {
+			shardedPool.returnBrokenResource(sj);
+			throw new RuntimeException(e);
+		} finally {
+			shardedPool.returnResource(sj);
+		}
+	}
+	
+	private Double zscore1(String key, String member) {
+		Jedis j = pool.getResource();
+		try {
+			return j.zscore(key, member);
+		} catch (Exception e) {
+			pool.returnBrokenResource(j);
+			throw new RuntimeException(e);
+		} finally {
+			pool.returnResource(j);
+		}
+	}
+
+	@Override
+	public Long zrank(String key, String member) {
+		AbstractTransaction rt = getTransaction();
+		if (rt != null) {
+			rt.getDelegate().zrank(key, member);
+			return null;
+		} else {
+			return isShard ? zrankN(key, member) : zrank1(key, member);
+		}
+	}
+	
+	private Long zrankN(String key, String member) {
+		ShardedJedis sj = shardedPool.getResource();
+		try {
+			return sj.zrank(key, member);
+		} catch (Exception e) {
+			shardedPool.returnBrokenResource(sj);
+			throw new RuntimeException(e);
+		} finally {
+			shardedPool.returnResource(sj);
+		}
+	}
+	
+	private Long zrank1(String key, String member) {
+		Jedis j = pool.getResource();
+		try {
+			return j.zrank(key, member);
+		} catch (Exception e) {
+			pool.returnBrokenResource(j);
+			throw new RuntimeException(e);
+		} finally {
+			pool.returnResource(j);
+		}
+	}
+
 	@Override
 	public Long zrem(String key, String... members) {
 		AbstractTransaction rt = getTransaction();
@@ -1661,6 +1870,233 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		}
 	}
 	
+	@Override
+	public Set<String> zrangeByScore(String key, double min, double max) {
+		return zrangeByScore(key, Double.toString(min), Double.toString(max));
+	}
+
+	@Override
+	public Set<String> zrangeByScore(String key, double min, double max, int offset, int count) {
+		return zrangeByScore(key, Double.toString(min), Double.toString(max), offset, count);
+	}
+
+	@Override
+	public Set<String> zrangeByScore(String key, String min, String max) {
+		AbstractTransaction rt = getTransaction();
+		if (rt != null) {
+			rt.getDelegate().zrangeByScore(key, min, max);
+			return null;
+		} else {
+			return isShard ? returnSet(zrangeByScoreN(key, min, max)) : returnSet(zrangeByScore1(key, min, max));
+		}
+	}
+	
+	private Set<String> zrangeByScoreN(String key, String min, String max) {
+		ShardedJedis sj = shardedPool.getResource();
+		try {
+			return sj.zrangeByScore(key, min, max);
+		} catch (Exception e) {
+			shardedPool.returnBrokenResource(sj);
+			throw new RuntimeException(e);
+		} finally {
+			shardedPool.returnResource(sj);
+		}
+	}
+	
+	private Set<String> zrangeByScore1(String key, String min, String max) {
+		Jedis j = pool.getResource();
+		try {
+			return j.zrangeByScore(key, min, max);
+		} catch (Exception e) {
+			pool.returnBrokenResource(j);
+			throw new RuntimeException(e);
+		} finally {
+			pool.returnResource(j);
+		}
+	}
+
+	@Override
+	public Set<String> zrangeByScore(String key, String min, String max, int offset, int count) {
+		AbstractTransaction rt = getTransaction();
+		if (rt != null) {
+			// TODO jedis api bug
+			throw new UnsupportedOperationException();
+		} else {
+			return isShard ? returnSet(zrangeByScoreN(key, min, max, offset, count)) : returnSet(zrangeByScore1(key, min, max, offset, count));
+		}
+	}
+	
+	private Set<String> zrangeByScoreN(String key, String min, String max, int offset, int count) {
+		ShardedJedis sj = shardedPool.getResource();
+		try {
+			return sj.zrangeByScore(key, min, max, offset, count);
+		} catch (Exception e) {
+			shardedPool.returnBrokenResource(sj);
+			throw new RuntimeException(e);
+		} finally {
+			shardedPool.returnResource(sj);
+		}
+	}
+	
+	private Set<String> zrangeByScore1(String key, String min, String max, int offset, int count) {
+		Jedis j = pool.getResource();
+		try {
+			return j.zrangeByScore(key, min, max, offset, count);
+		} catch (Exception e) {
+			pool.returnBrokenResource(j);
+			throw new RuntimeException(e);
+		} finally {
+			pool.returnResource(j);
+		}
+	}
+	
+	@Override
+	public Map<String, Double> zrangeByScoreWithScores(String key, double min, double max) {
+		return zrangeByScoreWithScores(key, Double.toString(min), Double.toString(max));
+	}
+
+	@Override
+	public Map<String, Double> zrangeByScoreWithScores(String key, double min, double max, int offset, int count) {
+		return zrangeByScoreWithScores(key, Double.toString(min), Double.toString(max), offset, count);
+	}
+	
+	@Override
+	public Map<String, Double> zrangeByScoreWithScores(String key, String min, String max) {
+		AbstractTransaction rt = getTransaction();
+		if (rt != null) {
+			// TODO jedis api bug
+			throw new UnsupportedOperationException();
+		} else {
+			return isShard ? returnMap(zrangeByScoreWithScoresN(key, min, max)) : returnMap(zrangeByScoreWithScores1(key, min, max));
+		}
+	}
+	
+	private Map<String, Double> zrangeByScoreWithScoresN(String key, String min, String max) {
+		ShardedJedis sj = shardedPool.getResource();
+		try {
+			Set<Tuple> set = sj.zrangeByScoreWithScores(key, min, max);
+			Map<String, Double> map = new HashMap<String, Double>();
+			if (set != null) {
+				for (Tuple tuple : set) {
+					map.put(tuple.getElement(), tuple.getScore());
+				}
+			}
+			return map;
+		} catch (Exception e) {
+			shardedPool.returnBrokenResource(sj);
+			throw new RuntimeException(e);
+		} finally {
+			shardedPool.returnResource(sj);
+		}
+	}
+	
+	private Map<String, Double> zrangeByScoreWithScores1(String key, String min, String max) {
+		Jedis j = pool.getResource();
+		try {
+			Set<Tuple> set = j.zrangeByScoreWithScores(key, min, max);
+			Map<String, Double> map = new HashMap<String, Double>();
+			if (set != null) {
+				for (Tuple tuple : set) {
+					map.put(tuple.getElement(), tuple.getScore());
+				}
+			}
+			return map;
+		} catch (Exception e) {
+			pool.returnBrokenResource(j);
+			throw new RuntimeException(e);
+		} finally {
+			pool.returnResource(j);
+		}
+	}
+
+	@Override
+	public Map<String, Double> zrangeByScoreWithScores(String key, String min, String max, int offset, int count) {
+		AbstractTransaction rt = getTransaction();
+		if (rt != null) {
+			// TODO jedis api bug
+			throw new UnsupportedOperationException();
+		} else {
+			return isShard ? returnMap(zrangeByScoreWithScoresN(key, min, max, offset, count)) : returnMap(zrangeByScoreWithScores1(key, min, max, offset, count));
+		}
+	}
+	
+	private Map<String, Double> zrangeByScoreWithScoresN(String key, String min, String max, int offset, int count) {
+		ShardedJedis sj = shardedPool.getResource();
+		try {
+			Set<Tuple> set = sj.zrangeByScoreWithScores(key, min, max, offset, count);
+			Map<String, Double> map = new HashMap<String, Double>();
+			if (set != null) {
+				for (Tuple tuple : set) {
+					map.put(tuple.getElement(), tuple.getScore());
+				}
+			}
+			return map;
+		} catch (Exception e) {
+			shardedPool.returnBrokenResource(sj);
+			throw new RuntimeException(e);
+		} finally {
+			shardedPool.returnResource(sj);
+		}
+	}
+	
+	private Map<String, Double> zrangeByScoreWithScores1(String key, String min, String max, int offset, int count) {
+		Jedis j = pool.getResource();
+		try {
+			Set<Tuple> set = j.zrangeByScoreWithScores(key, min, max, offset, count);
+			Map<String, Double> map = new HashMap<String, Double>();
+			if (set != null) {
+				for (Tuple tuple : set) {
+					map.put(tuple.getElement(), tuple.getScore());
+				}
+			}
+			return map;
+		} catch (Exception e) {
+			pool.returnBrokenResource(j);
+			throw new RuntimeException(e);
+		} finally {
+			pool.returnResource(j);
+		}
+	}
+
+	@Override
+	public Long zremrangeByScore(String key, double start, double end) {
+		return zremrangeByScore(key, Double.toString(start), Double.toString(end));
+	}
+
+	@Override
+	public Long zremrangeByScore(String key, String start, String end) {
+		AbstractTransaction rt = getTransaction();
+		if (rt != null) {
+			// TODO jedis api bugs
+			throw new UnsupportedOperationException();
+		} else {
+			return isShard ? zremrangeByScoreN(key, start, end) : zremrangeByScore1(key, start, end);
+		}
+	}
+	
+	private Long zremrangeByScoreN(String key, String start, String end) {
+		ShardedJedis sj = shardedPool.getResource();
+		try {
+			return sj.zremrangeByScore(key, start, end);
+		} catch (Exception e) {
+			shardedPool.returnBrokenResource(sj);
+			throw new RuntimeException(e);
+		} finally {
+			shardedPool.returnResource(sj);
+		}
+	}
+	
+	private Long zremrangeByScore1(String key, String start, String end) {
+		Jedis j = pool.getResource();
+		try {
+			return j.zremrangeByScore(key, start, end);
+		} catch (Exception e) {
+			pool.returnBrokenResource(j);
+			throw new RuntimeException(e);
+		} finally {
+			pool.returnResource(j);
+		}
+	}
 	
 	// ------------------------------------------------------------------------------------------------------ list
 
@@ -1670,8 +2106,6 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		if (rt != null) {
 			// TODO jedis api has bugs, fix later
 			throw new UnsupportedOperationException();
-//			rt.getDelegate().lpush(key, values);
-//			return -1;
 		} else {
 			return isShard ? lpushN(key, values) : lpush1(key, values);
 		}
@@ -1704,8 +2138,6 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		if (rt != null) {
 			// TODO jedis api has bugs, fix later
 			throw new UnsupportedOperationException();
-//			rt.getDelegate().rpush(key, string)
-//			return -1;
 		} else {
 			return isShard ? rpushN(key, values) : rpush1(key, values);
 		}
@@ -1819,7 +2251,11 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	private List<String> lrangeN(String key, long start, long end) {
 		ShardedJedis sj = shardedPool.getResource();
 		try {
-			return sj.lrange(key, start, end);
+			List<String> l = sj.lrange(key, start, end);
+			if (l == null) {
+				return Collections.emptyList();
+			}
+			return l;
 		} catch (Exception e) {
 			shardedPool.returnBrokenResource(sj);
 			throw new RuntimeException(e);
@@ -2124,12 +2560,26 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	
 	private List<String> returnList(List<String> list) {
 		if (list == null) { 
-			return null; 
+			return Collections.emptyList(); 
 		}
-		if (list.size() == 0) {
-			return null;
-		}
+		
 		return list;
+	}
+	
+	private Set<String> returnSet(Set<String> set) {
+		if (set == null) { 
+			return Collections.emptySet();
+		}
+		
+		return set;
+	}
+	
+	private <K, V> Map<K, V> returnMap(Map<K, V> map) {
+		if (map == null) {
+			return Collections.emptyMap();
+		}
+		
+		return map;
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------ getter 
