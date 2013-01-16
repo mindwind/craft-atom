@@ -25,7 +25,7 @@
 		<v.plugin.compiler>2.5.1</v.plugin.compiler>
 		<v.plugin.resources>2.6</v.plugin.resources>
 		<v.plugin.source>2.2</v.plugin.source>
-		<v.plugin.release>2.2</v.plugin.release>
+		<v.plugin.release>2.4</v.plugin.release>
 		<v.jdk>1.6</v.jdk>
 
 		<v.commons.logging>1.1.1</v.commons.logging>
