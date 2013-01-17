@@ -17,7 +17,7 @@ public class RedisCacheMain {
 	private static void init() {
 		boolean isShard = true;
 		int timeout = 3000;
-		rc = new RedisCache(isShard, timeout, "10.28.168.248:6379", 1);
+		rc = new RedisCache(isShard, timeout, "localhost:6379", 1);
 	}
 	
 	public static void before() {
@@ -35,7 +35,7 @@ public class RedisCacheMain {
 		RedisCacheMain rcm = new RedisCacheMain();
 		
 		// case 1
-		rcm.testGetAndSet();
+//		rcm.testGetAndSet();
 
 //		// case 2
 //		rcm.testSetex();
@@ -48,7 +48,35 @@ public class RedisCacheMain {
 //		
 //		// case 5
 //		rcm.testHmget();
+		
+		// case 6
+		rcm.testSetexInTransaction();
 
+	}
+	
+	public void testSetexInTransaction() {
+		before();
+		try {
+			testSetexInTransaction0();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			after();
+		}
+	}
+	
+	private void testSetexInTransaction0() {
+		Transaction tx = null;
+		try {
+			tx = rc.beginTransaction(key);
+			rc.setex(key, 5, "1");
+			List<Object> result = tx.commit();
+			System.out.println("testSetexInTransaction() result=" + result);
+		} finally {
+			if (tx != null) {
+				tx.close();
+			}
+		}
 	}
 	
 	public void testHmget() {
