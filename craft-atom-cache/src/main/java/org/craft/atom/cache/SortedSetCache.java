@@ -102,6 +102,8 @@ public interface SortedSetCache extends Cache {
 	 * @param key
 	 * @param min
 	 * @param max
+	 * @param offset inclusive
+	 * @param count
 	 * @return set of elements in the specified score range
 	 */
 	Set<String> zrangeByScore(String key, double min, double max, int offset, int count);
@@ -138,6 +140,8 @@ public interface SortedSetCache extends Cache {
 	 * @param key
 	 * @param min
 	 * @param max
+	 * @param offset inclusive
+	 * @param count
 	 * @return set of elements in the specified score range
 	 */
 	Set<String> zrangeByScore(String key, String min, String max, int offset, int count);
@@ -281,11 +285,11 @@ public interface SortedSetCache extends Cache {
 	/**
 	 * Time complexity: O(log(N)+M) with N being the number of elements in the sorted set and M the number of elements removed by the operation.
 	 * <br>
-	 * Removes all elements in the sorted set stored at key with a score between min and max (inclusive).
+	 * Removes all elements in the sorted set stored at key with a score between start and end (inclusive).
 	 * 
 	 * @param key
-	 * @param start
-	 * @param end
+	 * @param start inclusive
+	 * @param end   inclusive
 	 * @return the number of elements removed.
 	 */
 	Long zremrangeByScore(String key, String start, String end);

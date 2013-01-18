@@ -184,9 +184,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.expire(key, ttl);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -196,9 +196,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.expire(key, ttl);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -226,9 +226,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				c += sj.del(key);
 			}
 			return c;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -238,9 +238,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.del(keys);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -261,9 +261,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.ttl(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -273,9 +273,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.ttl(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -297,9 +297,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		try {
 			// TODO ShardedJedis should provide this API directly.
 			return sj.getShard(key).persist(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -309,9 +309,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.persist(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -332,9 +332,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.exists(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -344,9 +344,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.exists(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -369,9 +369,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.decr(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -381,9 +381,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.decr(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -404,9 +404,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.decrBy(key, num);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -416,9 +416,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.decrBy(key, num);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -439,9 +439,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.incrBy(key, num);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -451,9 +451,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.incrBy(key, num);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -474,9 +474,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.incr(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -486,9 +486,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.incr(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -511,9 +511,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.getSet(key, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -523,9 +523,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.getSet(key, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -546,9 +546,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.get(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -558,9 +558,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.get(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -584,9 +584,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			sj.set(key, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -596,9 +596,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			j.set(key, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -622,9 +622,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			sj.setex(key, ttl, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -634,9 +634,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			j.setex(key, ttl, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -657,9 +657,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.setnx(key, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -669,9 +669,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.setnx(key, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -699,9 +699,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				r.add(sj.get(key));
 			}
 			return r;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -711,9 +711,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.mget(keys);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -747,14 +747,14 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 					String value = keysvalues[i + 1];
 					sj.set(key, value);
 					r.add(key);
-				} catch (Exception e) {
+				} catch (RuntimeException e) {
 					e.printStackTrace();
 				}
 			}
 			return r;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -769,9 +769,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				r.add(keysvalues[i]);
 			}
 			return r;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -799,9 +799,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.msetnx(keysvalues);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -824,9 +824,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.hget(key, field);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -836,9 +836,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.hget(key, field);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -859,9 +859,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.hset(key, field, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -871,9 +871,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.hset(key, field, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -894,9 +894,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.hdel(key, fields);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -906,9 +906,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.hdel(key, fields);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -933,9 +933,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				list = Collections.emptyList();
 			}
 			return list;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -949,9 +949,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				list = Collections.emptyList();
 			}
 			return list;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -975,9 +975,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			sj.hmset(key, hash);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -987,9 +987,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			j.hmset(key, hash);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1010,9 +1010,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.hincrBy(key, field, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1022,9 +1022,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.hincrBy(key, field, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1045,9 +1045,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.hsetnx(key, field, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1057,9 +1057,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.hsetnx(key, field, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1080,9 +1080,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.hexists(key, field);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1092,9 +1092,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.hexists(key, field);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1115,9 +1115,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.hgetAll(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1127,9 +1127,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.hgetAll(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1154,9 +1154,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				set = Collections.emptySet();
 			}
 			return set;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1170,9 +1170,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				set = Collections.emptySet();
 			}
 			return set;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1193,9 +1193,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.hlen(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1205,9 +1205,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.hlen(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1228,9 +1228,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.hvals(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1240,9 +1240,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.hvals(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1265,9 +1265,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.sadd(key, values);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1277,9 +1277,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.sadd(key, values);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1300,9 +1300,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.scard(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1312,9 +1312,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.scard(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1335,9 +1335,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.srem(key, values);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1347,9 +1347,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.srem(key, values);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1370,9 +1370,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.smembers(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1382,9 +1382,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.smembers(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1409,9 +1409,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 			} else {
 				return j.sinter(keys);
 			}
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1432,9 +1432,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.sismember(key, member);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1444,9 +1444,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.sismember(key, member);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1467,9 +1467,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.spop(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1479,9 +1479,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.spop(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1504,9 +1504,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.zadd(key, score, member);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1516,9 +1516,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.zadd(key, score, member);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1539,9 +1539,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.zcard(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1551,9 +1551,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.zcard(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1578,9 +1578,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.zadd(key, scoreMembers);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1590,9 +1590,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.zadd(key, scoreMembers);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1618,9 +1618,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				set = Collections.emptySet();
 			}
 			return set;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1634,9 +1634,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				set = Collections.emptySet();
 			}
 			return set;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1665,9 +1665,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				}
 			}
 			return map;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1684,9 +1684,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				}
 			}
 			return map;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1707,9 +1707,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.zcount(key, min, max);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1719,9 +1719,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.zcount(key, min, max);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1742,9 +1742,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.zcount(key, min, max);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1754,9 +1754,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.zcount(key, min, max);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1777,9 +1777,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.zscore(key, member);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1789,9 +1789,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.zscore(key, member);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1812,9 +1812,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.zrank(key, member);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1824,9 +1824,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.zrank(key, member);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1850,9 +1850,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.zrem(key, members);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1862,9 +1862,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.zrem(key, members);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1895,9 +1895,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.zrangeByScore(key, min, max);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1907,9 +1907,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.zrangeByScore(key, min, max);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1930,9 +1930,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.zrangeByScore(key, min, max, offset, count);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -1942,9 +1942,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.zrangeByScore(key, min, max, offset, count);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -1982,9 +1982,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				}
 			}
 			return map;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2001,9 +2001,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				}
 			}
 			return map;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2031,9 +2031,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				}
 			}
 			return map;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2050,9 +2050,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				}
 			}
 			return map;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2078,9 +2078,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.zremrangeByScore(key, start, end);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2090,9 +2090,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.zremrangeByScore(key, start, end);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2124,9 +2124,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.lpush(key, values);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2147,9 +2147,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.rpush(key, values);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2159,9 +2159,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.rpush(key, values);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2182,9 +2182,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.lpop(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2194,9 +2194,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.lpop(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2217,9 +2217,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.rpop(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2229,9 +2229,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.rpop(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2256,9 +2256,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 				return Collections.emptyList();
 			}
 			return l;
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2268,9 +2268,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.lrange(key, start, end);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2294,9 +2294,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			sj.ltrim(key, start, end);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2306,9 +2306,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			j.ltrim(key, start, end);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2329,9 +2329,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.llen(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2341,9 +2341,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.llen(key);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2364,9 +2364,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.lrem(key, count, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2376,9 +2376,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.lrem(key, count, value);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2399,9 +2399,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			return sj.lindex(key, index);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2411,9 +2411,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			return j.lindex(key, index);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2432,9 +2432,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		try {
 			redis.clients.jedis.Transaction jt = j.multi();
 			rt = new RedisTransaction(this, jt, j);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			pool.returnResource(j);
 		}
@@ -2457,9 +2457,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 			Jedis j = sj.getShard(key);
 			redis.clients.jedis.Transaction jt = j.multi();
 			rt = new ShardedRedisTransaction(this, jt, sj);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		}
 		
 		if (rt != null) {
@@ -2486,9 +2486,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		try {
 			Jedis j = sj.getShard(keys[0]);
 			j.watch(keys);
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
@@ -2517,9 +2517,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		try {
 			Jedis j = sj.getShard(key);
 			j.unwatch();
-		} catch (Exception e) {
+		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
-			throw new RuntimeException(e);
+			throw e;
 		} finally {
 			shardedPool.returnResource(sj);
 		}
