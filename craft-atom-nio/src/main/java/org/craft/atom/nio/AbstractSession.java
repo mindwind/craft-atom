@@ -303,11 +303,19 @@ public abstract class AbstractSession implements Session {
 		
 		return true;
 	}
-
+	
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("AbstractSession [id=").append(id)
+		builder.append("[id=").append(id).append(" ").append(remoteAddress)
+		       .append(" -> ").append(localAddress).append("]");
+		
+		return builder.toString();
+	}
+	
+	public String toFullString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Session [id=").append(id)
 			   .append(", localAddress=").append(localAddress)
 			   .append(", remoteAddress=").append(remoteAddress)
 			   .append(", key=").append(selectionKey).append(", lastIoTime=")
