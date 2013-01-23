@@ -17,6 +17,8 @@
 		<module>craft-atom-cache</module>
 		<module>craft-atom-protocol</module>
 		<module>craft-atom-lock</module>
+		<module>craft-atom-protocol-http</module>
+		<module>craft-atom-test</module>
 	</modules>
 
 	<properties>
