@@ -367,11 +367,11 @@ public class Processor extends Abstractor {
 	 * @param session
 	 */
 	public void flush(AbstractSession session) {
-		if(this.shutdown) {
+		if (this.shutdown) {
 			throw new IllegalStateException("The processor already shutdown!");
 		}
 		
-		if(session == null) {
+		if (session == null) {
 			return;
 		}
 		
