@@ -14,7 +14,13 @@ public class CraftEchoServer {
 	private static final int PORT = 9123;
 	
 	public static void main(String[] args) throws IOException {
+		String rbs = System.getProperty("read.buffer.size");
+		if (rbs == null) {
+			rbs = "2048";
+		}
+		
 		AcceptorConfig ac = new AcceptorConfig();
+		ac.setReadBufferSize(Integer.parseInt(rbs));
 		new TcpAcceptor(new CraftEchoHandler(), ac, PORT);
 		System.out.println("craft echo server listening on port=" + PORT);
 	}
