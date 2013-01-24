@@ -22,7 +22,7 @@ public class NettyEchoServer {
 		NettyEchoHandler handler = new NettyEchoHandler();
 		ChannelPipeline pipeline = bootstrap.getPipeline();
 		pipeline.addLast("handler", handler);
-		bootstrap.setOption("child.keepAlive", true);
+		bootstrap.setOption("child.receiveBufferSize", 2048);
 		bootstrap.bind(new InetSocketAddress(PORT));
 		
 		System.out.println("netty echo server listening on port=" + PORT);

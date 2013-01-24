@@ -15,7 +15,6 @@ public class CraftEchoServer {
 	
 	public static void main(String[] args) throws IOException {
 		AcceptorConfig ac = new AcceptorConfig();
-		ac.setExecutorSize(Runtime.getRuntime().availableProcessors());
 		new TcpAcceptor(new CraftEchoHandler(), ac, PORT);
 		System.out.println("craft echo server listening on port=" + PORT);
 	}

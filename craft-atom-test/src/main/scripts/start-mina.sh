@@ -10,4 +10,4 @@ done
 export CP
 
 JAVA_OPTS='-Xms256m -Xmx256m -Dservice=mina-echo-server'
-nohup java $JAVA_OPTS -classpath $CP org.craft.atom.test.nio.MinaEchoServer >/dev/null 2>&1 &
+nohup java -server $JAVA_OPTS -classpath $CP org.craft.atom.test.nio.MinaEchoServer >/dev/null 2>&1 &
