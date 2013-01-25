@@ -41,6 +41,9 @@ public class Processor extends Abstractor {
 	/** A timeout used for the select, as we need to get out to deal with idle sessions */
 	private static final long SELECT_TIMEOUT = 1000L;
 	
+	/** Flush spin count */
+	private static final long FLUSH_SPIN_COUNT = 256;
+	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
 	/** A Session queue containing the newly created sessions */
@@ -60,7 +63,6 @@ public class Processor extends Abstractor {
 	private AbstractConfig config;
 	private AtomicBoolean wakeupCalled = new AtomicBoolean(false);
 	private Protocol protocol = Protocol.TCP;
-	
 	private volatile Selector selector;
 	private volatile boolean shutdown = false;
 	
@@ -85,11 +87,11 @@ public class Processor extends Abstractor {
 	 * @param session
 	 */
 	public void add(AbstractSession session) {
-		if(this.shutdown) {
+		if (this.shutdown) {
 			throw new IllegalStateException("The processor already shutdown!");
 		}
 		
-		if(session == null) {
+		if (session == null) {
 			return;
 		}
 		
@@ -227,7 +229,7 @@ public class Processor extends Abstractor {
 	
 	private void process() {
 		Iterator<SelectionKey> it = selector.selectedKeys().iterator();
-		while(it.hasNext()) {
+		while (it.hasNext()) {
 			AbstractSession session = (AbstractSession) it.next().attachment();
 			if (session.isValid()) {
 				process0(session);
@@ -253,16 +255,8 @@ public class Processor extends Abstractor {
 		}
 	}
 	
-	private void shrinkReadBufferSize(AbstractSession session) {
-		session.setReadBufferSize(session.getReadBufferSize() >>> 1);
-	}
-	
-	private void extendReadBufferSize(AbstractSession session) {
-		session.setReadBufferSize(session.getReadBufferSize() << 1);
-	}
-	
 	private void read(AbstractSession session) {
-		int bufferSize = session.getReadBufferSize();
+		int bufferSize = session.getSizePredictor().next();
 		ByteBuffer buf = ByteBuffer.allocate(bufferSize);
 
 		try {
@@ -272,7 +266,7 @@ public class Processor extends Abstractor {
 				readUdp(session, buf);
 			}
 		} catch (Exception e) {
-			LOG.warn("catch read exception and fire it, session=" + session, e);
+			LOG.error("catch read exception and fire it, session=" + session, e);
 
 			// fire exception caught event
 			eventDispatcher.dispatch(new Event(EventType.EXCEPTION_CAUGHT, session, e, handler));
@@ -331,12 +325,7 @@ public class Processor extends Abstractor {
 		}
 
 		if (readBytes > 0) {
-			if ((readBytes << 1) < session.getReadBufferSize()) {
-				shrinkReadBufferSize(session);
-			} else if (readBytes == session.getReadBufferSize()) {
-				extendReadBufferSize(session);
-			}
-			
+			session.getSizePredictor().previous(readBytes);
 			fireMessageReceived(session, buf, readBytes);
 		}
 
@@ -398,7 +387,7 @@ public class Processor extends Abstractor {
     
 	private void flush() {
 		int c = 0;
-		while(!flushingSessions.isEmpty() && c < 256) {
+		while (!flushingSessions.isEmpty() && c < FLUSH_SPIN_COUNT) {
 			AbstractSession session = flushingSessions.poll();
             if (session == null) {
                 // Just in case ... It should not happen.
@@ -412,14 +401,14 @@ public class Processor extends Abstractor {
             	if (session.isOpened()) {
             		flush0(session);
             	} else if (!session.isValid()) {
-            		throw new IllegalStateException("Session state is invalid, can't be flush, session id = " + session.getId());
+            		throw new IllegalStateException("Session state is invalid, can't be flush, session id = " + session);
             	} else {
               		// Retry later if session is not yet opened, in case that Session.write() is called before add() is processed.
             		asyWrite(session);
             		return;
             	}
 			} catch (Exception e) {
-				LOG.warn("catch flush exception and fire it", e);
+				LOG.error("catch flush exception and fire it", e);
 				
 				// fire exception caught event 
 				eventDispatcher.dispatch(new Event(EventType.EXCEPTION_CAUGHT, session, e, handler));
@@ -433,22 +422,52 @@ public class Processor extends Abstractor {
 	}
 	
 	private void flush0(AbstractSession session) throws IOException {
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Flushing session: " + session);
-		}
+		if (LOG.isDebugEnabled()) { LOG.debug("Flushing session: " + session); }
 		
 		final Queue<ByteBuffer> writeQueue = session.getWriteBufferQueue();
-		final int maxWrittenBytes = session.getMaxWriteBufferSize();
-		
-		if (LOG.isDebugEnabled()) {
-			LOG.debug("Max write byte size: " + maxWrittenBytes);
-		}
 
 		// First set not be interested to write event
 		setInterestedInWrite(session, false);
 		
+		// flush by mode
+		if (config.isReadWritefair()) {
+			fairFlush0(session, writeQueue);
+		} else {
+			oneOffFlush0(session, writeQueue);
+		}
+		
+		// The write buffer queue is not empty, we re-interest in writing and later flush it.
+		if (!writeQueue.isEmpty()) {
+			setInterestedInWrite(session, true);
+			flushingSessions.add(session);
+		}
+	}
+	
+	private void oneOffFlush0(AbstractSession session, Queue<ByteBuffer> writeQueue) throws IOException {
+		ByteBuffer buf = writeQueue.peek();
+		if (buf == null) {
+			return;
+		}
+		
+		write(session, buf, buf.remaining());
+		
+		if (buf.hasRemaining()) {
+			setInterestedInWrite(session, true);
+			flushingSessions.add(session);
+			return;
+		} else {
+			writeQueue.remove();
+			// fire message sent event
+			eventDispatcher.dispatch(new Event(EventType.MESSAGE_SENT, session, buf.array(), handler));
+		}
+	}
+	
+	private void fairFlush0(AbstractSession session, Queue<ByteBuffer> writeQueue) throws IOException {
 		ByteBuffer buf = null;
 		int writtenBytes = 0;
+		final int maxWrittenBytes = session.getMaxWriteBufferSize();
+		if (LOG.isDebugEnabled()) { LOG.debug("Max write byte size: " + maxWrittenBytes); }
+		
 		do {
 			if (buf == null) {
 				buf = writeQueue.peek();
@@ -468,9 +487,7 @@ public class Processor extends Abstractor {
 			
 			// The buffer is all flushed, remove it from write queue
 			if (!buf.hasRemaining()) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("The buffer is all flushed, remove it from write queue");
-				}
+				if (LOG.isDebugEnabled()) { LOG.debug("The buffer is all flushed, remove it from write queue"); }
 				
 				writeQueue.remove();
 				
@@ -484,9 +501,7 @@ public class Processor extends Abstractor {
 
 			// 0 byte be written, maybe kernel buffer is full so we re-interest in writing and later flush it.
 			if (localWrittenBytes == 0) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("0 byte be written, maybe kernel buffer is full so we re-interest in writing and later flush it");
-				}
+				if (LOG.isDebugEnabled()) { LOG.debug("0 byte be written, maybe kernel buffer is full so we re-interest in writing and later flush it"); }
 				
 				setInterestedInWrite(session, true);
 				flushingSessions.add(session);
@@ -495,9 +510,7 @@ public class Processor extends Abstractor {
 			
 			// The buffer isn't empty(bytes to flush more than max bytes), we re-interest in writing and later flush it.
 			if (localWrittenBytes > 0 && buf.hasRemaining()) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("The buffer isn't empty(bytes to flush more than max bytes), we re-interest in writing and later flush it");
-				}
+				if (LOG.isDebugEnabled()) { LOG.debug("The buffer isn't empty(bytes to flush more than max bytes), we re-interest in writing and later flush it"); }
 				
 				setInterestedInWrite(session, true);
 				flushingSessions.add(session);
@@ -515,17 +528,10 @@ public class Processor extends Abstractor {
 				return;
 			}
 		} while (writtenBytes < maxWrittenBytes);
-
-		// The write buffer queue is not empty, we re-interest in writing and later flush it.
-		if (!writeQueue.isEmpty()) {
-			setInterestedInWrite(session, true);
-			flushingSessions.add(session);
-		}
 	}
 	
-	private int write(AbstractSession session, ByteBuffer buf, int maxLength) throws IOException {
+	private int write(AbstractSession session, ByteBuffer buf, int maxLength) throws IOException {		
 		int localWrittenBytes = 0;
-		
 		if (LOG.isDebugEnabled()) {
 			LOG.debug("Allow write max len: " + maxLength);
 			LOG.debug("Waiting write byte buffer: " + buf);
@@ -694,10 +700,10 @@ public class Processor extends Abstractor {
 					notifyIdleSessions(System.currentTimeMillis());
 					
 					// last get a chance to exit infinite loop, just for TCP protocol.
-					if(num == 0 && Protocol.TCP.equals(protocol)) {
+					if (num == 0 && Protocol.TCP.equals(protocol)) {
 						processThreadRef.set(null);
 						
-						if(newSessions.isEmpty() && flushingSessions.isEmpty() && selector.keys().isEmpty()) {
+						if (newSessions.isEmpty() && flushingSessions.isEmpty() && selector.keys().isEmpty()) {
 							break;
 						}
 						
@@ -712,7 +718,7 @@ public class Processor extends Abstractor {
 			}
 			
 			// if shutdown == true, we shutdown the processor
-			if(shutdown) {
+			if (shutdown) {
 				try {
 					shutdown0();
 				} catch (Exception e) {

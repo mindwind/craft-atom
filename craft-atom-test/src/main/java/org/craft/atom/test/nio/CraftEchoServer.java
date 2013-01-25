@@ -19,8 +19,26 @@ public class CraftEchoServer {
 			rbs = "2048";
 		}
 		
+		String fairMode = System.getProperty("fair.mode");
+		if (fairMode == null) {
+			fairMode = "false";
+		}
+		
+		String ioPool = System.getProperty("io.pool");
+		if (ioPool == null) {
+			ioPool = "4";
+		}
+		
+		String executorPool = System.getProperty("executor.pool");
+		if (executorPool == null) {
+			executorPool = Integer.toString(Runtime.getRuntime().availableProcessors() * 4);
+		}
+		
 		AcceptorConfig ac = new AcceptorConfig();
 		ac.setReadBufferSize(Integer.parseInt(rbs));
+		ac.setReadWritefair(Boolean.parseBoolean(fairMode));
+		ac.setProcessorPoolSize(Integer.parseInt(ioPool));
+		ac.setExecutorSize(Integer.parseInt(executorPool));
 		new TcpAcceptor(new CraftEchoHandler(), ac, PORT);
 		System.out.println("craft echo server listening on port=" + PORT);
 	}

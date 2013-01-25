@@ -9,5 +9,5 @@ done
 
 export CP
 
-JAVA_OPTS='-Xms256m -Xmx256m -Dservice=mina-echo-server'
-java $JAVA_OPTS -classpath $CP org.craft.atom.test.nio.MinaEchoServer
+JAVA_OPTS='-Xms256m -Xmx256m -Dservice=craft-echo-server'
+java $JAVA_OPTS -classpath $CP org.craft.atom.test.nio.CraftEchoServer

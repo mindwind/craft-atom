@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.craft.atom.nio.api.AbstractConfig;
 import org.craft.atom.nio.api.Session;
+import org.craft.atom.nio.spi.SizePredictor;
 
 /**
  * @author Hu Feng
@@ -23,7 +24,6 @@ public abstract class AbstractSession implements Session {
 	protected long id;
 	protected SocketAddress localAddress;
 	protected SocketAddress remoteAddress;
-	
 	private SelectionKey selectionKey;
 	private long lastIoTime = System.currentTimeMillis();
 	private int minReadBufferSize = AbstractConfig.MIN_READ_BUFFER_SIZE;
@@ -32,6 +32,7 @@ public abstract class AbstractSession implements Session {
 	private Queue<ByteBuffer> writeBufferQueue = new ConcurrentLinkedQueue<ByteBuffer>();
 	private Queue<Event> eventQueue = new ConcurrentLinkedQueue<Event>();
 	private Map<Object, Object> attributes = new ConcurrentHashMap<Object, Object>(4);
+	private SizePredictor sizePredictor = new AdaptiveSizePredictor();
 	
 	/** read/write fairness from mina, it is a trade off for tps or fast response */
 	private int maxWriteBufferSize = maxReadBufferSize + (maxReadBufferSize >>> 1);
@@ -46,13 +47,15 @@ public abstract class AbstractSession implements Session {
 	private volatile State state = State.CREATED;
 	private enum State { CREATED, OPENED, CLOSING, CLOSED; }
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
-	public AbstractSession(AbstractConfig config) {
+	public AbstractSession(AbstractConfig config, SizePredictor sizePredictor) {
 		this.id = ID_GENERATOR.incrementAndGet();
 		this.setMinReadBufferSize(config.getMinReadBufferSize());
 		this.setMaxReadBufferSize(config.getMaxReadBufferSize());
 		this.setReadBufferSize(config.getReadBufferSize());
+		this.setSizePredictor(sizePredictor);
 	}
 	
 	public AbstractSession(AbstractSession session) {
@@ -70,6 +73,7 @@ public abstract class AbstractSession implements Session {
 		this.attributes = session.getAttributes();
 		this.maxWriteBufferSize = session.getMaxWriteBufferSize();
 		this.processor = session.getProcessor();
+		this.sizePredictor = session.getSizePredictor();
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -291,6 +295,14 @@ public abstract class AbstractSession implements Session {
 		return state == State.OPENED;
 	}
 	
+	public SizePredictor getSizePredictor() {
+		return sizePredictor;
+	}
+
+	public void setSizePredictor(SizePredictor sizePredictor) {
+		this.sizePredictor = sizePredictor;
+	}
+
 	@Override
 	public boolean isValid() {		
 		if (isClosing()) {
@@ -329,6 +341,7 @@ public abstract class AbstractSession implements Session {
 			   .append(", processor=").append(processor)
 			   .append(", eventProcessing=").append(eventProcessing)
 			   .append(", state=").append(state)
+			   .append(", sizePredictor").append(sizePredictor)
 			   .append("]");
 		
 		return builder.toString();

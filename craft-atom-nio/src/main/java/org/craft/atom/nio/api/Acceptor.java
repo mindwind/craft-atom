@@ -457,6 +457,6 @@ public abstract class Acceptor extends Abstractor {
 
 	public void setConfig(AcceptorConfig config) {
 		this.config = config;
-	}	
+	}
 
 }

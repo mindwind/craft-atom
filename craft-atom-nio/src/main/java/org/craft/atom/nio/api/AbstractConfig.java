@@ -9,7 +9,7 @@ package org.craft.atom.nio.api;
 public class AbstractConfig {
 	
 	public static final int MIN_READ_BUFFER_SIZE = 64;
-	public static final int READ_BUFFER_SIZE = 2048;
+	public static final int READ_BUFFER_SIZE = 1024;
 	public static final int MAX_READ_BUFFER_SIZE = 65536;
 	
 	/** I/O processor pool size */
@@ -29,6 +29,9 @@ public class AbstractConfig {
 	
 	/** 10s default I/O time out, the value must > 1s */
 	protected int ioTimeoutInMillis = 10000;
+	
+	/** Processor flush read-write fair mode */
+	protected boolean readWritefair = true;
 	
 	public int getProcessorPoolSize() {
 		return processorPoolSize;
@@ -86,11 +89,21 @@ public class AbstractConfig {
 		this.ioTimeoutInMillis = ioTimeoutInMillis;
 	}
 
+	public boolean isReadWritefair() {
+		return readWritefair;
+	}
+
+	public void setReadWritefair(boolean readWritefair) {
+		this.readWritefair = readWritefair;
+	}
+
 	@Override
 	public String toString() {
-		return "processorPoolSize=" + processorPoolSize + ", minReadBufferSize=" + minReadBufferSize + ", readBufferSize=" 
-				+ readBufferSize + ", maxReadBufferSize=" + maxReadBufferSize + ", executorSize=" + executorSize 
-				+ ", ioTimeoutInMillis=" + ioTimeoutInMillis;
+		return String
+				.format("AbstractConfig [processorPoolSize=%s, minReadBufferSize=%s, readBufferSize=%s, maxReadBufferSize=%s, executorSize=%s, ioTimeoutInMillis=%s, readWritefair=%s]",
+						processorPoolSize, minReadBufferSize, readBufferSize,
+						maxReadBufferSize, executorSize, ioTimeoutInMillis,
+						readWritefair);
 	}
 	
 }

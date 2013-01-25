@@ -98,7 +98,7 @@ public final class TcpAcceptor extends Acceptor {
 			}
 		}
 		
-		Session session = new TcpSession(sc, config);
+		Session session = new TcpSession(sc, config, this.sizePredictorFactory.getPredictor());
 		
 		return session;
 	}

@@ -7,6 +7,7 @@ import java.nio.channels.SelectableChannel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.nio.api.AbstractConfig;
+import org.craft.atom.nio.spi.SizePredictor;
 
 /**
  * @author Hu Feng
@@ -18,11 +19,10 @@ public class UdpSession extends AbstractSession {
 	
 	private DatagramChannel datagramChannel; 
 
-	public UdpSession(DatagramChannel datagramChannel, AbstractConfig config) {
-		super(config);
+	public UdpSession(DatagramChannel datagramChannel, AbstractConfig config, SizePredictor sizePredictor) {
+		super(config, sizePredictor);
 		this.datagramChannel = datagramChannel;
 		this.localAddress = datagramChannel.socket().getLocalSocketAddress();
-//		this.remoteAddress = datagramChannel.socket().getRemoteSocketAddress();
 		
 		// override read buffer size using default OS configuration.
 		try {

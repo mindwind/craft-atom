@@ -393,7 +393,7 @@ public class Connector extends Abstractor {
 
 		@Override
 		public Session call() throws Exception {
-			AbstractSession session = new TcpSession(channel, getConfig());
+			AbstractSession session = new TcpSession(channel, getConfig(), sizePredictorFactory.getPredictor());
 			Processor processor = pool.get(session);
 			session.setProcessor(processor);
 			processor.add(session);

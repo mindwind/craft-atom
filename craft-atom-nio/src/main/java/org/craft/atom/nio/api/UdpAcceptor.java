@@ -88,7 +88,7 @@ public class UdpAcceptor extends Acceptor {
 		boundmap.put(address, dc);
 		
 		Processor processor = pool.get(Protocol.UDP);
-		AbstractSession session = new UdpSession(dc, config);
+		AbstractSession session = new UdpSession(dc, config, sizePredictorFactory.getPredictor());
 		session.setProcessor(processor);
 		processor.add(session);
 		
