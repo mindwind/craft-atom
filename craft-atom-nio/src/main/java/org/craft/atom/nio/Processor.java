@@ -60,15 +60,16 @@ public class Processor extends Abstractor {
     
     private final AtomicReference<ProcessThread> processThreadRef = new AtomicReference<ProcessThread>();
 	private final Executor executor = Executors.newCachedThreadPool();
-	private AbstractConfig config;
-	private AtomicBoolean wakeupCalled = new AtomicBoolean(false);
+	private final ByteBufferAllocator byteBufferAllocator = new ByteBufferAllocator();
+	private final AbstractConfig config;
+	private final AtomicBoolean wakeupCalled = new AtomicBoolean(false);
 	private Protocol protocol = Protocol.TCP;
 	private volatile Selector selector;
 	private volatile boolean shutdown = false;
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
-	public Processor(AbstractConfig config, Handler handler, EventDispatcher eventDispatcher) {
+	Processor(AbstractConfig config, Handler handler, EventDispatcher eventDispatcher) {
 		this.config = config;
 		this.handler = handler;
 		this.eventDispatcher = eventDispatcher;
@@ -257,13 +258,14 @@ public class Processor extends Abstractor {
 	
 	private void read(AbstractSession session) {
 		int bufferSize = session.getSizePredictor().next();
-		ByteBuffer buf = ByteBuffer.allocate(bufferSize);
-
+		ByteBuffer buf = byteBufferAllocator.allocate(bufferSize);
+		
+		int readBytes = 0;
 		try {
 			if (protocol.equals(Protocol.TCP)) {
-				readTcp(session, buf);
+				readBytes = readTcp(session, buf);
 			} else if (protocol.equals(Protocol.UDP)) {
-				readUdp(session, buf);
+				readBytes = readUdp(session, buf);
 			}
 		} catch (Exception e) {
 			LOG.error("catch read exception and fire it, session=" + session, e);
@@ -275,6 +277,8 @@ public class Processor extends Abstractor {
 			if (e instanceof IOException) {
 				asyClose(session);
 			}
+		} finally {
+			if (readBytes > 0) { buf.flip(); }
 		}
 	}
 	
@@ -285,9 +289,10 @@ public class Processor extends Abstractor {
 		eventDispatcher.dispatch(new Event(EventType.MESSAGE_RECEIVED, session, barr, handler));
 	}
 	
-	private void readUdp(AbstractSession session, ByteBuffer buf) throws IOException {
+	private int readUdp(AbstractSession session, ByteBuffer buf) throws IOException {
 		DatagramChannel dc = (DatagramChannel) session.getChannel();
 		SocketAddress remoteAddress = dc.receive(buf);
+		int readBytes = buf.position();
 		
 		if (remoteAddress != null) {
 			String key = generateKey(session.getLocalAddress(), remoteAddress);
@@ -308,13 +313,15 @@ public class Processor extends Abstractor {
 			session.setLastIoTime(System.currentTimeMillis());
 			fireMessageReceived(session, buf, buf.position());
 		}
+		
+		return readBytes;
 	}
 	
 	private String generateKey(SocketAddress localAddress, SocketAddress remoteAddress) {
 		return localAddress.toString() + "-" + remoteAddress.toString();
 	}
 	
-	private void readTcp(AbstractSession session, ByteBuffer buf) throws IOException {
+	private int readTcp(AbstractSession session, ByteBuffer buf) throws IOException {
 		int readBytes = 0;
 		int ret;
 		while ((ret = ((SocketChannel) session.getChannel()).read(buf)) > 0) {
@@ -333,6 +340,8 @@ public class Processor extends Abstractor {
 		if (ret < 0) {
 			asyClose(session);
 		}
+		
+		return readBytes;
 	}
 
 	private void asyWrite(AbstractSession session) {

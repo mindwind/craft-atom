@@ -20,7 +20,7 @@ public class Event {
     private final Object parameter;
     private Handler handler;
     
-    public Event(EventType type, Session session, Object parameter, Handler handler) {
+    Event(EventType type, Session session, Object parameter, Handler handler) {
         if (type == null) {
             throw new IllegalArgumentException("type == null");
         }
