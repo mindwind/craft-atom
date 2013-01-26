@@ -9,5 +9,5 @@ done
 
 export CP
 
-JAVA_OPTS='-Xms256m -Xmx256m -Dservice=netty-echo-server'
+JAVA_OPTS='-Xms256m -Xmx256m -Dservice=netty-echo-server -Dio.pool=4 -Dexecutor.pool=4'
 nohup java $JAVA_OPTS -classpath $CP org.craft.atom.test.nio.NettyEchoServer >/dev/null 2>&1 &

@@ -16,7 +16,7 @@ public class CraftEchoServer {
 	public static void main(String[] args) throws IOException {
 		String rbs = System.getProperty("read.buffer.size");
 		if (rbs == null) {
-			rbs = "2048";
+			rbs = "1024";
 		}
 		
 		String fairMode = System.getProperty("fair.mode");
@@ -31,7 +31,7 @@ public class CraftEchoServer {
 		
 		String executorPool = System.getProperty("executor.pool");
 		if (executorPool == null) {
-			executorPool = Integer.toString(Runtime.getRuntime().availableProcessors() * 4);
+			executorPool = Integer.toString(Runtime.getRuntime().availableProcessors());
 		}
 		
 		AcceptorConfig ac = new AcceptorConfig();

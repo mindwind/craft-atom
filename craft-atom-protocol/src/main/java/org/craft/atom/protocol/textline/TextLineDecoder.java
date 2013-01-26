@@ -49,7 +49,7 @@ public class TextLineDecoder implements ProtocolDecoder<String> {
 		
 		reset();
 		buf.append(bytes);
-		while(splitIndex < buf.length()) {
+		while (splitIndex < buf.length()) {
 			int idx = buf.indexOf(delimiterBytes, searchIndex);
 			if (idx < 0) {
 				if (buf.length() > maxLineLength) {

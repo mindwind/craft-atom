@@ -16,10 +16,20 @@ public class MinaEchoServer {
 	private static final int PORT = 9123;
 	
 	public static void main(String[] args) throws IOException {
-		IoAcceptor acceptor = new NioSocketAcceptor();
-		acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(Runtime.getRuntime().availableProcessors() * 2)); 
+		String ioPool = System.getProperty("io.pool");
+		if (ioPool == null) {
+			ioPool = "4";
+		}
+		
+		String executorPool = System.getProperty("executor.pool");
+		if (executorPool == null) {
+			executorPool = Integer.toString(Runtime.getRuntime().availableProcessors());
+		}
+		
+		IoAcceptor acceptor = new NioSocketAcceptor(Integer.parseInt(ioPool));
+		acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(Integer.parseInt(executorPool))); 
 		acceptor.setHandler(new MinaEchoHandler());
-		acceptor.getSessionConfig().setReadBufferSize(2048);
+		acceptor.getSessionConfig().setReadBufferSize(1024);
 		acceptor.bind(new InetSocketAddress(PORT));
 		
 		System.out.println("mina echo server listening on port=" + PORT);
