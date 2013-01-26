@@ -14,7 +14,7 @@ import org.craft.atom.nio.api.TcpAcceptor;
  */
 public class TcpInteractiveMain {
 	
-	private static final int PORT = 54321;
+	private static final int PORT = 9988;
 	private Connector connector;
 	
 	public static void main(String[] args) throws Exception {
@@ -67,7 +67,7 @@ public class TcpInteractiveMain {
     }
     
     private void test(String msg, int port) throws Exception {
-    	TcpAcceptor acceptor = new TcpAcceptor(new EchoHandler(), port);
+    	TcpAcceptor acceptor = new TcpAcceptor(new TestHandler(), port);
     	Future<Session> future = connector.connect("127.0.0.1", port);
     	Session session = future.get();
     	synchronized(session) {

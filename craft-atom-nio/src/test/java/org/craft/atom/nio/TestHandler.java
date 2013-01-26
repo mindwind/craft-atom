@@ -5,14 +5,14 @@ import org.apache.commons.logging.LogFactory;
 import org.craft.atom.nio.api.Session;
 
 /**
- * Echo handler for test
+ * Test handler
  * 
  * @author Hu Feng
  * @version 1.0, 2011-12-19
  */
-public class EchoHandler extends AbstractHandler {
+public class TestHandler extends AbstractHandler {
 	
-	private static final Log LOG = LogFactory.getLog(EchoHandler.class);
+	private static final Log LOG = LogFactory.getLog(TestHandler.class);
 	
 	private StringBuilder buf = new StringBuilder();
 

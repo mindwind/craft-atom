@@ -628,10 +628,8 @@ public class Processor extends Abstractor {
 			}
 			
 			session.setClosing();
-			
 			close(session);
 			n++;
-			
 			session.setClosed();
 			
 			// fire session closed event
