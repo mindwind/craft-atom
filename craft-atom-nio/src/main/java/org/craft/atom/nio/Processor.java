@@ -278,7 +278,7 @@ public class Processor extends Abstractor {
 				asyClose(session);
 			}
 		} finally {
-			if (readBytes > 0) { buf.flip(); }
+			if (readBytes > 0) { buf.clear(); }
 		}
 	}
 	
