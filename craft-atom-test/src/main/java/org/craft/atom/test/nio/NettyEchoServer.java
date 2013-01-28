@@ -20,7 +20,7 @@ public class NettyEchoServer {
 	public static void main(String[] args) {
 		String ioPool = System.getProperty("io.pool");
 		if (ioPool == null) {
-			ioPool = "4";
+			ioPool = "1";
 		}
 		
 		String executorPool = System.getProperty("executor.pool");
@@ -33,7 +33,7 @@ public class NettyEchoServer {
 		NettyEchoHandler handler = new NettyEchoHandler();
 		ChannelPipeline pipeline = bootstrap.getPipeline();
 		pipeline.addLast("handler", handler);
-		bootstrap.setOption("child.receiveBufferSize", 1024);
+		bootstrap.setOption("child.receiveBufferSize", 2048);
 		bootstrap.bind(new InetSocketAddress(PORT));
 		
 		System.out.println("netty echo server listening on port=" + PORT);

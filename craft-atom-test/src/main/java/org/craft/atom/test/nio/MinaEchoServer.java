@@ -18,7 +18,7 @@ public class MinaEchoServer {
 	public static void main(String[] args) throws IOException {
 		String ioPool = System.getProperty("io.pool");
 		if (ioPool == null) {
-			ioPool = "4";
+			ioPool = "5";
 		}
 		
 		String executorPool = System.getProperty("executor.pool");
@@ -29,7 +29,7 @@ public class MinaEchoServer {
 		IoAcceptor acceptor = new NioSocketAcceptor(Integer.parseInt(ioPool));
 		acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(Integer.parseInt(executorPool))); 
 		acceptor.setHandler(new MinaEchoHandler());
-		acceptor.getSessionConfig().setReadBufferSize(1024);
+		acceptor.getSessionConfig().setReadBufferSize(2048);
 		acceptor.bind(new InetSocketAddress(PORT));
 		
 		System.out.println("mina echo server listening on port=" + PORT);
