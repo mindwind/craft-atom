@@ -5,6 +5,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,6 +22,7 @@ import org.craft.atom.nio.spi.EventDispatcher;
 public class PartialOrderedEventDispatcher implements EventDispatcher {
 	
 	private static final Log LOG = LogFactory.getLog(PartialOrderedEventDispatcher.class);
+	private static final AtomicInteger threadNumber = new AtomicInteger(1);
 	
 	private BlockingQueue<AbstractSession> squeue = new LinkedBlockingQueue<AbstractSession>();
 	private Executor executor;
@@ -30,7 +33,13 @@ public class PartialOrderedEventDispatcher implements EventDispatcher {
 			throw new IllegalArgumentException("executor size <= 0");
 		}
 		
-		executor = Executors.newFixedThreadPool(executorSize);
+		executor = Executors.newFixedThreadPool(executorSize, new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread t = new Thread(r, "craft-atom-nio-executor" + threadNumber.getAndIncrement());
+				return t;
+			}
+		});
 		for (int i = 0; i < executorSize; i++) {
 			executor.execute(new Worker());
 		}

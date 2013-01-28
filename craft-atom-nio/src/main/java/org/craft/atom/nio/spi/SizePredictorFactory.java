@@ -10,8 +10,11 @@ public interface SizePredictorFactory {
 	/**
 	 * Return a size predictor
 	 * 
+	 * @param minimum  the inclusive lower bound of the expected buffer size
+     * @param initial  the initial buffer size when no feed back was received
+     * @param maximum  the inclusive upper bound of the expected buffer size
 	 * @return
 	 */
-	SizePredictor getPredictor();
+	SizePredictor getPredictor(int minimum, int initial, int maximum);
 	
 }

@@ -10,8 +10,8 @@ import org.craft.atom.nio.spi.SizePredictorFactory;
 public class AdaptiveSizePredictorFactory implements SizePredictorFactory {
 
 	@Override
-	public SizePredictor getPredictor() {
-		return new AdaptiveSizePredictor();
+	public SizePredictor getPredictor(int minimum, int initial, int maximum) {
+		return new AdaptiveSizePredictor(minimum, initial, maximum);
 	}
 
 }

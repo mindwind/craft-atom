@@ -154,6 +154,10 @@ public class AdaptiveSizePredictor implements SizePredictor {
         }
 	}
 
+	public static int[] getSizeTable() {
+		return SIZE_TABLE;
+	}
+
 	@Override
 	public String toString() {
 		return String

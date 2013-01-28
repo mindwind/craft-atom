@@ -19,7 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.logging.Log;
@@ -44,6 +46,8 @@ public class Processor extends Abstractor {
 	/** Flush spin count */
 	private static final long FLUSH_SPIN_COUNT = 256;
 	
+	private static final AtomicInteger threadNumber = new AtomicInteger(1);
+	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
 	/** A Session queue containing the newly created sessions */
@@ -59,7 +63,7 @@ public class Processor extends Abstractor {
     private final Map<String, AbstractSession> udpSessionMap = new ConcurrentHashMap<String, AbstractSession>();
     
     private final AtomicReference<ProcessThread> processThreadRef = new AtomicReference<ProcessThread>();
-	private final Executor executor = Executors.newCachedThreadPool();
+	private final Executor executor;
 	private final ByteBufferAllocator byteBufferAllocator = new ByteBufferAllocator();
 	private final AbstractConfig config;
 	private final AtomicBoolean wakeupCalled = new AtomicBoolean(false);
@@ -73,6 +77,13 @@ public class Processor extends Abstractor {
 		this.config = config;
 		this.handler = handler;
 		this.eventDispatcher = eventDispatcher;
+		this.executor = Executors.newCachedThreadPool(new ThreadFactory() {	
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread t = new Thread(r, "craft-atom-nio-processor-" + threadNumber.getAndIncrement());
+				return t;
+			}
+		});
 		try {
             init();
         } catch (IOException e) {

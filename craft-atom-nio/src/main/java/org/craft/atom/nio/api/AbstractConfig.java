@@ -9,7 +9,7 @@ package org.craft.atom.nio.api;
 public class AbstractConfig {
 	
 	public static final int MIN_READ_BUFFER_SIZE = 64;
-	public static final int READ_BUFFER_SIZE = 1024;
+	public static final int READ_BUFFER_SIZE = 2048;
 	public static final int MAX_READ_BUFFER_SIZE = 65536;
 	
 	/** I/O processor pool size */

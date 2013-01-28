@@ -98,8 +98,7 @@ public final class TcpAcceptor extends Acceptor {
 			}
 		}
 		
-		Session session = new TcpSession(sc, config, this.sizePredictorFactory.getPredictor());
-		
+		Session session = new TcpSession(sc, config, this.sizePredictorFactory.getPredictor(config.getMinReadBufferSize(), config.getReadBufferSize(), config.getMaxReadBufferSize()));
 		return session;
 	}
 	
