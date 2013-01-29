@@ -8,6 +8,8 @@ import org.jboss.netty.channel.ChannelFactory;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioWorkerPool;
+import org.jboss.netty.handler.execution.ExecutionHandler;
+import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
 
 /**
  * @author Hu Feng
@@ -29,9 +31,11 @@ public class NettyEchoServer {
 		}
 		
 		ChannelFactory factory = new NioServerSocketChannelFactory(Executors.newCachedThreadPool(), Integer.parseInt(ioPool), new NioWorkerPool(Executors.newCachedThreadPool(), Integer.parseInt(executorPool)));
+		ExecutionHandler executionHandler = new ExecutionHandler(new OrderedMemoryAwareThreadPoolExecutor(Integer.parseInt(executorPool), 0, 0));
 		ServerBootstrap bootstrap = new ServerBootstrap(factory);
 		NettyEchoHandler handler = new NettyEchoHandler();
 		ChannelPipeline pipeline = bootstrap.getPipeline();
+		pipeline.addFirst("executor", executionHandler);  
 		pipeline.addLast("handler", handler);
 		bootstrap.setOption("child.receiveBufferSize", 2048);
 		bootstrap.bind(new InetSocketAddress(PORT));
