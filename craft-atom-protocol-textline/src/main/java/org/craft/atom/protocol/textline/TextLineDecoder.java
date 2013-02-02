@@ -2,6 +2,7 @@ package org.craft.atom.protocol.textline;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.craft.atom.protocol.ProtocolDecoder;
@@ -9,7 +10,7 @@ import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.util.ByteArrayBuffer;
 
 /**
- * A {@link ProtocolDecoder} which decodes a text line into a string, default charset is utf-8
+ * A {@link ProtocolDecoder} which decodes bytes into text line string, default charset is utf-8
  * <br>
  * Not thread safe
  * 
@@ -18,27 +19,44 @@ import org.craft.atom.util.ByteArrayBuffer;
  */
 public class TextLineDecoder implements ProtocolDecoder<String> {
 	
-	private static final int DEFAULT_BUFFER_LENGTH = 1024;
 	private Charset charset = Charset.forName("utf-8");
 	private String delimiter = "\n";
 	private byte[] delimiterBytes = delimiter.getBytes(charset);
 	private int delimiterLen = delimiterBytes.length;
-	private int maxLineLength = DEFAULT_BUFFER_LENGTH * 5;
+	private int defaultBufferSize = 1024;
+	private int maxLineLength = defaultBufferSize * 5;
 	private ByteArrayBuffer buf = new ByteArrayBuffer(maxLineLength);
 	private int splitIndex = 0;
 	private int searchIndex = 0;
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 	
 	public TextLineDecoder() {
 		super();
 	}
 
-	public TextLineDecoder(String charset, String delimiter, int maxLineLength) {
-		this.charset = Charset.forName(charset);
+	public TextLineDecoder(Charset charset) {
+		this.charset = charset;
+	}
+
+	public TextLineDecoder(Charset charset, String delimiter) {
+		this(charset);
 		this.delimiter = delimiter;
 		this.delimiterBytes = delimiter.getBytes(this.charset);
 		this.delimiterLen = this.delimiterBytes.length;
+	}
+
+	public TextLineDecoder(Charset charset, String delimiter, int defaultBufferSize) {
+		this(charset, delimiter);
+		this.defaultBufferSize = defaultBufferSize;
+	}
+
+	public TextLineDecoder(Charset charset, String delimiter, int defaultBufferSize, int maxLineLength) {
+		this(charset, delimiter, defaultBufferSize);
 		this.maxLineLength = maxLineLength;
 	}
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public List<String> decode(byte[] bytes) throws ProtocolException {
@@ -84,7 +102,7 @@ public class TextLineDecoder implements ProtocolDecoder<String> {
 			splitIndex = searchIndex = 0;
 		}
 		if (buf.capacity() > maxLineLength * 2) {
-			buf.reset(DEFAULT_BUFFER_LENGTH);
+			buf.reset(defaultBufferSize);
 		}
 	}
 	
@@ -114,7 +132,30 @@ public class TextLineDecoder implements ProtocolDecoder<String> {
 		this.maxLineLength = maxLineLength;
 		buf.reset(maxLineLength);
 	}
-	
-	
+
+	public int getDefaultBufferSize() {
+		return defaultBufferSize;
+	}
+
+	public void setDefaultBufferSize(int defaultBufferSize) {
+		this.defaultBufferSize = defaultBufferSize;
+	}
+
+	public ByteArrayBuffer getBuf() {
+		return buf;
+	}
+
+	public void setBuf(ByteArrayBuffer buf) {
+		this.buf = buf;
+	}
+
+	@Override
+	public String toString() {
+		return String
+				.format("TextLineDecoder [charset=%s, delimiter=%s, delimiterBytes=%s, delimiterLen=%s, defaultBufferSize=%s, maxLineLength=%s, buf=%s, splitIndex=%s, searchIndex=%s]",
+						charset, delimiter, Arrays.toString(delimiterBytes),
+						delimiterLen, defaultBufferSize, maxLineLength, buf,
+						splitIndex, searchIndex);
+	}
 
 }

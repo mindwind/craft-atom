@@ -17,15 +17,27 @@ public class TextLineEncoder implements ProtocolEncoder<String> {
 	private String delimiter = "\n";
 	private int maxLineLength = Integer.MAX_VALUE;
 	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	public TextLineEncoder() {
 		super();
 	}
+	
+	public TextLineEncoder(Charset charset) {
+		this.charset = charset;
+	}
+
+	public TextLineEncoder(Charset charset, String delimiter) {
+		this(charset);
+		this.delimiter = delimiter;
+	}
 
 	public TextLineEncoder(Charset charset, String delimiter, int maxLineLength) {
-		this.charset = charset;
-		this.delimiter = delimiter;
+		this(charset, delimiter);
 		this.maxLineLength = maxLineLength;
 	}
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public byte[] encode(String protocolObject) throws ProtocolException {
@@ -36,6 +48,11 @@ public class TextLineEncoder implements ProtocolEncoder<String> {
 		}
 		
 		return lineBytes;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("TextLineEncoder [charset=%s, delimiter=%s, maxLineLength=%s]", charset, delimiter, maxLineLength);
 	}
 
 }
