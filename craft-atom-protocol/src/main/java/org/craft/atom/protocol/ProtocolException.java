@@ -2,8 +2,8 @@ package org.craft.atom.protocol;
 
 
 /**
- * An exception that is thrown when {@link ProtocolEncoder} or {@link ProtocolDecoder} cannot understand or failed to validate
- * data to process.
+ * An exception that is thrown when {@link ProtocolEncoder} or {@link ProtocolDecoder} 
+ * cannot understand or failed to validate data to process.
  *
  * @author Hu Feng
  * @version 1.0, Oct 16, 2012
