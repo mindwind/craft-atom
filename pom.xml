@@ -19,6 +19,7 @@
 		<module>craft-atom-lock</module>
 		<module>craft-atom-protocol-http</module>
 		<module>craft-atom-test</module>
+		<module>craft-atom-protocol-textline</module>
 	</modules>
 
 	<properties>

@@ -5,21 +5,16 @@
 		<artifactId>craft-atom</artifactId>
 		<groupId>org.craft.atom</groupId>
 		<version>1.1.2-SNAPSHOT</version>
+		<relativePath>..</relativePath>
 	</parent>
-	<artifactId>craft-atom-protocol-http</artifactId>
-	<name>craft-atom-protocol-http</name>
+	<artifactId>craft-atom-protocol-textline</artifactId>
+	<name>craft-atom-protocol-textline</name>
 	
 	<dependencies>
 		<dependency>
 			<groupId>org.craft.atom</groupId>
 			<artifactId>craft-atom-protocol</artifactId>
 			<version>${project.version}</version>
-		</dependency>
-	
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-			<version>4.2.2</version>
 		</dependency>
 	</dependencies>
 </project>

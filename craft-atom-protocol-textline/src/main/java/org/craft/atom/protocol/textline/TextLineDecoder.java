@@ -9,7 +9,7 @@ import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.util.ByteArrayBuffer;
 
 /**
- * A {@link ProtocolDecoder} which decodes a text line into a string.
+ * A {@link ProtocolDecoder} which decodes a text line into a string, default charset is utf-8
  * <br>
  * Not thread safe
  * 
