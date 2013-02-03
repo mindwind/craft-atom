@@ -60,9 +60,6 @@ public class TextLineDecoder implements ProtocolDecoder<String> {
 
 	@Override
 	public List<String> decode(byte[] bytes) throws ProtocolException {
-		if (bytes.length > maxLineLength) {
-			throw new ProtocolException("Line is too long, maxLineLength=" + maxLineLength );
-		}
 		List<String> strs = new ArrayList<String>();
 		
 		reset();
