@@ -24,7 +24,7 @@ public class TextLineDecoderTest {
 	@Before
 	public void setup() {
 		decoder = new TextLineDecoder();
-		decoder.setMaxLineLength(20);
+		decoder.setMaxSize(20);
 	}
  	
 	@Test

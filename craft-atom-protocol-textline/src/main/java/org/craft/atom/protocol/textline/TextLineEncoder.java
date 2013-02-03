@@ -6,7 +6,9 @@ import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
 
 /**
- * A {@link ProtocolEncoder} which encodes a string into a text line which ends with the delimiter.
+ * A {@link ProtocolEncoder} which encodes a text line string into bytes which ends with the delimiter, default charset is utf-8.
+ * <br>
+ * Thread safe.
  * 
  * @author Hu Feng
  * @version 1.0, Oct 16, 2012
@@ -40,9 +42,9 @@ public class TextLineEncoder implements ProtocolEncoder<String> {
 	// ~ ------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public byte[] encode(String protocolObject) throws ProtocolException {
-		protocolObject += delimiter;
-		byte[] lineBytes = protocolObject.getBytes(charset);
+	public byte[] encode(String str) throws ProtocolException {
+		str += delimiter;
+		byte[] lineBytes = str.getBytes(charset);
 		if (lineBytes.length > maxLineLength) {
 			throw new ProtocolException("Line is too long, maxLineLength=" + maxLineLength );
 		}
