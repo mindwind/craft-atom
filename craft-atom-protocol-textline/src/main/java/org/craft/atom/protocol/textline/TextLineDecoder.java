@@ -94,11 +94,13 @@ public class TextLineDecoder implements ProtocolDecoder<String> {
 			splitIndex = 0;
 			searchIndex = buf.length();
 		}
+		
 		if (splitIndex > 0 && splitIndex == buf.length()) {
 			buf.clear();
 			splitIndex = searchIndex = 0;
 		}
-		if (buf.capacity() > maxLineLength * 2) {
+		
+		if (buf.length() == 0 && buf.capacity() > maxLineLength * 2) {
 			buf.reset(defaultBufferSize);
 		}
 	}
