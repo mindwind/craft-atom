@@ -1,11 +1,12 @@
 package org.craft.atom.protocol;
 
 
+
 /**
  * An exception that is thrown when {@link ProtocolEncoder} or {@link ProtocolDecoder} 
  * cannot understand or failed to validate data to process.
  *
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, Oct 16, 2012
  */
 public class ProtocolException extends Exception {
@@ -28,4 +29,8 @@ public class ProtocolException extends Exception {
 		super(cause);
 	}
 
+	public ProtocolException(ProtocolExceptionType type, Object... params) {
+		super(type.getDesc() + params);
+	}
+	
 }

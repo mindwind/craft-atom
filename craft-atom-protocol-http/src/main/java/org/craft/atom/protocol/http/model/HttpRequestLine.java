@@ -18,24 +18,24 @@ public class HttpRequestLine extends HttpStartLine {
 
 	private static final long serialVersionUID = 1393510808581169505L;
 
-	private String method;
+	private HttpMethod method;
 	private String uri;
 
 	public HttpRequestLine() {
 		super();
 	}
 
-	public HttpRequestLine(String method, String uri, HttpVersion version) {
+	public HttpRequestLine(HttpMethod method, String uri, HttpVersion version) {
 		super(version);
 		this.method = method;
 		this.uri = uri;
 	}
 
-	public String getMethod() {
+	public HttpMethod getMethod() {
 		return method;
 	}
 
-	public void setMethod(String method) {
+	public void setMethod(HttpMethod method) {
 		this.method = method;
 	}
 

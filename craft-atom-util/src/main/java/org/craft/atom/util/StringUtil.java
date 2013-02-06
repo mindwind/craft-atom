@@ -2,6 +2,7 @@ package org.craft.atom.util;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Random;
 
 /**
  * String util class.
@@ -599,6 +600,48 @@ public class StringUtil {
 			sb.deleteCharAt(sb.length() - 1);
 		}
 		return sb.toString();
+	}
+	
+	/**
+	 * Random split a string into number of segments.
+	 * 
+	 * @param num
+	 * @return
+	 */
+	public static String[] split(String str, int num) {
+		if (str == null) {
+			return null;
+		}
+		
+		if (num <= 1) {
+			return new String[] { str };
+		}
+		
+		String[] sarr = null;
+		int len = str.length();
+		if (num >= len) {
+			sarr = new String[len];
+			for (int i = 0; i < len; i++) {
+				sarr[i] = Character.toString(str.charAt(i));
+			}
+			return sarr;
+		}
+		
+		Random ran = new Random();
+		int scope = len / num;
+		int start = 0;
+		int end = 0;
+		sarr = new String[num];
+		for (int i = 0; i < num; i++) {
+			if (i == num - 1) {
+				sarr[i] = str.substring(start);
+			} else {
+				end = ran.nextInt(scope) + start;
+				sarr[i] = str.substring(start, end);
+				start = end;
+			}
+		}
+		return sarr;
 	}
 	
 	// ~ --------------------------------------------------------------------------------------------------------------

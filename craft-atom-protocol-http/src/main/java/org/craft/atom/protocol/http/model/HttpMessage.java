@@ -1,6 +1,7 @@
 package org.craft.atom.protocol.http.model;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -35,6 +36,8 @@ public abstract class HttpMessage implements Serializable {
 	
 	protected Map<String, HttpHeader> headers = new LinkedHashMap<String, HttpHeader>();
 	protected HttpEntity entity;
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 
 	public HttpMessage() {
 		super();
@@ -47,6 +50,29 @@ public abstract class HttpMessage implements Serializable {
 	public HttpMessage(Map<String, HttpHeader> headers, HttpEntity entity) {
 		this.headers = headers;
 		this.entity = entity;
+	}
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * Add a new header to http message, if the header exists replace it.
+	 * 
+	 * @param header
+	 */
+	public void addHeader(HttpHeader header) {
+		if (header == null || header.getName() == null) {
+			throw new IllegalArgumentException("header or header name is null!");
+		}
+		
+		headers.put(header.getName(), header);
+	}
+	
+	public HttpHeader getHeader(String name) {
+		if (name == null) {
+			throw new IllegalArgumentException("name is null!");
+		}
+		
+		return headers.get(name);
 	}
 
 	public Map<String, HttpHeader> getHeaders() {
@@ -63,6 +89,10 @@ public abstract class HttpMessage implements Serializable {
 
 	public void setEntity(HttpEntity entity) {
 		this.entity = entity;
+	}
+	
+	public Iterator<HttpHeader> headerIterator() {
+		return headers.values().iterator();
 	}
 
 	@Override

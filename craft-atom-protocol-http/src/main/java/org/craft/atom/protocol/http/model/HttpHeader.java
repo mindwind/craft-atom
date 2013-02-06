@@ -10,8 +10,7 @@ import java.util.List;
  * The HTTP header fields follow the same generic format as that given in
  * Section 3.1 of RFC 822. Each header field consists of a name followed by a
  * colon (":") and the field value. Field names are case-insensitive. The field
- * value MAY be preceded by any amount of LWS(Linear White Space), though a
- * single SP is preferred.
+ * value MAY be preceded by any amount of LWS(Linear White Space), though a single SP is preferred.
  * 
  * <pre>
  *     LWS  = [CRLF] 1*( SP | HT )
@@ -63,6 +62,14 @@ public class HttpHeader implements Serializable {
 
 	public void setValue(String value) {
 		this.value = value;
+	}
+	
+	public void appendValue(String valuePart) {
+		if (value == null) {
+			value = valuePart;
+		} else {
+			this.value += valuePart;
+		}
 	}
 	
 	/**

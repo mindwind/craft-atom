@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Decodes binary data into higher-level protocol objects, thread safe is not required.
  * 
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, Oct 16, 2012
  */
 public interface ProtocolDecoder<P> {

@@ -49,5 +49,9 @@ public enum HttpVersion {
 
 		return null;
 	}
+
+	public String getValue() {
+		return value;
+	}
 	
 }

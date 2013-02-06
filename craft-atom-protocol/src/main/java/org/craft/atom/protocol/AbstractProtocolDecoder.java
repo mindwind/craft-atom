@@ -1,16 +1,13 @@
 package org.craft.atom.protocol;
 
-import java.nio.charset.Charset;
-
 import org.craft.atom.util.ByteArrayBuffer;
 
 /**
  * @author mindwind
  * @version 1.0, Feb 3, 2013
  */
-abstract public class AbstractProtocolDecoder {
+abstract public class AbstractProtocolDecoder extends AbstractProtocolCodec {
 	
-	protected Charset charset = Charset.forName("utf-8");
 	protected int defaultBufferSize = 2048;
 	protected ByteArrayBuffer buf = new ByteArrayBuffer(defaultBufferSize);
 	protected int splitIndex = 0;
@@ -62,14 +59,6 @@ abstract public class AbstractProtocolDecoder {
 
 	public void setBuf(ByteArrayBuffer buf) {
 		this.buf = buf;
-	}
-	
-	public Charset getCharset() {
-		return charset;
-	}
-
-	public void setCharset(Charset charset) {
-		this.charset = charset;
 	}
 
 	public int getSplitIndex() {

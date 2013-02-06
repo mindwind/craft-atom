@@ -8,6 +8,7 @@ import java.util.List;
 import org.craft.atom.protocol.AbstractProtocolDecoder;
 import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.ProtocolException;
+import org.craft.atom.protocol.ProtocolExceptionType;
 
 /**
  * A {@link ProtocolDecoder} which decodes bytes into text line string, default charset is utf-8
@@ -59,20 +60,20 @@ public class TextLineDecoder extends AbstractProtocolDecoder implements Protocol
 		reset();
 		buf.append(bytes);
 		
-		while (splitIndex < buf.length()) {
+		while (searchIndex < buf.length()) {
 			int idx = buf.indexOf(delimiterBytes, searchIndex);
 			if (idx < 0) {
 				if (buf.length() > maxSize) {
-					buf.reset(maxSize);
-					throw new ProtocolException("Line is too long, max=" + maxSize );
+					buf.reset(defaultBufferSize);
+					throw new ProtocolException(ProtocolExceptionType.LINE_LENGTH_LIMIT, maxSize);
 				}
 				searchIndex = buf.length();
 				break;
 			}
 			byte[] lineBytes = buf.array(splitIndex, idx);
 			if (lineBytes.length > maxSize) {
-				buf.reset(maxSize);
-				throw new ProtocolException("Line is too long, max=" + maxSize );
+				buf.reset(defaultBufferSize);
+				throw new ProtocolException(ProtocolExceptionType.LINE_LENGTH_LIMIT, maxSize);
 			}
 			searchIndex = splitIndex = idx + delimiterLen;
 			strs.add(new String(lineBytes, charset));

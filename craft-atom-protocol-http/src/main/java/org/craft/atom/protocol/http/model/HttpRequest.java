@@ -24,7 +24,7 @@ public class HttpRequest extends HttpMessage {
 
 	private static final long serialVersionUID = 2454619732646455653L;
 	
-	private HttpRequestLine requestLine;
+	private HttpRequestLine requestLine = new HttpRequestLine();
 
 	public HttpRequest() {
 		super();
