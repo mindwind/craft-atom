@@ -1,10 +1,15 @@
 package org.craft.atom.protocol.http;
 
 import static org.craft.atom.protocol.http.model.HttpConstants.COLON;
+import static org.craft.atom.protocol.http.model.HttpConstants.CONTENT_ENCODING_DEFLATE;
+import static org.craft.atom.protocol.http.model.HttpConstants.CONTENT_ENCODING_GZIP;
+import static org.craft.atom.protocol.http.model.HttpConstants.CONTENT_ENCODING_IDENTITY;
 import static org.craft.atom.protocol.http.model.HttpConstants.CR;
+import static org.craft.atom.protocol.http.model.HttpConstants.EQUAL_SIGN;
 import static org.craft.atom.protocol.http.model.HttpConstants.HT;
 import static org.craft.atom.protocol.http.model.HttpConstants.LF;
 import static org.craft.atom.protocol.http.model.HttpConstants.NUL;
+import static org.craft.atom.protocol.http.model.HttpConstants.SEMICOLON;
 import static org.craft.atom.protocol.http.model.HttpConstants.SP;
 import static org.craft.atom.protocol.http.model.HttpConstants.TRANSFER_ENCODING_CHUNKED;
 
@@ -15,6 +20,8 @@ import java.util.List;
 import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.ProtocolExceptionType;
+import org.craft.atom.protocol.http.model.HttpChunk;
+import org.craft.atom.protocol.http.model.HttpChunkEntity;
 import org.craft.atom.protocol.http.model.HttpEntity;
 import org.craft.atom.protocol.http.model.HttpHeader;
 import org.craft.atom.protocol.http.model.HttpHeaders;
@@ -43,6 +50,9 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 	private HttpRequest request;
 	private HttpHeader header;
 	private HttpEntity entity;
+	private HttpChunk chunk;
+	private String chunkExtName;
+	private int trailerSize;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
@@ -78,6 +88,7 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 			return decode0(bytes);
 		} catch (Exception e) {
 			clear();
+			resetIndex();
 			if (e instanceof ProtocolException) {
 				throw (ProtocolException) e;
 			}
@@ -113,7 +124,7 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 			case HEADER_VALUE:
 				state4HEADER_VALUE();
 				break;
-			case HEADER_VALUE_SUFFFIX:
+			case HEADER_VALUE_SUFFIX:
 				state4HEADER_VALUE_SUFFIX();
 				break;
 			case ENTITY:
@@ -122,8 +133,23 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 			case ENTITY_LENGTH:
 				state4ENTITY_LENGTH();
 				break;
-			case ENTITY_CHUNKED:
-				
+			case ENTITY_CHUNKED_SIZE:
+				state4ENTITY_CHUNKED_SIZE();
+				break;
+			case ENTITY_CHUNKED_EXTENSION_NAME:
+				state4ENTITY_CHUNKED_EXTENSION_NAME();
+				break;
+			case ENTITY_CHUNKED_EXTENSION_VALUE:
+				state4ENTITY_CHUNKED_EXTENSION_VALUE();
+				break;
+			case ENTITY_CHUNKED_DATA:
+				state4ENTITY_CHUNKED_DATA();
+				break;
+			case ENTITY_CHUNKED_TRAILER_NAME:
+				state4ENTITY_CHUNKED_TRAILER_NAME();
+				break;
+			case ENTITY_CHUNKED_TRAILER_VALUE:
+				state4ENTITY_CHUNKED_TRAILER_VALUE();
 				break;
 			case ENTITY_ENCODING:
 				state4ENTITY_ENCODING();
@@ -140,7 +166,9 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 	}
 	
 	private void state4END(List<HttpRequest> reqs) throws ProtocolException {
-		slideIfMatch(LF);
+		// enter END state means search index stay for the last byte of the HttpMessage, move to next
+		slide(1);
+		
 		reqs.add(request);
 		splitIndex = stateIndex = searchIndex;
 		clear();
@@ -148,28 +176,183 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 	}
 
 	private void state4ENTITY_ENCODING() throws ProtocolException {
-		String coding = request.getHeader(HttpHeaders.CONTENT_ENCODING.getName()).getValue();
+		HttpHeader ceh = request.getHeader(HttpHeaders.CONTENT_ENCODING.getName());
+		String coding = null;
+		if (ceh == null){
+			coding = CONTENT_ENCODING_IDENTITY;
+		} else {
+			coding = ceh.getValue();
+		}
 		
 		// none or identity
-		if (coding == null || "identity".equals(coding)) {
-			
+		if (coding == null || CONTENT_ENCODING_IDENTITY.equals(coding)) {
+			request.getEntity().setContent(request.getEntity().getContent());
 		}
-		// gzip or x-gzip
-		else if ("gzip".equals(coding) && "x-gzip".equals(coding)) {
+		// gzip
+		else if (CONTENT_ENCODING_GZIP.equals(coding)) {
 			
 		}
 		// deflate
-		else if ("deflate".equals(coding)) {
+		else if (CONTENT_ENCODING_DEFLATE.equals(coding)) {
 			
+		}
+		// compress or others encoding is unsupported
+		else {
+			throw new ProtocolException(ProtocolExceptionType.UNEXPECTED, "unsupported content encoding=" + coding);
 		}
 		
 		// next state
+		request.setEntity(entity);
 		state = END;
+	}
+	
+	private void state4ENTITY_CHUNKED_TRAILER_NAME() throws ProtocolException {
+		boolean done = skip(CR, LF);
+		if (!done) { 
+			return; 
+		}
+		
+		// slice header name
+		String name = sliceBySeparators(0, COLON);
+		if (name == null) {
+			return;
+		}
+
+		header = new HttpHeader();
+		header.setName(name);
+
+		// to next state
+		trailerSize--;
+		state = ENTITY_CHUNKED_TRAILER_VALUE;
+	}
+	
+	private void state4ENTITY_CHUNKED_TRAILER_VALUE() throws ProtocolException {
+		// skip SP or HT
+		boolean done = skip(SP, HT);
+		if (!done) {
+			return;
+		}
+		
+		// slice header value
+		String value = sliceBySeparators(-1, LF);
+		if (value == null) {
+			return;
+		}
+		
+		header.appendValue(value);
+		((HttpChunkEntity) entity).addTrailer(header);
+		
+		// to next state
+		if (trailerSize == 0) {
+			slide(-1);
+			state = END;
+		} else {
+			state = ENTITY_CHUNKED_TRAILER_NAME;
+		}
+	}
+	
+	private void state4ENTITY_CHUNKED_DATA() throws ProtocolException {
+		boolean done = skip(CR, LF);
+		if (!done) { 
+			return; 
+		}
+		
+		// slice content value
+		int clen = chunk.getSize();
+		String chunkData = sliceByLength(clen);
+		if (chunkData == null) {
+			return;
+		}
+		
+		chunk.setData(chunkData);
+		((HttpChunkEntity) entity).addChunk(chunk);
+		
+		// skip CRLF
+		slide(2);
+		state = ENTITY_CHUNKED_SIZE;
+	}
+	
+	private void state4ENTITY_CHUNKED_EXTENSION_VALUE() throws ProtocolException {
+		// slice chunk extension value
+		String chunkExtValue = sliceBySeparators(0, SEMICOLON, CR);
+		if (chunkExtValue == null) {
+			return;
+		}
+		
+		chunk.addExtension(chunkExtName, chunkExtValue);
+		
+		byte pb = previousByte();
+		if (SEMICOLON == pb) {
+			state = ENTITY_CHUNKED_EXTENSION_NAME;
+		} else {
+			state = ENTITY_CHUNKED_DATA;
+		}
+	}
+	
+	private void state4ENTITY_CHUNKED_EXTENSION_NAME() throws ProtocolException {
+		// slice chunk extension name
+		String name = sliceBySeparators(0, EQUAL_SIGN, CR);
+		if (name == null) {
+			return;
+		}
+		
+		this.chunkExtName = name;
+		
+		byte pb = previousByte();
+		if (EQUAL_SIGN == pb) {
+			state = ENTITY_CHUNKED_EXTENSION_VALUE;
+		} else {
+			chunk.addExtension(chunkExtName, null);
+			state = ENTITY_CHUNKED_DATA;
+		}
+	}
+	
+	private void state4ENTITY_CHUNKED_SIZE() throws ProtocolException {		
+		boolean done = skip(LF);
+		if (!done) { 
+			return; 
+		}
+		
+		// slice chunk size
+		String sizeStr = sliceBySeparators(0, SEMICOLON, CR);
+		if (sizeStr == null) {
+			return;
+		}
+		
+		int size = Integer.parseInt(sizeStr, 16);
+		if (size < 0) {
+			throw new ProtocolException(ProtocolExceptionType.UNEXPECTED, "chunked size < 0");
+		}
+		
+		chunk = new HttpChunk();
+		chunk.setSize(size);
+		
+		byte pb = previousByte();
+		if (SEMICOLON == pb) {
+			state = ENTITY_CHUNKED_EXTENSION_NAME;
+		} else if (size > 0){
+			state = ENTITY_CHUNKED_DATA;
+		} else if (size == 0) {
+			HttpHeader trailerHeader = request.getHeader(HttpHeaders.TRAILER.getName());
+			request.setEntity(entity);
+			if (trailerHeader != null) {
+				trailerSize = trailerHeader.getValue().split(",").length;
+				if (trailerSize <= 0) {
+					throw new ProtocolException(ProtocolExceptionType.UNEXPECTED, "trailer size ilegal=" + trailerSize);
+				}
+				state = ENTITY_CHUNKED_TRAILER_NAME;
+			} else {
+				state = ENTITY_ENCODING;
+			}
+		}
 	}
 	
 	private void state4ENTITY_LENGTH() throws ProtocolException {
 		// get content length
 		int clen = Integer.parseInt(request.getHeader(HttpHeaders.CONTENT_LENGTH.getName()).getValue());
+		if (clen < 0) {
+			throw new ProtocolException(ProtocolExceptionType.UNEXPECTED, "content length < 0");
+		}
 		
 		// slice content value
 		String content = sliceByLength(clen);
@@ -186,15 +369,20 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 	}
 
 	private void state4ENTITY() throws ProtocolException {
-		entity = new HttpEntity();
+		boolean done = skip(CR, LF);
+		if (!done) { 
+			return; 
+		}
 		
 		// content length
 		if (request.getHeader(HttpHeaders.CONTENT_LENGTH.getName()) != null) {
+			entity = new HttpEntity();
 			state = ENTITY_LENGTH;
 		}
 		// chunked
 		else if (TRANSFER_ENCODING_CHUNKED.equals(request.getHeader(HttpHeaders.TRANSFER_ENCODING.getName()).getValue())) {
-			state = ENTITY_CHUNKED;
+			entity = new HttpChunkEntity();
+			state = ENTITY_CHUNKED_SIZE;
 		}
 		// no entity
 		else {
@@ -235,7 +423,7 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 		byte cb = currentByte();
 		// has no next byte in buffer
 		if (NUL == cb) {
-			state = HEADER_VALUE_SUFFFIX;
+			state = HEADER_VALUE_SUFFIX;
 		}
 		// folded header
 		else if (SP == cb || HT == cb) {
@@ -350,6 +538,15 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 		return false;
 	}
 	
+	private byte previousByte() {
+		int i = searchIndex - 1;
+		if ( i < buf.length()) {
+			return buf.byteAt(i);
+		} else {
+			return NUL;
+		}
+	}
+	
 	private byte currentByte() {
 		int i = searchIndex;
 		if ( i < buf.length()) {
@@ -376,10 +573,12 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 			throw new ProtocolException(ProtocolExceptionType.UNEXPECTED, "slice len=" + len + "< length=" + length); 
 		}
 		
-		int tailIndex = offset + len;
-		if (tailIndex <= buf.length()) {
+		int tailIndex = offset + len - 1;
+		if (tailIndex < buf.length()) {
 			stateIndex = searchIndex = tailIndex;
 			done = true;
+		} else {
+			searchIndex = buf.length();
 		}
 		
 		if (searchIndex > maxSize) { throw new ProtocolException(ProtocolExceptionType.MAX_SIZE_LIMIT, maxSize); }
@@ -417,48 +616,72 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 		}
 	}
 	
-	/** 
-	 * Stop when encounter first byte not in bytes or to the buffer end. 
-	 */
+//	/** 
+//	 * Stop when encounter first byte not in bytes or to the buffer end. 
+//	 */
+//	private boolean skip(byte... bytes) throws ProtocolException {
+//		boolean done = false;
+//		
+//		int length = searchIndex - stateIndex;
+//		for (int i = searchIndex; i < buf.length(); i++, length++) {
+//			if (length > maxLineLength) { throw new ProtocolException(ProtocolExceptionType.LINE_LENGTH_LIMIT, maxLineLength); }
+//			
+//			byte b = buf.byteAt(i);
+//			if (ByteUtil.indexOf(bytes, b) < 0) {
+//				done = true;
+//				stateIndex = searchIndex = i;
+//				break;
+//			} else { 
+//				stateIndex = searchIndex = i + 1;
+//			}
+//		}
+//		
+//		return done;
+//	}
+	
+//	private void slideIfMatch(byte... bytes) throws ProtocolException {
+//		int length = searchIndex - stateIndex;
+//		while (ByteUtil.indexOf(bytes, currentByte()) >= 0) {
+//			slide(1);
+//			length++;
+//			if (length > maxSize) { throw new ProtocolException(ProtocolExceptionType.MAX_SIZE_LIMIT, maxSize); }
+//		}
+//	}
+	
 	private boolean skip(byte... bytes) throws ProtocolException {
 		boolean done = false;
-		
 		int length = searchIndex - stateIndex;
-		for (int i = searchIndex; i < buf.length(); i++, length++) {
-			if (length > maxLineLength) { throw new ProtocolException(ProtocolExceptionType.LINE_LENGTH_LIMIT, maxLineLength); }
-			
-			byte b = buf.byteAt(i);
-			stateIndex = searchIndex = i;
-			if (ByteUtil.indexOf(bytes, b) < 0) {
+		while (searchIndex < buf.length()) {
+			byte cb = currentByte();
+			if (ByteUtil.indexOf(bytes, cb) < 0 && NUL != cb) {
 				done = true;
 				break;
 			}
-		}
-		
-		if (searchIndex == buf.length() - 1) {
-			done = true;
-		}
-		
-		return done;
-	}
-	
-	private void slideIfMatch(byte b) throws ProtocolException {
-		int length = searchIndex - stateIndex;
-		while (b == currentByte()) {
 			slide(1);
 			length++;
 			if (length > maxSize) { throw new ProtocolException(ProtocolExceptionType.MAX_SIZE_LIMIT, maxSize); }
 		}
+		return done;
 	}
 	
-	private void slide(int shift) {
+	private void slide(int shift) throws ProtocolException {
 		stateIndex = searchIndex += shift;
+		if (searchIndex > maxSize) {
+			throw new ProtocolException(ProtocolExceptionType.MAX_SIZE_LIMIT, maxSize);
+		}
 	}
 	
 	private void clear() {
 		request = null;
 		header = null;
 		entity = null;
+		chunk = null;
+		chunkExtName = null;
+		trailerSize = 0;
+	}
+	
+	private void resetIndex() {
+		searchIndex = splitIndex = stateIndex = 0;
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -479,13 +702,37 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 		this.header = header;
 	}
 
+	public HttpEntity getEntity() {
+		return entity;
+	}
+
+	public void setEntity(HttpEntity entity) {
+		this.entity = entity;
+	}
+
+	public HttpChunk getChunk() {
+		return chunk;
+	}
+
+	public void setChunk(HttpChunk chunk) {
+		this.chunk = chunk;
+	}
+
+	public String getChunkExtName() {
+		return chunkExtName;
+	}
+
+	public void setChunkExtName(String chunkExtName) {
+		this.chunkExtName = chunkExtName;
+	}
+
 	@Override
 	public String toString() {
 		return String
-				.format("HttpRequestDecoder [request=%s, header=%s, entity=%s, stateIndex=%s, state=%s, maxLineLength=%s, charset=%s, defaultBufferSize=%s, buf=%s, splitIndex=%s, searchIndex=%s, maxSize=%s]",
-						request, header, entity, stateIndex, state,
-						maxLineLength, charset, defaultBufferSize, buf,
-						splitIndex, searchIndex, maxSize);
+				.format("HttpRequestDecoder [request=%s, header=%s, entity=%s, chunk=%s, chunkExtName=%s, stateIndex=%s, state=%s, maxLineLength=%s, defaultBufferSize=%s, buf=%s, splitIndex=%s, searchIndex=%s, maxSize=%s, charset=%s]",
+						request, header, entity, chunk, chunkExtName,
+						stateIndex, state, maxLineLength, defaultBufferSize,
+						buf, splitIndex, searchIndex, maxSize, charset);
 	}
 
 }

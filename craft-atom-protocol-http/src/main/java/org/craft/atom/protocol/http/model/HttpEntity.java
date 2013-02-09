@@ -15,7 +15,7 @@ public class HttpEntity implements Serializable {
 
 	private static final long serialVersionUID = -3461343279665456788L;
 	
-	private String content;
+	protected String content;
 
 	public HttpEntity() {
 		super();

@@ -3,6 +3,8 @@ package org.craft.atom.protocol.http;
 import org.craft.atom.protocol.AbstractProtocolDecoder;
 
 /**
+ * A http decoder for {@code HttpRequest} and {@code HttpResponse}
+ * 
  * @author mindwind
  * @version 1.0, Feb 3, 2013
  * @see HttpRequestDecoder
@@ -17,11 +19,16 @@ abstract public class HttpDecoder extends AbstractProtocolDecoder {
 	protected static final int HEADER_NAME = 4;
 	protected static final int HEADER_VALUE_PREFIX = 5;
 	protected static final int HEADER_VALUE = 6;
-	protected static final int HEADER_VALUE_SUFFFIX = 7;
+	protected static final int HEADER_VALUE_SUFFIX = 7;
 	protected static final int ENTITY = 8;
 	protected static final int ENTITY_LENGTH = 9;
-	protected static final int ENTITY_CHUNKED = 10;
-	protected static final int ENTITY_ENCODING = 11;
+	protected static final int ENTITY_CHUNKED_SIZE = 10;
+	protected static final int ENTITY_CHUNKED_EXTENSION_NAME = 11;
+	protected static final int ENTITY_CHUNKED_EXTENSION_VALUE = 12;
+	protected static final int ENTITY_CHUNKED_DATA = 13;
+	protected static final int ENTITY_CHUNKED_TRAILER_NAME = 14;
+	protected static final int ENTITY_CHUNKED_TRAILER_VALUE = 15;
+	protected static final int ENTITY_ENCODING = 16;
 	protected static final int END = -1;
 	
 	protected int stateIndex = 0;

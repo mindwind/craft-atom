@@ -1,5 +1,10 @@
 package org.craft.atom.protocol.http.model;
 
+import static org.craft.atom.protocol.http.model.HttpConstants.S_COLON;
+import static org.craft.atom.protocol.http.model.HttpConstants.S_CR;
+import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
+import static org.craft.atom.protocol.http.model.HttpConstants.S_SP;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -85,5 +90,11 @@ public class HttpHeader implements Serializable {
 	@Override
 	public String toString() {
 		return String.format("HttpHeader [name=%s, value=%s]", name, value);
+	}
+	
+	public String toHttpString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getName()).append(S_COLON).append(S_SP).append(getValue()).append(S_CR).append(S_LF);
+		return sb.toString();
 	}
 }

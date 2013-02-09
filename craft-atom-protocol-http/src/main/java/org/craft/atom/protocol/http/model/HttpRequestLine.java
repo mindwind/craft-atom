@@ -1,5 +1,9 @@
 package org.craft.atom.protocol.http.model;
 
+import static org.craft.atom.protocol.http.model.HttpConstants.S_CR;
+import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
+import static org.craft.atom.protocol.http.model.HttpConstants.S_SP;
+
 
 /**
  * The Request-Line begins with a method token, followed by the Request-URI and the protocol version, 
@@ -50,6 +54,12 @@ public class HttpRequestLine extends HttpStartLine {
 	@Override
 	public String toString() {
 		return String.format("HttpRequestLine [method=%s, uri=%s, version=%s]", method, uri, version);
+	}
+	
+	public String toHttpString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getMethod()).append(S_SP).append(getUri()).append(S_SP).append(getVersion().getValue()).append(S_CR).append(S_LF);
+		return sb.toString();
 	}
 
 }

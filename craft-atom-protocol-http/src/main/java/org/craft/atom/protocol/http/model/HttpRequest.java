@@ -1,5 +1,9 @@
 package org.craft.atom.protocol.http.model;
 
+import static org.craft.atom.protocol.http.model.HttpConstants.S_CR;
+import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
+
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -55,6 +59,45 @@ public class HttpRequest extends HttpMessage {
 	@Override
 	public String toString() {
 		return String.format("HttpRequest [requestLine=%s, headers=%s, entity=%s]", requestLine, headers, entity);
+	}
+	
+	public String toHttpString() {
+		StringBuilder sb = new StringBuilder();
+		
+		// request line
+		HttpRequestLine requestLine = getRequestLine();
+		if (requestLine != null) {
+			sb.append(requestLine.toHttpString());
+		}
+		
+		// headers
+		Iterator<HttpHeader> it = headerIterator();
+		boolean hasHeader = false;
+		while (it.hasNext()) {
+			HttpHeader header = (HttpHeader) it.next();
+			sb.append(header.toHttpString());
+			if (!hasHeader) { 
+				hasHeader = true; 
+			}
+		}
+		
+		// empty lines
+		if (hasHeader) {
+			sb.append(S_CR).append(S_LF);
+		}
+		
+		// entity
+		HttpEntity entity = getEntity();
+		if (entity != null) {
+			if (entity instanceof HttpChunkEntity) {
+				HttpChunkEntity chunkEntity = (HttpChunkEntity) entity;
+				sb.append(chunkEntity.toHttpString());
+			} else {
+				sb.append(entity.getContent());
+			}
+		}
+		
+		return sb.toString();
 	}
 
 }

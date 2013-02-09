@@ -11,14 +11,16 @@ public enum HttpHeaders {
 	// ~ --------------------------------------------------------------------------------------- general headers
 	
 	
-	/** Transfer-Encoding: chunked */
+	/** (HTTP/1.1 - RFC2616) Transfer-Encoding: chunked */
 	TRANSFER_ENCODING("Transfer-Encoding"),
+	
+	TRAILER("Trailer"),
 	
 	
 	// ~ --------------------------------------------------------------------------------------- request headers
 	
 	
-	/** Accept: text/*, image/gif, image/jpeg;q=1 */
+	/** (HTTP/1.1 - RFC2616) Accept: text/*, image/gif, image/jpeg;q=1 */
 	ACCEPT("Accept"),
 	
 	
