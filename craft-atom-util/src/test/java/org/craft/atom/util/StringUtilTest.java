@@ -7,7 +7,7 @@ import org.junit.Test;
 /**
  * Tests for {@link StringUtil}
  *
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, 2011-12-23
  */
 public class StringUtilTest {

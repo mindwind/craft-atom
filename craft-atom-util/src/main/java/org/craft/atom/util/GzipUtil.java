@@ -9,45 +9,61 @@ import java.util.zip.GZIPOutputStream;
 /**
  * GZip util
  * 
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, Jun 3, 2012
  */
 public class GzipUtil {
-
-	public static String gzip(String str) throws IOException {
-		if (str == null || str.length() == 0) { return str; }
-		
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		GZIPOutputStream gzip = null;
-		try {
-			gzip = new GZIPOutputStream(out);
-			gzip.write(str.getBytes("UTF-8"));
-		} finally {
-			gzip.close();
+	
+	/**
+	 * Compress data bytes with gzip algorithm
+	 * 
+	 * @param data
+	 * @return
+	 * @throws IOException
+	 */
+	public static byte[] gzip(byte[] data) throws IOException {
+		if (data == null) {
+			return data;
 		}
 		
-		return out.toString("ISO-8859-1");
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		GZIPOutputStream gos = null;
+		try {
+			gos = new GZIPOutputStream(out);
+			gos.write(data);
+		} finally {
+			gos.close();
+		}
+		
+		return out.toByteArray();
 	}
 
-	public static String ungzip(String str) throws IOException {
-		if (str == null || str.length() == 0) { return str; }
+	/**
+	 * Decompress data bytes with gzip algorithm
+	 * 
+	 * @param data
+	 * @return
+	 * @throws IOException
+	 */
+	public static byte[] ungzip(byte[] data) throws IOException {
+		if (data == null) { return data; }
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ByteArrayInputStream in = new ByteArrayInputStream(str.getBytes("ISO-8859-1"));
+		ByteArrayInputStream in = new ByteArrayInputStream(data);
 		
-		GZIPInputStream gunzip = null;
+		GZIPInputStream gis = null;
 		try {
-			gunzip = new GZIPInputStream(in);
+			gis = new GZIPInputStream(in);
 			byte[] buffer = new byte[1024];
 			int n;
-			while ((n = gunzip.read(buffer)) >= 0) {
+			while ((n = gis.read(buffer)) >= 0) {
 				out.write(buffer, 0, n);
 			}
 		} finally {
-			gunzip.close();
+			gis.close();
 		}
 		
-		return out.toString("UTF-8");
+		return out.toByteArray();
 	}
 
 }

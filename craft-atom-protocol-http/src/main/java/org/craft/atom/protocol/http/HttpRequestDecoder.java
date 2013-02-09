@@ -194,7 +194,37 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 		}
 		// deflate
 		else if (CONTENT_ENCODING_DEFLATE.equals(coding)) {
-			
+			/*
+			 * A zlib stream will have a header.
+			 * 
+			 * CMF | FLG [| DICTID ] | ...compressed data | ADLER32 |
+			 * 
+			 * * CMF is one byte.
+			 * 
+			 * * FLG is one byte.
+			 * 
+			 * * DICTID is four bytes, and only present if FLG.FDICT is set.
+			 * 
+			 * Sniff the content. Does it look like a zlib stream, with a CMF, etc?
+			 * c.f. RFC1950, section 2.2. http://tools.ietf.org/html/rfc1950#page-4
+			 * 
+			 * We need to see if it looks like a proper zlib stream, or whether it
+			 * is just a deflate stream. RFC2616 calls zlib streams deflate.
+			 * Confusing, isn't it? That's why some servers implement deflate
+			 * Content-Encoding using deflate streams, rather than zlib streams.
+			 * 
+			 * We could start looking at the bytes, but to be honest, someone else
+			 * has already read the RFCs and implemented that for us. So we'll just
+			 * use the JDK libraries and exception handling to do this. If that
+			 * proves slow, then we could potentially change this to check the first
+			 * byte - does it look like a CMF? What about the second byte - does it
+			 * look like a FLG, etc.
+			 * 
+			 * Many browsers over the years implemented an incorrect deflate algorithm, 
+			 * For example: deflate works in Safari 4.0 but is broken in Safari 5.1, it also always has issues on IE.
+			 * So, we don't support deflate encoding now.
+			 */
+			throw new ProtocolException(ProtocolExceptionType.UNEXPECTED, "unsupported content encoding=" + coding);
 		}
 		// compress or others encoding is unsupported
 		else {
@@ -615,38 +645,6 @@ public class HttpRequestDecoder extends HttpDecoder implements ProtocolDecoder<H
 			return null;	
 		}
 	}
-	
-//	/** 
-//	 * Stop when encounter first byte not in bytes or to the buffer end. 
-//	 */
-//	private boolean skip(byte... bytes) throws ProtocolException {
-//		boolean done = false;
-//		
-//		int length = searchIndex - stateIndex;
-//		for (int i = searchIndex; i < buf.length(); i++, length++) {
-//			if (length > maxLineLength) { throw new ProtocolException(ProtocolExceptionType.LINE_LENGTH_LIMIT, maxLineLength); }
-//			
-//			byte b = buf.byteAt(i);
-//			if (ByteUtil.indexOf(bytes, b) < 0) {
-//				done = true;
-//				stateIndex = searchIndex = i;
-//				break;
-//			} else { 
-//				stateIndex = searchIndex = i + 1;
-//			}
-//		}
-//		
-//		return done;
-//	}
-	
-//	private void slideIfMatch(byte... bytes) throws ProtocolException {
-//		int length = searchIndex - stateIndex;
-//		while (ByteUtil.indexOf(bytes, currentByte()) >= 0) {
-//			slide(1);
-//			length++;
-//			if (length > maxSize) { throw new ProtocolException(ProtocolExceptionType.MAX_SIZE_LIMIT, maxSize); }
-//		}
-//	}
 	
 	private boolean skip(byte... bytes) throws ProtocolException {
 		boolean done = false;
