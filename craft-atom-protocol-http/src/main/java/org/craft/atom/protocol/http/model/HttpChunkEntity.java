@@ -1,9 +1,12 @@
 package org.craft.atom.protocol.http.model;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.craft.atom.util.ByteArrayBuffer;
 
 /**
  * Represents an http chunk entity.
@@ -51,7 +54,7 @@ public class HttpChunkEntity extends HttpEntity {
 		super();
 	}
 	
-	public HttpChunkEntity(String content) {
+	public HttpChunkEntity(byte[] content) {
 		super(content);
 	}
 	
@@ -86,13 +89,13 @@ public class HttpChunkEntity extends HttpEntity {
 		trailers.put(trailer.getName(), trailer);
 	}
 	
-	public String getContent() {
+	public byte[] getContent() {
 		if (content == null) {
-			StringBuilder sb = new StringBuilder();
+			ByteArrayBuffer buf = new ByteArrayBuffer();
 			for (HttpChunk chunk : chunks) {
-				sb.append(chunk.getData());
+				buf.append(chunk.getData());
 			}
-			this.content = sb.toString();
+			this.content = buf.array();
 		}
 		return this.content;
 	}
@@ -118,10 +121,10 @@ public class HttpChunkEntity extends HttpEntity {
 		return String.format("HttpChunkEntity [chunks=%s, trailers=%s, content=%s]", chunks, trailers, content);
 	}
 	
-	public String toHttpString() {
+	public String toHttpString(Charset charset) {
 		StringBuilder sb = new StringBuilder();
 		for (HttpChunk chunk : getChunks()) {
-			sb.append(chunk.toHttpString());
+			sb.append(chunk.toHttpString(charset));
 		}
 		for (HttpHeader trailer : trailers.values()) {
 			sb.append(trailer.toHttpString());

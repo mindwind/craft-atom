@@ -14,12 +14,18 @@ import org.craft.atom.protocol.http.model.HttpResponse;
  * @author mindwind
  * @version 1.0, Feb 3, 2013
  */
-public class HttpResponseDecoder extends HttpDecoder implements ProtocolDecoder<HttpResponse> {
+public class HttpResponseDecoder extends HttpDecoder<HttpResponse> implements ProtocolDecoder<HttpResponse> {
 
 	@Override
 	public List<HttpResponse> decode(byte[] bytes) throws ProtocolException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	boolean hasEntity(HttpResponse httpMessage) {
+		// Here assume all response has entity, it does not hurt the correctness.
+		return true;
 	}
 
 }

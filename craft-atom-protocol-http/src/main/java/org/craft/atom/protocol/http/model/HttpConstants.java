@@ -13,6 +13,8 @@ public class HttpConstants {
 	public static final String CONTENT_ENCODING_DEFLATE = "deflate";
 	public static final String CONTENT_ENCODING_COMPRESS = "compress";
 	
+	public static final String CONTENT_TYPE_CHARSET = "charset";
+	
 	// ~ ------------------------------------------------------------------------------------- some special character
 			
 	public static final byte NUL = 0;          // NULL              "\0";

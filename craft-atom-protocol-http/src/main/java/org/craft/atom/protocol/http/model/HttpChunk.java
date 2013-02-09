@@ -6,6 +6,7 @@ import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
 import static org.craft.atom.protocol.http.model.HttpConstants.S_SEMICOLON;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,7 +24,7 @@ public class HttpChunk implements Serializable {
 	
 	private int size;
 	private Map<String, String> extension = new LinkedHashMap<String, String>();
-	private String data;
+	private byte[] data;
 	
 	public HttpChunk() {
 		super();
@@ -33,13 +34,23 @@ public class HttpChunk implements Serializable {
 		this.size = size;
 	}
 
-	public HttpChunk(int size, String data) {
+	public HttpChunk(int size, byte[] data) {
 		this(size);
 		this.data = data;
 	}
+	
+	public HttpChunk(int size, String data, Charset charset) {
+		this(size);
+		this.data = data.getBytes(charset);
+	}
 
-	public HttpChunk(int size, String data, Map<String, String> extension) {
+	public HttpChunk(int size, byte[] data, Map<String, String> extension) {
 		this(size, data);
+		this.extension = extension;
+	}
+	
+	public HttpChunk(int size, String data, Charset charset, Map<String, String> extension) {
+		this(size, data, charset);
 		this.extension = extension;
 	}
 
@@ -51,11 +62,15 @@ public class HttpChunk implements Serializable {
 		this.size = size;
 	}
 
-	public String getData() {
+	public byte[] getData() {
 		return data;
 	}
+	
+	public String getDataString(Charset charset) {
+		return new String(data, charset);
+	}
 
-	public void setData(String data) {
+	public void setData(byte[] data) {
 		this.data = data;
 	}
 
@@ -76,7 +91,7 @@ public class HttpChunk implements Serializable {
 		return String.format("HttpChunk [size=%s, data=%s, extension=%s]", size, data, extension);
 	}
 	
-	public String toHttpString() {
+	public String toHttpString(Charset charset) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(Integer.toHexString(size));
 		Set<Entry<String, String>> extSet = extension.entrySet();
@@ -91,7 +106,7 @@ public class HttpChunk implements Serializable {
 		}
 		sb.append(S_CR).append(S_LF);
 		if (data != null) {
-			sb.append(data).append(S_CR).append(S_LF);
+			sb.append(new String(data, charset)).append(S_CR).append(S_LF);
 		}
 		return sb.toString();
 	}

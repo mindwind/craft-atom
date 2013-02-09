@@ -31,7 +31,7 @@ public enum HttpHeaders {
 	
 	// ~ --------------------------------------------------------------------------------------- entity headers
 	
-	
+	CONTENT_TYPE("Content-Type"),
 	CONTENT_LENGTH("Content-Length"),
 	CONTENT_ENCODING("Content-Encoding");
 	

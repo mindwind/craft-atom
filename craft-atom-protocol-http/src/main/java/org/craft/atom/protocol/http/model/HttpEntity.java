@@ -1,6 +1,7 @@
 package org.craft.atom.protocol.http.model;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 
 /**
  * Represents an http entity.<br>
@@ -15,27 +16,39 @@ public class HttpEntity implements Serializable {
 
 	private static final long serialVersionUID = -3461343279665456788L;
 	
-	protected String content;
+	protected byte[] content;
 
 	public HttpEntity() {
 		super();
 	}
 
-	public HttpEntity(String content) {
+	public HttpEntity(byte[] content) {
 		this.content = content;
 	}
+	
+	public HttpEntity(String content, Charset charset) {
+		this.content = content.getBytes(charset);
+	}
+	
+	public String getContentString(Charset charset) {
+		return new String(content, charset);
+	}
 
-	public String getContent() {
+	public byte[] getContent() {
 		return content;
 	}
 
-	public void setContent(String content) {
+	public void setContent(byte[] content) {
 		this.content = content;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("HttpEntity [content=%s]", content);
+		return String.format("HttpEntity [content=%s]", getContentString(Charset.defaultCharset()));
+	}
+
+	public String toHttpString(Charset charset) {
+		return new String(content, charset);
 	}
 
 }

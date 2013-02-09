@@ -17,6 +17,15 @@ public final class ByteArrayBuffer implements Serializable {
 
 	private byte[] buffer;
 	private int len;
+	
+	// ~ -------------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * Creates an instance of {@link ByteArrayBuffer} with default(2048) initial capacity.
+	 */
+	public ByteArrayBuffer() {
+		this(2048);
+	}
 
 	/**
 	 * Creates an instance of {@link ByteArrayBuffer} with the given initial capacity.
@@ -25,7 +34,6 @@ public final class ByteArrayBuffer implements Serializable {
 	 *            the capacity
 	 */
 	public ByteArrayBuffer(int capacity) {
-		super();
 		checkCapacity(capacity);
 		this.buffer = new byte[capacity];
 	}
@@ -44,7 +52,7 @@ public final class ByteArrayBuffer implements Serializable {
 		this.len = bytes.length;
 	}
 
-	// ~ --------------------------------------------------------------------------------------------------------------
+	// ~ -------------------------------------------------------------------------------------------------------------
 
 	private void checkCapacity(int capacity) {
 		if (capacity < 0) {

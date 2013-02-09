@@ -16,7 +16,7 @@ public class HttpRequestEncoder extends HttpEncoder implements ProtocolEncoder<H
 
 	@Override
 	public byte[] encode(HttpRequest request) throws ProtocolException {
-		String httpString = request.toHttpString();
+		String httpString = request.toHttpString(charset);
 		return httpString.getBytes(charset);
 	}
 

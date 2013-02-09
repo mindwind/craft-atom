@@ -3,6 +3,7 @@ package org.craft.atom.protocol.http.model;
 import static org.craft.atom.protocol.http.model.HttpConstants.S_CR;
 import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
 
+import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -61,7 +62,7 @@ public class HttpRequest extends HttpMessage {
 		return String.format("HttpRequest [requestLine=%s, headers=%s, entity=%s]", requestLine, headers, entity);
 	}
 	
-	public String toHttpString() {
+	public String toHttpString(Charset charset) {
 		StringBuilder sb = new StringBuilder();
 		
 		// request line
@@ -91,9 +92,9 @@ public class HttpRequest extends HttpMessage {
 		if (entity != null) {
 			if (entity instanceof HttpChunkEntity) {
 				HttpChunkEntity chunkEntity = (HttpChunkEntity) entity;
-				sb.append(chunkEntity.toHttpString());
+				sb.append(chunkEntity.toHttpString(charset));
 			} else {
-				sb.append(entity.getContent());
+				sb.append(entity.toHttpString(charset));
 			}
 		}
 		

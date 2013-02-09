@@ -4,8 +4,12 @@ import static org.craft.atom.protocol.http.model.HttpConstants.S_COLON;
 import static org.craft.atom.protocol.http.model.HttpConstants.S_CR;
 import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
 import static org.craft.atom.protocol.http.model.HttpConstants.S_SP;
+import static org.craft.atom.protocol.http.model.HttpConstants.S_SEMICOLON;
+import static org.craft.atom.protocol.http.model.HttpConstants.S_EQUAL_SIGN;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -83,8 +87,46 @@ public class HttpHeader implements Serializable {
 	 * @return
 	 */
 	public List<HttpHeaderValueElement> getValueElements() {
-		// TODO
-		return null;
+		List<HttpHeaderValueElement> elements = new ArrayList<HttpHeaderValueElement>();
+		if (value == null || value.length() == 0) {
+			return elements;
+		}
+		
+		String[] earr = value.split(",");
+		for (String es : earr) {
+			HttpHeaderValueElement hve = new HttpHeaderValueElement();
+			String[] nvs = es.split(S_SEMICOLON);
+			parseNameValue(hve, nvs[0]);
+			for (int i = 1; i < nvs.length; i++) {
+				parseParams(hve, nvs[i]);
+			}
+			elements.add(hve);
+		}
+		
+		return elements;
+	}
+	
+	private void parseParams(HttpHeaderValueElement hve, String pnv) {
+		String[] nvpair = pnv.split(S_EQUAL_SIGN);
+		if (nvpair.length > 1) {
+			hve.addParam(nvpair[0], nvpair[1]);
+		} else {
+			hve.addParam(nvpair[0], null);
+		}
+	}
+	
+	private void parseNameValue(HttpHeaderValueElement hve, String nv) {
+		String[] nvpair = nv.split(S_EQUAL_SIGN);
+		hve.setName(nvpair[0]);
+		if (nvpair.length > 1) {
+			hve.setValue(nvpair[1]);
+		}
+	}
+	
+	public static void main(String[] args) {
+		String a = "lsjflsjf";
+		String[] arr = a.split("=");
+		System.out.println(Arrays.toString(arr));
 	}
 
 	@Override

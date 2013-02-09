@@ -53,6 +53,26 @@ public class HttpHeaderValueElement implements Serializable {
 		this.value = value;
 		this.params = params;
 	}
+	
+	/**
+	 * Add a name value pair parameter, if exists replace it.
+	 * 
+	 * @param name
+	 * @param value
+	 */
+	public void addParam(String name, String value) {
+		params.put(name, value);
+	}
+	
+	/**
+	 * Return param value by name.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public String getParamValue(String name) {
+		return params.get(name);
+	}
 
 	public String getName() {
 		return name;
