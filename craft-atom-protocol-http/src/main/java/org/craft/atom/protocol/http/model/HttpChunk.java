@@ -7,6 +7,7 @@ import static org.craft.atom.protocol.http.model.HttpConstants.S_SEMICOLON;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -88,7 +89,7 @@ public class HttpChunk implements Serializable {
 
 	@Override
 	public String toString() {
-		return String.format("HttpChunk [size=%s, data=%s, extension=%s]", size, data, extension);
+		return String.format("HttpChunk [size=%s, data=%s, extension=%s]", size, Arrays.toString(data), extension);
 	}
 	
 	public String toHttpString(Charset charset) {
