@@ -141,6 +141,15 @@ public class HttpRequestDecoderTest {
 		testInRandomLoop(req, 1, true);
 	}
 	
+	/**
+	 * Test for folded header
+	 */
+	@Test public void testForFoldedHeader() throws ProtocolException {
+		String req = "POST /craft/webservice/helloWS HTTP/1.1\r\nTransfer-Encoding: chunked\r\nTrailer: Content-MD5\r\nContent-Type: text/xml;\r\n \t charset=UTF-8\r\n\r\n24;extname=extvalue;aaa=bbb;kkk\r\nThis is the data in the first chunk \r\n1A\r\nand this is the second one\r\n0\r\nContent-MD5: gjqesdflj12dsfsf12\r\n";
+		testInRandomLoop(req, 100, false);
+		testInRandomLoop(req, 1, true);
+	}
+	
 	private void testInRandomLoop(String req, int loop, boolean onebyte) throws ProtocolException {
 		for (int i = 0; i < loop; i++) {
 			int num = new Random().nextInt(req.length() + 1);
