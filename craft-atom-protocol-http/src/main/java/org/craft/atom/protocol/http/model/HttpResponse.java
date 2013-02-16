@@ -1,5 +1,6 @@
 package org.craft.atom.protocol.http.model;
 
+import java.nio.charset.Charset;
 import java.util.Map;
 
 /**
@@ -47,6 +48,21 @@ public class HttpResponse extends HttpMessage {
 	@Override
 	public String toString() {
 		return String.format("HttpResponse [statusLine=%s, headers=%s, entity=%s]", statusLine, headers, entity);
+	}
+	
+	public String toHttpString(Charset charset) {
+		StringBuilder sb = new StringBuilder();
+		
+		// request line
+		HttpStatusLine statusLine = getStatusLine();
+		if (statusLine != null) {
+			sb.append(statusLine.toHttpString());
+		}
+		
+		// message headers and entity
+		sb.append(super.toHttpString(charset));
+		
+		return sb.toString();
 	}
 
 }

@@ -15,9 +15,9 @@ import org.craft.atom.protocol.http.model.HttpResponse;
 public class HttpResponseEncoder extends HttpEncoder implements ProtocolEncoder<HttpResponse> {
 
 	@Override
-	public byte[] encode(HttpResponse protocolObject) throws ProtocolException {
-		// TODO Auto-generated method stub
-		return null;
+	public byte[] encode(HttpResponse resonpse) throws ProtocolException {
+		String httpString = resonpse.toHttpString(charset);
+		return httpString.getBytes(charset);
 	}
 
 }

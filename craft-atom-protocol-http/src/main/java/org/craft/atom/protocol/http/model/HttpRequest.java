@@ -1,10 +1,6 @@
 package org.craft.atom.protocol.http.model;
 
-import static org.craft.atom.protocol.http.model.HttpConstants.S_CR;
-import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
-
 import java.nio.charset.Charset;
-import java.util.Iterator;
 import java.util.Map;
 
 
@@ -23,7 +19,6 @@ import java.util.Map;
  * 
  * @author mindwind
  * @version 1.0, Feb 1, 2013
- * @see HttpRequestLine
  */
 public class HttpRequest extends HttpMessage {
 
@@ -71,32 +66,8 @@ public class HttpRequest extends HttpMessage {
 			sb.append(requestLine.toHttpString());
 		}
 		
-		// headers
-		Iterator<HttpHeader> it = headerIterator();
-		boolean hasHeader = false;
-		while (it.hasNext()) {
-			HttpHeader header = (HttpHeader) it.next();
-			sb.append(header.toHttpString());
-			if (!hasHeader) { 
-				hasHeader = true; 
-			}
-		}
-		
-		// empty lines
-		if (hasHeader) {
-			sb.append(S_CR).append(S_LF);
-		}
-		
-		// entity
-		HttpEntity entity = getEntity();
-		if (entity != null) {
-			if (entity instanceof HttpChunkEntity) {
-				HttpChunkEntity chunkEntity = (HttpChunkEntity) entity;
-				sb.append(chunkEntity.toHttpString(charset));
-			} else {
-				sb.append(entity.toHttpString(charset));
-			}
-		}
+		// message headers and entity
+		sb.append(super.toHttpString(charset));
 		
 		return sb.toString();
 	}

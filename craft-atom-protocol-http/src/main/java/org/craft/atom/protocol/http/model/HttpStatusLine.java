@@ -1,5 +1,9 @@
 package org.craft.atom.protocol.http.model;
 
+import static org.craft.atom.protocol.http.model.HttpConstants.S_CR;
+import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
+import static org.craft.atom.protocol.http.model.HttpConstants.S_SP;
+
 import org.apache.http.HttpResponse;
 
 /**
@@ -40,7 +44,12 @@ public class HttpStatusLine extends HttpStartLine {
 
 	@Override
 	public String toString() {
-		return String.format("HttpStatusLine [status=%s, version=%s]", status,
-				version);
+		return String.format("HttpStatusLine [status=%s, version=%s]", status, version);
+	}
+	
+	public String toHttpString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getVersion().getValue()).append(S_SP).append(getStatus().getStatusCode()).append(S_SP).append(getStatus().getReasonPhrase()).append(S_CR).append(S_LF);
+		return sb.toString();
 	}
 }
