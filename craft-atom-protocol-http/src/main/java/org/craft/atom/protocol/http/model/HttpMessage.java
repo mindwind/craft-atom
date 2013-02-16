@@ -128,9 +128,9 @@ public abstract class HttpMessage implements Serializable {
 		if (entity != null) {
 			if (entity instanceof HttpChunkEntity) {
 				HttpChunkEntity chunkEntity = (HttpChunkEntity) entity;
-				sb.append(chunkEntity.toHttpString(charset));
+				sb.append(chunkEntity.toHttpString());
 			} else {
-				sb.append(entity.toHttpString(charset));
+				sb.append(entity.toHttpString());
 			}
 		}
 		

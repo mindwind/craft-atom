@@ -321,11 +321,13 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 		// content length
 		if (httpMessage.getHeader(HttpHeaders.CONTENT_LENGTH.getName()) != null) {
 			entity = new HttpEntity();
+			entity.setCharset(getContentCharset(httpMessage));
 			state = ENTITY_LENGTH;
 		}
 		// chunked
 		else if (TRANSFER_ENCODING_CHUNKED.equals(httpMessage.getHeader(HttpHeaders.TRANSFER_ENCODING.getName()).getValue())) {
 			entity = new HttpChunkEntity();
+			entity.setCharset(getContentCharset(httpMessage));
 			state = ENTITY_CHUNKED_SIZE;
 		}
 		// no entity

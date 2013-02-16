@@ -1,6 +1,5 @@
 package org.craft.atom.protocol.http.model;
 
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -121,7 +120,7 @@ public class HttpChunkEntity extends HttpEntity {
 		return String.format("HttpChunkEntity [chunks=%s, trailers=%s, content=%s]", chunks, trailers, content);
 	}
 	
-	public String toHttpString(Charset charset) {
+	public String toHttpString() {
 		StringBuilder sb = new StringBuilder();
 		for (HttpChunk chunk : getChunks()) {
 			sb.append(chunk.toHttpString(charset));

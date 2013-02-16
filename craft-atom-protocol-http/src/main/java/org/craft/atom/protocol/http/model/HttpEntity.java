@@ -16,6 +16,7 @@ public class HttpEntity implements Serializable {
 
 	private static final long serialVersionUID = -3461343279665456788L;
 	
+	protected Charset charset;
 	protected byte[] content;
 
 	public HttpEntity() {
@@ -27,10 +28,11 @@ public class HttpEntity implements Serializable {
 	}
 	
 	public HttpEntity(String content, Charset charset) {
+		this.charset = charset;
 		this.content = content.getBytes(charset);
 	}
 	
-	public String getContentString(Charset charset) {
+	public String getContentAsString() {
 		return new String(content, charset);
 	}
 
@@ -42,12 +44,20 @@ public class HttpEntity implements Serializable {
 		this.content = content;
 	}
 
-	@Override
-	public String toString() {
-		return String.format("HttpEntity [content=%s]", getContentString(Charset.defaultCharset()));
+	public Charset getCharset() {
+		return charset;
 	}
 
-	public String toHttpString(Charset charset) {
+	public void setCharset(Charset charset) {
+		this.charset = charset;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("HttpEntity [charset=%s, content=%s]", charset, getContentAsString());
+	}
+
+	public String toHttpString() {
 		return new String(content, charset);
 	}
 
