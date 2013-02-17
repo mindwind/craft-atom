@@ -36,10 +36,16 @@ Version 1.1.1
 
 Version 1.1.2
 -----------------------------------------------------------------------------------------------------------------------
-
 craft-atom-cache
   .add SortedSetCache 接口 
-  .fix 修正 api 契约，确保所有返回的集合对象不为 null 而是 空集合
+  .fix api 契约，确保所有返回的集合对象不为 null 而是 空集合
   
 craft-atom-lock
-  .fix 修正 transaction api commit 时返回 list 集合判断空问题
+  .fix transaction api commit 时返回 list 集合判断空问题
+  
+craft-atom-nio
+  .fix buffer 分配预测算法
+  
+craft-atom-protocol
+  .add http codec 
+  .fix textline codec 分离为独立模块
