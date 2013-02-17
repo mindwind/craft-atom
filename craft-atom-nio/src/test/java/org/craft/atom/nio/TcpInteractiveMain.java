@@ -67,7 +67,7 @@ public class TcpInteractiveMain {
     }
     
     private void test(String msg, int port) throws Exception {
-    	TcpAcceptor acceptor = new TcpAcceptor(new TestHandler(), port);
+    	TcpAcceptor acceptor = new TcpAcceptor(new MyHandler(), port);
     	Future<Session> future = connector.connect("127.0.0.1", port);
     	Session session = future.get();
     	synchronized(session) {

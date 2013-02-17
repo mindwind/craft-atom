@@ -11,7 +11,7 @@ import org.craft.atom.nio.api.TcpAcceptor;
 public class EchoServer {
 	
 	public static void main(String[] args) {
-		new TcpAcceptor(new TestHandler(), 7777);
+		new TcpAcceptor(new MyHandler(), 7777);
 	}
 	
 }

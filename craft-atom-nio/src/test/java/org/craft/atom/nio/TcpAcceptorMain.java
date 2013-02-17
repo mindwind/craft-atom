@@ -29,7 +29,7 @@ public class TcpAcceptorMain {
 	}
 	
     public void testDuplicateBind() throws IOException {
-		TcpAcceptor acceptor = new TcpAcceptor(new TestHandler(), PORT);
+		TcpAcceptor acceptor = new TcpAcceptor(new MyHandler(), PORT);
 		
 		Assert.assertEquals(1, acceptor.getBoundAddresses().size());
 		
@@ -43,7 +43,7 @@ public class TcpAcceptorMain {
 	}
 	
     public void testDuplicateUnbind() throws IOException {
-    	TcpAcceptor acceptor = new TcpAcceptor(new TestHandler(), PORT);
+    	TcpAcceptor acceptor = new TcpAcceptor(new MyHandler(), PORT);
 
         // this should succeed
         acceptor.unbind(PORT);
@@ -55,7 +55,7 @@ public class TcpAcceptorMain {
     }
     
     public void testManyTimes() throws IOException {
-    	TcpAcceptor acceptor = new TcpAcceptor(new TestHandler(), PORT);
+    	TcpAcceptor acceptor = new TcpAcceptor(new MyHandler(), PORT);
 
         for (int i = 0; i < 1024; i++) {
             acceptor.unbind(PORT);
