@@ -4,8 +4,6 @@ import static org.craft.atom.protocol.http.model.HttpConstants.S_CR;
 import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
 import static org.craft.atom.protocol.http.model.HttpConstants.S_SP;
 
-import org.apache.http.HttpResponse;
-
 /**
  * The first line of a Response message is the Status-Line, consisting
  * of the protocol version followed by a numeric status code and its

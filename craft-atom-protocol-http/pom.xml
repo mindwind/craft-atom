@@ -15,11 +15,5 @@
 			<artifactId>craft-atom-protocol</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-	
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-			<version>4.2.2</version>
-		</dependency>
 	</dependencies>
 </project>
