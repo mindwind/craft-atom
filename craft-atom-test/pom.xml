@@ -3,10 +3,10 @@
 	<parent>
 		<artifactId>craft-atom</artifactId>
 		<groupId>org.craft.atom</groupId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.1.4-SNAPSHOT</version>
 	</parent>
 	<artifactId>craft-atom-test</artifactId>
-	<name>craft-atom-test</name>
+	<name>${project.artifactId}</name>
 
 	<dependencies>
 		<dependency>

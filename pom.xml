@@ -3,7 +3,7 @@
 
 	<groupId>org.craft.atom</groupId>
 	<artifactId>craft-atom</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.1.4-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	
@@ -13,14 +13,14 @@
   </scm>
 
 	<modules>
-		<module>craft-atom-util</module>
-		<module>craft-atom-test</module>
 		<module>craft-atom-nio</module>
+		<module>craft-atom-util</module>
 		<module>craft-atom-cache</module>
+		<module>craft-atom-protocol</module>
 		<module>craft-atom-lock</module>
 		<module>craft-atom-protocol-http</module>
+		<module>craft-atom-test</module>
 		<module>craft-atom-protocol-textline</module>
-		<module>craft-atom-protocol</module>
 	</modules>
 
 	<properties>
