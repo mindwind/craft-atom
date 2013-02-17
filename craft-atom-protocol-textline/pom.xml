@@ -11,7 +11,7 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>org.craft.atom</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>craft-atom-protocol</artifactId>
 			<version>${project.version}</version>
 		</dependency>
