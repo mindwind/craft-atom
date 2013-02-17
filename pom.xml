@@ -116,6 +116,8 @@
 				<configuration>
 					<tagBase>https://github.com/mindwind/craft-atom.git</tagBase>
 					<useReleaseProfile>false</useReleaseProfile>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<updateDependencies>false</updateDependencies>
 				</configuration>
 			</plugin>
 		</plugins>

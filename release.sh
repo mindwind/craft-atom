@@ -1,3 +1,3 @@
 mvn release:clean
-mvn release:prepare
+mvn -Darguments="-DskipTests=true" release:prepare
 mvn release:perform
