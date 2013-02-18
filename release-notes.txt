@@ -1,51 +1,51 @@
 Version 1.0.0
 -----------------------------------------------------------------------------------------------------------------------
-.启动原子组件项目
+  .startup
 
 
 Version 1.1.0
 -----------------------------------------------------------------------------------------------------------------------
-.fix 统一所有子模块版本，采用 maven release 插件发布
+  .fix unify all sub module version，use maven release plugin for auto release
 
 craft-atom-cache
-  .fix redis cache transaction 调用的并发导致的响应数据错误问题
-  .add SortedSetCache 接口 
-  .add HashCache api 完善
-  .add ListCache api 完善
-  .fix 捕捉jedis 操作异常，从 pool 中移除
-  .fix 事务 api 调用异常
+  .fix redis cache transaction return data error on concurrent invoking.
+  .add SortedSetCache 
+  .add HashCache api 
+  .add ListCache api 
+  .fix catch jedis thrown exception and clean pool.
+  .fix transaction api invoking exception.
 
 craft-atom-lock
-  .add 基于redis2.4服务端版本实现的分布式锁机制
+  .add distributed lock base on redis 2.4.x
   
 craft-atom-nio
-  .add 提供更简单和干净的 nio 网络编程模型
+  .add a more simple nio encapsulation model.
   
 craft-atom-protocol
-  .add 提供简单、干净、且独立的协议实现封装
-  .add 提供 textline（文本换行）的协议解析
+  .add a more simple and clean protocol codec component.
+  .add textline protocol codec implementation
   
 craft-atom-util
-  .add 常用工具类补充
+  .add frequently-used util class.
 
   
-Version 1.1.1
+Version 1.1.1 ~ 1.1.3
 -----------------------------------------------------------------------------------------------------------------------
-测试 maven release plugin 发布
+test maven release plugin auto release
 
 
-Version 1.1.2
+Version 1.1.4
 -----------------------------------------------------------------------------------------------------------------------
 craft-atom-cache
-  .add SortedSetCache 接口 
-  .fix api 契约，确保所有返回的集合对象不为 null 而是 空集合
+  .add SortedSetCache api 
+  .fix api contract，return empty collection not null.
   
 craft-atom-lock
-  .fix transaction api commit 时返回 list 集合判断空问题
+  .fix transaction api commit return list is null.
   
 craft-atom-nio
-  .fix buffer 分配预测算法
+  .fix buffer size predictor.
   
 craft-atom-protocol
-  .add http codec 
-  .fix textline codec 分离为独立模块
+  .add simple http codec 
+  .fix textline codec as a single sub-module.
