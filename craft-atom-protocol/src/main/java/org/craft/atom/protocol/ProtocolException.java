@@ -1,5 +1,7 @@
 package org.craft.atom.protocol;
 
+import java.util.Arrays;
+
 
 
 /**
@@ -30,7 +32,7 @@ public class ProtocolException extends Exception {
 	}
 
 	public ProtocolException(ProtocolExceptionType type, Object... params) {
-		super(type.getDesc() + params);
+		super(type.getDesc() + Arrays.toString(params));
 	}
 	
 }

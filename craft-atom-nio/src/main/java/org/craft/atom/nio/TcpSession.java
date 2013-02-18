@@ -17,6 +17,11 @@ public class TcpSession extends AbstractSession {
 
 	public TcpSession(SocketChannel socketChannel, AbstractConfig config, SizePredictor sizePredictor) {
 		super(config, sizePredictor);
+		
+		if (socketChannel == null) {
+			throw new IllegalArgumentException("socketChannel is null!");
+		}
+		
 		this.socketChannel = socketChannel;
 		this.localAddress = socketChannel.socket().getLocalSocketAddress();
 		this.remoteAddress = socketChannel.socket().getRemoteSocketAddress();

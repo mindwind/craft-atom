@@ -23,7 +23,10 @@ public class ProcessorPool {
 	private final Random random = new Random();
 
 	public ProcessorPool(AbstractConfig config, Handler handler, EventDispatcher eventDispatcher) {
-		super();
+		if (config == null) {
+			throw new IllegalArgumentException("config is null!");
+		}
+		
 		int size = config.getProcessorPoolSize();
 		if (size < 1) {
 			size = 1;
@@ -52,7 +55,7 @@ public class ProcessorPool {
 	 * @return
 	 */
 	public Processor get(Protocol protocol) {
-		Processor processor = pool[random.nextInt() % pool.length];
+		Processor processor = pool[random.nextInt(pool.length) % pool.length];
 		processor.setProtocol(protocol);
 		return processor;
 	}

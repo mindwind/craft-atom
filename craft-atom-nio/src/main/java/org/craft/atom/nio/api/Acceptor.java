@@ -103,7 +103,7 @@ public abstract class Acceptor extends Abstractor {
 	 */
 	public Acceptor(Handler handler, AcceptorConfig config, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
 		if (handler == null) {
-			throw new IllegalStateException("Handler is not set!");
+			throw new IllegalArgumentException("handler should not be null!");
 		}
 		
 		this.config = (config == null ? new AcceptorConfig() : config);

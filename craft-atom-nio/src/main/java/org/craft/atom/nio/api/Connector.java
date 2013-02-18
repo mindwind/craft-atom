@@ -65,6 +65,10 @@ public class Connector extends Abstractor {
 	 * @param handler
 	 */
 	public Connector(ConnectorConfig config, Handler handler) {
+		if (handler == null) {
+			throw new IllegalArgumentException("handler should not be null!");
+		}
+		
 		this.config = (config == null ? new ConnectorConfig() : config);
 		this.handler = handler;
 		this.eventDispatcher = new PartialOrderedEventDispatcher(this.config.getExecutorSize());

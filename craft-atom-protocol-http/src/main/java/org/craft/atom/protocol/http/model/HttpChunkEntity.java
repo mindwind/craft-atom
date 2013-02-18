@@ -117,7 +117,7 @@ public class HttpChunkEntity extends HttpEntity {
 
 	@Override
 	public String toString() {
-		return String.format("HttpChunkEntity [chunks=%s, trailers=%s, content=%s]", chunks, trailers, content);
+		return String.format("HttpChunkEntity [chunks=%s, trailers=%s, content=%s]", chunks, trailers, getContentAsString());
 	}
 	
 	public String toHttpString() {

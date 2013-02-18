@@ -182,7 +182,7 @@ public class Processor extends Abstractor {
 	}
 	
 	private void registerNewSelector() throws IOException {
-        synchronized (selector) {
+        synchronized (this) {
             Set<SelectionKey> keys = selector.keys();
 
             // Open a new selector

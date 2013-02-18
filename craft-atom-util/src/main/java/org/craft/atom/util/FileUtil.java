@@ -53,12 +53,14 @@ public class FileUtil {
 	 */
 	public static String readFileAsString(String filePath) throws IOException {
 		byte[] buffer = new byte[(int) getFile(filePath).length()];
-		BufferedInputStream inputStream = null;
+		BufferedInputStream bis = null;
 		try {
-			inputStream = new BufferedInputStream(new FileInputStream(getFile(filePath)));
-			inputStream.read(buffer);
+			bis = new BufferedInputStream(new FileInputStream(getFile(filePath)));
+			bis.read(buffer);
 		} finally {
-			inputStream.close();
+			if (bis != null) {
+				bis.close();
+			}
 		}
 		return new String(buffer);
 	}
@@ -72,13 +74,15 @@ public class FileUtil {
 	 */
 	public static void writeStringToFile(String content, String filePath)
 			throws Exception {
-		BufferedOutputStream outputStream = null;
+		BufferedOutputStream bos = null;
 		try {
-			outputStream = new BufferedOutputStream(new FileOutputStream(getFile(filePath)));
-			outputStream.write(content.getBytes());
-			outputStream.flush();
+			bos = new BufferedOutputStream(new FileOutputStream(getFile(filePath)));
+			bos.write(content.getBytes());
+			bos.flush();
 		} finally {
-			outputStream.close();
+			if (bos != null) {
+				bos.close();
+			}
 		}
 	}
 

@@ -32,7 +32,9 @@ public class GzipUtil {
 			gos = new GZIPOutputStream(out);
 			gos.write(data);
 		} finally {
-			gos.close();
+			if (gos != null) {
+				gos.close();
+			}
 		}
 		
 		return out.toByteArray();
@@ -60,7 +62,9 @@ public class GzipUtil {
 				out.write(buffer, 0, n);
 			}
 		} finally {
-			gis.close();
+			if (gis != null) {
+				gis.close();
+			}
 		}
 		
 		return out.toByteArray();
