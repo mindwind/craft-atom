@@ -1,6 +1,11 @@
 package org.craft.atom.cache;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.craft.atom.cache.impl.RedisCache;
 import org.junit.Assert;
@@ -50,8 +55,131 @@ public class RedisCacheMain {
 //		rcm.testHmget();
 		
 		// case 6
-		rcm.testSetexInTransaction();
+//		rcm.testSetexInTransaction();
+		
+		// case 7 
+		rcm.testTransactionInHighConcurrency();
 
+	}
+	
+	public void testTransactionInHighConcurrency() {
+		ScheduledExecutorService ses = Executors.newScheduledThreadPool(10);
+		ses.scheduleAtFixedRate(new TransactionLoadWorker(), 1000, 100, TimeUnit.MILLISECONDS);
+		
+		for (int i = 0; i < 1000; i++) {
+			before();
+			try {
+				String t = testTransactionInHighConcurrency0();
+				System.out.println(i + "-" + t);
+				Thread.sleep(10);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			} finally {
+				after();
+			}
+		}
+		
+		ses.shutdown();
+	}
+	
+	private class TransactionLoadWorker implements Runnable  {
+
+		@Override
+		public void run() {
+			String lockKey = "lockKey";
+			boolean lock = tryLock(lockKey, 10000, TimeUnit.MILLISECONDS);
+			if (lock) {
+				try {
+					rc.setex("transaction-test", 15, "1");
+					System.out.println("transaction load ...");
+				} finally {
+					unlock(lockKey);
+				}
+			}
+		}
+		
+	}
+	
+	private boolean tryLock(String lockKey, int ttl, TimeUnit unit) {
+		if (lockKey == null || unit == null) {
+			throw new IllegalArgumentException("invalid tryLock() arguments!");
+		}
+		
+		int ttlSeconds = (int) TimeUnit.SECONDS.convert(ttl, unit);
+		if (ttlSeconds == 0) {
+			throw new IllegalArgumentException("ttl=0, this implementation time precision is second!");
+		}
+		
+		boolean success = true;
+		try {
+			rc.watch(lockKey);
+			if (rc.get(lockKey) == null) {
+				success = tryLock0(lockKey, ttlSeconds);
+			} else {
+				rc.unwatch(lockKey);
+				success = false;
+			}
+		} catch (Exception e) {
+			success = false;
+		}
+		return success;
+	}
+	
+	private boolean tryLock0(String lockKey, int ttlSeconds) {
+		Transaction tx = null;
+		try {
+			tx = rc.beginTransaction(lockKey);
+			rc.setex(lockKey, ttlSeconds, "1");
+			List<Object> result = tx.commit();
+			return result != null && result.size() > 0;
+		} finally {
+			if (tx != null) {
+				tx.close();
+			}
+		}
+	}
+
+	private boolean unlock(String lockKey) {
+		boolean success = true;
+		
+		try {
+			rc.del(lockKey);
+		} catch (Exception e) {
+			success = false;
+		}
+		
+		return success;
+	}
+	
+	private String testTransactionInHighConcurrency0() {
+		Map<String, String> hash = new HashMap<String, String>();
+		hash.put("t-1", "t-1");
+		hash.put("t-2", "t-2");
+		hash.put("t-3", "t-3");
+		hash.put("t-4", "t-4");
+		hash.put("t-5", "t-5");
+		
+		Transaction tx = null;
+		try {
+			tx = rc.beginTransaction(key);
+			rc.hmset(key, hash);
+			rc.expire(key, 70);
+			List<Object> list = tx.commit();
+			System.out.println(list);
+			if (list.isEmpty()) {
+				throw new IllegalStateException();
+			}
+		} finally {
+			if (tx != null) {
+				tx.close();
+			}
+		}
+		
+		String t2 = rc.hget(key, "t-2");
+		if (t2 == null) {
+			throw new IllegalStateException();
+		}
+		return t2;
 	}
 	
 	public void testSetexInTransaction() {
