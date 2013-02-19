@@ -222,10 +222,7 @@ public interface SortedSetCache extends Cache {
 	 * @param min min score inclusive
 	 * @param max max score inclusive
 	 * @return  the number of elements in the specified score range.
-<<<<<<< HEAD
 	 * @see #zcount(String, String, String)
-=======
->>>>>>> 752fc6b123c6df3c731d2d456b2984da6ac38b39
 	 */
 	Long zcount(String key, double min, double max);
 	
