@@ -22,7 +22,8 @@ public class RedisCacheMain {
 	private static void init() {
 		boolean isShard = true;
 		int timeout = 3000;
-		rc = new RedisCache(isShard, timeout, "localhost:6379", 1);
+//		rc = new RedisCache(isShard, timeout, "10.28.176.14:6379", 2);
+		rc = new RedisCache(isShard, timeout, "localhost:6379", 2);
 	}
 	
 	public static void before() {
@@ -64,7 +65,7 @@ public class RedisCacheMain {
 	
 	public void testTransactionInHighConcurrency() {
 		ScheduledExecutorService ses = Executors.newScheduledThreadPool(10);
-		ses.scheduleAtFixedRate(new TransactionLoadWorker(), 1000, 100, TimeUnit.MILLISECONDS);
+		ses.scheduleAtFixedRate(new TransactionLoadWorker(), 1000, 1, TimeUnit.MILLISECONDS);
 		
 		for (int i = 0; i < 1000; i++) {
 			before();
@@ -129,6 +130,7 @@ public class RedisCacheMain {
 		Transaction tx = null;
 		try {
 			tx = rc.beginTransaction(lockKey);
+//			tx = rc.beginTransaction();
 			rc.setex(lockKey, ttlSeconds, "1");
 			List<Object> result = tx.commit();
 			return result != null && result.size() > 0;
@@ -162,6 +164,7 @@ public class RedisCacheMain {
 		Transaction tx = null;
 		try {
 			tx = rc.beginTransaction(key);
+//			tx = rc.beginTransaction();
 			rc.hmset(key, hash);
 			rc.expire(key, 70);
 			List<Object> list = tx.commit();
