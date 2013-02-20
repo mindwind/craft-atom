@@ -21,6 +21,7 @@
 		<module>craft-atom-protocol-http</module>
 		<module>craft-atom-test</module>
 		<module>craft-atom-protocol-textline</module>
+		<module>craft-atom-io</module>
 	</modules>
 
 	<properties>
