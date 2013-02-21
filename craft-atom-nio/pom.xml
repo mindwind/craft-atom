@@ -12,8 +12,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
+			<groupId>org.craft.atom</groupId>
+			<artifactId>craft-atom-io</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 </project>

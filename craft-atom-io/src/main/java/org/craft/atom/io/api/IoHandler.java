@@ -55,5 +55,5 @@ public interface IoHandler {
 	 * @param channel
 	 * @param cause
 	 */
-	void channelException(Channel<byte[]> channel, Throwable cause);
+	void channelThrown(Channel<byte[]> channel, Throwable cause);
 }

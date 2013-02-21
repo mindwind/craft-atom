@@ -6,7 +6,7 @@ import org.craft.atom.nio.PartialOrderedEventDispatcher;
 /**
  * Event dispatcher dispatch all I/O events to {@link Handler}
  *
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, 2011-12-15
  * @see PartialOrderedEventDispatcher
  */

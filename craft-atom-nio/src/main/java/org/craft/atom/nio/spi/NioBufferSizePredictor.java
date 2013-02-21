@@ -1,14 +1,14 @@
 package org.craft.atom.nio.spi;
 
 /**
- * Predicts the size number.
+ * Predicts the nio buffer size.
  * <p>
- * Usually be used predict buffer size allocation, More accurate the prediction is, more effective the memory utilization will be.
+ * Predict buffer size allocation, More accurate the prediction is, more effective the memory utilization will be.
  *
  * @author mindwind
  * @version 1.0, Jan 25, 2013
  */
-public interface SizePredictor {
+public interface NioBufferSizePredictor {
 	
 	/**
 	 * Predicts the size of next operaion.

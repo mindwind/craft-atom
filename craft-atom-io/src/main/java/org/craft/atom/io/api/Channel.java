@@ -1,7 +1,5 @@
 package org.craft.atom.io.api;
 
-
-
 /**
  * A nexus for I/O operations.
  *
@@ -61,4 +59,41 @@ public interface Channel<D> {
      * @return <tt>true</tt> if, and only if, this channel is open
      */
 	boolean isOpen();
+	
+	/**
+	 * Returns the value of the user-defined attribute of this session.
+	 * 
+	 * @param key
+	 *            the key of the attribute, can not be <tt>null</tt>
+	 * @return <tt>null</tt> if there is no attribute with the specified key
+	 */
+	Object getAttribute(Object key);
+    
+	/**
+	 * Sets a user-defined attribute.
+	 * 
+	 * @param key
+	 *            the key of the attribute , can not be <tt>null</tt>
+	 * @param value
+	 *            the value of the attribute, can not be <tt>null</tt>
+	 * @return The old value of the attribute. <tt>null</tt> if it is new.
+	 */
+	Object setAttribute(Object key, Object value);
+
+	/**
+	 * Remove a user-defined attribute.
+	 * 
+	 * @param key
+	 *            the key of the attribute , can not be <tt>null</tt>
+	 */
+	void removeAttribute(Object key);
+    
+	/**
+	 * Returns <tt>true</tt> if this session contains the attribute with the specified <tt>key</tt>.
+	 * 
+	 * @param key
+	 *            the key of the attribute , can not be <tt>null</tt>
+	 * @return
+	 */
+	boolean containsAttribute(Object key);
 }
