@@ -52,13 +52,6 @@ public class NioUdpByteChannel extends NioByteChannel {
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
-	
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[id=").append(id).append(" ").append(localAddress).append(" -> ").append(remoteAddress).append("]");
-		return builder.toString();
-	}
 
 	public String toFullString() {
 		return String
