@@ -153,13 +153,6 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 		return predictor;
 	}
 	
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[id=").append(id).append(" ").append(remoteAddress).append(" -> ").append(localAddress).append("]");
-		return builder.toString();
-	}
-	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
 	protected void close0() throws IOException { /* override this */ }

@@ -50,5 +50,23 @@ public class NioUdpByteChannel extends NioByteChannel {
 	protected SelectableChannel innerChannel() {
 		return datagramChannel;
 	}
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[id=").append(id).append(" ").append(localAddress).append(" -> ").append(remoteAddress).append("]");
+		return builder.toString();
+	}
+
+	public String toFullString() {
+		return String
+				.format("NioUdpByteChannel [datagramChannel=%s, localAddress=%s, remoteAddress=%s, selectionKey=%s, predictor=%s, lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s]",
+						datagramChannel, localAddress, remoteAddress,
+						selectionKey, predictor, lastIoTime, minReadBufferSize,
+						defaultReadBufferSize, maxReadBufferSize,
+						maxWriteBufferSize, id, attributes, state);
+	}
 
 }

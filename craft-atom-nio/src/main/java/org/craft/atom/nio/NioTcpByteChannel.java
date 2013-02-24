@@ -64,6 +64,13 @@ public class NioTcpByteChannel extends NioByteChannel {
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("[id=").append(id).append(" ").append(remoteAddress).append(" -> ").append(localAddress).append("]");
+		return builder.toString();
+	}
 
 	public String toFullString() {
 		return String
