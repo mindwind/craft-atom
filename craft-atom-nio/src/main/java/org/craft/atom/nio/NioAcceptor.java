@@ -22,7 +22,7 @@ import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.api.NioAcceptorConfig;
 import org.craft.atom.nio.api.NioTcpAcceptor;
 import org.craft.atom.nio.api.NioUdpAcceptor;
-import org.craft.atom.nio.spi.NioBufferSizePredictor;
+import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
@@ -69,7 +69,7 @@ abstract public class NioAcceptor extends NioReactor {
 	 * @param handler
 	 */
 	public NioAcceptor(IoHandler handler) {
-		this(handler, new NioAcceptorConfig(), new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictor());
+		this(handler, new NioAcceptorConfig(), new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictorFactory());
 	}
 	
 	/**
@@ -79,7 +79,7 @@ abstract public class NioAcceptor extends NioReactor {
 	 * @param config
 	 */
 	public NioAcceptor(IoHandler handler, NioAcceptorConfig config) {
-		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictor());
+		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictorFactory());
 	}
 	
 	/**
@@ -90,7 +90,7 @@ abstract public class NioAcceptor extends NioReactor {
 	 * @param dispatcher
 	 */
 	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher) {
-		this(handler, config, dispatcher, new NioAdaptiveBufferSizePredictor());
+		this(handler, config, dispatcher, new NioAdaptiveBufferSizePredictorFactory());
 	}
 	
 	/**
@@ -101,7 +101,7 @@ abstract public class NioAcceptor extends NioReactor {
 	 * @param dispatcher
 	 * @param predictor
 	 */
-	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictor predictor) {
+	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory) {
 		if (handler == null) {
 			throw new IllegalArgumentException("Handler should not be null!");
 		}
@@ -109,7 +109,7 @@ abstract public class NioAcceptor extends NioReactor {
 		this.handler = handler;
 		this.config = (config == null ? new NioAcceptorConfig() : config);
 		this.dispatcher = dispatcher;
-		this.predictor = predictor;
+		this.predictorFactory = predictorFactory;
 		this.pool = new NioProcessorPool(config, handler, dispatcher);
 	}
 	
@@ -154,7 +154,7 @@ abstract public class NioAcceptor extends NioReactor {
 	 * @param otherLocalAddresses
 	 */
 	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
-		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictor(), firstLocalAddress, otherLocalAddresses);
+		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictorFactory(), firstLocalAddress, otherLocalAddresses);
 	}
 	
 	/**
@@ -167,8 +167,8 @@ abstract public class NioAcceptor extends NioReactor {
 	 * @param firstLocalAddress
 	 * @param otherLocalAddresses
 	 */
-	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictor predictor, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
-		this(handler, config, dispatcher, predictor);
+	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
+		this(handler, config, dispatcher, predictorFactory);
 		
 		try {
 			init();
@@ -506,10 +506,10 @@ abstract public class NioAcceptor extends NioReactor {
 	@Override
 	public String toString() {
 		return String
-				.format("NioAcceptor [selector=%s, selectable=%s, config=%s, pool=%s, lock=%s, endFlag=%s, exception=%s, bindAddresses=%s, unbindAddresses=%s, boundmap=%s, handler=%s, dispatcher=%s, predictor=%s]",
+				.format("NioAcceptor [selector=%s, selectable=%s, config=%s, pool=%s, lock=%s, endFlag=%s, exception=%s, bindAddresses=%s, unbindAddresses=%s, boundmap=%s, handler=%s, dispatcher=%s, predictorFactory=%s]",
 						selector, selectable, config, pool, lock, endFlag,
 						exception, bindAddresses, unbindAddresses, boundmap,
-						handler, dispatcher, predictor);
+						handler, dispatcher, predictorFactory);
 	}
 
 }

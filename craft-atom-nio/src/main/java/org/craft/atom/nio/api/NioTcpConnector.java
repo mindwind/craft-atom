@@ -21,7 +21,7 @@ import org.craft.atom.nio.NioByteChannel;
 import org.craft.atom.nio.NioConnector;
 import org.craft.atom.nio.NioProcessor;
 import org.craft.atom.nio.NioTcpByteChannel;
-import org.craft.atom.nio.spi.NioBufferSizePredictor;
+import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
@@ -52,8 +52,8 @@ public class NioTcpConnector extends NioConnector {
 		super(handler, config, dispatcher);
 	}
 
-	public NioTcpConnector(IoHandler handler, NioConnectorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictor predictor) {
-		super(handler, config, dispatcher, predictor);
+	public NioTcpConnector(IoHandler handler, NioConnectorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory) {
+		super(handler, config, dispatcher, predictorFactory);
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -304,7 +304,7 @@ public class NioTcpConnector extends NioConnector {
 
 		@Override
 		public Channel<byte[]> call() throws Exception {
-			NioByteChannel channel = new NioTcpByteChannel(socketChannel, config, predictor);
+			NioByteChannel channel = new NioTcpByteChannel(socketChannel, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()));
 			NioProcessor processor = pool.pick(channel);
 			processor.setProtocol(IoProtocol.TCP);
 			channel.setProcessor(processor);

@@ -13,7 +13,7 @@ import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.NioAcceptor;
 import org.craft.atom.nio.NioByteChannel;
 import org.craft.atom.nio.NioTcpByteChannel;
-import org.craft.atom.nio.spi.NioBufferSizePredictor;
+import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
@@ -44,8 +44,8 @@ public class NioTcpAcceptor extends NioAcceptor {
 		super(handler, config, firstLocalAddress, otherLocalAddresses);
 	}
 
-	public NioTcpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictor predictor, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
-		super(handler, config, dispatcher, predictor, firstLocalAddress, otherLocalAddresses);
+	public NioTcpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
+		super(handler, config, dispatcher, predictorFactory, firstLocalAddress, otherLocalAddresses);
 	}
 	
 	public NioTcpAcceptor(IoHandler handler) {
@@ -60,8 +60,8 @@ public class NioTcpAcceptor extends NioAcceptor {
 		super(handler, config, dispatcher);
 	}
 
-	public NioTcpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictor predictor) {
-		super(handler, config, dispatcher, predictor);
+	public NioTcpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory) {
+		super(handler, config, dispatcher, predictorFactory);
 	}
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ public class NioTcpAcceptor extends NioAcceptor {
 			}
 		}
 		
-		NioByteChannel channel = new NioTcpByteChannel(sc, config, predictor);
+		NioByteChannel channel = new NioTcpByteChannel(sc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()));
 		return channel;
 	}
 

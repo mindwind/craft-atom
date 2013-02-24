@@ -46,13 +46,13 @@ public class NioProcessor extends NioReactor {
 	/** Flush spin count */
 	private static final long FLUSH_SPIN_COUNT = 256;
 	
-	/** A Session queue containing the newly created sessions */
+	/** A channel queue containing the newly created channel */
 	private final Queue<NioByteChannel> newChannels = new ConcurrentLinkedQueue<NioByteChannel>();
 	
-	/** A queue used to store the sessions to be flushed */
+	/** A queue used to store the channel to be flushed */
     private final Queue<NioByteChannel> flushingChannels= new ConcurrentLinkedQueue<NioByteChannel>();
     
-    /** A queue used to store the sessions to be closed */
+    /** A queue used to store the channel to be closed */
     private final Queue<NioByteChannel> closingChannels = new ConcurrentLinkedQueue<NioByteChannel>();
     
     /** UDP channel holders */
@@ -88,7 +88,7 @@ public class NioProcessor extends NioReactor {
 	/**
 	 * Adds a nio channel to processor's new channel queue, so that processor can process I/O operations associated this channel.
 	 * 
-	 * @param session
+	 * @param channel
 	 */
 	public void add(NioByteChannel channel) {
 		if (this.shutdown) {
@@ -131,7 +131,7 @@ public class NioProcessor extends NioReactor {
 	}
 	
 	private void shutdown0() throws IOException {
-		// close all the session within this processor
+		// close all the channel within this processor
 		this.closingChannels.addAll(newChannels);
 		newChannels.clear();
 		this.closingChannels.addAll(flushingChannels);
@@ -281,6 +281,7 @@ public class NioProcessor extends NioReactor {
 	private void read(NioByteChannel channel) {
 		int bufferSize = channel.getPredictor().next();
 		ByteBuffer buf = allocator.allocate(bufferSize);
+		if (LOG.isDebugEnabled()) { LOG.debug("Predict buffer size=" + bufferSize + ", allocate buffer=" + buf); }
 		
 		int readBytes = 0;
 		try {
@@ -290,12 +291,12 @@ public class NioProcessor extends NioReactor {
 				readBytes = readUdp(channel, buf);
 			}
 		} catch (Throwable t) {
-			LOG.error("catch read exception and fire it, channel=" + channel, t);
+			LOG.error("Catch read exception and fire it, channel=" + channel, t);
 
 			// fire exception caught event
 			fireChannelThrown(channel, t);
 			
-			// if it is IO exception close session avoid infinite loop.
+			// if it is IO exception close channel avoid infinite loop.
 			if (t instanceof IOException) {
 				asyClose(channel);
 			}
@@ -319,7 +320,7 @@ public class NioProcessor extends NioReactor {
 			fireChannelRead(channel, buf, readBytes);
 		}
 
-		// read end-of-stream, remote peer may close channel so close session.
+		// read end-of-stream, remote peer may close channel so close channel.
 		if (ret < 0) {
 			asyClose(channel);
 		}
@@ -406,7 +407,7 @@ public class NioProcessor extends NioReactor {
 				// fire channel thrown event 
 				fireChannelThrown(channel, t);
 				
-				// if it is IO exception close session avoid infinite loop.
+				// if it is IO exception close channel avoid infinite loop.
 				if (t instanceof IOException) {
 					asyClose(channel);
 				}
@@ -661,20 +662,20 @@ public class NioProcessor extends NioReactor {
 				try {
 					int selected = select();
 					
-					// register new sessions
+					// register new channels
 					register();
 					
 					if (selected > 0) {
                         process();
                     }
 					
-					// flush sessions
+					// flush channels
 					flush();
 					
-					// close sessions
+					// close channels
 					close();
 					
-					// notify idle sessions
+					// notify idle channels
 					notifyIdle(System.currentTimeMillis());
 				} catch (Exception e) {
 					LOG.error("Unexpected exception caught while process", e);

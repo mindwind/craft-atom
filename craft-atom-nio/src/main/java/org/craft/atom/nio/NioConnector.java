@@ -14,7 +14,7 @@ import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.api.NioConnectorConfig;
 import org.craft.atom.nio.api.NioTcpConnector;
-import org.craft.atom.nio.spi.NioBufferSizePredictor;
+import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
@@ -56,7 +56,7 @@ abstract public class NioConnector extends NioReactor {
 	 * @param config
 	 */
 	public NioConnector(IoHandler handler, NioConnectorConfig config) {
-		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictor());
+		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictorFactory());
 	}
 	
 	/**
@@ -67,7 +67,7 @@ abstract public class NioConnector extends NioReactor {
 	 * @param dispatcher
 	 */
 	public NioConnector(IoHandler handler, NioConnectorConfig config, NioChannelEventDispatcher dispatcher) {
-		this(handler, config, dispatcher, new NioAdaptiveBufferSizePredictor());
+		this(handler, config, dispatcher, new NioAdaptiveBufferSizePredictorFactory());
 	}
 	
 	/**
@@ -78,7 +78,7 @@ abstract public class NioConnector extends NioReactor {
 	 * @param dispatcher
 	 * @param predictor
 	 */
-	public NioConnector(IoHandler handler, NioConnectorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictor predictor) {
+	public NioConnector(IoHandler handler, NioConnectorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory) {
 		if (handler == null) {
 			throw new IllegalArgumentException("Handler should not be null!");
 		}
@@ -86,7 +86,7 @@ abstract public class NioConnector extends NioReactor {
 		this.config = (config == null ? new NioConnectorConfig() : config);
 		this.handler = handler;
 		this.dispatcher = dispatcher;
-		this.predictor = predictor;
+		this.predictorFactory = predictorFactory;
 		this.pool = new NioProcessorPool(config, handler, dispatcher);
 		try {
 			init();

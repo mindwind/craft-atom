@@ -1,7 +1,7 @@
 package org.craft.atom.nio;
 
 import org.craft.atom.io.IoHandler;
-import org.craft.atom.nio.spi.NioBufferSizePredictor;
+import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
@@ -18,7 +18,7 @@ abstract public class NioReactor {
 
 	protected IoHandler handler;
 	protected NioChannelEventDispatcher dispatcher;
-	protected NioBufferSizePredictor predictor;
+	protected NioBufferSizePredictorFactory predictorFactory;
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
 
@@ -38,19 +38,17 @@ abstract public class NioReactor {
 		this.dispatcher = dispatcher;
 	}
 
-	public NioBufferSizePredictor getPredictor() {
-		return predictor;
+	public NioBufferSizePredictorFactory getPredictorFactory() {
+		return predictorFactory;
 	}
 
-	public void setPredictor(NioBufferSizePredictor predictor) {
-		this.predictor = predictor;
+	public void setPredictorFactory(NioBufferSizePredictorFactory predictorFactory) {
+		this.predictorFactory = predictorFactory;
 	}
 
 	@Override
 	public String toString() {
-		return String.format(
-				"NioReactor [handler=%s, dispatcher=%s, predictor=%s]",
-				handler, dispatcher, predictor);
+		return String.format("NioReactor [handler=%s, dispatcher=%s, predictorFactory=%s]", handler, dispatcher, predictorFactory);
 	}
 
 }

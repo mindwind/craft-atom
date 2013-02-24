@@ -9,7 +9,7 @@ import org.craft.atom.io.Channel;
  */
 public class NioConnectorHandler extends AbstractIoHandler {
 	
-	private static final byte EXCLAMATION_MARK = 33;   // char - !
+	private static final byte LF = 10; 
 	private StringBuilder buf = new StringBuilder();
 	
 	@Override
@@ -20,7 +20,7 @@ public class NioConnectorHandler extends AbstractIoHandler {
 			buf.append((char) b);
 		}
 		
-		if (bytes[bytes.length - 1] == EXCLAMATION_MARK) {
+		if (bytes[bytes.length - 1] == LF) {
 			byte[] echoBytes = buf.toString().getBytes();
 			System.out.println("\nEcho received bytes size=" + echoBytes.length + "\n");
 			buf = new StringBuilder();

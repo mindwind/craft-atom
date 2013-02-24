@@ -11,7 +11,7 @@ import org.craft.atom.nio.NioAcceptor;
 import org.craft.atom.nio.NioByteChannel;
 import org.craft.atom.nio.NioProcessor;
 import org.craft.atom.nio.NioUdpByteChannel;
-import org.craft.atom.nio.spi.NioBufferSizePredictor;
+import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
@@ -38,8 +38,8 @@ public class NioUdpAcceptor extends NioAcceptor {
 		super(handler, config, firstLocalAddress, otherLocalAddresses);
 	}
 
-	public NioUdpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictor predictor, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
-		super(handler, config, dispatcher, predictor, firstLocalAddress, otherLocalAddresses);
+	public NioUdpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
+		super(handler, config, dispatcher, predictorFactory, firstLocalAddress, otherLocalAddresses);
 	}
 	
 	public NioUdpAcceptor(IoHandler handler) {
@@ -54,8 +54,8 @@ public class NioUdpAcceptor extends NioAcceptor {
 		super(handler, config, dispatcher);
 	}
 
-	public NioUdpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictor predictor) {
-		super(handler, config, dispatcher, predictor);
+	public NioUdpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory) {
+		super(handler, config, dispatcher, predictorFactory);
 	}
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ public class NioUdpAcceptor extends NioAcceptor {
 		dc.socket().bind(address);
 		boundmap.put(address, dc);
 		
-		NioByteChannel channel = new NioUdpByteChannel(dc, config, predictor);
+		NioByteChannel channel = new NioUdpByteChannel(dc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()));
 		NioProcessor processor = pool.pick(channel);
 		processor.setProtocol(IoProtocol.UDP);
 		channel.setProcessor(processor);

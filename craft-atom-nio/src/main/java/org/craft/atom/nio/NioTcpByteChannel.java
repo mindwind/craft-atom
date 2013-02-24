@@ -64,19 +64,12 @@ public class NioTcpByteChannel extends NioByteChannel {
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
-
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[id=").append(id).append(" ").append(remoteAddress).append(" <-> ").append(localAddress).append("]");
-		return builder.toString();
-	}
 	
 	public String toFullString() {
 		return String
-				.format("NioTcpByteChannel [socketChannel=%s, localAddress=%s, remoteAddress=%s, selectionKey=%s, lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s]",
+				.format("NioTcpByteChannel [socketChannel=%s, localAddress=%s, remoteAddress=%s, selectionKey=%s, predictor=%s, lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s]",
 						socketChannel, localAddress, remoteAddress,
-						selectionKey, lastIoTime, minReadBufferSize,
+						selectionKey, predictor, lastIoTime, minReadBufferSize,
 						defaultReadBufferSize, maxReadBufferSize,
 						maxWriteBufferSize, id, attributes, state);
 	}
