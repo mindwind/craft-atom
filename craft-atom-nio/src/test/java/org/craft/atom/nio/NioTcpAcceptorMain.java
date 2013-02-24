@@ -30,7 +30,7 @@ public class NioTcpAcceptorMain {
 	}
 	
     public void testDuplicateBind() throws IOException {
-		NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioEchoHandler(), PORT);
+		NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), PORT);
 		
 		Assert.assertEquals(1, acceptor.getBoundAddresses().size());
 		
@@ -44,7 +44,7 @@ public class NioTcpAcceptorMain {
 	}
 	
     public void testDuplicateUnbind() throws IOException {
-    	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioEchoHandler(), PORT);
+    	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), PORT);
 
         // this should succeed
         acceptor.unbind(PORT);
@@ -57,7 +57,7 @@ public class NioTcpAcceptorMain {
     }
     
     public void testBindAndUnbindManyTimes(int times) throws IOException {
-    	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioEchoHandler(), PORT);
+    	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), PORT);
 
         for (int i = 0; i < times; i++) {
             acceptor.unbind(PORT);

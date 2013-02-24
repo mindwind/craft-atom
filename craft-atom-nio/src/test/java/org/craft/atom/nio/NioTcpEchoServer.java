@@ -9,7 +9,7 @@ import org.craft.atom.nio.api.NioTcpAcceptor;
 public class NioTcpEchoServer {
 	
 	public static void main(String[] args) {
-		new NioTcpAcceptor(new NioEchoHandler(), 7777);
+		new NioTcpAcceptor(new NioAcceptorHandler(), 7777);
 	}
 	
 }

@@ -23,7 +23,7 @@ public class NioTcpConnectorMain {
 	}
 	
 	public void testConnectTimeout() {
-		NioTcpConnector connector =  new NioTcpConnector(new NioNotifyHandler());
+		NioTcpConnector connector =  new NioTcpConnector(new NioConnectorHandler());
 		Future<Channel<byte[]>> future = connector.connect("127.0.0.1", 7777);
 		try {
 			future.get(5, TimeUnit.SECONDS);

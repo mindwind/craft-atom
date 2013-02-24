@@ -74,7 +74,7 @@ public class NioProcessor extends NioReactor {
 		this.config = config;
 		this.handler = handler;
 		this.dispatcher = dispatcher;
-		this.executor = Executors.newCachedThreadPool(new NamedThreadFactory("craft-atom-nio-processor-"));
+		this.executor = Executors.newCachedThreadPool(new NamedThreadFactory("craft-atom-nio-processor"));
 		
 		try {
 			selector = Selector.open();
@@ -252,6 +252,8 @@ public class NioProcessor extends NioReactor {
 		Iterator<SelectionKey> it = selector.selectedKeys().iterator();
 		while (it.hasNext()) {
 			NioByteChannel channel = (NioByteChannel) it.next().attachment();
+			if (LOG.isDebugEnabled()) { LOG.debug("Event process on channel=" + channel); }
+			
 			if (channel.isValid()) {
 				process0(channel);
 			} else {

@@ -38,7 +38,7 @@ public class NioTcpInteractiveMain {
 	}
 	
     public void setUp() throws Exception {
-         connector =  new NioTcpConnector(new NioNotifyHandler());
+         connector =  new NioTcpConnector(new NioConnectorHandler());
     }
     
     public void testHello() throws Exception {
@@ -67,14 +67,16 @@ public class NioTcpInteractiveMain {
     }
     
     private void test(String desc, String msg, int port) throws Exception {
-    	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioEchoHandler(), port);
-    	Future<Channel<byte[]>> future = connector.connect("127.0.0.1", port);
+    	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), port);
+    	Future<Channel<byte[]>> future = connector.connect("192.168.1.102", port);
     	Channel<byte[]> channel = future.get();
     	synchronized(channel) {
+    		long s = System.currentTimeMillis();
     		channel.write(msg.getBytes());
     		channel.wait();
+    		long e = System.currentTimeMillis();
     		acceptor.shutdown();
-    		System.out.println("Test case=" + desc + " finish!\n");
+    		System.out.println("Test case=" + desc + " finished, elapse: " + (e - s) + "ms \n");
     	}
     }
     
