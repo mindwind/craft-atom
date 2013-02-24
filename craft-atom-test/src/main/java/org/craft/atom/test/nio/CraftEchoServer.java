@@ -2,8 +2,8 @@ package org.craft.atom.test.nio;
 
 import java.io.IOException;
 
-import org.craft.atom.nio.api.AcceptorConfig;
-import org.craft.atom.nio.api.TcpAcceptor;
+import org.craft.atom.nio.api.NioAcceptorConfig;
+import org.craft.atom.nio.api.NioTcpAcceptor;
 
 /**
  * @author Hu Feng
@@ -34,12 +34,12 @@ public class CraftEchoServer {
 			executorPool = Integer.toString(Runtime.getRuntime().availableProcessors());
 		}
 		
-		AcceptorConfig ac = new AcceptorConfig();
-		ac.setReadBufferSize(Integer.parseInt(rbs));
+		NioAcceptorConfig ac = new NioAcceptorConfig();
+		ac.setDefaultReadBufferSize(Integer.parseInt(rbs));
 		ac.setReadWritefair(Boolean.parseBoolean(fairMode));
 		ac.setProcessorPoolSize(Integer.parseInt(ioPool));
 		ac.setExecutorSize(Integer.parseInt(executorPool));
-		new TcpAcceptor(new CraftEchoHandler(), ac, PORT);
+		new NioTcpAcceptor(new CraftEchoIoHandler(), ac, PORT);
 		System.out.println("craft echo server listening on port=" + PORT);
 	}
 	
