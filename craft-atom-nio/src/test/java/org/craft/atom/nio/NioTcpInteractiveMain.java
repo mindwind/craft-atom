@@ -68,7 +68,7 @@ public class NioTcpInteractiveMain {
     
     private void test(String desc, String msg, int port) throws Exception {
     	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), port);
-    	Future<Channel<byte[]>> future = connector.connect("192.168.1.102", port);
+    	Future<Channel<byte[]>> future = connector.connect("127.0.0.1", port);
     	Channel<byte[]> channel = future.get();
     	synchronized(channel) {
     		long s = System.currentTimeMillis();

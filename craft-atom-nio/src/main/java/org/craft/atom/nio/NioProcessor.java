@@ -252,8 +252,6 @@ public class NioProcessor extends NioReactor {
 		Iterator<SelectionKey> it = selector.selectedKeys().iterator();
 		while (it.hasNext()) {
 			NioByteChannel channel = (NioByteChannel) it.next().attachment();
-			if (LOG.isDebugEnabled()) { LOG.debug("Event process on channel=" + channel); }
-			
 			if (channel.isValid()) {
 				process0(channel);
 			} else {
@@ -269,11 +267,13 @@ public class NioProcessor extends NioReactor {
 		
 		// Process reads
 		if (channel.isOpen() && channel.isReadable()) {
+			if (LOG.isDebugEnabled()) { LOG.debug("Read event process on channel=" + channel); }
 			read(channel);
 		}
 
 		// Process writes
 		if (channel.isOpen() && channel.isWritable()) {
+			if (LOG.isDebugEnabled()) { LOG.debug("Write event process on channel=" + channel); }
 			asyWrite(channel);
 		}
 	}
@@ -492,7 +492,7 @@ public class NioProcessor extends NioReactor {
 
 			// 0 byte be written, maybe kernel buffer is full so we re-interest in writing and later flush it.
 			if (localWrittenBytes == 0) {
-				if (LOG.isDebugEnabled()) { LOG.debug("0 byte be written, maybe kernel buffer is full so we re-interest in writing and later flush it"); }
+				if (LOG.isDebugEnabled()) { LOG.debug("Zero byte be written, maybe kernel buffer is full so we re-interest in writing and later flush it, channel=" + channel); }
 				
 				setInterestedInWrite(channel, true);
 				flushingChannels.add(channel);
@@ -501,7 +501,7 @@ public class NioProcessor extends NioReactor {
 			
 			// The buffer isn't empty(bytes to flush more than max bytes), we re-interest in writing and later flush it.
 			if (localWrittenBytes > 0 && buf.hasRemaining()) {
-				if (LOG.isDebugEnabled()) { LOG.debug("The buffer isn't empty(bytes to flush more than max bytes), we re-interest in writing and later flush it"); }
+				if (LOG.isDebugEnabled()) { LOG.debug("The buffer isn't empty(bytes to flush more than max bytes), we re-interest in writing and later flush it, channel=" + channel); }
 				
 				setInterestedInWrite(channel, true);
 				flushingChannels.add(channel);
@@ -511,7 +511,7 @@ public class NioProcessor extends NioReactor {
 			// Wrote too much, so we re-interest in writing and later flush other bytes.
 			if (writtenBytes >= maxWrittenBytes && buf.hasRemaining()) {
 				if (LOG.isDebugEnabled()) {
-					LOG.debug("Wrote too much, so we re-interest in writing and later flush other bytes");
+					LOG.debug("Wrote too much, so we re-interest in writing and later flush other bytes, channel=" + channel);
 				}
 				
 				setInterestedInWrite(channel, true);
