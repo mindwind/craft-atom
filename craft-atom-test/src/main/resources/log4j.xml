@@ -21,11 +21,19 @@
 	
 	<category name="org.craft.atom" additivity="false">
 		<priority value="warn" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</category>
+	
+	<category name="org.apache.mina" additivity="false">
+		<priority value="warn" />
+		<appender-ref ref="console" />
 		<appender-ref ref="file" />
 	</category>
 
 	<root>
-		<priority value="warn" />
+		<priority value="debug" />
+		<appender-ref ref="console" />
 		<appender-ref ref="file" />
 	</root>
 </log4j:configuration>
