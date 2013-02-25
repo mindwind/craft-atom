@@ -1,6 +1,5 @@
 package org.craft.atom.nio;
 
-import java.net.SocketException;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SocketChannel;
 
@@ -25,11 +24,6 @@ public class TcpSession extends AbstractSession {
 		this.socketChannel = socketChannel;
 		this.localAddress = socketChannel.socket().getLocalSocketAddress();
 		this.remoteAddress = socketChannel.socket().getRemoteSocketAddress();
-		try {
-			this.socketChannel.socket().setReceiveBufferSize(config.getReadBufferSize());
-		} catch (SocketException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override
