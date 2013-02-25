@@ -27,7 +27,6 @@ public class NioUdpByteChannel extends NioByteChannel {
 		
 		this.datagramChannel = datagramChannel;
 		this.localAddress = datagramChannel.socket().getLocalSocketAddress();
-		this.predictor = predictor;
 	}
 
 	@Override
@@ -49,11 +48,11 @@ public class NioUdpByteChannel extends NioByteChannel {
 
 	public String toFullString() {
 		return String
-				.format("NioUdpByteChannel [datagramChannel=%s, localAddress=%s, remoteAddress=%s, selectionKey=%s, predictor=%s, lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s]",
+				.format("NioUdpByteChannel [datagramChannel=%s, localAddress=%s, remoteAddress=%s, selectionKey=%s, predictor=%s, lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s, channelEventSize=%s]",
 						datagramChannel, localAddress, remoteAddress,
 						selectionKey, predictor, lastIoTime, minReadBufferSize,
 						defaultReadBufferSize, maxReadBufferSize,
-						maxWriteBufferSize, id, attributes, state);
+						maxWriteBufferSize, id, attributes, state, channelEventSize);
 	}
 
 }

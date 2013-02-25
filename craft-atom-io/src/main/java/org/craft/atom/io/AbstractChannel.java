@@ -38,6 +38,30 @@ abstract public class AbstractChannel {
 		return state == ChannelState.OPEN;
 	}
 	
+	public boolean isClosing() {
+		return state == ChannelState.CLOSING;
+	}
+	
+	public boolean isClosed() {
+		return state == ChannelState.CLOSED;
+	}
+	
+	public boolean isPaused() {
+		return state == ChannelState.PAUSED;
+	}
+	
+	public void pause() {
+		state = ChannelState.PAUSED;
+	}
+	
+	public void resume() {
+		state = ChannelState.OPEN;
+	}
+	
+	public void close() {
+		state = ChannelState.CLOSED;
+	}
+	
 	public Object getAttribute(Object key) {
 		if (key == null) {
             throw new IllegalArgumentException("key can not be null");

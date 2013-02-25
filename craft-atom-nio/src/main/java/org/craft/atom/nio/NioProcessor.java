@@ -40,6 +40,8 @@ public class NioProcessor extends NioReactor {
 	
 	private static final Log LOG = LogFactory.getLog(NioProcessor.class);
 	
+	private static volatile boolean pause = false;
+	
 	/** A timeout used for the select, as we need to get out to deal with idle channel */
 	private static final long SELECT_TIMEOUT = 1000L;
 	
@@ -82,6 +84,20 @@ public class NioProcessor extends NioReactor {
             throw new RuntimeException("Fail to startup a processor", e);
         }
 	}
+    
+    // ~ ------------------------------------------------------------------------------------------------------------
+    
+    static void pause() {
+    	pause = true;
+    }
+    
+    static void resume() {
+    	pause = false;
+    }
+    
+    static boolean isPaused() {
+    	return pause;
+    }
     
     // ~ ------------------------------------------------------------------------------------------------------------
     
@@ -266,13 +282,13 @@ public class NioProcessor extends NioReactor {
 		channel.setLastIoTime(System.currentTimeMillis());
 		
 		// Process reads
-		if (channel.isOpen() && channel.isReadable()) {
+		if (channel.isReadable()) {
 			if (LOG.isDebugEnabled()) { LOG.debug("Read event process on channel=" + channel); }
 			read(channel);
 		}
 
 		// Process writes
-		if (channel.isOpen() && channel.isWritable()) {
+		if (channel.isWritable()) {
 			if (LOG.isDebugEnabled()) { LOG.debug("Write event process on channel=" + channel); }
 			asyWrite(channel);
 		}
@@ -450,8 +466,9 @@ public class NioProcessor extends NioReactor {
 			flushingChannels.add(channel);
 			return;
 		} else {
-			writeQueue.remove();
-			// fire message sent event
+			channel.afterFlush();
+			
+			// fire channel written event
 			fireChannelWritten(channel, buf);
 		}
 	}
@@ -481,9 +498,9 @@ public class NioProcessor extends NioReactor {
 			if (!buf.hasRemaining()) {
 				if (LOG.isDebugEnabled()) { LOG.debug("The buffer is all flushed, remove it from write queue"); }
 				
-				writeQueue.remove();
+				channel.afterFlush();
 				
-				// fire message sent event
+				// fire channel written event
 				fireChannelWritten(channel, buf);
 				
 				// set buf=null and the next loop if no byte buffer to write then break the loop.
@@ -624,6 +641,15 @@ public class NioProcessor extends NioReactor {
 		}
 		return channels;
 	}
+    
+    private void nap() {
+    	try {
+    		LOG.warn("Turn on processor pause signal, events over-stock size=" + NioEventCounter.getInstance().current());
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			LOG.warn("Pause interrupted", e);
+		}
+    }
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
     
@@ -661,6 +687,9 @@ public class NioProcessor extends NioReactor {
 			while (!shutdown) {
 				try {
 					int selected = select();
+					
+					// see pause signal means events over-stock, so we sleep a while.
+					if (pause) { nap(); continue; }
 					
 					// register new channels
 					register();

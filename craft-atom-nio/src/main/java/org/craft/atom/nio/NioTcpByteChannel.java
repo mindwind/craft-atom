@@ -28,7 +28,6 @@ public class NioTcpByteChannel extends NioByteChannel {
 		this.socketChannel = socketChannel;
 		this.localAddress = socketChannel.socket().getLocalSocketAddress();
 		this.remoteAddress = socketChannel.socket().getRemoteSocketAddress();
-		this.predictor = predictor;
 	}
 
 	@Override
@@ -61,11 +60,11 @@ public class NioTcpByteChannel extends NioByteChannel {
 	
 	public String toFullString() {
 		return String
-				.format("NioTcpByteChannel [socketChannel=%s, localAddress=%s, remoteAddress=%s, selectionKey=%s, predictor=%s, lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s]",
+				.format("NioTcpByteChannel [socketChannel=%s, localAddress=%s, remoteAddress=%s, selectionKey=%s, predictor=%s, lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s, channelEventSize=%s]",
 						socketChannel, localAddress, remoteAddress,
 						selectionKey, predictor, lastIoTime, minReadBufferSize,
 						defaultReadBufferSize, maxReadBufferSize,
-						maxWriteBufferSize, id, attributes, state);
+						maxWriteBufferSize, id, attributes, state, channelEventSize);
 	}
 
 }

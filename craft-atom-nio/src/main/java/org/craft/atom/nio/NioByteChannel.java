@@ -7,6 +7,7 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.craft.atom.io.AbstractIoByteChannel;
 import org.craft.atom.io.ChannelState;
@@ -25,19 +26,24 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	protected SocketAddress localAddress;
 	protected SocketAddress remoteAddress;
 	protected SelectionKey selectionKey;
-	protected NioBufferSizePredictor predictor;
+	protected NioProcessor processor;
 	
-	private Queue<ByteBuffer> writeBufferQueue = new ConcurrentLinkedQueue<ByteBuffer>();
-	private Queue<NioByteChannelEvent> eventQueue = new ConcurrentLinkedQueue<NioByteChannelEvent>();
-	private NioProcessor processor;
-	private final Object lock = new Object();
-	private volatile boolean eventProcessing = false;
+	protected final int channelEventSize;
+	protected final AtomicInteger channelEventCounter;
+	protected final NioBufferSizePredictor predictor;
+	protected final Queue<ByteBuffer> writeBufferQueue = new ConcurrentLinkedQueue<ByteBuffer>();
+	protected final Queue<NioByteChannelEvent> eventQueue = new ConcurrentLinkedQueue<NioByteChannelEvent>();
+	protected final Object lock = new Object();
+	
+	protected volatile boolean eventProcessing = false;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
 	public NioByteChannel(NioConfig config, NioBufferSizePredictor predictor) {
 		super(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize());
 		this.predictor = predictor;
+		this.channelEventSize = config.getChannelEventSize();
+		this.channelEventCounter = new AtomicInteger(0);
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -60,8 +66,14 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 			throw new IllegalStateException("Channel state is invalid, channel=" + this.toString());
 		}
 		
-		this.setLastIoTime(System.currentTimeMillis());
+		if (isPaused()) {
+			// channel paused, reject I/O operation
+			return false;
+		}
+		
+		setLastIoTime(System.currentTimeMillis());
 		getWriteBufferQueue().add(ByteBuffer.wrap(data));
+		beforeFlush();
 		processor.flush(this);
 		
 		return true;
@@ -72,6 +84,23 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
+	void beforeFlush() {
+		if (channelEventSize == 0) {
+			return;
+		}
+		
+		increseEvent();
+	}
+	
+	void afterFlush() {
+		writeBufferQueue.remove();
+		if (channelEventSize == 0) {
+			return;
+		}
+		
+		decreseEvent();
+	}
 	
 	void add(NioByteChannelEvent event) {
 		eventQueue.offer(event);
@@ -87,14 +116,6 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 		}
 		
 		return true;
-	}
-	
-	boolean isClosing() {
-		return state == ChannelState.CLOSING;
-	}
-	
-	boolean isClosed() {
-		return state == ChannelState.CLOSED;
 	}
 	
 	void setClosing() {
@@ -142,15 +163,33 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	}
 	
 	boolean isReadable() {
-		return selectionKey.isValid() && selectionKey.isReadable();
+		return isOpen() && selectionKey.isValid() && selectionKey.isReadable();
 	}
 	
 	boolean isWritable() {
-		return selectionKey.isValid() && selectionKey.isWritable();
+		return (isOpen() || isPaused()) && selectionKey.isValid() && selectionKey.isWritable();
 	}
 	
 	NioBufferSizePredictor getPredictor() {
 		return predictor;
+	}
+	
+	int increseEvent() {
+		NioEventCounter.getInstance().increse();
+		int es = channelEventCounter.incrementAndGet();
+		if (es > channelEventSize) {
+			pause();
+		}
+		return es;
+	}
+	
+	int decreseEvent() {
+		NioEventCounter.getInstance().decrese();
+		int es = channelEventCounter.decrementAndGet();
+		if (es <= channelEventSize && isPaused()) {
+			resume();
+		}
+		return es;
 	}
 	
 	@Override

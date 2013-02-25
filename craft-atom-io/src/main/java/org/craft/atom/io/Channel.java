@@ -30,7 +30,7 @@ public interface Channel<D> {
 	long getId();
 	
 	/**
-	 * Closes this channel.
+	 * Close this channel.
 	 * 
 	 * <p> After a channel is closed, any further attempt to invoke I/O
      * operations upon it will cause a exception to be thrown.
@@ -46,6 +46,36 @@ public interface Channel<D> {
 	void close();
 	
 	/**
+	 * Pause this channel.
+	 * 
+	 * <p> After a channel is paused, any further attempt to invoke I/O 
+	 * operation upon it will return <tt>null</tt> or <tt>false</tt> indicate operation fail, 
+	 * instead throw exception.
+	 * 
+	 * <p> If this channel is already paused then invoking this method has no
+     * effect.
+     *
+     * <p> This method may be invoked at any time.  If some other thread has
+     * already invoked it, however, then another invocation will block until
+     * the first invocation is complete, after which it will return without
+     * effect.
+	 */
+	void pause();
+	
+	/**
+	 * Resume this channel from paused state.
+	 * 
+	 * <p> If this channel is already paused then invoking this method has no
+     * effect.
+     * 
+     * <p> This method may be invoked at any time.  If some other thread has
+     * already invoked it, however, then another invocation will block until
+     * the first invocation is complete, after which it will return without
+     * effect.
+	 */
+	void resume();
+	
+	/**
 	 * Write some data to another peer of the channel.
 	 * 
 	 * @param data
@@ -54,11 +84,32 @@ public interface Channel<D> {
 	boolean write(D data);
 	
 	/**
-     * Tells whether or not this channel is open.  </p>
+     * Tells whether or not this channel is open. 
      *
      * @return <tt>true</tt> if, and only if, this channel is open
      */
 	boolean isOpen();
+	
+	/**
+	 * Tells whether or not this channel is in closing.
+	 * 
+	 * @return <tt>true</tt> if, and only if, this channel is in closing
+	 */
+	boolean isClosing();
+	
+	/**
+	 * Tells whether or not this channel is closed.
+	 * 
+	 * @return <tt>true</tt> if, and only if, this channel is closed
+	 */
+	boolean isClosed();
+	
+	/**
+	 * Tells whether or not this channel is paused.
+	 * 
+	 * @return <tt>true</tt> if, and only if, this channel is paused
+	 */
+	boolean isPaused();
 	
 	/**
 	 * Returns the value of the user-defined attribute of this session.

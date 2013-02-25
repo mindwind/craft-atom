@@ -19,8 +19,11 @@ abstract public class NioConfig extends IoConfig {
 	/** Processor flush read-write fair mode */
 	protected boolean readWritefair = true;
 	
-	/** Event queue size */
-	protected int eventQueueSize = Integer.MAX_VALUE;
+	/** The queued events size per channel, zero means no limit. */
+	protected int channelEventSize = 0;
+	
+	/** The total queued events size, zero means no limit.  */
+	protected int totalEventSize = 0;
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 
@@ -52,20 +55,28 @@ abstract public class NioConfig extends IoConfig {
 		this.readWritefair = readWritefair;
 	}
 
-	public int getEventQueueSize() {
-		return eventQueueSize;
+	public int getChannelEventSize() {
+		return channelEventSize;
 	}
 
-	public void setEventQueueSize(int eventQueueSize) {
-		this.eventQueueSize = eventQueueSize;
+	public void setChannelEventSize(int channelEventSize) {
+		this.channelEventSize = channelEventSize;
+	}
+
+	public int getTotalEventSize() {
+		return totalEventSize;
+	}
+
+	public void setTotalEventSize(int totalEventSize) {
+		this.totalEventSize = totalEventSize;
 	}
 
 	@Override
 	public String toString() {
 		return String
-				.format("NioConfig [processorPoolSize=%s, executorSize=%s, readWritefair=%s, eventQueueSize=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, ioTimeoutInMillis=%s]",
+				.format("NioConfig [processorPoolSize=%s, executorSize=%s, readWritefair=%s, channelEventSize=%s, totalEventSize=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, ioTimeoutInMillis=%s]",
 						processorPoolSize, executorSize, readWritefair,
-						eventQueueSize, minReadBufferSize,
+						channelEventSize, totalEventSize, minReadBufferSize,
 						defaultReadBufferSize, maxReadBufferSize,
 						ioTimeoutInMillis);
 	}
