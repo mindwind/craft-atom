@@ -34,9 +34,11 @@ public class NioTcpInteractiveMain {
 		tim.testCriticalValue98304();
 		
 		// case 5
-		tim.testCriticalValue200000();
+		for (int i = 0; i < 10; i++) {
+			tim.testCriticalValue200000();
+		}
 		
-		System.exit(0);
+//		System.exit(0);
 	}
 	
     public void setUp() throws Exception {

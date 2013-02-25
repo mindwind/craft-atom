@@ -2,7 +2,6 @@ package org.craft.atom.nio;
 
 import java.io.IOException;
 import java.net.SocketAddress;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
@@ -29,11 +28,6 @@ public class NioUdpByteChannel extends NioByteChannel {
 		this.datagramChannel = datagramChannel;
 		this.localAddress = datagramChannel.socket().getLocalSocketAddress();
 		this.predictor = predictor;
-		try {
-			this.datagramChannel.socket().setReceiveBufferSize(config.getDefaultReadBufferSize());
-		} catch (SocketException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override

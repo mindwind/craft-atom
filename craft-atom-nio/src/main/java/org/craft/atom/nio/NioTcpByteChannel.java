@@ -1,7 +1,6 @@
 package org.craft.atom.nio;
 
 import java.io.IOException;
-import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
@@ -30,11 +29,6 @@ public class NioTcpByteChannel extends NioByteChannel {
 		this.localAddress = socketChannel.socket().getLocalSocketAddress();
 		this.remoteAddress = socketChannel.socket().getRemoteSocketAddress();
 		this.predictor = predictor;
-		try {
-			this.socketChannel.socket().setReceiveBufferSize(config.getDefaultReadBufferSize());
-		} catch (SocketException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	@Override
