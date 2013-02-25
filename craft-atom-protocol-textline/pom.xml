@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>craft-atom</artifactId>
 		<groupId>org.craft.atom</groupId>
-		<version>1.1.6-SNAPSHOT</version>
+		<version>1.1.6</version>
 	</parent>
 	<artifactId>craft-atom-protocol-textline</artifactId>
 	<name>${project.artifactId}</name>
