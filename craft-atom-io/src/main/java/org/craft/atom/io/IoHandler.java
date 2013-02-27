@@ -41,6 +41,14 @@ public interface IoHandler {
 	void channelRead(Channel<byte[]> channel, byte[] bytes);
 	
 	/**
+	 * Invoked when channel would flush out some bytes.
+	 * 
+	 * @param channel
+	 * @param bytes
+	 */
+	void channelFlush(Channel<byte[]> channel, byte[] bytes);
+	
+	/**
 	 * Invoked when channel has written some bytes.
 	 * 
 	 * @param channel

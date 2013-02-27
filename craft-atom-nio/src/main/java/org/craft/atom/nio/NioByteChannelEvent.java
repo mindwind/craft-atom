@@ -55,6 +55,9 @@ public class NioByteChannelEvent extends AbstractNioByteChannelEvent {
 		case CHANNEL_READ:
 			handler.channelRead(channel, (byte[]) parameter);
 			break;
+		case CHANNEL_FLUSH:
+			handler.channelFlush(channel, (byte[]) parameter);
+			break;
 		case CHANNEL_WRITTEN:
 			handler.channelWritten(channel, (byte[]) parameter);
 			break;

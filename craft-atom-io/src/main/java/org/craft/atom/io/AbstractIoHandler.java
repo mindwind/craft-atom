@@ -37,13 +37,18 @@ abstract public class AbstractIoHandler implements IoHandler {
 	}
 
 	@Override
+	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {
+		if (LOG.isDebugEnabled()) { LOG.debug("Flush bytes, channel=" + channel + ", bytes=" + Arrays.toString(bytes)); }
+	}
+
+	@Override
 	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {
 		if (LOG.isDebugEnabled()) { LOG.debug("Written bytes, channel=" + channel + ", bytes=" + Arrays.toString(bytes)); }	
 	}
 
 	@Override
 	public void channelThrown(Channel<byte[]> channel, Throwable cause) {
-		LOG.warn("Exception channel=" + channel, cause);
+		LOG.warn("Thrown exception, channel=" + channel, cause);
 	}
 	
 }

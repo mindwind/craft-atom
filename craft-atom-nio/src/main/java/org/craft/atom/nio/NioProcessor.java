@@ -439,6 +439,8 @@ public class NioProcessor extends NioReactor {
 			return;
 		}
 		
+		// fire channel flush event
+		fireChannelFlush(channel, buf);
 		write(channel, buf, buf.remaining());
 		
 		if (buf.hasRemaining()) {
@@ -464,6 +466,9 @@ public class NioProcessor extends NioReactor {
 				buf = writeQueue.peek();
 				if (buf == null) {
 					return;
+				} else {
+					// fire channel flush event
+					fireChannelFlush(channel, buf);
 				}
 			}
 			
@@ -616,6 +621,10 @@ public class NioProcessor extends NioReactor {
 		byte[] barr = new byte[length];
 		System.arraycopy(buf.array(), 0, barr, 0, length);
 		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_READ, channel, handler, barr));
+	}
+	
+	private void fireChannelFlush(NioByteChannel channel, ByteBuffer buf) {
+		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_FLUSH, channel, handler, buf.array()));
 	}
 	
 	private void fireChannelWritten(NioByteChannel channel, ByteBuffer buf) {

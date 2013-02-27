@@ -17,6 +17,9 @@ public enum ChannelEventType {
 	/** When channel has read some data, fire this event */
 	CHANNEL_READ,
 	
+	/** When channel would flush out data in it, fire this event */
+	CHANNEL_FLUSH,
+	
 	/** When channel has written some data, fire this event */
 	CHANNEL_WRITTEN,
 	
