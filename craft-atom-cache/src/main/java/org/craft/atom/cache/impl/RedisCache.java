@@ -24,15 +24,15 @@ import redis.clients.jedis.ShardedJedisPool;
 import redis.clients.jedis.Tuple;
 
 /**
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, Sep 8, 2012
  */
 public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCache, StringCache, LongCache {
 	
+	private static final ThreadLocal<AbstractTransaction> THREAD_LOCAL = new ThreadLocal<AbstractTransaction>();
+	
 	private int timeout = 3000;
 	private boolean isShard = true;
-	
-	private ThreadLocal<AbstractTransaction> threadLocal = new ThreadLocal<AbstractTransaction>();
 	private ShardedJedisPool shardedPool;
 	private JedisPool pool;
 	private List<CacheHost> cacheHosts;
@@ -2440,7 +2440,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		}
 		
 		if (rt != null) {
-			threadLocal.set(rt);
+			THREAD_LOCAL.set(rt);
 		}
 		return rt;
 	}
@@ -2463,7 +2463,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		}
 		
 		if (rt != null) {
-			threadLocal.set(rt);
+			THREAD_LOCAL.set(rt);
 		}
 		return rt;
 	}
@@ -2540,7 +2540,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		} else {
 			pool.returnResource(j);
 		}
-		threadLocal.remove();
+		THREAD_LOCAL.remove();
 	}
 	
 	void cleanTransaction(ShardedJedis sj, boolean broken) {
@@ -2549,11 +2549,11 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		} else {
 			shardedPool.returnResource(sj);
 		}
-		threadLocal.remove();
+		THREAD_LOCAL.remove();
 	}
 
 	private AbstractTransaction getTransaction() {
-		return threadLocal.get();
+		return THREAD_LOCAL.get();
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
