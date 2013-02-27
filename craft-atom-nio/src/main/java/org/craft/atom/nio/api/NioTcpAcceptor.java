@@ -36,12 +36,24 @@ public class NioTcpAcceptor extends NioAcceptor {
 		super(handler, config, port);
 	}
 	
+	public NioTcpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, int port) {
+		super(handler, config, dispatcher, port);
+	}
+	
+	public NioTcpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory, int port) {
+		super(handler, config, dispatcher, predictorFactory, port);
+	}
+	
 	public NioTcpAcceptor(IoHandler handler, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
 		super(handler, firstLocalAddress, otherLocalAddresses);
 	}
 	
 	public NioTcpAcceptor(IoHandler handler, NioAcceptorConfig config, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
 		super(handler, config, firstLocalAddress, otherLocalAddresses);
+	}
+	
+	public NioTcpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
+		super(handler, config, dispatcher, firstLocalAddress, otherLocalAddresses);
 	}
 
 	public NioTcpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {

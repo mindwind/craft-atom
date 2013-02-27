@@ -44,6 +44,7 @@ public class NioTcpInteractiveOverloadProtecionMain {
     	config.setTotalEventSize(1);
     	config.setChannelEventSize(1);
     	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorNapHandler(), config, port);
+//    	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorNapHandler(), config, new NioOrderedDirectChannelEventDispatcher(1), port);
     	
     	Future<Channel<byte[]>> future = connector.connect("127.0.0.1", port);
     	Channel<byte[]> channel = future.get();

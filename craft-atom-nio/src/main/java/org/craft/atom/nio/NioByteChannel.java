@@ -96,19 +96,19 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 		this.processor = processor;
 	}
 	
-	// ~ ------------------------------------------------------------------------------------------------------------
-	
-	boolean tryAcquire() {
+	public boolean tryAcquire() {
 		return semaphore.tryAcquire();
 	}
 	
-	void release() {
+	public void release() {
 		semaphore.release();
 	}
 	
-	int availablePermits() {
+	public int availablePermits() {
 		return semaphore.availablePermits();
 	}
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 	
 	void add(ChannelEvent<byte[]> event) {
 		eventQueue.offer(event);

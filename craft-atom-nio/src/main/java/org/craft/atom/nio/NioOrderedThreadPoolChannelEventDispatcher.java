@@ -5,12 +5,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.Semaphore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.ChannelEvent;
-import org.craft.atom.nio.spi.NioChannelEventDispatcher;
+import org.craft.atom.nio.spi.AbstractNioChannelEventDispatcher;
 import org.craft.atom.util.NamedThreadFactory;
 
 /**
@@ -20,13 +19,12 @@ import org.craft.atom.util.NamedThreadFactory;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
-public class NioOrderedThreadPoolChannelEventDispatcher implements NioChannelEventDispatcher {
+public class NioOrderedThreadPoolChannelEventDispatcher extends AbstractNioChannelEventDispatcher {
 	
 	private static final Log LOG = LogFactory.getLog(NioOrderedThreadPoolChannelEventDispatcher.class);
 	
 	private final BlockingQueue<NioByteChannel> channelQueue;
 	private final Executor executor;
-	private final Semaphore semaphore;
 
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
@@ -35,15 +33,12 @@ public class NioOrderedThreadPoolChannelEventDispatcher implements NioChannelEve
 	}
 	
 	NioOrderedThreadPoolChannelEventDispatcher(int executorSize, int totalEventSize) {
+		super(totalEventSize);
+		
 		if (executorSize <= 0) {
 			executorSize = Runtime.getRuntime().availableProcessors() * 8;
 		}
 		
-		if (totalEventSize <= 0) {
-			totalEventSize = Integer.MAX_VALUE;
-		}
-		
-		this.semaphore = new Semaphore(totalEventSize, false);
 		this.channelQueue = new LinkedBlockingQueue<NioByteChannel>();
 		this.executor = Executors.newFixedThreadPool(executorSize, new NamedThreadFactory("craft-atom-nio-executor"));
 		for (int i = 0; i < executorSize; i++) {
@@ -65,30 +60,6 @@ public class NioOrderedThreadPoolChannelEventDispatcher implements NioChannelEve
 		if (!channel.isEventProcessing()) {
 			channelQueue.offer(channel);
 		}
-	}
-	
-	private void beforeDispatch(NioByteChannel channel) {
-		boolean b = channel.tryAcquire();
-		if (!b) {
-			channel.pause();
-			LOG.warn("Pause channel=" + channel + ", availablePermits=" + channel.availablePermits());
-		}
-		
-		try {
-			semaphore.acquire();
-		} catch (InterruptedException e) {
-			LOG.warn(e.getMessage(), e);
-		}
-	}
-	
-	private void afterDispatch(NioByteChannel channel) {
-		channel.release();
-		if (channel.isPaused()) {
-			channel.resume();
-			LOG.warn("Resume channel=" + channel + ", availablePermits=" + channel.availablePermits());
-		}
-		
-		semaphore.release();
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------

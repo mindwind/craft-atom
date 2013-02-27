@@ -56,12 +56,123 @@ abstract public class NioAcceptor extends NioReactor {
 	protected final Set<SocketAddress> bindAddresses = new HashSet<SocketAddress>();
 	
 	/** Wait for unbinding addresses */
-	private final Set<SocketAddress> unbindAddresses = new HashSet<SocketAddress>();
+	protected final Set<SocketAddress> unbindAddresses = new HashSet<SocketAddress>();
 	
 	/** Already bound addresses and the server socket channel */
 	protected final Map<SocketAddress, SelectableChannel> boundmap = new ConcurrentHashMap<SocketAddress, SelectableChannel>();
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
+	
+	/**
+	 * Constructs a new nio acceptor with default configuration, binds to the specified local address port.
+	 * 
+	 * @param handler
+	 * @param port
+	 */
+	public NioAcceptor(IoHandler handler, int port) {
+		this(handler, new NioAcceptorConfig(), port);
+	}
+	
+	/**
+	 * Constructs a new nio acceptor with specified configuration, binds to the specified local address port.
+	 * 
+	 * @param handler
+	 * @param config
+	 * @param port
+	 */
+	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, int port) {
+		this(handler, config, new InetSocketAddress(port));
+	}
+	
+	/**
+	 * Constructs a new nio acceptor with specified configuration and dispatcher, binds to the specified local address port.
+	 * 
+	 * @param handler
+	 * @param config
+	 * @param dispatcher
+	 * @param port
+	 */
+	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, int port) {
+		this(handler, config, dispatcher, new InetSocketAddress(port));
+	}
+	
+	/**
+	 * Constructs a new nio acceptor with specified configuration, dispatcher and predictor factory, binds to the specified local address port.
+	 * 
+	 * @param handler
+	 * @param config
+	 * @param dispatcher
+	 * @param predictorFactory
+	 * @param port
+	 */
+	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory, int port) {
+		this(handler, config, dispatcher, predictorFactory, new InetSocketAddress(port));
+	}
+	
+	/**
+	 * Constructs a new nio acceptor with default configuration, and binds the specified socket addresses.
+	 * 
+	 * @param handler
+	 * @param firstLocalAddress
+	 * @param otherLocalAddresses
+	 */
+	public NioAcceptor(IoHandler handler, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
+		this(handler, new NioAcceptorConfig(), firstLocalAddress, otherLocalAddresses);
+	}
+	
+	/**
+	 * Constructs a new acceptor the specified configuration, and binds the specified socket addresses.
+	 * 
+	 * @param handler
+	 * @param config
+	 * @param firstLocalAddress
+	 * @param otherLocalAddresses
+	 */
+	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
+		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(config.getExecutorSize(), config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory(), firstLocalAddress, otherLocalAddresses);
+	}
+	
+	/**
+	 * Constructs a new acceptor the specified configuration and dispatcher, binds the specified socket addresses.
+	 * 
+	 * @param handler
+	 * @param config
+	 * @param dispatcher
+	 * @param firstLocalAddress
+	 * @param otherLocalAddresses
+	 */
+	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
+		this(handler, config, dispatcher, new NioAdaptiveBufferSizePredictorFactory(), firstLocalAddress, otherLocalAddresses);
+	}
+	
+	/**
+	 * Constructs a new acceptor the specified configuration, dispatcher and predictor factory, binds the specified socket addresses.
+	 * 
+	 * @param handler
+	 * @param config
+	 * @param dispatcher
+	 * @param predictor
+	 * @param firstLocalAddress
+	 * @param otherLocalAddresses
+	 */
+	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
+		this(handler, config, dispatcher, predictorFactory);
+		
+		try {
+			init();
+			bind(firstLocalAddress, otherLocalAddresses);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to construct.", e);
+		} finally {
+			if (!selectable && selector != null) {
+				try {
+					selector.close();
+				} catch (IOException e) {
+					LOG.warn("Unexpected exception caught", e);
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Constructs a new nio acceptor with default configuration, but not binds to any address.
@@ -111,79 +222,6 @@ abstract public class NioAcceptor extends NioReactor {
 		this.dispatcher = dispatcher;
 		this.predictorFactory = predictorFactory;
 		this.pool = new NioProcessorPool(config, handler, dispatcher);
-	}
-	
-	/**
-	 * Constructs a new nio acceptor with default configuration, and binds to the specified local address port.
-	 * 
-	 * @param handler
-	 * @param prot
-	 */
-	public NioAcceptor(IoHandler handler, int port) {
-		this(handler, new NioAcceptorConfig(), port);
-	}
-	
-	/**
-	 * Constructs a new nio acceptor with specified configuration, and binds to the specified local address port.
-	 * 
-	 * @param handler
-	 * @param config
-	 * @param prot
-	 */
-	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, int port) {
-		this(handler, config, new InetSocketAddress(port));
-	}
-	
-	/**
-	 * Constructs a new nio acceptor with default configuration, and binds the specified socket addresses.
-	 * 
-	 * @param handler
-	 * @param firstLocalAddress
-	 * @param otherLocalAddresses
-	 */
-	public NioAcceptor(IoHandler handler, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
-		this(handler, new NioAcceptorConfig(), firstLocalAddress, otherLocalAddresses);
-	}
-	
-	/**
-	 * Constructs a new acceptor the specified configuration, and binds the specified socket addresses.
-	 * 
-	 * @param handler
-	 * @param config
-	 * @param firstLocalAddress
-	 * @param otherLocalAddresses
-	 */
-	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
-		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(config.getExecutorSize(), config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory(), firstLocalAddress, otherLocalAddresses);
-	}
-	
-	/**
-	 * Constructs a new acceptor the specified configuration, dispatcher and predictor, binds the specified socket addresses.
-	 * 
-	 * @param handler
-	 * @param config
-	 * @param dispatcher
-	 * @param predictor
-	 * @param firstLocalAddress
-	 * @param otherLocalAddresses
-	 */
-	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
-		this(handler, config, dispatcher, predictorFactory);
-		
-		try {
-			init();
-			bind(firstLocalAddress, otherLocalAddresses);
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to construct.", e);
-		} finally {
-			if (!selectable && selector != null) {
-				try {
-					selector.close();
-				} catch (IOException e) {
-					LOG.warn("Unexpected exception caught", e);
-				}
-			}
-		}
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------

@@ -175,7 +175,8 @@ public class NioProcessor extends NioReactor {
 	
 	private int select() throws IOException {
 		long t0 = System.currentTimeMillis();
-		int selected = selector.select(SELECT_TIMEOUT);
+//		int selected = selector.select(SELECT_TIMEOUT);
+		int selected = selector.select();
 		long t1 = System.currentTimeMillis();
 		long delta = (t1 - t0);
 		

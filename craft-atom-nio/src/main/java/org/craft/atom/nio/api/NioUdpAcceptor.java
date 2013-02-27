@@ -30,12 +30,24 @@ public class NioUdpAcceptor extends NioAcceptor {
 		super(handler, config, port);
 	}
 	
+	public NioUdpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, int port) {
+		super(handler, config, dispatcher, port);
+	}
+
+	public NioUdpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory, int port) {
+		super(handler, config, dispatcher, predictorFactory, port);
+	}
+
 	public NioUdpAcceptor(IoHandler handler, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
 		super(handler, firstLocalAddress, otherLocalAddresses);
 	}
 	
 	public NioUdpAcceptor(IoHandler handler, NioAcceptorConfig config, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
 		super(handler, config, firstLocalAddress, otherLocalAddresses);
+	}
+	
+	public NioUdpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
+		super(handler, config, dispatcher, firstLocalAddress, otherLocalAddresses);
 	}
 
 	public NioUdpAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
