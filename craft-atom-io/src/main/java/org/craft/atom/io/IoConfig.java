@@ -15,7 +15,7 @@ public abstract class IoConfig {
 	protected int minReadBufferSize = MIN_READ_BUFFER_SIZE;
 	protected int defaultReadBufferSize = DEFAULT_READ_BUFFER_SIZE;
 	protected int maxReadBufferSize = MAX_READ_BUFFER_SIZE;
-	protected int ioTimeoutInMillis = 30000;
+	protected int ioTimeoutInMillis = 120 * 1000;
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ public abstract class IoConfig {
 
 	public void setIoTimeoutInMillis(int ioTimeoutInMillis) {
 		if (ioTimeoutInMillis <= 0) {
-			this.ioTimeoutInMillis = 10000;
+			this.ioTimeoutInMillis = 120000;
 		}
 		
 		this.ioTimeoutInMillis = ioTimeoutInMillis;

@@ -34,6 +34,7 @@ public class NioProcessorPool {
 		this.config = config;
 		this.handler = handler;
 		this.dispatcher = dispatcher;
+		NioChannelIdleTimer.getInstance().init(dispatcher, handler, config.getIoTimeoutInMillis());
 		fill(pool);
 	}
 	

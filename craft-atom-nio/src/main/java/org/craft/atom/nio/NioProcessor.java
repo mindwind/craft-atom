@@ -8,9 +8,7 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -40,9 +38,6 @@ public class NioProcessor extends NioReactor {
 	
 	private static final Log LOG = LogFactory.getLog(NioProcessor.class);
 	
-	/** A timeout used for the select, as we need to get out to deal with idle channel */
-	private static final long SELECT_TIMEOUT = 1000L;
-	
 	/** Flush spin count */
 	private static final long FLUSH_SPIN_COUNT = 256;
 	
@@ -62,6 +57,7 @@ public class NioProcessor extends NioReactor {
     private final AtomicReference<ProcessThread> processThreadRef = new AtomicReference<ProcessThread>();
     private final NioByteBufferAllocator allocator = new NioByteBufferAllocator();
     private final AtomicBoolean wakeupCalled = new AtomicBoolean(false);
+    private final NioChannelIdleTimer idleTimer = NioChannelIdleTimer.getInstance();
     
     private IoProtocol protocol;
     
@@ -156,6 +152,7 @@ public class NioProcessor extends NioReactor {
 			channel.setClosing();
 			close(channel);
 			channel.setClosed();
+			idleTimer.remove(channel);
 			
 			// fire channel closed event
 			fireChannelClosed(channel);
@@ -174,18 +171,14 @@ public class NioProcessor extends NioReactor {
 	}
 	
 	private int select() throws IOException {
-		long t0 = System.currentTimeMillis();
-//		int selected = selector.select(SELECT_TIMEOUT);
 		int selected = selector.select();
-		long t1 = System.currentTimeMillis();
-		long delta = (t1 - t0);
 		
-		if ((selected == 0) && !wakeupCalled.get() && (delta < 100)) {
+		if ((selected == 0) && !wakeupCalled.get()) {
             // the select() may have been interrupted because we have had an closed channel.
             if (isBrokenConnection()) {
                 LOG.warn("Broken connection wakeup");
             } else {
-                LOG.warn("Create a new selector. Selected is 0, delta=" + (t1 - t0));
+                LOG.warn("Create a new selector. Selected is 0");
                 
                 // it is a workaround method for jdk bug, see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6403933
                 registerNewSelector();
@@ -243,6 +236,7 @@ public class NioProcessor extends NioReactor {
 			SelectableChannel sc = channel.innerChannel();
 			SelectionKey key = sc.register(selector, SelectionKey.OP_READ, channel);
 			channel.setSelectionKey(key);
+			idleTimer.add(channel);
 			
 			// fire channel opened event
 			fireChannelOpened(channel);
@@ -609,34 +603,11 @@ public class NioProcessor extends NioReactor {
 		asyClose(channel);
 		wakeup();
     }
-    
-    private void notifyIdle(long currentTime) {
-		for (NioByteChannel channel : allChannels()) {
-			long elapse = currentTime - channel.getLastIoTime();
-			if (elapse > config.getIoTimeoutInMillis()) {
-				channel.setLastIoTime(currentTime);
-				fireChannelIdle(channel);
-			}
-		}
-	}
-    
-    private List<NioByteChannel> allChannels() {
-		List<NioByteChannel> channels = new ArrayList<NioByteChannel>();
-		Set<SelectionKey> keys = selector.keys();
-		for (SelectionKey key : keys) {
-			channels.add((NioByteChannel) key.attachment());
-		}
-		return channels;
-	}
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
     
     private void fireChannelOpened(NioByteChannel channel) {
     	dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_OPENED, channel, handler));
-    }
-    
-    private void fireChannelIdle(NioByteChannel channel) {
-    	dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_IDLE, channel, handler));
     }
 	
 	private void fireChannelRead(NioByteChannel channel, ByteBuffer buf, int length) {
@@ -677,8 +648,6 @@ public class NioProcessor extends NioReactor {
 					// close channels
 					close();
 					
-					// notify idle channels
-					notifyIdle(System.currentTimeMillis());
 				} catch (Exception e) {
 					LOG.error("Unexpected exception caught while process", e);
 				}

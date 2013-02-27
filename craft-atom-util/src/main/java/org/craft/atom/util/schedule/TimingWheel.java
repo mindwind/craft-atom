@@ -39,11 +39,14 @@ import org.apache.commons.logging.LogFactory;
  * After expiration occurs, the {@link ExpirationListener} interface will be invoked and the expired object will be 
  * the argument for callback method {@link ExpirationListener#expired(Object)}
  * <p>
+ * As timing-wheel use map structure internal, so any element added to timing-wheel should implement 
+ * its own {@link #equals(o)} and {@link #hashCode()} method.
+ * <p>
  * {@link TimingWheel} is based on <a href="http://cseweb.ucsd.edu/users/varghese/">George Varghese</a> and Tony Lauck's paper,
  * <a href="http://cseweb.ucsd.edu/users/varghese/PAPERS/twheel.ps.Z">'Hashed and Hierarchical Timing Wheels: data structures 
  * to efficiently implement a timer facility'</a>.  More comprehensive slides are located <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.
  * 
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, Sep 20, 2012
  */
 public class TimingWheel<E> {
@@ -67,8 +70,7 @@ public class TimingWheel<E> {
 	/**
 	 * Construct a timing wheel.
 	 * 
-	 * @param tickDuration
-	 *            tick duration with specified time unit.
+	 * @param tickDuration   tick duration with specified time unit.
 	 * @param ticksPerWheel
 	 * @param timeUnit
 	 */
@@ -309,6 +311,15 @@ public class TimingWheel<E> {
 			return "Slot [id=" + id + ", elements=" + elements + "]";
 		}
 		
+	}
+
+	@Override
+	public String toString() {
+		return String
+				.format("TimingWheel [tickDuration=%s, ticksPerWheel=%s, currentTickIndex=%s, expirationListeners=%s, wheel=%s, indicator=%s, shutdown=%s, lock=%s, workerThread=%s]",
+						tickDuration, ticksPerWheel, currentTickIndex,
+						expirationListeners, wheel, indicator, shutdown, lock,
+						workerThread);
 	}
 	
 }

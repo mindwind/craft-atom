@@ -10,8 +10,13 @@
 		</layout>
 	</appender>
 	
-	<category name="org.craft.atom" additivity="false">
-		<priority value="info" />
+	<category name="org.craft.atom.nio" additivity="false">
+		<priority value="debug" />
+		<appender-ref ref="console" />
+	</category>
+	
+	<category name="org.craft.atom.io" additivity="false">
+		<priority value="debug" />
 		<appender-ref ref="console" />
 	</category>
 
