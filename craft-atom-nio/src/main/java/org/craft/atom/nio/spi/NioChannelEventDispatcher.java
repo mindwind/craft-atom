@@ -1,7 +1,9 @@
 package org.craft.atom.nio.spi;
 
+import org.craft.atom.io.ChannelEvent;
 import org.craft.atom.io.IoHandler;
-import org.craft.atom.nio.NioByteChannelEvent;
+import org.craft.atom.nio.NioOrderedDirectChannelEventDispatcher;
+import org.craft.atom.nio.NioOrderedThreadPoolChannelEventDispatcher;
 
 /**
  * Nio channel event dispatcher, dispatch all channel I/O events to {@link IoHandler}
@@ -18,6 +20,6 @@ public interface NioChannelEventDispatcher {
 	 * 
 	 * @param event
 	 */
-	void dispatch(NioByteChannelEvent event);
+	void dispatch(ChannelEvent<byte[]> event);
 	
 }

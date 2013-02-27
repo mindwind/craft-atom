@@ -17,5 +17,10 @@ public interface ChannelEvent<D> {
      * @return the event type.
      */
     ChannelEventType getType();
-	
+    
+    /**
+     * Fire the event.
+     */
+    void fire();
+
 }

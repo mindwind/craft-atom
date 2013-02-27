@@ -68,7 +68,7 @@ public class NioUdpAcceptor extends NioAcceptor {
 		dc.socket().bind(address);
 		boundmap.put(address, dc);
 		
-		NioByteChannel channel = new NioUdpByteChannel(dc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()));
+		NioByteChannel channel = new NioUdpByteChannel(dc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()), dispatcher);
 		NioProcessor processor = pool.pick(channel);
 		processor.setProtocol(IoProtocol.UDP);
 		channel.setProcessor(processor);

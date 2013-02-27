@@ -79,7 +79,7 @@ abstract public class NioAcceptor extends NioReactor {
 	 * @param config
 	 */
 	public NioAcceptor(IoHandler handler, NioAcceptorConfig config) {
-		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictorFactory());
+		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(config.getExecutorSize(), config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory());
 	}
 	
 	/**
@@ -154,7 +154,7 @@ abstract public class NioAcceptor extends NioReactor {
 	 * @param otherLocalAddresses
 	 */
 	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
-		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictorFactory(), firstLocalAddress, otherLocalAddresses);
+		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(config.getExecutorSize(), config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory(), firstLocalAddress, otherLocalAddresses);
 	}
 	
 	/**

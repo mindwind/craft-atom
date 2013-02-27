@@ -30,4 +30,10 @@ public class NioEventCounter {
 	int current() {
 		return counter.get();
 	}
+
+	@Override
+	public String toString() {
+		return String.format("NioEventCounter [counter=%s]", counter);
+	}
+	
 }

@@ -7,6 +7,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
 import org.craft.atom.nio.spi.NioBufferSizePredictor;
+import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
  * A nio channel for stream-oriented connecting sockets.
@@ -18,8 +19,8 @@ public class NioTcpByteChannel extends NioByteChannel {
 	
 	private SocketChannel socketChannel;
 	
-	public NioTcpByteChannel(SocketChannel socketChannel, NioConfig config, NioBufferSizePredictor predictor) {
-		super(config, predictor);
+	public NioTcpByteChannel(SocketChannel socketChannel, NioConfig config, NioBufferSizePredictor predictor, NioChannelEventDispatcher dispatcher) {
+		super(config, predictor, dispatcher);
 		
 		if (socketChannel == null) {
 			throw new IllegalArgumentException("SocketChannel can not be null.");
@@ -60,11 +61,11 @@ public class NioTcpByteChannel extends NioByteChannel {
 	
 	public String toFullString() {
 		return String
-				.format("NioTcpByteChannel [socketChannel=%s, localAddress=%s, remoteAddress=%s, selectionKey=%s, predictor=%s, lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s, channelEventSize=%s]",
+				.format("NioTcpByteChannel [socketChannel=%s, localAddress=%s, remoteAddress=%s, selectionKey=%s, predictor=%s, lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s, semaphore=%s]",
 						socketChannel, localAddress, remoteAddress,
 						selectionKey, predictor, lastIoTime, minReadBufferSize,
 						defaultReadBufferSize, maxReadBufferSize,
-						maxWriteBufferSize, id, attributes, state, channelEventSize);
+						maxWriteBufferSize, id, attributes, state, semaphore);
 	}
 
 }

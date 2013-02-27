@@ -19,11 +19,11 @@ abstract public class NioConfig extends IoConfig {
 	/** Processor flush read-write fair mode */
 	protected boolean readWritefair = true;
 	
-	/** The queued events size per channel, zero means no limit. */
-	protected int channelEventSize = 0;
+	/** The queued events size per channel */
+	protected int channelEventSize = Integer.MAX_VALUE;
 	
-	/** The total queued events size, zero means no limit.  */
-	protected int totalEventSize = 0;
+	/** The total queued events size */
+	protected int totalEventSize = Integer.MAX_VALUE;
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 
@@ -60,6 +60,10 @@ abstract public class NioConfig extends IoConfig {
 	}
 
 	public void setChannelEventSize(int channelEventSize) {
+		if (channelEventSize <= 0) {
+			channelEventSize = Integer.MAX_VALUE;
+		}
+		
 		this.channelEventSize = channelEventSize;
 	}
 
@@ -67,7 +71,11 @@ abstract public class NioConfig extends IoConfig {
 		return totalEventSize;
 	}
 
-	public void setTotalEventSize(int totalEventSize) {
+	public void setTotalEventSize(int totalEventSize) {		
+		if (totalEventSize <= 0) {
+			totalEventSize = Integer.MAX_VALUE;
+		}
+		
 		this.totalEventSize = totalEventSize;
 	}
 

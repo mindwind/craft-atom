@@ -103,7 +103,7 @@ public class NioTcpAcceptor extends NioAcceptor {
 			}
 		}
 		
-		NioByteChannel channel = new NioTcpByteChannel(sc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()));
+		NioByteChannel channel = new NioTcpByteChannel(sc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()), dispatcher);
 		return channel;
 	}
 

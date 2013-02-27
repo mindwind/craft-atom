@@ -40,8 +40,6 @@ public class NioProcessor extends NioReactor {
 	
 	private static final Log LOG = LogFactory.getLog(NioProcessor.class);
 	
-	private static volatile boolean pause = false;
-	
 	/** A timeout used for the select, as we need to get out to deal with idle channel */
 	private static final long SELECT_TIMEOUT = 1000L;
 	
@@ -84,20 +82,6 @@ public class NioProcessor extends NioReactor {
             throw new RuntimeException("Fail to startup a processor", e);
         }
 	}
-    
-    // ~ ------------------------------------------------------------------------------------------------------------
-    
-    static void pause() {
-    	pause = true;
-    }
-    
-    static void resume() {
-    	pause = false;
-    }
-    
-    static boolean isPaused() {
-    	return pause;
-    }
     
     // ~ ------------------------------------------------------------------------------------------------------------
     
@@ -412,10 +396,10 @@ public class NioProcessor extends NioReactor {
             c++;
             
             try {
-            	if (channel.isOpen()) {
-            		flush0(channel);
-            	} else {
+            	if (channel.isClosed() || channel.isClosing()) {
             		throw new IllegalStateException("Channel state is invalid, can not be flush, channel=" + channel);
+            	} else {
+            		flush0(channel);
             	}
 			} catch (Throwable t) {
 				LOG.error("Catch flush exception and fire it", t);
@@ -466,7 +450,7 @@ public class NioProcessor extends NioReactor {
 			flushingChannels.add(channel);
 			return;
 		} else {
-			channel.afterFlush();
+			writeQueue.remove();
 			
 			// fire channel written event
 			fireChannelWritten(channel, buf);
@@ -498,7 +482,7 @@ public class NioProcessor extends NioReactor {
 			if (!buf.hasRemaining()) {
 				if (LOG.isDebugEnabled()) { LOG.debug("The buffer is all flushed, remove it from write queue"); }
 				
-				channel.afterFlush();
+				writeQueue.remove();
 				
 				// fire channel written event
 				fireChannelWritten(channel, buf);
@@ -546,15 +530,17 @@ public class NioProcessor extends NioReactor {
 			return;
 		}
 
-		int newInterestOps = key.interestOps();
-
+		int oldInterestOps = key.interestOps();
+		int newInterestOps = oldInterestOps;
 		if (isInterested) {
 			newInterestOps |= SelectionKey.OP_WRITE;
 		} else {
 			newInterestOps &= ~SelectionKey.OP_WRITE;
 		}
 
-		key.interestOps(newInterestOps);
+		if (oldInterestOps != newInterestOps) {
+            key.interestOps(newInterestOps);
+        }
 	}
 	
 	private int write(NioByteChannel channel, ByteBuffer buf, int maxLength) throws IOException {		
@@ -641,43 +627,34 @@ public class NioProcessor extends NioReactor {
 		}
 		return channels;
 	}
-    
-    private void nap() {
-    	try {
-    		LOG.warn("Turn on processor pause signal, events over-stock size=" + NioEventCounter.getInstance().current());
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			LOG.warn("Pause interrupted", e);
-		}
-    }
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
     
     private void fireChannelOpened(NioByteChannel channel) {
-    	dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_OPENED, channel, handler));
+    	dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_OPENED, channel, handler));
     }
     
     private void fireChannelIdle(NioByteChannel channel) {
-    	dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_IDLE, channel, handler));
+    	dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_IDLE, channel, handler));
     }
 	
 	private void fireChannelRead(NioByteChannel channel, ByteBuffer buf, int length) {
 		// fire channel received event, here we copy buffer bytes to a new byte array to avoid handler expose <code>ByteBuffer</code> to end user.
 		byte[] barr = new byte[length];
 		System.arraycopy(buf.array(), 0, barr, 0, length);
-		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_READ, channel, handler, barr));
+		dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_READ, channel, handler, barr));
 	}
 	
 	private void fireChannelWritten(NioByteChannel channel, ByteBuffer buf) {
-		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_WRITTEN, channel, handler, buf.array()));
+		dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_WRITTEN, channel, handler, buf.array()));
 	}
 	
 	private void fireChannelThrown(NioByteChannel channel, Throwable t) {
-		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_THROWN, channel, handler, t));
+		dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_THROWN, channel, handler, t));
 	}
 	
 	private void fireChannelClosed(NioByteChannel channel) {
-		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_CLOSED, channel, handler));
+		dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_CLOSED, channel, handler));
 	}
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
@@ -688,18 +665,13 @@ public class NioProcessor extends NioReactor {
 				try {
 					int selected = select();
 					
-					// see pause signal means events over-stock, so we sleep a while.
-					if (pause) { nap(); continue; }
+					// flush channels
+					flush();
 					
 					// register new channels
 					register();
 					
-					if (selected > 0) {
-                        process();
-                    }
-					
-					// flush channels
-					flush();
+					if (selected > 0) { process(); }
 					
 					// close channels
 					close();

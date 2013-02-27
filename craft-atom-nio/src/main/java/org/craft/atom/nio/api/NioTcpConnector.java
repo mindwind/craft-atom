@@ -304,7 +304,7 @@ public class NioTcpConnector extends NioConnector {
 
 		@Override
 		public Channel<byte[]> call() throws Exception {
-			NioByteChannel channel = new NioTcpByteChannel(socketChannel, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()));
+			NioByteChannel channel = new NioTcpByteChannel(socketChannel, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()), dispatcher);
 			NioProcessor processor = pool.pick(channel);
 			processor.setProtocol(IoProtocol.TCP);
 			channel.setProcessor(processor);

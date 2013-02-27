@@ -56,7 +56,7 @@ abstract public class NioConnector extends NioReactor {
 	 * @param config
 	 */
 	public NioConnector(IoHandler handler, NioConnectorConfig config) {
-		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictorFactory());
+		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(config.getExecutorSize(), config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory());
 	}
 	
 	/**

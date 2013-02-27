@@ -7,11 +7,17 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 import org.craft.atom.io.AbstractIoByteChannel;
+import org.craft.atom.io.ChannelEvent;
+import org.craft.atom.io.ChannelEventType;
 import org.craft.atom.io.ChannelState;
 import org.craft.atom.nio.spi.NioBufferSizePredictor;
+import org.craft.atom.nio.spi.NioChannelEventDispatcher;
+import org.craft.atom.util.NamedThreadFactory;
 
 /**
  * Channel transmit bytes base nio
@@ -28,22 +34,23 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	protected SelectionKey selectionKey;
 	protected NioProcessor processor;
 	
-	protected final int channelEventSize;
-	protected final AtomicInteger channelEventCounter;
+	protected final Semaphore semaphore;
+	protected final NioChannelEventDispatcher dispatcher;
 	protected final NioBufferSizePredictor predictor;
 	protected final Queue<ByteBuffer> writeBufferQueue = new ConcurrentLinkedQueue<ByteBuffer>();
-	protected final Queue<NioByteChannelEvent> eventQueue = new ConcurrentLinkedQueue<NioByteChannelEvent>();
+	protected final Queue<ChannelEvent<byte[]>> eventQueue = new ConcurrentLinkedQueue<ChannelEvent<byte[]>>();
+	protected final Executor executor = Executors.newCachedThreadPool(new NamedThreadFactory("craft-atom-nio-writer"));
 	protected final Object lock = new Object();
 	
 	protected volatile boolean eventProcessing = false;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
-	public NioByteChannel(NioConfig config, NioBufferSizePredictor predictor) {
+	public NioByteChannel(NioConfig config, NioBufferSizePredictor predictor, NioChannelEventDispatcher dispatcher) {
 		super(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize());
+		this.semaphore = new Semaphore(config.getChannelEventSize(), false);
 		this.predictor = predictor;
-		this.channelEventSize = config.getChannelEventSize();
-		this.channelEventCounter = new AtomicInteger(0);
+		this.dispatcher = dispatcher;
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -57,13 +64,15 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
         }
 		
 		processor.remove(this);
-
 	}
 
 	@Override
 	public boolean write(byte[] data) {
 		if (!isValid()) {
 			throw new IllegalStateException("Channel state is invalid, channel=" + this.toString());
+		}
+		if (data == null) {
+			throw new IllegalArgumentException("Write data is null.");
 		}
 		
 		if (isPaused()) {
@@ -72,9 +81,13 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 		}
 		
 		setLastIoTime(System.currentTimeMillis());
-		getWriteBufferQueue().add(ByteBuffer.wrap(data));
-		beforeFlush();
-		processor.flush(this);
+		final NioProcessorByteChannelEvent event = new NioProcessorByteChannelEvent(ChannelEventType.CHANNEL_WRITTEN, this, processor, data);
+		executor.execute(new Runnable() {
+			@Override
+			public void run() {
+				dispatcher.dispatch(event);
+			}
+		});
 		
 		return true;
 	}
@@ -85,24 +98,19 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
-	void beforeFlush() {
-		if (channelEventSize == 0) {
-			return;
-		}
-		
-		increseEvent();
+	boolean tryAcquire() {
+		return semaphore.tryAcquire();
 	}
 	
-	void afterFlush() {
-		writeBufferQueue.remove();
-		if (channelEventSize == 0) {
-			return;
-		}
-		
-		decreseEvent();
+	void release() {
+		semaphore.release();
 	}
 	
-	void add(NioByteChannelEvent event) {
+	int availablePermits() {
+		return semaphore.availablePermits();
+	}
+	
+	void add(ChannelEvent<byte[]> event) {
 		eventQueue.offer(event);
 	}
 	
@@ -150,7 +158,7 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 		return writeBufferQueue;
 	}
 	
-	Queue<NioByteChannelEvent> getEventQueue() {
+	Queue<ChannelEvent<byte[]>> getEventQueue() {
 		return eventQueue;
 	}
 	
@@ -173,25 +181,7 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	NioBufferSizePredictor getPredictor() {
 		return predictor;
 	}
-	
-	int increseEvent() {
-		NioEventCounter.getInstance().increse();
-		int es = channelEventCounter.incrementAndGet();
-		if (es > channelEventSize) {
-			pause();
-		}
-		return es;
-	}
-	
-	int decreseEvent() {
-		NioEventCounter.getInstance().decrese();
-		int es = channelEventCounter.decrementAndGet();
-		if (es <= channelEventSize && isPaused()) {
-			resume();
-		}
-		return es;
-	}
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();

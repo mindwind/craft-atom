@@ -1,9 +1,10 @@
 package org.craft.atom.nio;
 
+import org.craft.atom.io.ChannelEvent;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
- * An {@link NioChannelEventDispatcher} that maintains order of {@link NioByteChannelEvent} in the same channel.
+ * An {@link NioChannelEventDispatcher} that maintains order of {@link NioHandlerByteChannelEvent} in the same channel.
  * It use io process thread pool to dispatch event.
  * 
  * @author mindwind
@@ -12,7 +13,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 public class NioOrderedDirectChannelEventDispatcher implements NioChannelEventDispatcher {
 
 	@Override
-	public void dispatch(NioByteChannelEvent event) {
+	public void dispatch(ChannelEvent<byte[]> event) {
 		event.fire();
 	}
 

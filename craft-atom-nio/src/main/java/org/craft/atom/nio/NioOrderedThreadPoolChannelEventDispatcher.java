@@ -5,14 +5,16 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.Semaphore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.craft.atom.io.ChannelEvent;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 import org.craft.atom.util.NamedThreadFactory;
 
 /**
- * An {@link NioOrderedThreadPoolChannelEventDispatcher} that maintains order of {@link NioByteChannelEvent} in the same channel.
+ * An {@link NioOrderedThreadPoolChannelEventDispatcher} that maintains order of {@link NioHandlerByteChannelEvent} in the same channel.
  * It use a new thread pool for event dispatch, isolate io process thread and event process thread.
  * 
  * @author mindwind
@@ -24,16 +26,12 @@ public class NioOrderedThreadPoolChannelEventDispatcher implements NioChannelEve
 	
 	private final BlockingQueue<NioByteChannel> channelQueue;
 	private final Executor executor;
-	private final int totalEventSize;
+	private final Semaphore semaphore;
 
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
 	NioOrderedThreadPoolChannelEventDispatcher() {
-		this(Runtime.getRuntime().availableProcessors() * 8);
-	}
-	
-	NioOrderedThreadPoolChannelEventDispatcher(int executorSize) {
-		this(executorSize, 0);
+		this(Runtime.getRuntime().availableProcessors() * 8, Integer.MAX_VALUE);
 	}
 	
 	NioOrderedThreadPoolChannelEventDispatcher(int executorSize, int totalEventSize) {
@@ -41,52 +39,56 @@ public class NioOrderedThreadPoolChannelEventDispatcher implements NioChannelEve
 			executorSize = Runtime.getRuntime().availableProcessors() * 8;
 		}
 		
-		if (totalEventSize < 0) {
-			totalEventSize = 0;
+		if (totalEventSize <= 0) {
+			totalEventSize = Integer.MAX_VALUE;
 		}
 		
-		this.totalEventSize = totalEventSize;
-		channelQueue = new LinkedBlockingQueue<NioByteChannel>();
-		executor = Executors.newFixedThreadPool(executorSize, new NamedThreadFactory("craft-atom-nio-executor"));
+		this.semaphore = new Semaphore(totalEventSize, false);
+		this.channelQueue = new LinkedBlockingQueue<NioByteChannel>();
+		this.executor = Executors.newFixedThreadPool(executorSize, new NamedThreadFactory("craft-atom-nio-executor"));
 		for (int i = 0; i < executorSize; i++) {
 			executor.execute(new Worker());
 		}
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
-
+	
 	@Override
-	public void dispatch(NioByteChannelEvent event) {
+	public void dispatch(ChannelEvent<byte[]> event) {
 		NioByteChannel channel = (NioByteChannel) event.getChannel();
-		channel.add(event);
 		beforeDispatch(channel);
+		dispatch0(event, channel);
+	}
+	
+	private void dispatch0(ChannelEvent<byte[]> event, NioByteChannel channel) {
+		channel.add(event);
 		if (!channel.isEventProcessing()) {
 			channelQueue.offer(channel);
 		}
 	}
 	
 	private void beforeDispatch(NioByteChannel channel) {
-		if (totalEventSize == 0) {
-			return;
+		boolean b = channel.tryAcquire();
+		if (!b) {
+			channel.pause();
+			LOG.warn("Pause channel=" + channel + ", availablePermits=" + channel.availablePermits());
 		}
 		
-		channel.increseEvent();
-		int tes = NioEventCounter.getInstance().current();
-		if (tes > totalEventSize) {
-			NioProcessor.pause();
+		try {
+			semaphore.acquire();
+		} catch (InterruptedException e) {
+			LOG.warn(e.getMessage(), e);
 		}
 	}
 	
 	private void afterDispatch(NioByteChannel channel) {
-		if (totalEventSize == 0) {
-			return;
+		channel.release();
+		if (channel.isPaused()) {
+			channel.resume();
+			LOG.warn("Resume channel=" + channel + ", availablePermits=" + channel.availablePermits());
 		}
 		
-		channel.decreseEvent();
-		int tes = NioEventCounter.getInstance().current();
-		if (tes <= totalEventSize && NioProcessor.isPaused()) {
-			NioProcessor.resume();
-		}
+		semaphore.release();
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -97,8 +99,8 @@ public class NioOrderedThreadPoolChannelEventDispatcher implements NioChannelEve
 		
 		private void fire(NioByteChannel channel) {
 			int count = 0;
-			Queue<NioByteChannelEvent> q = channel.getEventQueue();
-			for (NioByteChannelEvent event = q.poll(); event != null; event = q.poll()) {
+			Queue<ChannelEvent<byte[]>> q = channel.getEventQueue();
+			for (ChannelEvent<byte[]> event = q.poll(); event != null; event = q.poll()) {
 				event.fire();
 				afterDispatch(channel);
 				count++;

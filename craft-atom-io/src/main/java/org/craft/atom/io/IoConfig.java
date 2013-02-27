@@ -15,7 +15,7 @@ public abstract class IoConfig {
 	protected int minReadBufferSize = MIN_READ_BUFFER_SIZE;
 	protected int defaultReadBufferSize = DEFAULT_READ_BUFFER_SIZE;
 	protected int maxReadBufferSize = MAX_READ_BUFFER_SIZE;
-	protected int ioTimeoutInMillis = 10000;
+	protected int ioTimeoutInMillis = 30000;
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 
