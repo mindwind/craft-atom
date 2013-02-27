@@ -313,6 +313,7 @@ public class NioProcessor extends NioReactor {
 		if (readBytes > 0) {
 			channel.getPredictor().previous(readBytes);
 			fireChannelRead(channel, buf, readBytes);
+			if (LOG.isDebugEnabled()) { LOG.debug("Actual read=" + readBytes); }
 		}
 
 		// read end-of-stream, remote peer may close channel so close channel.
@@ -607,26 +608,26 @@ public class NioProcessor extends NioReactor {
 	// ~ -------------------------------------------------------------------------------------------------------------
     
     private void fireChannelOpened(NioByteChannel channel) {
-    	dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_OPENED, channel, handler));
+    	dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_OPENED, channel, handler));
     }
 	
 	private void fireChannelRead(NioByteChannel channel, ByteBuffer buf, int length) {
 		// fire channel received event, here we copy buffer bytes to a new byte array to avoid handler expose <code>ByteBuffer</code> to end user.
 		byte[] barr = new byte[length];
 		System.arraycopy(buf.array(), 0, barr, 0, length);
-		dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_READ, channel, handler, barr));
+		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_READ, channel, handler, barr));
 	}
 	
 	private void fireChannelWritten(NioByteChannel channel, ByteBuffer buf) {
-		dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_WRITTEN, channel, handler, buf.array()));
+		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_WRITTEN, channel, handler, buf.array()));
 	}
 	
 	private void fireChannelThrown(NioByteChannel channel, Throwable t) {
-		dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_THROWN, channel, handler, t));
+		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_THROWN, channel, handler, t));
 	}
 	
 	private void fireChannelClosed(NioByteChannel channel) {
-		dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_CLOSED, channel, handler));
+		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_CLOSED, channel, handler));
 	}
 	
 	// ~ -------------------------------------------------------------------------------------------------------------

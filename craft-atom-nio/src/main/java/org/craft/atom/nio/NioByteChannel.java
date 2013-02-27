@@ -7,17 +7,13 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
 import org.craft.atom.io.AbstractIoByteChannel;
 import org.craft.atom.io.ChannelEvent;
-import org.craft.atom.io.ChannelEventType;
 import org.craft.atom.io.ChannelState;
 import org.craft.atom.nio.spi.NioBufferSizePredictor;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
-import org.craft.atom.util.NamedThreadFactory;
 
 /**
  * Channel transmit bytes base nio
@@ -39,7 +35,6 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	protected final NioBufferSizePredictor predictor;
 	protected final Queue<ByteBuffer> writeBufferQueue = new ConcurrentLinkedQueue<ByteBuffer>();
 	protected final Queue<ChannelEvent<byte[]>> eventQueue = new ConcurrentLinkedQueue<ChannelEvent<byte[]>>();
-	protected final Executor executor = Executors.newCachedThreadPool(new NamedThreadFactory("craft-atom-nio-writer"));
 	protected final Object lock = new Object();
 	
 	protected volatile boolean eventProcessing = false;
@@ -81,14 +76,8 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 		}
 		
 		setLastIoTime(System.currentTimeMillis());
-		final NioProcessorByteChannelEvent event = new NioProcessorByteChannelEvent(ChannelEventType.CHANNEL_WRITTEN, this, processor, data);
-		executor.execute(new Runnable() {
-			@Override
-			public void run() {
-				dispatcher.dispatch(event);
-			}
-		});
-		
+		getWriteBufferQueue().add(ByteBuffer.wrap(data));
+		processor.flush(this);
 		return true;
 	}
 	

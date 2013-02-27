@@ -44,7 +44,7 @@ public class NioChannelIdleTimer {
 	}
 	
 	private void fireChannelIdle(NioByteChannel channel) {
-    	dispatcher.dispatch(new NioHandlerByteChannelEvent(ChannelEventType.CHANNEL_IDLE, channel, handler));
+    	dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_IDLE, channel, handler));
     }
 	
 	// ~ --------------------------------------------------------------------------------------------------------

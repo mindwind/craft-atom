@@ -13,7 +13,7 @@ import org.craft.atom.nio.spi.AbstractNioChannelEventDispatcher;
 import org.craft.atom.util.NamedThreadFactory;
 
 /**
- * An {@link NioOrderedThreadPoolChannelEventDispatcher} that maintains order of {@link NioHandlerByteChannelEvent} in the same channel.
+ * An {@link NioOrderedThreadPoolChannelEventDispatcher} that maintains order of {@link NioByteChannelEvent} in the same channel.
  * It use a new thread pool for event dispatch, isolate io process thread and event process thread.
  * 
  * @author mindwind

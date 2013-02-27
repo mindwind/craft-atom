@@ -5,7 +5,7 @@ import org.craft.atom.nio.spi.AbstractNioChannelEventDispatcher;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
- * An {@link NioChannelEventDispatcher} that maintains order of {@link NioHandlerByteChannelEvent} in the same channel.
+ * An {@link NioChannelEventDispatcher} that maintains order of {@link NioByteChannelEvent} in the same channel.
  * It use io process thread pool to dispatch event.
  * 
  * @author mindwind
