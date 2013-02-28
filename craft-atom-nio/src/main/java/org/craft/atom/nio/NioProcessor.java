@@ -123,7 +123,7 @@ public class NioProcessor extends NioReactor {
 	 */
 	public void shutdown() {
 		this.shutdown = true;
-		this.selector.wakeup();
+		wakeup();
 	}
 	
 	private void shutdown0() throws IOException {
