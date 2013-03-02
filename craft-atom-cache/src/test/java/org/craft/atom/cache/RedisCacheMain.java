@@ -11,7 +11,7 @@ import org.craft.atom.cache.impl.RedisCache;
 import org.junit.Assert;
 
 /**
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, Sep 10, 2012
  */
 public class RedisCacheMain {
@@ -22,17 +22,18 @@ public class RedisCacheMain {
 	private static void init() {
 		boolean isShard = true;
 		int timeout = 3000;
-		rc = new RedisCache(isShard, timeout, "localhost:6379", 1);
+		rc = new RedisCache(isShard, timeout, "localhost:6379", 2);
+//		rc = new RedisCache(isShard, timeout, "10.28.176.81:6380", 2);
 	}
 	
 	public static void before() {
-		System.out.println("------------------------------- before");
+//		System.out.println("------------------------------- before");
 	}
 	
 	public static void after() {
 		rc.del(key);
 		
-		System.out.println("------------------------------- after");
+//		System.out.println("------------------------------- after");
 	}
 	
 	public static void main(String[] args) {
@@ -66,7 +67,7 @@ public class RedisCacheMain {
 		ScheduledExecutorService ses = Executors.newScheduledThreadPool(10);
 		ses.scheduleAtFixedRate(new TransactionLoadWorker(), 1000, 100, TimeUnit.MILLISECONDS);
 		
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 1; i <= 1000; i++) {
 			before();
 			try {
 				String t = testTransactionInHighConcurrency0();
@@ -91,7 +92,7 @@ public class RedisCacheMain {
 			if (lock) {
 				try {
 					rc.setex("transaction-test", 15, "1");
-					System.out.println("transaction load ...");
+//					System.out.println("transaction load ...");
 				} finally {
 					unlock(lockKey);
 				}
@@ -116,11 +117,12 @@ public class RedisCacheMain {
 			if (rc.get(lockKey) == null) {
 				success = tryLock0(lockKey, ttlSeconds);
 			} else {
-				rc.unwatch(lockKey);
 				success = false;
 			}
 		} catch (Exception e) {
 			success = false;
+		} finally {
+			rc.unwatch(lockKey);
 		}
 		return success;
 	}
@@ -167,6 +169,7 @@ public class RedisCacheMain {
 			List<Object> list = tx.commit();
 			System.out.println(list);
 			if (list.isEmpty()) {
+				System.exit(0);
 				throw new IllegalStateException();
 			}
 		} finally {

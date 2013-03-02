@@ -47,12 +47,13 @@ public class RedisDLock24 implements DLock {
 			if (redisCache.get(lockKey) == null) {
 				success = tryLock0(lockKey, ttlSeconds);
 			} else {
-				redisCache.unwatch(lockKey);
 				success = false;
 			}
 		} catch (Exception e) {
 			LOG.error("tryLock failed!", e);
 			success = false;
+		} finally {
+			redisCache.unwatch(lockKey);
 		}
 		return success;
 	}

@@ -29,10 +29,12 @@ import redis.clients.jedis.Tuple;
  */
 public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCache, StringCache, LongCache {
 	
+	private static final ThreadLocal<AbstractTransaction> THREAD_LOCAL_TRANSACTION = new ThreadLocal<AbstractTransaction>();
+	private static final ThreadLocal<Jedis> THREAD_LOCAL_JEDIS = new ThreadLocal<Jedis>();
+	private static final ThreadLocal<ShardedJedis> THREAD_LOCAL_SHARDED_JEDIS = new ThreadLocal<ShardedJedis>();
+	
 	private int timeout = 3000;
 	private boolean isShard = true;
-	
-	private ThreadLocal<AbstractTransaction> threadLocal = new ThreadLocal<AbstractTransaction>();
 	private ShardedJedisPool shardedPool;
 	private JedisPool pool;
 	private List<CacheHost> cacheHosts;
@@ -2427,21 +2429,20 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 			throw new UnsupportedOperationException("Use beginTransaction(key)");
 		}
 		
-		Jedis j = pool.getResource();
+		Jedis j = THREAD_LOCAL_JEDIS.get();
+		if (j == null) {
+			j = pool.getResource();
+		}
 		AbstractTransaction rt = null;
 		try {
 			redis.clients.jedis.Transaction jt = j.multi();
 			rt = new RedisTransaction(this, jt, j);
+			THREAD_LOCAL_TRANSACTION.set(rt);
 		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
 			throw e;
-		} finally {
-			pool.returnResource(j);
 		}
 		
-		if (rt != null) {
-			threadLocal.set(rt);
-		}
 		return rt;
 	}
 
@@ -2450,21 +2451,22 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		if (!isShard) {
 			throw new UnsupportedOperationException("Use beginTransaction()");
 		}
-
-		ShardedJedis sj = shardedPool.getResource();
+		
+		ShardedJedis sj = THREAD_LOCAL_SHARDED_JEDIS.get();
+		if (sj == null) {
+			sj = shardedPool.getResource();
+		}
 		AbstractTransaction rt = null;
 		try {
-			Jedis j = sj.getShard(key);
+			Jedis j = sj.getShard(key); 
 			redis.clients.jedis.Transaction jt = j.multi();
 			rt = new ShardedRedisTransaction(this, jt, sj);
+			THREAD_LOCAL_TRANSACTION.set(rt);
 		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
 			throw e;
 		}
 		
-		if (rt != null) {
-			threadLocal.set(rt);
-		}
 		return rt;
 	}
 	
@@ -2486,11 +2488,10 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		try {
 			Jedis j = sj.getShard(keys[0]);
 			j.watch(keys);
+			THREAD_LOCAL_SHARDED_JEDIS.set(sj);
 		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
 			throw e;
-		} finally {
-			shardedPool.returnResource(sj);
 		}
 	}
 	
@@ -2498,8 +2499,10 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			j.watch(keys);
-		} finally {
-			pool.returnResource(j);
+			THREAD_LOCAL_JEDIS.set(j);
+		} catch (RuntimeException e) {
+			pool.returnBrokenResource(j);
+			throw e;
 		}
 	}
 
@@ -2513,7 +2516,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	}
 	
 	private void unwatchN(String key) {
-		ShardedJedis sj = shardedPool.getResource();
+		ShardedJedis sj = THREAD_LOCAL_SHARDED_JEDIS.get();
 		try {
 			Jedis j = sj.getShard(key);
 			j.unwatch();
@@ -2521,39 +2524,50 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 			shardedPool.returnBrokenResource(sj);
 			throw e;
 		} finally {
-			shardedPool.returnResource(sj);
+			if (THREAD_LOCAL_SHARDED_JEDIS.get() != null) {
+				THREAD_LOCAL_SHARDED_JEDIS.remove();
+				shardedPool.returnResource(sj);
+			}
 		}
 	}
 	
 	private void unwatch1() {
-		Jedis j = pool.getResource();
+		Jedis j = THREAD_LOCAL_JEDIS.get();
 		try {
 			j.unwatch();
+		} catch (RuntimeException e) {
+			pool.returnBrokenResource(j);
+			throw e;
 		} finally {
-			pool.returnResource(j);
+			if (THREAD_LOCAL_JEDIS.get() != null) {
+				THREAD_LOCAL_JEDIS.remove();
+				pool.returnResource(j);
+			}
 		}
 	}
 
 	void cleanTransaction(Jedis j, boolean broken) {
+		THREAD_LOCAL_TRANSACTION.remove();
+		THREAD_LOCAL_JEDIS.remove();
 		if (broken) {
 			pool.returnBrokenResource(j);
 		} else {
 			pool.returnResource(j);
 		}
-		threadLocal.remove();
 	}
 	
 	void cleanTransaction(ShardedJedis sj, boolean broken) {
+		THREAD_LOCAL_TRANSACTION.remove();
+		THREAD_LOCAL_SHARDED_JEDIS.remove();
 		if (broken) {
 			shardedPool.returnBrokenResource(sj);
 		} else {
 			shardedPool.returnResource(sj);
 		}
-		threadLocal.remove();
 	}
 
 	private AbstractTransaction getTransaction() {
-		return threadLocal.get();
+		return THREAD_LOCAL_TRANSACTION.get();
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
