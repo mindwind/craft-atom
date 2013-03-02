@@ -78,4 +78,14 @@ Emergent fix bugs found by FindBugs.
 
 
 
+Version 1.1.6
+-----------------------------------------------------------------------------------------------------------------------
+Emergent bug fix
+-----------------------------------------------------------------------------------------------------------------------
 
+
+Version 2.0.0
+-----------------------------------------------------------------------------------------------------------------------
+craft-atom-nio
+  .improve refactor nio design and implementation, provide more clean and consistent api and better performance.
+  .fix     cache transaction api "watch" bugs, it doesn't hold the connection in one transaction.

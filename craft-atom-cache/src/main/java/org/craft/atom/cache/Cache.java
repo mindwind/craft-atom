@@ -113,11 +113,12 @@ public interface Cache {
 	 * Marks the given keys to be watched for conditional execution of a transaction.
 	 * watch() is used to provide a check-and-set (CAS) behavior to cache transactions.
 	 * Watched keys are monitored in order to detect changes against them. If at least one watched key is modified before 
-	 * the transaction commit, the whole transaction aborts, and transaction commit returns a <tt>null</tt> to notify that 
+	 * the transaction commit, the whole transaction aborts, and transaction commit returns a empty result to notify that 
 	 * the transaction failed.
 	 * <p>
 	 * <b>NOTE:</b><br>
 	 * In a sharded cache deployment environment, only single key are supported.
+	 * Once watch some keys, it must be unwatched avoid  resource leak.
 	 * @param keys
 	 */
 	void watch(String... keys);
