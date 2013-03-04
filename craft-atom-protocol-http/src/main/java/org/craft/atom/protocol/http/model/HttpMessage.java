@@ -5,9 +5,9 @@ import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  * HTTP messages consist of requests from client to server and responses
@@ -38,7 +38,7 @@ public abstract class HttpMessage implements Serializable {
 
 	private static final long serialVersionUID = -8373186983205172162L;
 	
-	protected Map<String, HttpHeader> headers = new LinkedHashMap<String, HttpHeader>();
+	protected List<HttpHeader> headers = new ArrayList<HttpHeader>();
 	protected HttpEntity entity;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -47,11 +47,11 @@ public abstract class HttpMessage implements Serializable {
 		super();
 	}
 
-	public HttpMessage(Map<String, HttpHeader> headers) {
+	public HttpMessage(List<HttpHeader> headers) {
 		this.headers = headers;
 	}
 	
-	public HttpMessage(Map<String, HttpHeader> headers, HttpEntity entity) {
+	public HttpMessage(List<HttpHeader> headers, HttpEntity entity) {
 		this.headers = headers;
 		this.entity = entity;
 	}
@@ -68,22 +68,60 @@ public abstract class HttpMessage implements Serializable {
 			throw new IllegalArgumentException("header or header name is null!");
 		}
 		
-		headers.put(header.getName(), header);
+		headers.add(header);
 	}
 	
-	public HttpHeader getHeader(String name) {
+	/**
+     * Gets the first header with the given name.
+     *
+     * <p>Header name comparison is case insensitive.
+     *
+     * @param name the name of the header to get
+     * @return the first header or <code>null</code>
+     */
+	public HttpHeader getFirstHeader(String name) {
 		if (name == null) {
 			throw new IllegalArgumentException("name is null!");
 		}
 		
-		return headers.get(name);
+		for (int i = 0; i < headers.size(); i++) {
+            HttpHeader header = headers.get(i);
+            if (header.getName().equalsIgnoreCase(name)) {
+                return header;
+            }
+        }
+		
+        return null;
+	}
+	
+	/**
+     * Gets all of the headers with the given name.  The returned list
+     * maintains the relative order in which the headers were added.
+     *
+     * <p>Header name comparison is case insensitive.
+     *
+     * @param name the name of the header(s) to get
+     *
+     * @return an array of length >= 0
+     */
+	public List<HttpHeader> getHeaders(String name) {
+		List<HttpHeader> headersFound = new ArrayList<HttpHeader>();
+
+        for (int i = 0; i < headers.size(); i++) {
+        	HttpHeader header = headers.get(i);
+            if (header.getName().equalsIgnoreCase(name)) {
+                headersFound.add(header);
+            }
+        }
+
+        return headersFound;
 	}
 
-	public Map<String, HttpHeader> getHeaders() {
+	public List<HttpHeader> getHeaders() {
 		return headers;
 	}
 
-	public void setHeaders(Map<String, HttpHeader> headers) {
+	public void setHeaders(List<HttpHeader> headers) {
 		this.headers = headers;
 	}
 
@@ -96,7 +134,7 @@ public abstract class HttpMessage implements Serializable {
 	}
 	
 	public Iterator<HttpHeader> headerIterator() {
-		return headers.values().iterator();
+		return headers.iterator();
 	}
 
 	@Override

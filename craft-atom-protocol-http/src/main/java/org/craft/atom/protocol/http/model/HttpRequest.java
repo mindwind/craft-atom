@@ -1,7 +1,7 @@
 package org.craft.atom.protocol.http.model;
 
 import java.nio.charset.Charset;
-import java.util.Map;
+import java.util.List;
 
 
 /**
@@ -34,12 +34,12 @@ public class HttpRequest extends HttpMessage {
 		this.requestLine = requestLine;
 	}
 	
-	public HttpRequest(HttpRequestLine requestLine, Map<String, HttpHeader> headers) {
+	public HttpRequest(HttpRequestLine requestLine, List<HttpHeader> headers) {
 		super(headers);
 		this.requestLine = requestLine;
 	}
 	
-	public HttpRequest(HttpRequestLine requestLine, Map<String, HttpHeader> headers, HttpEntity entity) {
+	public HttpRequest(HttpRequestLine requestLine, List<HttpHeader> headers, HttpEntity entity) {
 		super(headers, entity);
 		this.requestLine = requestLine;
 	}

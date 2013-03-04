@@ -135,7 +135,7 @@ public enum HttpStatus {
     
     
     /** (HTTP/1.0 - RFC 1945) The server encountered an error that prevented it from servicing the request. */
-    INTERNAL_SERVER_ERROR(500, "nternal Server Error"),
+    INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
     
     /** (HTTP/1.0 - RFC 1945) The client made a request that is beyond the server's capabilities. */
     NOT_IMPLEMENTED(501, "Not Implemented"),

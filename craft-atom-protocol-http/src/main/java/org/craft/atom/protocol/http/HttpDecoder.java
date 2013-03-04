@@ -88,7 +88,7 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 	}
 	
 	protected void state4ENTITY_ENCODING() throws ProtocolException, IOException {
-		HttpHeader ceh = httpMessage.getHeader(HttpHeaders.CONTENT_ENCODING.getName());
+		HttpHeader ceh = httpMessage.getFirstHeader(HttpHeaders.CONTENT_ENCODING.getName());
 		String coding = null;
 		if (ceh == null){
 			coding = CONTENT_ENCODING_IDENTITY;
@@ -277,7 +277,7 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 		} else if (size > 0){
 			state = ENTITY_CHUNKED_DATA;
 		} else if (size == 0) {
-			HttpHeader trailerHeader = httpMessage.getHeader(HttpHeaders.TRAILER.getName());
+			HttpHeader trailerHeader = httpMessage.getFirstHeader(HttpHeaders.TRAILER.getName());
 			httpMessage.setEntity(entity);
 			if (trailerHeader != null) {
 				trailerSize = trailerHeader.getValue().split(",").length;
@@ -293,7 +293,7 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 	
 	protected void state4ENTITY_LENGTH() throws ProtocolException {
 		// get content length
-		int clen = Integer.parseInt(httpMessage.getHeader(HttpHeaders.CONTENT_LENGTH.getName()).getValue());
+		int clen = Integer.parseInt(httpMessage.getFirstHeader(HttpHeaders.CONTENT_LENGTH.getName()).getValue());
 		if (clen < 0) {
 			throw new ProtocolException(ProtocolExceptionType.UNEXPECTED, "content length < 0");
 		}
@@ -319,13 +319,13 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 		}
 		
 		// content length
-		if (httpMessage.getHeader(HttpHeaders.CONTENT_LENGTH.getName()) != null) {
+		if (httpMessage.getFirstHeader(HttpHeaders.CONTENT_LENGTH.getName()) != null) {
 			entity = new HttpEntity();
 			entity.setCharset(getContentCharset(httpMessage));
 			state = ENTITY_LENGTH;
 		}
 		// chunked
-		else if (TRANSFER_ENCODING_CHUNKED.equals(httpMessage.getHeader(HttpHeaders.TRANSFER_ENCODING.getName()).getValue())) {
+		else if (TRANSFER_ENCODING_CHUNKED.equals(httpMessage.getFirstHeader(HttpHeaders.TRANSFER_ENCODING.getName()).getValue())) {
 			entity = new HttpChunkEntity();
 			entity.setCharset(getContentCharset(httpMessage));
 			state = ENTITY_CHUNKED_SIZE;
@@ -438,7 +438,7 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 			return contentCharset;
 		}
 		
-		HttpHeader contentTypeHeader = httpMessage.getHeader(HttpHeaders.CONTENT_TYPE.getName());
+		HttpHeader contentTypeHeader = httpMessage.getFirstHeader(HttpHeaders.CONTENT_TYPE.getName());
 		if (contentTypeHeader == null) {
 			contentCharset =  charset;
 			return contentCharset;

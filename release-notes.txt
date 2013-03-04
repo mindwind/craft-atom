@@ -1,7 +1,23 @@
-Version 2.0.0
------------------------------------------------------------------------------------------------------------------------
-craft-atom-nio
-  [improve] - refactor nio design and implementation, provide more clean and consistent api and better performance.
 
-craft-atom-cache
-  [fix] - cache transaction api "watch" bugs, it doesn't hold the connection in one transaction.
+craft-atom 2.x release notes
+-----------------------------------------------------------------------------------------------------------------------
+Upgrade urgency levels:
+
+LOW:      No need to upgrade unless there are new features you want to use.
+MODERATE: Program an upgrade of the server, but it's not urgent.
+HIGH:     There is a critical bug that may affect a subset of users. Upgrade!
+CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
+-----------------------------------------------------------------------------------------------------------------------
+
+
+
+craft-atom 2.0.0 
+-----------------------------------------------------------------------------------------------------------------------
+
+UPGRADE URGENCY: HIGH
+
+* craft-atom-nio
+  [IMPROVED] - refactor nio design and implementation, provide more clean and consistent api and better performance.
+
+* craft-atom-cache
+  [FIX]      - cache transaction api "watch" bugs, it doesn't hold the connection in one transaction.

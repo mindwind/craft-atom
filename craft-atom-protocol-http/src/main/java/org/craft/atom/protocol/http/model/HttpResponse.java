@@ -1,7 +1,7 @@
 package org.craft.atom.protocol.http.model;
 
 import java.nio.charset.Charset;
-import java.util.Map;
+import java.util.List;
 
 /**
  * HTTP response message.
@@ -27,12 +27,12 @@ public class HttpResponse extends HttpMessage {
 		super();
 	}
 
-	public HttpResponse(HttpStatusLine statusLine, Map<String, HttpHeader> headers) {
+	public HttpResponse(HttpStatusLine statusLine, List<HttpHeader> headers) {
 		super(headers);
 		this.statusLine = statusLine;
 	}
 	
-	public HttpResponse(HttpStatusLine statusLine, Map<String, HttpHeader> headers, HttpEntity entity) {
+	public HttpResponse(HttpStatusLine statusLine, List<HttpHeader> headers, HttpEntity entity) {
 		super(headers, entity);
 		this.statusLine = statusLine;
 	}
