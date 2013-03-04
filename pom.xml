@@ -3,13 +3,13 @@
 
 	<groupId>org.craft.atom</groupId>
 	<artifactId>craft-atom</artifactId>
-	<version>1.1.7-SNAPSHOT</version>
+	<version>1.1.7</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	
 	<scm>
 		<developerConnection>scm:git:https://github.com/mindwind/craft-atom.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>craft-atom-1.1.7</tag>
   </scm>
 
 	<modules>
