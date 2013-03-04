@@ -80,5 +80,14 @@ craft-atom-nio
 
 Version 1.1.7
 -----------------------------------------------------------------------------------------------------------------------
-craft-atom-nio
-  .fix     cache transaction api "watch" bugs, it doesn't hold the connection in one transaction.
+craft-atom-cache
+  .fix cache transaction api "watch" bugs, it doesn't hold the connection in one transaction.
+  
+
+
+
+Version 1.1.8
+-----------------------------------------------------------------------------------------------------------------------
+craft-atom-cache
+  .fix redis cache unwatch api null pointer exception
+     
