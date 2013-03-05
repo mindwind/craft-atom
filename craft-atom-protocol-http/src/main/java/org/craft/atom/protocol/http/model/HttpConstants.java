@@ -13,7 +13,7 @@ public class HttpConstants {
 	public static final String CONTENT_ENCODING_DEFLATE = "deflate";
 	public static final String CONTENT_ENCODING_COMPRESS = "compress";
 	
-	public static final String CONTENT_TYPE_CHARSET = "charset";
+	public static final String CHARSET = "charset";
 	
 	// ~ ------------------------------------------------------------------------------------- some special character
 			
@@ -33,9 +33,5 @@ public class HttpConstants {
 	public static final String S_COLON = ":";      
 	public static final String S_SEMICOLON = ";";
 	public static final String S_EQUAL_SIGN = "=";
-	
-//	public static void main(String[] args) {
-//		System.out.println("=".getBytes()[0]);
-//	}
 	
 }

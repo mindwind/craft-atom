@@ -23,11 +23,13 @@ import org.craft.atom.protocol.ProtocolExceptionType;
 import org.craft.atom.protocol.http.model.HttpChunk;
 import org.craft.atom.protocol.http.model.HttpChunkEntity;
 import org.craft.atom.protocol.http.model.HttpConstants;
+import org.craft.atom.protocol.http.model.HttpContentType;
 import org.craft.atom.protocol.http.model.HttpEntity;
 import org.craft.atom.protocol.http.model.HttpHeader;
+import org.craft.atom.protocol.http.model.HttpHeaderType;
 import org.craft.atom.protocol.http.model.HttpHeaderValueElement;
-import org.craft.atom.protocol.http.model.HttpHeaders;
 import org.craft.atom.protocol.http.model.HttpMessage;
+import org.craft.atom.protocol.http.model.MimeType;
 import org.craft.atom.util.ByteUtil;
 import org.craft.atom.util.GzipUtil;
 
@@ -66,13 +68,12 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 	protected int stateIndex = 0;
 	protected int state = START;
 	protected int maxLineLength = defaultBufferSize;
-	
-	protected Charset contentCharset;
+	protected int trailerSize;
 	protected HttpHeader header;
 	protected HttpEntity entity;
 	protected HttpChunk chunk;
+	protected HttpContentType contentType;
 	protected String chunkExtName;
-	protected int trailerSize;
 	protected T httpMessage;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -88,7 +89,7 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 	}
 	
 	protected void state4ENTITY_ENCODING() throws ProtocolException, IOException {
-		HttpHeader ceh = httpMessage.getFirstHeader(HttpHeaders.CONTENT_ENCODING.getName());
+		HttpHeader ceh = httpMessage.getFirstHeader(HttpHeaderType.CONTENT_ENCODING.getName());
 		String coding = null;
 		if (ceh == null){
 			coding = CONTENT_ENCODING_IDENTITY;
@@ -277,7 +278,7 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 		} else if (size > 0){
 			state = ENTITY_CHUNKED_DATA;
 		} else if (size == 0) {
-			HttpHeader trailerHeader = httpMessage.getFirstHeader(HttpHeaders.TRAILER.getName());
+			HttpHeader trailerHeader = httpMessage.getFirstHeader(HttpHeaderType.TRAILER.getName());
 			httpMessage.setEntity(entity);
 			if (trailerHeader != null) {
 				trailerSize = trailerHeader.getValue().split(",").length;
@@ -293,7 +294,7 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 	
 	protected void state4ENTITY_LENGTH() throws ProtocolException {
 		// get content length
-		int clen = Integer.parseInt(httpMessage.getFirstHeader(HttpHeaders.CONTENT_LENGTH.getName()).getValue());
+		int clen = Integer.parseInt(httpMessage.getFirstHeader(HttpHeaderType.CONTENT_LENGTH.getName()).getValue());
 		if (clen < 0) {
 			throw new ProtocolException(ProtocolExceptionType.UNEXPECTED, "content length < 0");
 		}
@@ -319,15 +320,15 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 		}
 		
 		// content length
-		if (httpMessage.getFirstHeader(HttpHeaders.CONTENT_LENGTH.getName()) != null) {
+		if (httpMessage.getFirstHeader(HttpHeaderType.CONTENT_LENGTH.getName()) != null) {
 			entity = new HttpEntity();
-			entity.setCharset(getContentCharset(httpMessage));
+			entity.setContentType(getContentType(httpMessage));
 			state = ENTITY_LENGTH;
 		}
 		// chunked
-		else if (TRANSFER_ENCODING_CHUNKED.equals(httpMessage.getFirstHeader(HttpHeaders.TRANSFER_ENCODING.getName()).getValue())) {
+		else if (TRANSFER_ENCODING_CHUNKED.equals(httpMessage.getFirstHeader(HttpHeaderType.TRANSFER_ENCODING.getName()).getValue())) {
 			entity = new HttpChunkEntity();
-			entity.setCharset(getContentCharset(httpMessage));
+			entity.setContentType(getContentType(httpMessage));
 			state = ENTITY_CHUNKED_SIZE;
 		}
 		// no entity
@@ -433,31 +434,35 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 		}
 	}
 	
-	protected Charset getContentCharset(HttpMessage httpMessage) {
-		if (contentCharset != null) {
-			return contentCharset;
+	protected HttpContentType getContentType(HttpMessage httpMessage) {
+		if (contentType != null) {
+			return contentType;
 		}
 		
-		HttpHeader contentTypeHeader = httpMessage.getFirstHeader(HttpHeaders.CONTENT_TYPE.getName());
+		// No Content-Type header
+		HttpHeader contentTypeHeader = httpMessage.getFirstHeader(HttpHeaderType.CONTENT_TYPE.getName());
 		if (contentTypeHeader == null) {
-			contentCharset =  charset;
-			return contentCharset;
+			contentType = new HttpContentType(charset);
+			return contentType;
 		}
 		
+		// value element is null, e.g. Content-Type: 
 		List<HttpHeaderValueElement> elements = contentTypeHeader.getValueElements();
 		if (elements.isEmpty()) {
-			contentCharset = charset;
-			return contentCharset;
+			contentType = new HttpContentType(charset);
+			return contentType;
 		}
 		
-		String charsetName = elements.get(0).getParamValue(HttpConstants.CONTENT_TYPE_CHARSET);
-		if (charsetName == null) {
-			contentCharset = charset;
-			return contentCharset;
+		// e.g. Content-Type: text/plain; charset=utf-8
+		HttpHeaderValueElement element = elements.get(0);
+		Charset contentCharset = charset;
+		String mimeType = element.getName();
+		String charsetName = element.getParamValue(HttpConstants.CHARSET);
+		if (charsetName != null) {
+			contentCharset = Charset.forName(charsetName);
 		}
-		
-		contentCharset = Charset.forName(charsetName);
-		return contentCharset;
+		contentType = new HttpContentType(MimeType.from(mimeType), contentCharset);
+		return contentType;
 	}
 	
 	protected byte previousByte() {
@@ -564,7 +569,6 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 	}
 	
 	protected void clear() {
-		contentCharset = null;
 		header = null;
 		entity = null;
 		chunk = null;
@@ -632,11 +636,11 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 	@Override
 	public String toString() {
 		return String
-				.format("HttpDecoder [stateIndex=%s, state=%s, maxLineLength=%s, contentCharset=%s, header=%s, entity=%s, chunk=%s, chunkExtName=%s, trailerSize=%s, httpMessage=%s, defaultBufferSize=%s, buf=%s, splitIndex=%s, searchIndex=%s, maxSize=%s, charset=%s]",
-						stateIndex, state, maxLineLength, contentCharset,
-						header, entity, chunk, chunkExtName, trailerSize,
-						httpMessage, defaultBufferSize, buf, splitIndex,
-						searchIndex, maxSize, charset);
+				.format("HttpDecoder [stateIndex=%s, state=%s, maxLineLength=%s, trailerSize=%s, header=%s, entity=%s, chunk=%s, contentType=%s, chunkExtName=%s, httpMessage=%s, defaultBufferSize=%s, buf=%s, splitIndex=%s, searchIndex=%s, maxSize=%s, charset=%s]",
+						stateIndex, state, maxLineLength, trailerSize, header,
+						entity, chunk, contentType, chunkExtName, httpMessage,
+						defaultBufferSize, buf, splitIndex, searchIndex,
+						maxSize, charset);
 	}
 
 }

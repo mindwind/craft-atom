@@ -16,7 +16,7 @@ public class HttpEntity implements Serializable {
 
 	private static final long serialVersionUID = -3461343279665456788L;
 	
-	protected Charset charset;
+	protected HttpContentType contentType = HttpContentType.DEFAULT;
 	protected byte[] content;
 
 	public HttpEntity() {
@@ -27,13 +27,15 @@ public class HttpEntity implements Serializable {
 		this.content = content;
 	}
 	
-	public HttpEntity(String content, Charset charset) {
-		this.charset = charset;
-		this.content = content.getBytes(charset);
+	public HttpEntity(String content, HttpContentType contentType) {
+		this.contentType = contentType;
+		Charset charset = contentType.getCharset();
+		this.content = content.getBytes(charset == null ? Charset.defaultCharset() : charset);
 	}
 	
 	public String getContentAsString() {
-		return new String(content, charset);
+		Charset charset = contentType.getCharset();
+		return new String(content, charset == null ? Charset.defaultCharset() : charset);
 	}
 
 	public byte[] getContent() {
@@ -44,21 +46,17 @@ public class HttpEntity implements Serializable {
 		this.content = content;
 	}
 
-	public Charset getCharset() {
-		return charset;
+	public HttpContentType getContentType() {
+		return contentType;
 	}
 
-	public void setCharset(Charset charset) {
-		this.charset = charset;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("HttpEntity [charset=%s, content=%s]", charset, getContentAsString());
+	public void setContentType(HttpContentType contentType) {
+		this.contentType = contentType;
 	}
 
 	public String toHttpString() {
-		return new String(content, charset);
+		Charset charset = contentType.getCharset();
+		return new String(content, charset == null ? Charset.defaultCharset() : charset);
 	}
 
 }

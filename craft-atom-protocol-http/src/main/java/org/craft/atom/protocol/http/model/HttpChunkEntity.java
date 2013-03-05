@@ -123,7 +123,7 @@ public class HttpChunkEntity extends HttpEntity {
 	public String toHttpString() {
 		StringBuilder sb = new StringBuilder();
 		for (HttpChunk chunk : getChunks()) {
-			sb.append(chunk.toHttpString(charset));
+			sb.append(chunk.toHttpString(contentType.getCharset()));
 		}
 		for (HttpHeader trailer : trailers.values()) {
 			sb.append(trailer.toHttpString());

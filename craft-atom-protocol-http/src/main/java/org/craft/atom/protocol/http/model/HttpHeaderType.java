@@ -1,12 +1,12 @@
 package org.craft.atom.protocol.http.model;
 
 /**
- * Constants enumerating the HTTP headers.
+ * HTTP header type enumeration.
  * 
  * @author mindwind
  * @version 1.0, Feb 6, 2013
  */
-public enum HttpHeaders {
+public enum HttpHeaderType {
 
 	// ~ --------------------------------------------------------------------------------------- general headers
 	
@@ -1089,7 +1089,7 @@ public enum HttpHeaders {
 
 	private final String name;
 
-	private HttpHeaders(String name) {
+	private HttpHeaderType(String name) {
 		this.name = name;
 	}
 

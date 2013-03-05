@@ -226,11 +226,11 @@ public class HttpRequestDecoder extends HttpDecoder<HttpRequest> implements Prot
 	@Override
 	public String toString() {
 		return String
-				.format("HttpRequestDecoder [stateIndex=%s, state=%s, maxLineLength=%s, contentCharset=%s, header=%s, entity=%s, chunk=%s, chunkExtName=%s, trailerSize=%s, httpMessage=%s, defaultBufferSize=%s, buf=%s, splitIndex=%s, searchIndex=%s, maxSize=%s, charset=%s]",
-						stateIndex, state, maxLineLength, contentCharset,
-						header, entity, chunk, chunkExtName, trailerSize,
-						httpMessage, defaultBufferSize, buf, splitIndex,
-						searchIndex, maxSize, charset);
+				.format("HttpRequestDecoder [stateIndex=%s, state=%s, maxLineLength=%s, trailerSize=%s, header=%s, entity=%s, chunk=%s, contentType=%s, chunkExtName=%s, httpMessage=%s, defaultBufferSize=%s, buf=%s, splitIndex=%s, searchIndex=%s, maxSize=%s, charset=%s]",
+						stateIndex, state, maxLineLength, trailerSize, header,
+						entity, chunk, contentType, chunkExtName, httpMessage,
+						defaultBufferSize, buf, splitIndex, searchIndex,
+						maxSize, charset);
 	}
 	
 }
