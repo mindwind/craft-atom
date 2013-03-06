@@ -2518,8 +2518,10 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	private void unwatchN(String key) {
 		ShardedJedis sj = THREAD_LOCAL_SHARDED_JEDIS.get();
 		try {
-			Jedis j = sj.getShard(key);
-			j.unwatch();
+			if (sj != null) {
+				Jedis j = sj.getShard(key);
+				j.unwatch();
+			}
 		} catch (RuntimeException e) {
 			shardedPool.returnBrokenResource(sj);
 			throw e;
@@ -2534,7 +2536,9 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 	private void unwatch1() {
 		Jedis j = THREAD_LOCAL_JEDIS.get();
 		try {
-			j.unwatch();
+			if (j != null) {
+				j.unwatch();
+			}
 		} catch (RuntimeException e) {
 			pool.returnBrokenResource(j);
 			throw e;
