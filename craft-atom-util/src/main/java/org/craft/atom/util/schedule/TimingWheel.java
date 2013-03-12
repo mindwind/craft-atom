@@ -202,7 +202,7 @@ public class TimingWheel<E> {
 			slot.remove(e);
 			synchronized (e) {
 				Slot<E> latestSlot = indicator.get(e);
-				if (latestSlot.equals(slot)) {
+				if (slot.equals(latestSlot)) {
 					indicator.remove(e);
 				}
 			}
