@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.Channel;
+import org.craft.atom.io.IoConnector;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.api.NioConnectorConfig;
 import org.craft.atom.nio.api.NioTcpConnector;
@@ -18,14 +19,14 @@ import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
- * Connects to server based TCP or UDP, communicates with the server, and fires events.
+ * Connects to server based on TCP or UDP, communicates with the server, and fires events.
  * 
  * @author mindwind
  * @version 1.0, Feb 24, 2013
  * @see NioTcpConnector
  * @see NioUdpConnector
  */
-abstract public class NioConnector extends NioReactor {
+abstract public class NioConnector extends NioReactor implements IoConnector {
 	
 	private static final Log LOG = LogFactory.getLog(NioConnector.class);
 	

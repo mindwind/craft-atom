@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.craft.atom.io.IoAcceptor;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.api.NioAcceptorConfig;
@@ -26,15 +27,14 @@ import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
- * Accepts incoming connection based TCP or datagram based UDP, 
- * communicates with clients, and fires events.
+ * Accepts incoming connection based TCP or datagram based UDP, communicates with clients, and fires events.
  * 
  * @author mindwind
  * @version 1.0, Feb 21, 2013
  * @see NioTcpAcceptor
  * @see NioUdpAcceptor
  */
-abstract public class NioAcceptor extends NioReactor {
+abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	
 	private static final Log LOG = LogFactory.getLog(NioAcceptor.class);
 	
@@ -249,7 +249,7 @@ abstract public class NioAcceptor extends NioReactor {
 	
 	/**
 	 * Binds to the specified local addresses and start to accept incoming connections. 
-	 * If any address binding failed then rollback the already binding addresses. 
+	 * If any address binding failed then rollback the already bound addresses. 
 	 * Bind operation is fail fast, if encounter the first bind exception then throw it immediately.
 	 * 
 	 * @param firstLocalAddress
