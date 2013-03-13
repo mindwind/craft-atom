@@ -2,7 +2,7 @@ package org.craft.atom.cache.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1660,7 +1660,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			Set<Tuple> set = sj.zrangeWithScores(key, start, end);
-			Map<String, Double> map = new HashMap<String, Double>();
+			Map<String, Double> map = new LinkedHashMap<String, Double>();
 			if (set != null) {
 				for (Tuple tuple : set) {
 					map.put(tuple.getElement(), tuple.getScore());
@@ -1679,7 +1679,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			Set<Tuple> set = j.zrangeWithScores(key, start, end);
-			Map<String, Double> map = new HashMap<String, Double>();
+			Map<String, Double> map = new LinkedHashMap<String, Double>();
 			if (set != null) {
 				for (Tuple tuple : set) {
 					map.put(tuple.getElement(), tuple.getScore());
@@ -1977,7 +1977,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			Set<Tuple> set = sj.zrangeByScoreWithScores(key, min, max);
-			Map<String, Double> map = new HashMap<String, Double>();
+			Map<String, Double> map = new LinkedHashMap<String, Double>();
 			if (set != null) {
 				for (Tuple tuple : set) {
 					map.put(tuple.getElement(), tuple.getScore());
@@ -1996,7 +1996,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			Set<Tuple> set = j.zrangeByScoreWithScores(key, min, max);
-			Map<String, Double> map = new HashMap<String, Double>();
+			Map<String, Double> map = new LinkedHashMap<String, Double>();
 			if (set != null) {
 				for (Tuple tuple : set) {
 					map.put(tuple.getElement(), tuple.getScore());
@@ -2026,7 +2026,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		ShardedJedis sj = shardedPool.getResource();
 		try {
 			Set<Tuple> set = sj.zrangeByScoreWithScores(key, min, max, offset, count);
-			Map<String, Double> map = new HashMap<String, Double>();
+			Map<String, Double> map = new LinkedHashMap<String, Double>();
 			if (set != null) {
 				for (Tuple tuple : set) {
 					map.put(tuple.getElement(), tuple.getScore());
@@ -2045,7 +2045,7 @@ public class RedisCache implements ListCache, SetCache, SortedSetCache, HashCach
 		Jedis j = pool.getResource();
 		try {
 			Set<Tuple> set = j.zrangeByScoreWithScores(key, min, max, offset, count);
-			Map<String, Double> map = new HashMap<String, Double>();
+			Map<String, Double> map = new LinkedHashMap<String, Double>();
 			if (set != null) {
 				for (Tuple tuple : set) {
 					map.put(tuple.getElement(), tuple.getScore());
