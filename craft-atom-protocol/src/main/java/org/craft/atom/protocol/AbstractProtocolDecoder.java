@@ -15,7 +15,7 @@ abstract public class AbstractProtocolDecoder extends AbstractProtocolCodec {
 	protected int maxSize = defaultBufferSize * 10;
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
-	
+
 	protected void reset() {
 		if (splitIndex > 0 && splitIndex < buf.length()) {
 			byte[] tailBytes = buf.array(splitIndex, buf.length());

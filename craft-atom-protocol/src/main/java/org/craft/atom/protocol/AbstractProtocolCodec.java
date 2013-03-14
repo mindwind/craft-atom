@@ -9,7 +9,7 @@ import java.nio.charset.Charset;
 public class AbstractProtocolCodec {
 	
 	protected Charset charset = Charset.forName("utf-8");
-	
+
 	public Charset getCharset() {
 		return charset;
 	}

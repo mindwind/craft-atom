@@ -1,5 +1,7 @@
 package org.craft.atom.protocol.http;
 
+import java.nio.charset.Charset;
+
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.http.model.HttpResponse;
@@ -13,6 +15,14 @@ import org.craft.atom.protocol.http.model.HttpResponse;
  * @version 1.0, Feb 3, 2013
  */
 public class HttpResponseEncoder extends HttpEncoder implements ProtocolEncoder<HttpResponse> {
+
+	public HttpResponseEncoder() {
+		super();
+	}
+	
+	public HttpResponseEncoder(Charset charset)  {
+		
+	}
 
 	@Override
 	public byte[] encode(HttpResponse resonpse) throws ProtocolException {
