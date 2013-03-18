@@ -20,7 +20,7 @@ public class RedisDLock24Main {
 	private static void init() {
 		boolean isShard = true;
 		int timeout = 3000;
-		rc = new RedisCache(isShard, timeout, "localhost:6379", 1);
+		rc = new RedisCache(isShard, timeout, "localhost:6379", 10);
 		dlock = new RedisDLock24(rc);
 	}
 	
@@ -38,7 +38,7 @@ public class RedisDLock24Main {
 		init();
 		
 		// case 1
-//		testTryLock1();
+		testTryLock1();
 		
 		// case 2
 //		testTryLock2();
