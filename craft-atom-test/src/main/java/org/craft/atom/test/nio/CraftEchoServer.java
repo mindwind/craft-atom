@@ -6,7 +6,7 @@ import org.craft.atom.nio.api.NioAcceptorConfig;
 import org.craft.atom.nio.api.NioTcpAcceptor;
 
 /**
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, Jan 22, 2013
  */
 public class CraftEchoServer {
