@@ -13,6 +13,9 @@ public class HttpConstants {
 	public static final String CONTENT_ENCODING_DEFLATE = "deflate";
 	public static final String CONTENT_ENCODING_COMPRESS = "compress";
 	
+	public static final String CONNECTION_CLOSE = "close";
+	public static final String CONNECTION_KEEP_ALIVE = "Keep-alive";
+	
 	public static final String CHARSET = "charset";
 	
 	// ~ ------------------------------------------------------------------------------------- some special character

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.craft.atom.protocol.http.model.HttpConstants;
 import org.craft.atom.protocol.http.model.HttpHeader;
 import org.craft.atom.protocol.http.model.HttpHeaderType;
 
@@ -28,16 +29,16 @@ public class HttpHeaders {
 	}
 	
 	/**
-	 * Creates a HTTP "Date" header with current datetime.
+	 * Creates a HTTP "Connection" header with keep alive flag.
 	 * 
 	 * @param keepAlive is keep alive.
-	 * @return
+	 * @return the newly created header
 	 */
 	public static HttpHeader newConnectionHeader(boolean keepAlive) {
 		if (keepAlive) {
-			return new HttpHeader(HttpHeaderType.CONNECTION.getName(), "keep-alive");
+			return new HttpHeader(HttpHeaderType.CONNECTION.getName(), HttpConstants.CONNECTION_KEEP_ALIVE);
 		} else {
-			return new HttpHeader(HttpHeaderType.CONNECTION.getName(), "close");
+			return new HttpHeader(HttpHeaderType.CONNECTION.getName(), HttpConstants.CONNECTION_CLOSE);
 		}
 	}
 	
@@ -48,6 +49,16 @@ public class HttpHeaders {
 	 */
 	public static HttpHeader newDateHeader() {
 		return new HttpHeader(HttpHeaderType.DATE.getName(), HttpDates.currentDate());
+	}
+	
+	/**
+	 * Creates a HTTP "Content-Length" header.
+	 * 
+	 * @param length
+	 * @return the newly created header
+	 */
+	public static HttpHeader newContentLengthHeader(int length) {
+		return new HttpHeader(HttpHeaderType.CONTENT_LENGTH.getName(), Integer.toString(length));
 	}
 	
 	// ~ -----------------------------------------------------------------------------------------------------------

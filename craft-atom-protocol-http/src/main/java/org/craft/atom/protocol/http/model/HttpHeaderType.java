@@ -69,7 +69,7 @@ public enum HttpHeaderType {
 	 * For examples:
 	 * 
 	 * <pre>
-	 * Connection: Keep-Alive
+	 * Connection: Keep-alive
 	 * Connection: close
 	 * </pre>
 	 */

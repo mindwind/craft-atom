@@ -58,6 +58,7 @@ public abstract class HttpMessage implements Serializable {
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
+	
 	/**
 	 * Add a new header to http message, if the header exists replace it.
 	 * 
@@ -136,6 +137,10 @@ public abstract class HttpMessage implements Serializable {
 	public Iterator<HttpHeader> headerIterator() {
 		return headers.iterator();
 	}
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
 
 	@Override
 	public String toString() {
