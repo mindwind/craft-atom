@@ -159,7 +159,6 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		this(handler, config, dispatcher, predictorFactory);
 		
 		try {
-			init();
 			bind(firstLocalAddress, otherLocalAddresses);
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to construct.", e);
@@ -258,7 +257,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	 */
 	synchronized public void bind(SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) throws IOException {
 		if (!this.selectable) {
-            throw new IllegalStateException("The acceptor is already shutdown.");
+            init();
         }
 		
 		if (firstLocalAddress == null) {
