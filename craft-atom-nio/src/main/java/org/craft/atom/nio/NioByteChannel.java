@@ -174,7 +174,7 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("[id=").append(id).append(" ").append(localAddress).append(" <-> ").append(remoteAddress).append("]");
+		builder.append("[id=").append(id).append("  ").append(localAddress).append(" <-> ").append(remoteAddress).append("  state=").append(state).append("]");
 		return builder.toString();
 	}
 	
