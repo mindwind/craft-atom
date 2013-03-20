@@ -73,11 +73,45 @@ public abstract class HttpMessage implements Serializable {
 	}
 	
 	/**
-     * Gets the first header with the given name.
+	 * Remove the first header with given name.
+	 * 
+	 * @param name the name of the header
+	 */
+	public void removeFirstHeader(String name) {
+		removeHeaders0(name, true);
+	}
+	
+	/**
+	 * Remove all the headers with the given name.
+	 * 
+	 * @param name the name of the header
+	 */
+	public void removeHeaders(String name) {
+		removeHeaders0(name, false);
+	}
+	
+	private void removeHeaders0(String name, boolean interrupt) {
+		if (name == null) {
+			throw new IllegalArgumentException("name is null!");
+		}
+		
+		for (int i = 0; i < headers.size(); i++) {
+            HttpHeader header = headers.get(i);
+            if (header.getName().equalsIgnoreCase(name)) {
+            	headers.remove(i);
+            	if (interrupt) {
+            		break;
+            	}
+            }
+        }
+	}
+	
+	/**
+     * Get the first header with the given name.
      *
      * <p>Header name comparison is case insensitive.
      *
-     * @param name the name of the header to get
+     * @param name the name of the header
      * @return the first header or <code>null</code>
      */
 	public HttpHeader getFirstHeader(String name) {
