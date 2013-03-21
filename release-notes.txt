@@ -24,4 +24,4 @@ UPGRADE URGENCY: HIGH
   
 * craft-atom-protocol-http
   [FIX]      - http protocol header model, use list instead of map, because header name can be repeatable.
-  [ADD]      - http protocol entity content type definition.
+  [NEW]      - http protocol entity content type definition.
