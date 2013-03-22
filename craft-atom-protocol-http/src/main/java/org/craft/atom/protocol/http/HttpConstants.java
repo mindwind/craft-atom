@@ -1,4 +1,4 @@
-package org.craft.atom.protocol.http.model;
+package org.craft.atom.protocol.http;
 
 /**
  * @author mindwind
@@ -7,14 +7,13 @@ package org.craft.atom.protocol.http.model;
 public class HttpConstants {
 	
 	public static final String TRANSFER_ENCODING_CHUNKED = "chunked";
-	
 	public static final String CONTENT_ENCODING_IDENTITY = "identity";
 	public static final String CONTENT_ENCODING_GZIP = "gzip";
 	public static final String CONTENT_ENCODING_DEFLATE = "deflate";
 	public static final String CONTENT_ENCODING_COMPRESS = "compress";
-	
 	public static final String CONNECTION_CLOSE = "close";
 	public static final String CONNECTION_KEEP_ALIVE = "Keep-alive";
+	public static final String KEEP_ALIVE_OPTIONS = "timeout=120, max=10000";
 	
 	public static final String CHARSET = "charset";
 	

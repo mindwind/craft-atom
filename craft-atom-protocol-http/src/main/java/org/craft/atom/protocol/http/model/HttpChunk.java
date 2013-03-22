@@ -1,9 +1,9 @@
 package org.craft.atom.protocol.http.model;
 
-import static org.craft.atom.protocol.http.model.HttpConstants.S_CR;
-import static org.craft.atom.protocol.http.model.HttpConstants.S_EQUAL_SIGN;
-import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
-import static org.craft.atom.protocol.http.model.HttpConstants.S_SEMICOLON;
+import static org.craft.atom.protocol.http.HttpConstants.S_CR;
+import static org.craft.atom.protocol.http.HttpConstants.S_EQUAL_SIGN;
+import static org.craft.atom.protocol.http.HttpConstants.S_LF;
+import static org.craft.atom.protocol.http.HttpConstants.S_SEMICOLON;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;

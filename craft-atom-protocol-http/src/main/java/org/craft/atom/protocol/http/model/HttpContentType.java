@@ -1,5 +1,6 @@
 package org.craft.atom.protocol.http.model;
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 
 /**
@@ -10,9 +11,10 @@ import java.nio.charset.Charset;
  * @author mindwind
  * @version 1.0, Mar 5, 2013
  */
-public class HttpContentType {
+public class HttpContentType implements Serializable {
 	
-	 public static final HttpContentType DEFAULT = new HttpContentType(MimeType.TEXT_HTML, Charset.forName("utf-8"));
+	private static final long serialVersionUID = -7286615457150709389L;
+	public static final HttpContentType DEFAULT = new HttpContentType(MimeType.TEXT_HTML, Charset.forName("utf-8"));
 		
 	private final MimeType mimeType;
 	private final Charset charset;

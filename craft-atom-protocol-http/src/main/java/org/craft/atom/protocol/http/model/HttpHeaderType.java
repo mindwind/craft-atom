@@ -855,6 +855,33 @@ public enum HttpHeaderType {
 	 * </pre>
 	 */
 	X_PAD("X-Pad"),
+	
+	/**
+	 * Extension response header
+	 * <p>
+	 * keep-alive headers are just requests to keep the connection alive.
+	 * Clients and servers do not need to agree to a keep-alive session if it is requested. 
+	 * They can close idle keep-alive connections at any time and are free to limit the number of transactions processed on a keep-alive connection.
+	 * <p>
+	 * The keep-alive behavior can be tuned by comma-separated options specified in the Keep-Alive general header:
+	 * <li> 
+	 *     The <code>timeout</code> parameter is sent in a Keep-Alive response header. 
+	 *     It estimates how long the server is likely to keep the connection alive for. 
+	 *     This is not a guarantee.
+	 * </li>
+	 * <li> 
+	 *     The <code>max</code> parameter is sent in a Keep-Alive response header. 
+	 *     It estimates how many more HTTP transactions the server is likely to keep the connection alive for. 
+	 *     This is not a guarantee.
+	 * </li>
+	 * <p>
+	 * For examples:
+	 * 
+	 * <pre>
+	 * Keep-Alive: timeout=15, max=100
+	 * </pre>
+	 */
+	KEEP_ALIVE("Keep-Alive"),
 
 	// ~ --------------------------------------------------------------------------------------- entity headers
 

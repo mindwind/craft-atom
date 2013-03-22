@@ -1,15 +1,14 @@
 package org.craft.atom.protocol.http.model;
 
-import static org.craft.atom.protocol.http.model.HttpConstants.S_COLON;
-import static org.craft.atom.protocol.http.model.HttpConstants.S_CR;
-import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
-import static org.craft.atom.protocol.http.model.HttpConstants.S_SP;
-import static org.craft.atom.protocol.http.model.HttpConstants.S_SEMICOLON;
-import static org.craft.atom.protocol.http.model.HttpConstants.S_EQUAL_SIGN;
+import static org.craft.atom.protocol.http.HttpConstants.S_COLON;
+import static org.craft.atom.protocol.http.HttpConstants.S_CR;
+import static org.craft.atom.protocol.http.HttpConstants.S_EQUAL_SIGN;
+import static org.craft.atom.protocol.http.HttpConstants.S_LF;
+import static org.craft.atom.protocol.http.HttpConstants.S_SEMICOLON;
+import static org.craft.atom.protocol.http.HttpConstants.S_SP;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -121,12 +120,6 @@ public class HttpHeader implements Serializable {
 		if (nvpair.length > 1) {
 			hve.setValue(nvpair[1]);
 		}
-	}
-	
-	public static void main(String[] args) {
-		String a = "lsjflsjf";
-		String[] arr = a.split("=");
-		System.out.println(Arrays.toString(arr));
 	}
 
 	@Override

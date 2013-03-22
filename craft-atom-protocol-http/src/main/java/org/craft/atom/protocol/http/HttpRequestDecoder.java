@@ -1,9 +1,9 @@
 package org.craft.atom.protocol.http;
 
-import static org.craft.atom.protocol.http.model.HttpConstants.CR;
-import static org.craft.atom.protocol.http.model.HttpConstants.HT;
-import static org.craft.atom.protocol.http.model.HttpConstants.LF;
-import static org.craft.atom.protocol.http.model.HttpConstants.SP;
+import static org.craft.atom.protocol.http.HttpConstants.CR;
+import static org.craft.atom.protocol.http.HttpConstants.HT;
+import static org.craft.atom.protocol.http.HttpConstants.LF;
+import static org.craft.atom.protocol.http.HttpConstants.SP;
 
 import java.io.IOException;
 import java.nio.charset.Charset;

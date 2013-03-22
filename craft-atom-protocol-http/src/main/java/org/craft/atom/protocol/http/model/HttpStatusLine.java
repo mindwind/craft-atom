@@ -1,8 +1,8 @@
 package org.craft.atom.protocol.http.model;
 
-import static org.craft.atom.protocol.http.model.HttpConstants.S_CR;
-import static org.craft.atom.protocol.http.model.HttpConstants.S_LF;
-import static org.craft.atom.protocol.http.model.HttpConstants.S_SP;
+import static org.craft.atom.protocol.http.HttpConstants.S_CR;
+import static org.craft.atom.protocol.http.HttpConstants.S_LF;
+import static org.craft.atom.protocol.http.HttpConstants.S_SP;
 
 /**
  * The first line of a Response message is the Status-Line, consisting

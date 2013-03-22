@@ -1,17 +1,17 @@
 package org.craft.atom.protocol.http;
 
-import static org.craft.atom.protocol.http.model.HttpConstants.COLON;
-import static org.craft.atom.protocol.http.model.HttpConstants.CONTENT_ENCODING_DEFLATE;
-import static org.craft.atom.protocol.http.model.HttpConstants.CONTENT_ENCODING_GZIP;
-import static org.craft.atom.protocol.http.model.HttpConstants.CONTENT_ENCODING_IDENTITY;
-import static org.craft.atom.protocol.http.model.HttpConstants.CR;
-import static org.craft.atom.protocol.http.model.HttpConstants.EQUAL_SIGN;
-import static org.craft.atom.protocol.http.model.HttpConstants.HT;
-import static org.craft.atom.protocol.http.model.HttpConstants.LF;
-import static org.craft.atom.protocol.http.model.HttpConstants.NUL;
-import static org.craft.atom.protocol.http.model.HttpConstants.SEMICOLON;
-import static org.craft.atom.protocol.http.model.HttpConstants.SP;
-import static org.craft.atom.protocol.http.model.HttpConstants.TRANSFER_ENCODING_CHUNKED;
+import static org.craft.atom.protocol.http.HttpConstants.COLON;
+import static org.craft.atom.protocol.http.HttpConstants.CONTENT_ENCODING_DEFLATE;
+import static org.craft.atom.protocol.http.HttpConstants.CONTENT_ENCODING_GZIP;
+import static org.craft.atom.protocol.http.HttpConstants.CONTENT_ENCODING_IDENTITY;
+import static org.craft.atom.protocol.http.HttpConstants.CR;
+import static org.craft.atom.protocol.http.HttpConstants.EQUAL_SIGN;
+import static org.craft.atom.protocol.http.HttpConstants.HT;
+import static org.craft.atom.protocol.http.HttpConstants.LF;
+import static org.craft.atom.protocol.http.HttpConstants.NUL;
+import static org.craft.atom.protocol.http.HttpConstants.SEMICOLON;
+import static org.craft.atom.protocol.http.HttpConstants.SP;
+import static org.craft.atom.protocol.http.HttpConstants.TRANSFER_ENCODING_CHUNKED;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -22,7 +22,6 @@ import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.ProtocolExceptionType;
 import org.craft.atom.protocol.http.model.HttpChunk;
 import org.craft.atom.protocol.http.model.HttpChunkEntity;
-import org.craft.atom.protocol.http.model.HttpConstants;
 import org.craft.atom.protocol.http.model.HttpContentType;
 import org.craft.atom.protocol.http.model.HttpEntity;
 import org.craft.atom.protocol.http.model.HttpHeader;
