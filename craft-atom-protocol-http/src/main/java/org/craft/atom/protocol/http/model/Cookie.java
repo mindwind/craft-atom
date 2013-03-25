@@ -5,6 +5,7 @@ import static org.craft.atom.protocol.http.HttpConstants.S_SEMICOLON;
 import static org.craft.atom.protocol.http.HttpConstants.S_SP;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -121,33 +122,65 @@ public class Cookie implements Serializable {
 		this.httpOnly = httpOnly;
 	}
 	
-	public static Cookie from(HttpHeaderValueElement element) {
-		if (element == null) {
-			throw new IllegalArgumentException();
+	public static Cookie fromCookiePair(String cookiePair) {
+		if (cookiePair == null) {
+			return null;
 		}
 		
 		Cookie cookie = new Cookie();
-		cookie.setName(element.getName());
-		cookie.setValue(element.getValue());
-		Map<String, String> map = element.getParams();
-		Set<Entry<String, String>> avs = map.entrySet();
-		for (Entry<String, String> av : avs) {
-			String k = av.getKey();
-			String v = av.getValue();
+		String[] nv = cookiePair.split(S_EQUAL_SIGN, 2);
+		cookie.setName(nv[0]);
+		if (nv.length > 1) {
+			cookie.setValue(nv[1]);
+		}
+		
+		return cookie;
+	}
+	
+	public static Cookie fromSetCookieString(String setCookieString) {
+		if (setCookieString == null) {
+			return null;
+		}
+		
+		String[] sarr = setCookieString.split(S_SEMICOLON + S_SP);
+		
+		// cookie-pair
+		Cookie cookie = new Cookie();
+		String cookiePair = sarr[0];
+		String[] nv = cookiePair.split(S_EQUAL_SIGN, 2);
+		cookie.setName(nv[0]);
+		if (nv.length > 1) {
+			cookie.setValue(nv[1]);
+		}
+		
+		// no cookie-av
+		if (sarr.length == 1) {
+			return cookie;
+		}
+		
+		// cookie-av
+		for (int i = 1; i < sarr.length; i++) {
+			String cookieAv = sarr[i];
+			nv = cookieAv.split(S_EQUAL_SIGN);
+			String k = nv[0];
 			if (DOMAIN.equalsIgnoreCase(k)) {
-				cookie.setDomain(v);
+				if (nv.length > 1) { cookie.setDomain(nv[1]); }
 			} else if (PATH.equalsIgnoreCase(k)) {
-				cookie.setPath(v);
+				if (nv.length > 1) { cookie.setPath(nv[1]); }
 			} else if (HTTP_ONLY.equalsIgnoreCase(k)) {
 				cookie.setHttpOnly(true);
 			} else if (SECURE.equalsIgnoreCase(k)) {
 				cookie.setSecure(true);
 			} else if (EXPIRES.equalsIgnoreCase(k)) {
-				cookie.setExpires(HttpDates.parse(v));
+				if (nv.length > 1) { cookie.setExpires(HttpDates.parse(nv[1])); }
 			} else if (MAX_AGE.equalsIgnoreCase(k)) {
-				cookie.setMaxAge(Integer.parseInt(v));
+				if (nv.length > 1) { cookie.setMaxAge(Integer.parseInt(nv[1])); }
 			} else {
-				cookie.addExtensionAttribute(k, v);
+				if (nv.length > 1) {
+					cookie.addExtensionAttribute(k, nv[1]);
+				} else {
+					cookie.addExtensionAttribute(k, "");
+				}
 			}
 		}
 		
@@ -221,11 +254,7 @@ public class Cookie implements Serializable {
 	}
 
 	public Map<String, String> getExtensionAttributes() {
-		return extension;
-	}
-
-	public void setExtensionAttributes(Map<String, String> attributes) {
-		this.extension = attributes;
+		return Collections.unmodifiableMap(extension);
 	}
 	
 	public void addExtensionAttribute(String name, String value) {

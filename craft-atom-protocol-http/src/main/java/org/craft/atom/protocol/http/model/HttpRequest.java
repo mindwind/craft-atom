@@ -1,6 +1,10 @@
 package org.craft.atom.protocol.http.model;
 
+import static org.craft.atom.protocol.http.HttpConstants.S_SEMICOLON;
+import static org.craft.atom.protocol.http.HttpConstants.S_SP;
+
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,6 +29,8 @@ public class HttpRequest extends HttpMessage {
 	private static final long serialVersionUID = 2454619732646455653L;
 	
 	private HttpRequestLine requestLine = new HttpRequestLine();
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 
 	public HttpRequest() {
 		super();
@@ -51,6 +57,29 @@ public class HttpRequest extends HttpMessage {
 	public void setRequestLine(HttpRequestLine requestLine) {
 		this.requestLine = requestLine;
 	}
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
+	protected List<Cookie> getCookies(String name, boolean all) {
+		List<Cookie> cookies = new ArrayList<Cookie>();
+		if (name == null && !all) {
+			return cookies;
+		}
+		
+		List<HttpHeader> cookieHeaders = getHeaders(HttpHeaderType.COOKIE.getName());
+		for (HttpHeader cookieHeader : cookieHeaders) {
+			String cookieValue = cookieHeader.getValue();
+			String[] cookiePairArr = cookieValue.split(S_SEMICOLON + S_SP);
+			for (String cookiePair : cookiePairArr) {
+				Cookie cookie = Cookie.fromCookiePair(cookiePair);
+				cookies.add(cookie);
+			}
+		}
+		
+		return cookies;
+	}
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public String toString() {

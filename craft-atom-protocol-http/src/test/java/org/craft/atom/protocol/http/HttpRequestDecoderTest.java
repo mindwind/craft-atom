@@ -7,6 +7,7 @@ import java.util.Random;
 import junit.framework.Assert;
 
 import org.craft.atom.protocol.ProtocolException;
+import org.craft.atom.protocol.http.model.Cookie;
 import org.craft.atom.protocol.http.model.HttpRequest;
 import org.craft.atom.util.StringUtil;
 import org.junit.Before;
@@ -148,6 +149,23 @@ public class HttpRequestDecoderTest {
 		String req = "POST /craft/webservice/helloWS HTTP/1.1\r\nTransfer-Encoding: chunked\r\nTrailer: Content-MD5\r\nContent-Type: text/xml;\r\n \t charset=UTF-8\r\n\r\n24;extname=extvalue;aaa=bbb;kkk\r\nThis is the data in the first chunk \r\n1A\r\nand this is the second one\r\n0\r\nContent-MD5: gjqesdflj12dsfsf12\r\n";
 		testInRandomLoop(req, 100, false);
 		testInRandomLoop(req, 1, true);
+	}
+	
+	/**
+	 * Test for one request with cookie parse
+	 */
+	@Test public void testOneRequestWithCookie() throws ProtocolException {
+		String req = "GET /s?wd=java+jdk7&rsv_bp=0&inputT=14326 HTTP/1.1\r\nHost: www.baidu.com\r\nUser-Agent: Mozilla/5.0 (Windows NT 6.1; rv:5.0) Gecko/20100101 Firefox/5.0\r\nAccept: text/html,application/xhtml+xml,\r\n\tapplication/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nAccept-Charset: GB2312,utf-8;q=0.7,*;q=0.7\r\nConnection: keep-alive\r\nReferer: http://www.baidu.com/\r\nCookie: SID=31d4d96e407aad42\r\nCookie: BAIDUID=34C25418C0B70D93E53A8E1CB8CB150F:FG=1; lang=en-US\r\n\r\n";
+		List<HttpRequest> reqs = decoder.decode(req.getBytes(charset));
+		Assert.assertEquals(1, reqs.size());
+		
+		HttpRequest request = reqs.get(0);
+		List<Cookie> cookies = request.getCookies();
+		Assert.assertEquals(3, cookies.size());
+		
+		for (Cookie cookie : cookies) {
+			System.out.println(cookie.toHttpString());
+		}
 	}
 	
 	private void testInRandomLoop(String req, int loop, boolean onebyte) throws ProtocolException {

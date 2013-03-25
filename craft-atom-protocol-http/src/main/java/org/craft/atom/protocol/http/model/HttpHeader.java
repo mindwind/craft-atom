@@ -6,6 +6,7 @@ import static org.craft.atom.protocol.http.HttpConstants.S_EQUAL_SIGN;
 import static org.craft.atom.protocol.http.HttpConstants.S_LF;
 import static org.craft.atom.protocol.http.HttpConstants.S_SEMICOLON;
 import static org.craft.atom.protocol.http.HttpConstants.S_SP;
+import static org.craft.atom.protocol.http.HttpConstants.S_COMMA;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class HttpHeader implements Serializable {
 			return elements;
 		}
 		
-		String[] earr = value.split(",");
+		String[] earr = value.split(S_COMMA);
 		for (String es : earr) {
 			HttpHeaderValueElement hve = new HttpHeaderValueElement();
 			String[] nvs = es.split(S_SEMICOLON);

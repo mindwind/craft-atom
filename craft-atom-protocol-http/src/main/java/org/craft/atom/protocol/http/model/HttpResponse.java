@@ -1,6 +1,7 @@
 package org.craft.atom.protocol.http.model;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,6 +23,8 @@ public class HttpResponse extends HttpMessage {
 	private static final long serialVersionUID = 1532809882773093282L;
 	
 	private HttpStatusLine statusLine;
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 
 	public HttpResponse() {
 		super();
@@ -44,6 +47,26 @@ public class HttpResponse extends HttpMessage {
 	public void setStatusLine(HttpStatusLine statusLine) {
 		this.statusLine = statusLine;
 	}
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
+	protected List<Cookie> getCookies(String name, boolean all) {
+		List<Cookie> cookies = new ArrayList<Cookie>();
+		if (name == null && !all) {
+			return cookies;
+		}
+		
+		List<HttpHeader> cookieHeaders = getHeaders(HttpHeaderType.COOKIE.getName());
+		for (HttpHeader cookieHeader : cookieHeaders) {
+			String setCookieString = cookieHeader.getValue();
+			Cookie cookie = Cookie.fromSetCookieString(setCookieString);
+			cookies.add(cookie);
+		}
+		
+		return cookies;
+	}
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public String toString() {

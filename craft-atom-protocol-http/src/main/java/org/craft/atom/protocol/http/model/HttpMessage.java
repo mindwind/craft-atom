@@ -136,8 +136,7 @@ public abstract class HttpMessage implements Serializable {
      * <p>Header name comparison is case insensitive.
      *
      * @param name the name of the header(s) to get
-     *
-     * @return an array of length >= 0
+     * @return header list
      */
 	public List<HttpHeader> getHeaders(String name) {
 		List<HttpHeader> headersFound = new ArrayList<HttpHeader>();
@@ -151,6 +150,29 @@ public abstract class HttpMessage implements Serializable {
 
         return headersFound;
 	}
+	
+	/**
+	 * Returns an list containing all of the <code>Cookie</code> objects.
+	 * 
+	 * @return
+	 */
+	public List<Cookie> getCookies() {
+		return getCookies(null, true);
+	}
+	
+	/**
+	 * Returns an list containing the <code>Cookie</code> objects with specified name.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public List<Cookie> getCookies(String name) {
+		return getCookies(name, false);
+	}
+	
+	abstract protected List<Cookie> getCookies(String name, boolean all);
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 
 	public List<HttpHeader> getHeaders() {
 		return headers;
