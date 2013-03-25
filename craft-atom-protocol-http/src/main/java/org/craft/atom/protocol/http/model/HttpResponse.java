@@ -4,6 +4,11 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.craft.atom.protocol.ProtocolException;
+import org.craft.atom.protocol.http.HttpCookieDecoder;
+
 /**
  * HTTP response message.
  * <pre>
@@ -21,6 +26,8 @@ import java.util.List;
 public class HttpResponse extends HttpMessage {
 
 	private static final long serialVersionUID = 1532809882773093282L;
+	private static final Log LOG = LogFactory.getLog(HttpResponse.class);
+	private static final HttpCookieDecoder SET_COOKIE_DECODER = new HttpCookieDecoder(true);
 	
 	private HttpStatusLine statusLine;
 	
@@ -50,21 +57,40 @@ public class HttpResponse extends HttpMessage {
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
-	protected List<Cookie> getCookies(String name, boolean all) {
+	protected List<Cookie> parseCookies() {
 		List<Cookie> cookies = new ArrayList<Cookie>();
-		if (name == null && !all) {
-			return cookies;
-		}
 		
 		List<HttpHeader> cookieHeaders = getHeaders(HttpHeaderType.COOKIE.getName());
 		for (HttpHeader cookieHeader : cookieHeaders) {
-			String setCookieString = cookieHeader.getValue();
-			Cookie cookie = Cookie.fromSetCookieString(setCookieString);
-			cookies.add(cookie);
+			String cookieValue = cookieHeader.getValue();
+			try {
+				List<Cookie> cl = SET_COOKIE_DECODER.decode(cookieValue.getBytes(SET_COOKIE_DECODER.getCharset()));
+				cookies.addAll(cl);
+			} catch (ProtocolException e) {
+				LOG.error("Decode response cookie error", e);
+				return cookies;
+			}
 		}
 		
-		return cookies;
+		this.cookies = cookies;
+		return this.cookies;
 	}
+	
+//	protected List<Cookie> getCookies(String name, boolean all) {
+//		List<Cookie> cookies = new ArrayList<Cookie>();
+//		if (name == null && !all) {
+//			return cookies;
+//		}
+//		
+//		List<HttpHeader> cookieHeaders = getHeaders(HttpHeaderType.COOKIE.getName());
+//		for (HttpHeader cookieHeader : cookieHeaders) {
+//			String setCookieString = cookieHeader.getValue();
+//			Cookie cookie = Cookie.fromSetCookieString(setCookieString);
+//			cookies.add(cookie);
+//		}
+//		
+//		return cookies;
+//	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 

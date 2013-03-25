@@ -30,6 +30,7 @@ public class HttpConstants {
 	public static final byte SEMICOLON = 59;   // Semicolon         ";"
 	public static final byte EQUAL_SIGN = 61;  // Equal Sign        "="
 	public static final byte COMMA = 44;       // Comma             ","
+	public static final byte Q_MARK = 63;      // Question Mark     "?"
 	public static final String S_NUL = "\0";         
 	public static final String S_CR = "\r";         
 	public static final String S_LF = "\n";          
@@ -39,9 +40,10 @@ public class HttpConstants {
 	public static final String S_SEMICOLON = ";";
 	public static final String S_EQUAL_SIGN = "=";
 	public static final String S_COMMA = ",";
+	public static final String S_Q_MARK = "?";
 	
 	public static void main(String[] args) {
-		System.out.println(Arrays.toString("\0\r\n \t:;=,".getBytes()));
+		System.out.println(Arrays.toString("\0\r\n \t:;=,?".getBytes()));
 		System.out.println(Integer.toHexString(EQUAL_SIGN));
 	}
 	

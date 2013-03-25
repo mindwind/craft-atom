@@ -64,7 +64,6 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 	protected static final int ENTITY_ENCODING = 58;
 	protected static final int END = -1;
 	
-	protected int stateIndex = 0;
 	protected int state = START;
 	protected int maxLineLength = defaultBufferSize;
 	protected int trailerSize;

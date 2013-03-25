@@ -9,10 +9,17 @@ import org.craft.atom.util.ByteArrayBuffer;
 abstract public class AbstractProtocolDecoder extends AbstractProtocolCodec {
 	
 	protected int defaultBufferSize = 2048;
+	protected int maxSize = defaultBufferSize * 1024;
 	protected ByteArrayBuffer buf = new ByteArrayBuffer(defaultBufferSize);
+	
+	/** The separator index position according to specific protocol, indicates next byte nearby last complete protocol object. */
 	protected int splitIndex = 0;
+	
+	/** The cursor index position for protocol process, indicates next byte would be process by protocol codec. */
 	protected int searchIndex = 0;
-	protected int maxSize = defaultBufferSize * 10;
+	
+	/** The index position for protocol state machine process */
+	protected int stateIndex = 0;
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
 

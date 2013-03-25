@@ -6,6 +6,7 @@ import static org.craft.atom.protocol.http.HttpConstants.S_LF;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,6 +41,7 @@ public abstract class HttpMessage implements Serializable {
 	
 	protected List<HttpHeader> headers = new ArrayList<HttpHeader>();
 	protected HttpEntity entity;
+	protected List<Cookie> cookies;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
@@ -157,7 +159,16 @@ public abstract class HttpMessage implements Serializable {
 	 * @return
 	 */
 	public List<Cookie> getCookies() {
-		return getCookies(null, true);
+		if (this.cookies != null) {
+			return Collections.unmodifiableList(this.cookies);
+		}
+		
+		synchronized (this) {
+			if (this.cookies != null) {
+				return Collections.unmodifiableList(this.cookies);
+			}
+			return Collections.unmodifiableList(parseCookies());
+		}
 	}
 	
 	/**
@@ -167,10 +178,23 @@ public abstract class HttpMessage implements Serializable {
 	 * @return
 	 */
 	public List<Cookie> getCookies(String name) {
-		return getCookies(name, false);
+		List<Cookie> cookies = new ArrayList<Cookie>();
+		if (name == null) {
+			return cookies;
+		}
+		
+		
+		List<Cookie> allCookies = getCookies();
+		for (Cookie cookie : allCookies) {
+			if (name.equalsIgnoreCase(cookie.getName())) {
+				cookies.add(cookie);
+			}
+		}
+		
+		return cookies;
 	}
 	
-	abstract protected List<Cookie> getCookies(String name, boolean all);
+	abstract protected List<Cookie> parseCookies();
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 

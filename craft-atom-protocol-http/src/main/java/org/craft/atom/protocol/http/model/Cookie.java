@@ -60,7 +60,7 @@ import org.craft.atom.protocol.http.HttpDates;
  * 
  * For examples:
  * <pre>
- * Set-Cookie: SID=31d4d96e407aad42; Domain=example.com; Path=/; HttpOnly; Secure; Expires=Wed, 09 Jun 2021 10:18:14 GMT
+ * Set-Cookie: SID=31d4d96e407aad42; Domain=example.com; Path=/; HttpOnly; Secure; Expires=Wed, 09 Jun 2021 10:18:14 GMT; Max-Age=86400
  * Cookie: SID=31d4d96e407aad42; lang=en-US
  * </pre>
  * 
@@ -120,71 +120,6 @@ public class Cookie implements Serializable {
 	public Cookie(String name, String value, String domain, String path, boolean httpOnly) {
 		this(name, value, domain, path);
 		this.httpOnly = httpOnly;
-	}
-	
-	public static Cookie fromCookiePair(String cookiePair) {
-		if (cookiePair == null) {
-			return null;
-		}
-		
-		Cookie cookie = new Cookie();
-		String[] nv = cookiePair.split(S_EQUAL_SIGN, 2);
-		cookie.setName(nv[0]);
-		if (nv.length > 1) {
-			cookie.setValue(nv[1]);
-		}
-		
-		return cookie;
-	}
-	
-	public static Cookie fromSetCookieString(String setCookieString) {
-		if (setCookieString == null) {
-			return null;
-		}
-		
-		String[] sarr = setCookieString.split(S_SEMICOLON + S_SP);
-		
-		// cookie-pair
-		Cookie cookie = new Cookie();
-		String cookiePair = sarr[0];
-		String[] nv = cookiePair.split(S_EQUAL_SIGN, 2);
-		cookie.setName(nv[0]);
-		if (nv.length > 1) {
-			cookie.setValue(nv[1]);
-		}
-		
-		// no cookie-av
-		if (sarr.length == 1) {
-			return cookie;
-		}
-		
-		// cookie-av
-		for (int i = 1; i < sarr.length; i++) {
-			String cookieAv = sarr[i];
-			nv = cookieAv.split(S_EQUAL_SIGN);
-			String k = nv[0];
-			if (DOMAIN.equalsIgnoreCase(k)) {
-				if (nv.length > 1) { cookie.setDomain(nv[1]); }
-			} else if (PATH.equalsIgnoreCase(k)) {
-				if (nv.length > 1) { cookie.setPath(nv[1]); }
-			} else if (HTTP_ONLY.equalsIgnoreCase(k)) {
-				cookie.setHttpOnly(true);
-			} else if (SECURE.equalsIgnoreCase(k)) {
-				cookie.setSecure(true);
-			} else if (EXPIRES.equalsIgnoreCase(k)) {
-				if (nv.length > 1) { cookie.setExpires(HttpDates.parse(nv[1])); }
-			} else if (MAX_AGE.equalsIgnoreCase(k)) {
-				if (nv.length > 1) { cookie.setMaxAge(Integer.parseInt(nv[1])); }
-			} else {
-				if (nv.length > 1) {
-					cookie.addExtensionAttribute(k, nv[1]);
-				} else {
-					cookie.addExtensionAttribute(k, "");
-				}
-			}
-		}
-		
-		return cookie;
 	}
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
@@ -263,6 +198,10 @@ public class Cookie implements Serializable {
 	
 	public void removeExtensionAttribute(String name) {
 		this.extension.remove(name);
+	}
+	
+	public String getExtensionAttribute(String name) {
+		return this.extension.get(name);
 	}
 
 	@Override
