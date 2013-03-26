@@ -183,7 +183,6 @@ public abstract class HttpMessage implements Serializable {
 			return cookies;
 		}
 		
-		
 		List<Cookie> allCookies = getCookies();
 		for (Cookie cookie : allCookies) {
 			if (name.equalsIgnoreCase(cookie.getName())) {

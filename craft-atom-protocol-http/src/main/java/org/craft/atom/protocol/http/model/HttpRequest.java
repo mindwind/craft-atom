@@ -4,6 +4,7 @@ import static org.craft.atom.protocol.http.HttpConstants.S_Q_MARK;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -81,8 +82,16 @@ public class HttpRequest extends HttpMessage {
 	 * @return
 	 */
 	public String getParameter(String name) {
-		// TODO
-		return null;
+		if (name == null) {
+			return null;
+		}
+		
+		List<String> values = getParameters(name);
+		if (values.isEmpty()) {
+			return null;
+		}
+		
+		return values.get(0);
 	}
 	
 	/**
@@ -93,6 +102,39 @@ public class HttpRequest extends HttpMessage {
 	 * @return
 	 */
 	public List<String> getParameters(String name) {
+		List<String> values = new ArrayList<String>();
+		if (name == null) {
+			return values;
+		}
+		
+		Map<String, List<String>> map = getParameterMap();
+		values = map.get(name);
+		if (values == null) {
+			values = Collections.emptyList();
+		}
+		
+		return values;
+	}
+	
+	/**
+	 * Returns a immutable parameter map of this request
+	 * 
+	 * @return
+	 */
+	public Map<String, List<String>> getParameterMap() {
+		if (this.parameterMap != null) {
+			return Collections.unmodifiableMap(this.parameterMap);
+		}
+		
+		synchronized (this) {
+			if (this.parameterMap != null) {
+				return Collections.unmodifiableMap(this.parameterMap);
+			}
+			return Collections.unmodifiableMap(parseParameters());
+		}
+	}
+	
+	private Map<String, List<String>> parseParameters() {
 		// TODO
 		return null;
 	}
