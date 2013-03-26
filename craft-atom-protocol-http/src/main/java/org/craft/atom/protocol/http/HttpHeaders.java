@@ -1,5 +1,7 @@
 package org.craft.atom.protocol.http;
 
+import org.craft.atom.protocol.http.model.Cookie;
+import org.craft.atom.protocol.http.model.HttpContentType;
 import org.craft.atom.protocol.http.model.HttpHeader;
 import org.craft.atom.protocol.http.model.HttpHeaderType;
 
@@ -55,6 +57,19 @@ public class HttpHeaders {
 	}
 	
 	/**
+	 * Creates a HTTP "Content-Type" header.
+	 * 
+	 * @param contentType
+	 * @return
+	 */
+	public static HttpHeader newContentTypeHeader(HttpContentType contentType) {
+		if (contentType == null) {
+			return null;
+		}
+		return new HttpHeader(HttpHeaderType.CONTENT_TYPE.getName(), contentType.toHttpString());
+	}
+	
+	/**
 	 * Creates a HTTP "Keep-Alive" header.
 	 * 
 	 * @param options
@@ -62,6 +77,32 @@ public class HttpHeaders {
 	 */
 	public static HttpHeader newKeepAliveHeader(String options) {
 		return new HttpHeader(HttpHeaderType.KEEP_ALIVE.getName(), options);
+	}
+	
+	/**
+	 * Creates a HTTP "Cookie" header.
+	 * 
+	 * @param options
+	 * @return the newly created header
+	 */
+	public static HttpHeader newCookieHeader(Cookie cookie) {
+		if (cookie == null) {
+			return null;
+		}
+		return new HttpHeader(HttpHeaderType.COOKIE.getName(), cookie.toHttpString());
+	}
+	
+	/**
+	 * Creates a HTTP "Set-Cookie" header.
+	 * 
+	 * @param options
+	 * @return the newly created header
+	 */
+	public static HttpHeader newSetCookieHeader(Cookie cookie) {
+		if (cookie == null) {
+			return null;
+		}
+		return new HttpHeader(HttpHeaderType.SET_COOKIE.getName(), cookie.toHttpString());
 	}
 	
 }

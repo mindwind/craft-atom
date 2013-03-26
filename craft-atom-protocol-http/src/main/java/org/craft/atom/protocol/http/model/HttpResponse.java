@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.http.HttpCookieDecoder;
+import org.craft.atom.protocol.http.HttpHeaders;
 
 /**
  * HTTP response message.
@@ -57,6 +58,12 @@ public class HttpResponse extends HttpMessage {
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
+	@Override
+	public void addCookie(Cookie cookie) {
+		addHeader(HttpHeaders.newSetCookieHeader(cookie));
+	}
+	
+	@Override
 	protected List<Cookie> parseCookies() {
 		List<Cookie> cookies = new ArrayList<Cookie>();
 		
@@ -75,22 +82,6 @@ public class HttpResponse extends HttpMessage {
 		this.cookies = cookies;
 		return this.cookies;
 	}
-	
-//	protected List<Cookie> getCookies(String name, boolean all) {
-//		List<Cookie> cookies = new ArrayList<Cookie>();
-//		if (name == null && !all) {
-//			return cookies;
-//		}
-//		
-//		List<HttpHeader> cookieHeaders = getHeaders(HttpHeaderType.COOKIE.getName());
-//		for (HttpHeader cookieHeader : cookieHeaders) {
-//			String setCookieString = cookieHeader.getValue();
-//			Cookie cookie = Cookie.fromSetCookieString(setCookieString);
-//			cookies.add(cookie);
-//		}
-//		
-//		return cookies;
-//	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 

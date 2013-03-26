@@ -15,7 +15,7 @@ public enum MimeType {
 	
 	
 	// application
-	APPLICATION_FORM_URLENCODED("application", "x-www-form-urlencoded"),
+	APPLICATION_X_WWW_FORM_URLENCODED("application", "x-www-form-urlencoded"),
 	APPLICATION_JSON("application", "json"),
 	APPLICATION_XML("application", "xml"),
 	APPLICATION_JAVASCRIPT("application", "javascript"),
@@ -35,8 +35,8 @@ public enum MimeType {
 	// ~ ---------------------------------------------------------------------------------------------------------
 	
 	public static MimeType from(String type) {
-		if (APPLICATION_FORM_URLENCODED.toString().equalsIgnoreCase(type)) {
-			return APPLICATION_FORM_URLENCODED;
+		if (APPLICATION_X_WWW_FORM_URLENCODED.toString().equalsIgnoreCase(type)) {
+			return APPLICATION_X_WWW_FORM_URLENCODED;
 		}
 		if (APPLICATION_JSON.toString().equalsIgnoreCase(type)) {
 			return APPLICATION_JSON;

@@ -1,5 +1,6 @@
 package org.craft.atom.protocol.http.model;
 
+import static org.craft.atom.protocol.http.HttpConstants.S_AMPERSAND;
 import static org.craft.atom.protocol.http.HttpConstants.S_Q_MARK;
 
 import java.nio.charset.Charset;
@@ -12,6 +13,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.http.HttpCookieDecoder;
+import org.craft.atom.protocol.http.HttpHeaders;
+import org.craft.atom.protocol.http.HttpParameterDecoder;
 
 
 /**
@@ -35,6 +38,7 @@ public class HttpRequest extends HttpMessage {
 	private static final Log LOG = LogFactory.getLog(HttpRequest.class);
 	private static final long serialVersionUID = 2454619732646455653L;
 	private static final HttpCookieDecoder COOKIE_DECODER = new HttpCookieDecoder();
+	private static final HttpParameterDecoder PARAMETER_DECODER = new HttpParameterDecoder();
 	
 	private HttpRequestLine requestLine = new HttpRequestLine();
 	private Map<String, List<String>> parameterMap;
@@ -135,8 +139,31 @@ public class HttpRequest extends HttpMessage {
 	}
 	
 	private Map<String, List<String>> parseParameters() {
-		// TODO
-		return null;
+		Map<String, List<String>> map = Collections.emptyMap();
+		
+		StringBuilder buf = new StringBuilder();
+		String queryString = getQueryString();
+		if (queryString != null) {
+			buf.append(queryString);
+		}
+		
+		HttpContentType contentType = getContentType();
+		if (contentType != null && MimeType.APPLICATION_X_WWW_FORM_URLENCODED == contentType.getMimeType()) {
+			buf.append(S_AMPERSAND).append(getEntity().getContentAsString());
+		}
+		
+		try {
+			List<Map<String, List<String>>> paras = PARAMETER_DECODER.decode(buf.toString().getBytes(PARAMETER_DECODER.getCharset()));
+			if (!paras.isEmpty()) {
+				map = paras.get(0);
+			}
+		} catch (ProtocolException e) {
+			LOG.error("Decode request parameter error", e);
+			return map;
+		}
+		
+		this.parameterMap = map;
+		return this.parameterMap;
 	}
 	
 	/**
@@ -163,6 +190,12 @@ public class HttpRequest extends HttpMessage {
     	return uri.substring(idx + 1);
     }
 	
+    @Override
+	public void addCookie(Cookie cookie) {
+		addHeader(HttpHeaders.newCookieHeader(cookie));
+	}
+    
+    @Override
 	protected List<Cookie> parseCookies() {
 		List<Cookie> cookies = new ArrayList<Cookie>();
 		

@@ -68,7 +68,7 @@ public abstract class HttpMessage implements Serializable {
 	 */
 	public void addHeader(HttpHeader header) {
 		if (header == null || header.getName() == null) {
-			throw new IllegalArgumentException("header or header name is null!");
+			return;
 		}
 		
 		headers.add(header);
@@ -94,7 +94,7 @@ public abstract class HttpMessage implements Serializable {
 	
 	private void removeHeaders0(String name, boolean interrupt) {
 		if (name == null) {
-			throw new IllegalArgumentException("name is null!");
+			return;
 		}
 		
 		for (int i = 0; i < headers.size(); i++) {
@@ -118,7 +118,7 @@ public abstract class HttpMessage implements Serializable {
      */
 	public HttpHeader getFirstHeader(String name) {
 		if (name == null) {
-			throw new IllegalArgumentException("name is null!");
+			return null;
 		}
 		
 		for (int i = 0; i < headers.size(); i++) {
@@ -193,7 +193,47 @@ public abstract class HttpMessage implements Serializable {
 		return cookies;
 	}
 	
+	/**
+	 * Returns the cookie with specified name or <tt>null</tt> if does not exist.
+	 * <p>
+	 * You should only use this method when you are sure the cookie is unique. 
+     * If the cookie might have more than one, use {@link #getCookies}.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Cookie getCookie(String name) {
+		List<Cookie> cookies = getCookies(name);
+		if (cookies.isEmpty()) {
+			return null;
+		}
+		return cookies.get(0);
+	}
+	
+	 /**
+     * Adds the specified cookie to http message. This method can be called
+     * multiple times to set more than one cookie.
+     * 
+     * @param cookie
+     *            the Cookie to return to the client
+     */
+    abstract public void addCookie(Cookie cookie);
+	
 	abstract protected List<Cookie> parseCookies();
+	
+	/**
+	 * Returns the content type of the http message, or <code>null</code> if message has no entity.
+	 * 
+	 * @return
+	 */
+	public HttpContentType getContentType() {
+		HttpEntity entity = getEntity();
+		if (entity == null) {
+			return null;
+		}
+		
+		return entity.getContentType();
+	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 

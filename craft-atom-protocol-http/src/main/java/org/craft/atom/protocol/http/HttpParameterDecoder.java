@@ -111,7 +111,9 @@ public class HttpParameterDecoder extends AbstractProtocolCodec implements Proto
 			}
 		}
 		
-		paras.add(map);
+		if (map != null) {
+			paras.add(map);
+		}
 		return paras;
 	}
 

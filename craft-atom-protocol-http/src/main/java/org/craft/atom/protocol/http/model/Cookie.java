@@ -119,7 +119,11 @@ public class Cookie implements Serializable {
 
 	public Cookie(String name, String value, String domain, String path, boolean httpOnly) {
 		this(name, value, domain, path);
-		this.httpOnly = httpOnly;
+	}
+	
+	public Cookie(String name, String value, String domain, String path, boolean httpOnly, int maxAge) {
+		this(name, value, domain, path, httpOnly);
+		this.maxAge = maxAge;
 	}
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
