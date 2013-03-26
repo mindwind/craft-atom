@@ -145,6 +145,7 @@ public class TimingWheel<E> {
 	 * @return remain time to be expired in millisecond.
 	 */
 	public long add(E e) {
+		// at any time just only one e(element) in the timing-wheel, all operations(add,remove,put) on this element should be synchronized.
 		synchronized(e) {
 			checkAdd(e);
 			
