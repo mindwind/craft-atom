@@ -28,29 +28,26 @@ public class MinaEchoHandler implements IoHandler {
 	}
 
 	@Override
-	public void sessionIdle(IoSession session, IdleStatus status)
-			throws Exception {
+	public void sessionIdle(IoSession session, IdleStatus status) throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void exceptionCaught(IoSession session, Throwable cause)
-			throws Exception {
+	public void exceptionCaught(IoSession session, Throwable cause) throws Exception {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void messageReceived(IoSession session, Object message)
-			throws Exception {
+	public void messageReceived(IoSession session, Object message) throws Exception {
 		session.write(message);
 	}
 
 	@Override
 	public void messageSent(IoSession session, Object message) throws Exception {
 		// TODO Auto-generated method stub
-
+//		System.out.println("session=" + session + ", sent=" + message);
 	}
 
 }
