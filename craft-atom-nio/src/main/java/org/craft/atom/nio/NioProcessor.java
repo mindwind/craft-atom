@@ -394,12 +394,12 @@ public class NioProcessor extends NioReactor {
             
             try {
             	if (channel.isClosed() || channel.isClosing()) {
-            		throw new IllegalStateException("Channel state is invalid, can not be flush, channel=" + channel);
+            		throw new IOException("Channel state is invalid, can not be flush, channel=" + channel);
             	} else {
             		flush0(channel);
             	}
 			} catch (Throwable t) {
-				LOG.error("Catch flush exception and fire it", t);
+				LOG.warn("Catch flush exception and fire it", t);
 				
 				// fire channel thrown event 
 				fireChannelThrown(channel, t);
