@@ -421,14 +421,14 @@ public class Processor extends Abstractor {
             	if (session.isOpened()) {
             		flush0(session);
             	} else if (!session.isValid()) {
-            		throw new IllegalStateException("Session state is invalid, can't be flush, session id = " + session);
+            		throw new IOException("Session state is invalid, can't be flush, session id = " + session);
             	} else {
               		// Retry later if session is not yet opened, in case that Session.write() is called before add() is processed.
             		asyWrite(session);
             		return;
             	}
 			} catch (Exception e) {
-				LOG.error("catch flush exception and fire it", e);
+				LOG.warn("catch flush exception and fire it", e);
 				
 				// fire exception caught event 
 				eventDispatcher.dispatch(new Event(EventType.EXCEPTION_CAUGHT, session, e, handler));
