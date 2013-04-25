@@ -279,7 +279,7 @@ public class Processor extends Abstractor {
 				readBytes = readUdp(session, buf);
 			}
 		} catch (Exception e) {
-			LOG.error("catch read exception and fire it, session=" + session, e);
+			LOG.warn("catch read exception and fire it, session=" + session, e);
 
 			// fire exception caught event
 			eventDispatcher.dispatch(new Event(EventType.EXCEPTION_CAUGHT, session, e, handler));
