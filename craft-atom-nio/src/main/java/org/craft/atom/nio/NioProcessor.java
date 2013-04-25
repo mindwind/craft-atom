@@ -287,7 +287,7 @@ public class NioProcessor extends NioReactor {
 				readBytes = readUdp(channel, buf);
 			}
 		} catch (Throwable t) {
-			LOG.error("Catch read exception and fire it, channel=" + channel, t);
+			LOG.warn("Catch read exception and fire it, channel=" + channel, t);
 
 			// fire exception caught event
 			fireChannelThrown(channel, t);
