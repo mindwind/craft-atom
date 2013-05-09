@@ -389,13 +389,13 @@ public class NioProcessor extends NioReactor {
                 break;
             }
             
-            // spin counter avoid infinite loop in this method.
-            c++;
-            
             try {
             	if (channel.isClosed() || channel.isClosing()) {
-            		throw new IOException("Channel state is invalid, can not be flush, channel=" + channel);
+            		if (LOG.isDebugEnabled()) { LOG.debug("Channel=" + channel + ", flushing channel size=" + flushingChannels.size()); }
+            		continue;
             	} else {
+            		// spin counter avoid infinite loop in this method.
+                    c++;
             		flush0(channel);
             	}
 			} catch (Throwable t) {
