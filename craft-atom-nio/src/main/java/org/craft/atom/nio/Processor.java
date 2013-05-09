@@ -393,11 +393,11 @@ public class Processor extends Abstractor {
      * associated with the {@code Session} and releases any other related resources.
      */
     void remove(AbstractSession session) {
-    	if(this.shutdown) {
+		if (this.shutdown) {
 			throw new IllegalStateException("The processor already shutdown!");
 		}
 		
-		if(session == null) {
+		if (session == null) {
 			return;
 		}
 		
@@ -414,14 +414,15 @@ public class Processor extends Abstractor {
                 break;
             }
             
-            // spin counter avoid infinite loop in this method.
-            c++;
-            
             try {
             	if (session.isOpened()) {
+                    // spin counter avoid infinite loop in this method.
+                    c++;
             		flush0(session);
-            	} else if (!session.isValid()) {
-            		throw new IOException("Session state is invalid, can't be flush, session id = " + session);
+				} else if (!session.isValid()) {
+					// skip this session
+					if (LOG.isDebugEnabled()) { LOG.debug("Session state is invalid, state=" + session.getState() + ", can't be flush, session = " + session + ", flushingSessions size=" + flushingSessions.size()); }
+					continue;
             	} else {
               		// Retry later if session is not yet opened, in case that Session.write() is called before add() is processed.
             		asyWrite(session);
@@ -667,7 +668,7 @@ public class Processor extends Abstractor {
 	private void closeTcp(AbstractSession session) throws IOException {
 		SelectableChannel sc = session.getChannel();
 		SelectionKey key = session.getSelectionKey();
-		if(key != null) {
+		if (key != null) {
 			key.cancel();
 		}
 		sc.close();

@@ -303,6 +303,10 @@ public abstract class AbstractSession implements Session {
 		this.sizePredictor = sizePredictor;
 	}
 
+	public State getState() {
+		return state;
+	}
+
 	@Override
 	public boolean isValid() {		
 		if (isClosing()) {
