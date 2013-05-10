@@ -263,7 +263,7 @@ public class Processor extends Abstractor {
 
 		// Process writes
 		if (session.isOpened() && isWritable(session)) {
-			asyWrite(session);
+			scheduleFlush(session);
 		}
 	}
 	
@@ -286,7 +286,7 @@ public class Processor extends Abstractor {
 			
 			// if it is IO exception close session avoid infinite loop.
 			if (e instanceof IOException) {
-				asyClose(session);
+				scheduleClose(session);
 			}
 		} finally {
 			if (readBytes > 0) { buf.clear(); }
@@ -349,15 +349,17 @@ public class Processor extends Abstractor {
 
 		// read end-of-stream, remote peer may close channel so close session.
 		if (ret < 0) {
-			asyClose(session);
+			scheduleClose(session);
 		}
 		
 		return readBytes;
 	}
 
-	private void asyWrite(AbstractSession session) {
-		// Add session to flushing queue, soon after it will be flushed in the same select loop.
-		flushingSessions.add(session);
+	private void scheduleFlush(AbstractSession session) {
+		// Add session to flushing queue if it's not already in the queue, soon after it will be flushed in the same select loop.
+		if (session.setScheduledForFlush(true)) {
+			flushingSessions.add(session);
+		}
 	}
 	
 	private boolean isReadable(AbstractSession session) {
@@ -384,7 +386,7 @@ public class Processor extends Abstractor {
 			return;
 		}
 		
-		flushingSessions.add(session);
+		scheduleFlush(session);
 		wakeup();
 	}
 	
@@ -401,7 +403,7 @@ public class Processor extends Abstractor {
 			return;
 		}
 		
-		asyClose(session);
+		scheduleClose(session);
 		wakeup();
     }
     
@@ -414,6 +416,9 @@ public class Processor extends Abstractor {
                 break;
             }
             
+            // Reset the Schedule for flush flag for this session, as we are flushing it now
+            session.unscheduledForFlush();
+            
             try {
             	if (session.isOpened()) {
                     // spin counter avoid infinite loop in this method.
@@ -425,7 +430,7 @@ public class Processor extends Abstractor {
 					continue;
             	} else {
               		// Retry later if session is not yet opened, in case that Session.write() is called before add() is processed.
-            		asyWrite(session);
+            		scheduleFlush(session);
             		return;
             	}
 			} catch (Exception e) {
@@ -436,7 +441,7 @@ public class Processor extends Abstractor {
 				
 				// if it is IO exception close session avoid infinite loop.
 				if (e instanceof IOException) {
-					asyClose(session);
+					scheduleClose(session);
 				}
 			}
 		}
@@ -460,7 +465,7 @@ public class Processor extends Abstractor {
 		// The write buffer queue is not empty, we re-interest in writing and later flush it.
 		if (!writeQueue.isEmpty()) {
 			setInterestedInWrite(session, true);
-			flushingSessions.add(session);
+			scheduleFlush(session);
 		}
 	}
 	
@@ -474,7 +479,7 @@ public class Processor extends Abstractor {
 		
 		if (buf.hasRemaining()) {
 			setInterestedInWrite(session, true);
-			flushingSessions.add(session);
+			scheduleFlush(session);
 			return;
 		} else {
 			writeQueue.remove();
@@ -525,7 +530,7 @@ public class Processor extends Abstractor {
 				if (LOG.isDebugEnabled()) { LOG.debug("0 byte be written, maybe kernel buffer is full so we re-interest in writing and later flush it"); }
 				
 				setInterestedInWrite(session, true);
-				flushingSessions.add(session);
+				scheduleFlush(session);
 				return;
 			}
 			
@@ -534,7 +539,7 @@ public class Processor extends Abstractor {
 				if (LOG.isDebugEnabled()) { LOG.debug("The buffer isn't empty(bytes to flush more than max bytes), we re-interest in writing and later flush it"); }
 				
 				setInterestedInWrite(session, true);
-				flushingSessions.add(session);
+				scheduleFlush(session);
 				return;
 			}
 
@@ -545,7 +550,7 @@ public class Processor extends Abstractor {
 				}
 				
 				setInterestedInWrite(session, true);
-				flushingSessions.add(session);
+				scheduleFlush(session);
 				return;
 			}
 		} while (writtenBytes < maxWrittenBytes);
@@ -621,7 +626,7 @@ public class Processor extends Abstractor {
 		key.interestOps(newInterestOps);
 	}
 	
-	private void asyClose(AbstractSession session) {
+	private void scheduleClose(AbstractSession session) {
 		if (session.isClosing() || session.isClosed()) {
 			return;
 		}

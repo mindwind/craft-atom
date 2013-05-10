@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.craft.atom.nio.api.AbstractConfig;
@@ -41,6 +42,7 @@ public abstract class AbstractSession implements Session {
 	private Processor processor;
 	
 	private final Object lock = new Object();
+	private final AtomicBoolean scheduledForFlush = new AtomicBoolean(false);
 	private volatile boolean eventProcessing = false;
 	
 	/** session state */
@@ -242,6 +244,44 @@ public abstract class AbstractSession implements Session {
 	public boolean containsAttribute(Object key) {
 		return attributes.containsKey(key);
 	}
+	
+	/**
+     * Change the session's status : it's not anymore scheduled for flush
+     */
+    public final void unscheduledForFlush() {
+        scheduledForFlush.set(false);
+    }
+	
+	/**
+     * Tells if the session is scheduled for flushed
+     *
+     * @param true if the session is scheduled for flush
+     */
+    public final boolean isScheduledForFlush() {
+        return scheduledForFlush.get();
+    }
+    
+    /**
+     * Set the scheduledForFLush flag. As we may have concurrent access to this
+     * flag, we compare and set it in one call.
+     *
+     * @param schedule
+     *            the new value to set if not already set.
+     * @return true if the session flag has been set, and if it wasn't set
+     *         already.
+     */
+    public final boolean setScheduledForFlush(boolean schedule) {
+        if (schedule) {
+            // If the current tag is set to false, switch it to true,
+            // otherwise, we do nothing but return false : the session
+            // is already scheduled for flush
+            return scheduledForFlush.compareAndSet(false, schedule);
+        }
+
+        scheduledForFlush.set(schedule);
+        return true;
+    }
+
 	
 	// ~ ---------------------------------------------------------------------------------------------------------------
 	
