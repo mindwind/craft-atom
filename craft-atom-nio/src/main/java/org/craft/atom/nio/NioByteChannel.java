@@ -8,6 +8,7 @@ import java.nio.channels.SelectionKey;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.craft.atom.io.AbstractIoByteChannel;
 import org.craft.atom.io.ChannelEvent;
@@ -36,6 +37,7 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	protected final Queue<ByteBuffer> writeBufferQueue = new ConcurrentLinkedQueue<ByteBuffer>();
 	protected final Queue<ChannelEvent<byte[]>> eventQueue = new ConcurrentLinkedQueue<ChannelEvent<byte[]>>();
 	protected final Object lock = new Object();
+	protected final AtomicBoolean scheduleFlush = new AtomicBoolean(false);
 	
 	protected volatile boolean eventProcessing = false;
 	
@@ -96,6 +98,19 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	public int availablePermits() {
 		return semaphore.availablePermits();
 	}
+	
+    public void unsetScheduleFlush() {
+    	scheduleFlush.set(false);
+    }
+    
+    public boolean setScheduleFlush(boolean schedule) {
+        if (schedule) {
+            return scheduleFlush.compareAndSet(false, schedule);
+        }
+
+        scheduleFlush.set(schedule);
+        return true;
+    }
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 	

@@ -270,7 +270,7 @@ public class NioProcessor extends NioReactor {
 		// Process writes
 		if (channel.isWritable()) {
 			if (LOG.isDebugEnabled()) { LOG.debug("Write event process on channel=" + channel); }
-			asyWrite(channel);
+			scheduleFlush(channel);
 		}
 	}
 	
@@ -294,7 +294,7 @@ public class NioProcessor extends NioReactor {
 			
 			// if it is IO exception close channel avoid infinite loop.
 			if (t instanceof IOException) {
-				asyClose(channel);
+				scheduleClose(channel);
 			}
 		} finally {
 			if (readBytes > 0) { buf.clear(); }
@@ -319,13 +319,13 @@ public class NioProcessor extends NioReactor {
 
 		// read end-of-stream, remote peer may close channel so close channel.
 		if (ret < 0) {
-			asyClose(channel);
+			scheduleClose(channel);
 		}
 		
 		return readBytes;
 	}
 	
-	private void asyClose(NioByteChannel channel) {
+	private void scheduleClose(NioByteChannel channel) {
 		if (channel.isClosing() || channel.isClosed()) {
 			return;
 		}
@@ -371,13 +371,15 @@ public class NioProcessor extends NioReactor {
 			return;
 		}
 		
-		asyWrite(channel);
+		scheduleFlush(channel);
 		wakeup();
 	}
 	
-	private void asyWrite(NioByteChannel channel) {
-		// Add channel to flushing queue, soon after it will be flushed in the same select loop.
-		flushingChannels.add(channel);
+	private void scheduleFlush(NioByteChannel channel) {
+		// Add channel to flushing queue if it's not already in the queue, soon after it will be flushed in the same select loop.
+		if (channel.setScheduleFlush(true)) {
+			flushingChannels.add(channel);
+		}
 	}
 	
 	private void flush() {
@@ -388,6 +390,9 @@ public class NioProcessor extends NioReactor {
                 // Just in case ... It should not happen.
                 break;
             }
+            
+            // Reset the Schedule for flush flag for this channel, as we are flushing it now
+            channel.unsetScheduleFlush();
             
             try {
             	if (channel.isClosed() || channel.isClosing()) {
@@ -406,7 +411,7 @@ public class NioProcessor extends NioReactor {
 				
 				// if it is IO exception close channel avoid infinite loop.
 				if (t instanceof IOException) {
-					asyClose(channel);
+					scheduleClose(channel);
 				}
 			}
 		}
@@ -430,7 +435,7 @@ public class NioProcessor extends NioReactor {
 		// The write buffer queue is not empty, we re-interest in writing and later flush it.
 		if (!writeQueue.isEmpty()) {
 			setInterestedInWrite(channel, true);
-			flushingChannels.add(channel);
+			scheduleFlush(channel);
 		}
 	}
 	
@@ -446,7 +451,7 @@ public class NioProcessor extends NioReactor {
 		
 		if (buf.hasRemaining()) {
 			setInterestedInWrite(channel, true);
-			flushingChannels.add(channel);
+			scheduleFlush(channel);
 			return;
 		} else {
 			writeQueue.remove();
@@ -499,7 +504,7 @@ public class NioProcessor extends NioReactor {
 				if (LOG.isDebugEnabled()) { LOG.debug("Zero byte be written, maybe kernel buffer is full so we re-interest in writing and later flush it, channel=" + channel); }
 				
 				setInterestedInWrite(channel, true);
-				flushingChannels.add(channel);
+				scheduleFlush(channel);
 				return;
 			}
 			
@@ -508,7 +513,7 @@ public class NioProcessor extends NioReactor {
 				if (LOG.isDebugEnabled()) { LOG.debug("The buffer isn't empty(bytes to flush more than max bytes), we re-interest in writing and later flush it, channel=" + channel); }
 				
 				setInterestedInWrite(channel, true);
-				flushingChannels.add(channel);
+				scheduleFlush(channel);
 				return;
 			}
 
@@ -519,7 +524,7 @@ public class NioProcessor extends NioReactor {
 				}
 				
 				setInterestedInWrite(channel, true);
-				flushingChannels.add(channel);
+				scheduleFlush(channel);
 				return;
 			}
 		} while (writtenBytes < maxWrittenBytes);
@@ -607,7 +612,7 @@ public class NioProcessor extends NioReactor {
 			return;
 		}
 		
-		asyClose(channel);
+		scheduleClose(channel);
 		wakeup();
     }
 	
