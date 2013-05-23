@@ -12,5 +12,11 @@ public interface SingletonRedisCommand extends RedisCommand {
 	long del(String... keys);
 	long del(byte[]... keys);
 	
+	long bitand(String destKey, String... keys);
+	long bitand(byte[] destKey, byte[]... keys);
+	long bitor(String destKey, String... keys);
+	long bitor(byte[] destKey, byte[]... keys);
+	long bitxor(String destKey, String... keys);
+	long bitxor(byte[] destKey, byte[]... keys);
 	
 }

@@ -577,5 +577,195 @@ public interface RedisCommand {
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Strings
 	
+	/**
+	 * Available since 2.0.0
+	 * <p>
+	 * Time complexity: O(1). The amortized time complexity is O(1) assuming the appended value is small 
+	 * and the already present value is of any size, since the dynamic string library used by Redis will double the 
+	 * free space available on every reallocation.
+	 * <p>
+	 * 
+	 * If key already exists and is a string, this command appends the value at the end of the string. 
+	 * If key does not exist it is created and set as an empty string, so APPEND will be similar to SET in this special case.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return the length of the string after the append operation.
+	 */
+	long append(String key, String value);
+	long append(byte[] key, String value);
+	
+	/**
+	 * Available since 2.6.0
+	 * <p>
+	 * Time complexity: O(N)
+	 * <p>
+	 * 
+	 * Count the number of set bits (population counting) in a string.
+	 * By default all the bytes contained in the string are examined. It is possible to specify the counting operation 
+	 * only in an interval passing the additional arguments start and end.Like for the GETRANGE command start and end 
+	 * can contain negative values in order to index bytes starting from the end of the string, where -1 is the last byte, 
+	 * -2 is the penultimate, and so forth.
+	 * Non-existent keys are treated as empty strings, so the command will return zero.
+	 * 
+	 * @param key
+	 * @return The number of bits set to 1.
+	 */
+	long bitcount(String key);
+	long bitcount(byte[] key);
+	long bitcount(String key, long start, long end);
+	long bitcount(byte[] key, long start, long end);
+	
+	/**
+	 * Available since 2.6.0
+	 * <p>
+	 * Time complexity: O(N)
+	 * <p>
+	 * 
+	 * Perform a bitwise operation between multiple keys (containing string values) and store the result in the destination key.
+	 * The BITOP command supports four bitwise operations: AND, OR, XOR and NOT, thus the valid forms to call the command are:
+	 * BITOP AND destkey srckey1 srckey2 srckey3 ... srckeyN
+	 * BITOP OR destkey srckey1 srckey2 srckey3 ... srckeyN
+	 * BITOP XOR destkey srckey1 srckey2 srckey3 ... srckeyN
+	 * BITOP NOT destkey srckey
+	 * As you can see NOT is special as it only takes an input key, because it performs inversion of bits so it only makes sense as an unary operator.
+	 * The result of the operation is always stored at destkey.
+	 * <p>
+	 * 
+	 * Handling of strings with different lengths
+	 * When an operation is performed between strings having different lengths, all the strings shorter than the longest string 
+	 * in the set are treated as if they were zero-padded up to the length of the longest string.
+	 * The same holds true for non-existent keys, that are considered as a stream of zero bytes up to the length of the longest string.
+	 * 
+	 * @param destKey
+	 * @param keys
+	 * @return The size of the string stored in the destination key, that is equal to the size of the longest input string.
+	 */
+	long bitnot(String destKey, String key);
+	long bitnot(byte[] destKey, byte[] key);
+	
+	/**
+	 * Available since 1.0.0
+	 * <p>
+	 * Time complexity: O(1)
+	 * <p>
+	 * 
+	 * Decrements the number stored at key by one. If the key does not exist, it is set to 0 before performing the operation. 
+	 * An error is returned if the key contains a value of the wrong type or contains a string that can not be represented as integer. 
+	 * This operation is limited to 64 bit signed integers.
+	 * See INCR for extra information on increment/decrement operations.
+	 * 
+	 * @param key
+	 * @return the value of key after the decrement
+	 */
+	long decr(String key);
+	long decr(byte[] key);
+	
+	/**
+	 * Available since 1.0.0
+	 * <p>
+	 * Time complexity: O(1)
+	 * <p>
+	 * Decrements the number stored at key by decrement. If the key does not exist, it is set to 0 before performing the operation. 
+	 * An error is returned if the key contains a value of the wrong type or contains a string that can not be represented as integer. 
+	 * This operation is limited to 64 bit signed integers.
+	 * See INCR for extra information on increment/decrement operations.
+	 * 
+	 * @param key
+	 * @param decrement
+	 * @return the value of key after the decrement
+	 */
+	long decrBy(String key, long decrement);
+	long decrBy(byte[] key, long decrement);
+	
+	/**
+	 * Available since 1.0.0
+	 * <p>
+	 * Time complexity: O(1)
+	 * <p>
+	 * Get the value of key. If the key does not exist the special value nil is returned. 
+	 * An error is returned if the value stored at key is not a string, because GET only handles string values.
+	 * 
+	 * @param key
+	 * @return the value of key, or null when key does not exist.
+	 */
+	String get(String key);
+	String get(byte[] key);
+	
+	/**
+	 * Available since 2.2.0
+	 * <p>
+	 * Time complexity: O(1)
+	 * <p>
+	 * 
+	 * Returns the bit value at offset in the string value stored at key.
+	 * When offset is beyond the string length, the string is assumed to be a contiguous space with 0 bits. 
+	 * When key does not exist it is assumed to be an empty string, so offset is always out of range and the value is also 
+	 * assumed to be a contiguous space with 0 bits.
+	 * 
+	 * @param key
+	 * @param offset
+	 * @return the bit value stored at offset.
+	 */
+	boolean getbit(String key, long offset);
+	boolean getbit(byte[] key, long offset);
+	
+	/**
+	 * Available since 2.4.0
+	 * <p>
+	 * Time complexity: O(N) where N is the length of the returned string. The complexity is ultimately determined by the returned length, 
+	 * but because creating a substring from an existing string is very cheap, it can be considered O(1) for small strings.
+	 * <p>
+	 * 
+	 * Warning: this command was renamed to GETRANGE, it is called SUBSTR in Redis versions <= 2.0.
+	 * Returns the substring of the string value stored at key, determined by the offsets start and end (both are inclusive). 
+	 * Negative offsets can be used in order to provide an offset starting from the end of the string. So -1 means the last character, 
+	 * -2 the penultimate and so forth.
+	 * The function handles out of range requests by limiting the resulting range to the actual length of the string.
+	 * 
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	String getrange(String key, long start, long end);
+	String getrange(byte[] key, long start, long end);
+	
+	/**
+	 * Available since 1.0.0
+	 * <p>
+	 * Time complexity: O(1)
+	 * <p>
+	 * 
+	 * Atomically sets key to value and returns the old value stored at key. 
+	 * Returns an error when key exists but does not hold a string value.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return the old value stored at key, or null when key did not exist.
+	 */
+	String getset(String key, String value);
+	String getset(byte[] key, String value);
+	
+	/**
+	 * Available since 1.0.0
+	 * <p>
+	 * Time complexity: O(1)
+	 * <p>
+	 * Increments the number stored at key by one. If the key does not exist, it is set to 0 before performing the operation. 
+	 * An error is returned if the key contains a value of the wrong type or contains a string that can not be represented as integer. 
+	 * This operation is limited to 64 bit signed integers.
+	 * 
+	 * Note: this is a string operation because Redis does not have a dedicated integer type. 
+	 * The string stored at the key is interpreted as a base-10 64 bit signed integer to execute the operation.
+	 * Redis stores integers in their integer representation, so for string values that actually hold an integer, 
+	 * there is no overhead for storing the string representation of the integer.
+	 * 
+	 * @param key
+	 * @return the value of key after the increment
+	 */
+	long incr(String key);
+	long incr(byte[] key);
+	
 	
 }

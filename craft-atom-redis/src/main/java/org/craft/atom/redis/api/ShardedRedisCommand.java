@@ -15,5 +15,11 @@ public interface ShardedRedisCommand extends RedisCommand {
 	long del(String shardKey, String... keys);
 	long del(byte[] shardKey, byte[]... keys);
 	
-	
+	long bitand(String shardKey, String destKey, String... keys);
+	long bitand(byte[] shardKey, byte[] destKey, byte[]... keys);
+	long bitor(String shardKey, String destKey, String... keys);
+	long bitor(byte[] shardKey, byte[] destKey, byte[]... keys);
+	long bitxor(String shardKey, String destKey, String... keys);
+	long bitxor(byte[] shardKey, byte[] destKey, byte[]... keys);
+
 }
