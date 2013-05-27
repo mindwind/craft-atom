@@ -23,7 +23,7 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
  */
 public class MinaSslEchoServer {
 	
-	private static final int PORT = 7180;
+	private static final int PORT = 6280;
 	
 	private static KeyManagerFactory KEY_MANAGER_FACTORY;
 	

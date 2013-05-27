@@ -18,7 +18,7 @@ public class MinaEchoHandler implements IoHandler {
 
 	@Override
 	public void sessionOpened(IoSession session) throws Exception {
-//		System.out.println("session open=" + session);
+		System.out.println("session open=" + session);
 	}
 
 	@Override
@@ -41,13 +41,25 @@ public class MinaEchoHandler implements IoHandler {
 
 	@Override
 	public void messageReceived(IoSession session, Object message) throws Exception {
-		session.write(message);
+		session.write(getHttpResponse());
 	}
 
 	@Override
 	public void messageSent(IoSession session, Object message) throws Exception {
 		// TODO Auto-generated method stub
 //		System.out.println("session=" + session + ", sent=" + message);
+	}
+	
+	private String getHttpResponse() {
+		String rsp = "";
+		rsp += "HTTP/1.1 200 OK\r\n";
+		rsp += "Server: arthas\r\n";
+		rsp += "Date: Thu, 18 Apr 2013 10:52:34 GMT\r\n";
+		rsp += "Content-Length: 11\r\n";
+		rsp += "Content-Type: text/html; charset=UTF-8\r\n";
+		rsp += "Connection: close\r\n\r\n";
+		rsp += "hello, SSL!";
+		return rsp;
 	}
 
 }
