@@ -1,5 +1,7 @@
 package org.craft.atom.redis.api;
 
+import java.util.List;
+
 /**
  * The atomic commands supported by sharded Redis.
  * <p>
@@ -11,15 +13,60 @@ package org.craft.atom.redis.api;
  */
 public interface ShardedRedisCommand extends RedisCommand {
 	
+	// ~ --------------------------------------------------------------------------------------------------------- Keys
 	
-	long del(String shardKey, String... keys);
-	long del(byte[] shardKey, byte[]... keys);
 	
-	long bitand(String shardKey, String destKey, String... keys);
-	long bitand(byte[] shardKey, byte[] destKey, byte[]... keys);
-	long bitor(String shardKey, String destKey, String... keys);
-	long bitor(byte[] shardKey, byte[] destKey, byte[]... keys);
-	long bitxor(String shardKey, String destKey, String... keys);
-	long bitxor(byte[] shardKey, byte[] destKey, byte[]... keys);
-
+	/**
+	 * @see {@link #del(String)}
+	 * @param shardKey
+	 * @param keys
+	 * @return
+	 */
+	long del(String shardkey, String... keys);
+	long del(byte[] shardkey, byte[]... keys);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------ Strings
+	
+	
+	/**
+	 * @see {@link #bitnot(String, String)}
+	 * @param shardKey
+	 * @param destKey
+	 * @param keys
+	 * @return
+	 */
+	long bitand(String shardkey, String destKey, String... keys);
+	long bitand(byte[] shardkey, byte[] destKey, byte[]... keys);
+	long bitor(String shardkey, String destKey, String... keys);
+	long bitor(byte[] shardkey, byte[] destKey, byte[]... keys);
+	long bitxor(String shardkey, String destKey, String... keys);
+	long bitxor(byte[] shardkey, byte[] destKey, byte[]... keys);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#mget(String...)}
+	 * @param shardkey
+	 * @param keys
+	 * @return
+	 */
+	List<String> mget(String shardkey, String... keys);
+	List<byte[]> mget(byte[] shardkey, byte[]... keys);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#mset(String...)}
+	 * @param shardkey
+	 * @param keysvalues
+	 * @return
+	 */
+	String mset(String shardkey, String... keysvalues);
+	byte[] mset(String shardkey, byte[]... keysvalues);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#msetnx(String...)}
+	 * @param shardkey
+	 * @param keysvalues
+	 * @return
+	 */
+	String msetnx(String shardkey, String... keysvalues);
+	byte[] msetnx(String shardkey, byte[]... keysvalues);
 }
