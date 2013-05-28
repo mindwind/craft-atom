@@ -22,8 +22,8 @@ public class RedisCacheMain {
 	private static void init() {
 		boolean isShard = true;
 		int timeout = 3000;
-		rc = new RedisCache(isShard, timeout, "localhost:6379", 2);
-//		rc = new RedisCache(isShard, timeout, "10.28.176.81:6380", 2);
+//		rc = new RedisCache(isShard, timeout, "localhost:6379", 2);
+		rc = new RedisCache(isShard, timeout, "redis.com:6379", 2);
 	}
 	
 	public static void before() {
@@ -36,12 +36,16 @@ public class RedisCacheMain {
 //		System.out.println("------------------------------- after");
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		init();
 		RedisCacheMain rcm = new RedisCacheMain();
 		
 		// case 1
-//		rcm.testGetAndSet();
+		for (int i = 0; i < 100; i++) {
+			rcm.testGetAndSet();
+			Thread.sleep(5000);
+		}
+		
 
 //		// case 2
 //		rcm.testSetex();
@@ -59,7 +63,7 @@ public class RedisCacheMain {
 //		rcm.testSetexInTransaction();
 		
 		// case 7 
-		rcm.testTransactionInHighConcurrency();
+//		rcm.testTransactionInHighConcurrency();
 
 	}
 	
