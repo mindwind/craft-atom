@@ -1,6 +1,7 @@
 package org.craft.atom.redis.api;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -70,7 +71,8 @@ public interface RedisCommand {
 	 * Returns <tt>true</tt>if key exists.
 	 * 
 	 * @param key
-	 * @return
+	 * @return true if the key exists.
+	 *         false if the key does not exist.
 	 */
 	boolean exists(String key);
 	boolean exists(byte[] key);
@@ -961,4 +963,225 @@ public interface RedisCommand {
 	 */
 	long strlen(String key);
 	long strlen(byte[] key);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------- Hashes
+	
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(N) 
+	 * where N is the number of fields to be removed.
+	 * 
+	 * <p>
+	 * Removes the specified fields from the hash stored at key. 
+	 * Specified fields that do not exist within this hash are ignored. 
+	 * If key does not exist, it is treated as an empty hash and this command returns 0.
+	 * 
+	 * History
+	 * >= 2.4: Accepts multiple field arguments. Redis versions older than 2.4 can only remove a field per call.
+	 * To remove multiple fields from a hash in an atomic fashion in earlier versions, use a MULTI / EXEC block.
+	 * 
+	 * @param key
+	 * @param fields
+	 * @return the number of fields that were removed from the hash, not including specified but non existing fields.
+	 */
+	long hdel(String key, String... fields);
+	long hdel(byte[] key, String... fields);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Returns if field is an existing field in the hash stored at key.
+	 * 
+	 * @param key
+	 * @param field
+	 * @return true if the hash contains field.
+	 *         false if the hash does not contain field, or key does not exist.
+	 */
+	boolean hexists(String key, String field);
+	boolean hexists(byte[] key, byte[] field);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Returns the value associated with field in the hash stored at key.
+	 * 
+	 * @param key
+	 * @param field
+	 * @return the value associated with field, or nil when field is not present in the hash or key does not exist.
+	 */
+	String hget(String key, String field);
+	byte[] hget(byte[] key, byte[] field);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(N) 
+	 * where N is the size of the hash.
+	 * 
+	 * <p>
+	 * Returns all fields and values of the hash stored at key. 
+	 * In the returned value, every field name is followed by its value, so the length of the reply is twice the size of the hash.
+	 * 
+	 * @param key
+	 * @return list of fields and their values stored in the hash, or an empty list when key does not exist.
+	 */
+	Map<String, String> hgetall(String key);
+	Map<byte[], byte[]> hgetall(byte[] key);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Increments the number stored at field in the hash stored at key by increment. If key does not exist, 
+	 * a new key holding a hash is created. If field does not exist the value is set to 0 before the operation is performed.
+	 * The range of values supported by HINCRBY is limited to 64 bit signed integers.
+	 * 
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return the value at field after the increment operation.
+	 */
+	long hincrby(String key, String field, long value);
+	long hincrby(byte[] key, byte[] field, long value);
+	
+	/**
+	 * Available since 2.6.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Increment the specified field of an hash stored at key, and representing a floating point number, by the specified increment. 
+	 * If the field does not exist, it is set to 0 before performing the operation. 
+	 * An error is returned if one of the following conditions occur:
+	 * - The field contains a value of the wrong type (not a string).
+	 * - The current field content or the specified increment are not parsable as a double precision floating point number.
+	 * The exact behavior of this command is identical to the one of the INCRBYFLOAT command, 
+	 * please refer to the documentation of INCRBYFLOAT for further information.
+	 * 
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return the value of field after the increment.
+	 */
+	double hincrbyfloat(String key, String field, double value);
+	double hincrbyfloat(byte[] key, byte[] field, double value);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(N) 
+	 * where N is the size of the hash.
+	 * 
+	 * <p>
+	 * Returns all field names in the hash stored at key.
+	 * 
+	 * @param key
+	 * @return list of fields in the hash, or an empty list when key does not exist.
+	 */
+	Set<String> hkeys(String key);
+	Set<byte[]> hkeys(byte[] key);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Returns the number of fields contained in the hash stored at key.
+	 * 
+	 * @param key
+	 * @return number of fields in the hash, or 0 when key does not exist.
+	 */
+	long hlen(String key);
+	long hlen(byte[] key);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(N) 
+	 * where N is the number of fields being requested.
+	 * 
+	 * <p>
+	 * Returns the values associated with the specified fields in the hash stored at key.
+	 * For every field that does not exist in the hash, a nil value is returned. 
+	 * Because a non-existing keys are treated as empty hashes, running HMGET against a non-existing key will return a list of nil values.
+	 * 
+	 * @param key
+	 * @param fields
+	 * @return list of values associated with the given fields, in the same order as they are requested.
+	 */
+	List<String> hmget(String key, String... fields);
+	List<byte[]> hmget(byte[] key, byte[]... fields);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(N) 
+	 * where N is the number of fields being set.
+	 * 
+	 * <p>
+	 * Sets the specified fields to their respective values in the hash stored at key. 
+	 * This command overwrites any existing fields in the hash. If key does not exist, a new key holding a hash is created.
+	 * 
+	 * @param key
+	 * @param hash
+	 * @return Status code reply, e.g. OK
+	 */
+	String hmset(String key, Map<String, String> hash);
+	byte[] hmset(byte[] key, Map<byte[], byte[]> hash);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Sets field in the hash stored at key to value. If key does not exist, a new key holding a hash is created. 
+	 * If field already exists in the hash, it is overwritten.
+	 * 
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return 1 if field is a new field in the hash and value was set.
+	 *         0 if field already exists in the hash and the value was updated.
+	 */
+	long hset(String key, String field, String value);
+	long hset(byte[] key, byte[] field, byte[] value);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Sets field in the hash stored at key to value, only if field does not yet exist. If key does not exist, 
+	 * a new key holding a hash is created. If field already exists, this operation has no effect.
+	 * 
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return 1 if field is a new field in the hash and value was set.
+	 *         0 if field already exists in the hash and no operation was performed.
+	 */
+	long hsetnx(String key, String field, String value);
+	long hsetnx(byte[] key, byte[] field, byte[] value);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(N) 
+	 * where N is the size of the hash.
+	 * 
+	 * <p>
+	 * Returns all values in the hash stored at key.
+	 * 
+	 * @param key
+	 * @return list of values in the hash, or an empty list when key does not exist.
+	 */
+	List<String> hvals(String key);
+	List<byte[]> hvals(byte[] key);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------- Lists
+	
+	
+	
 }
