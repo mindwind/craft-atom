@@ -1,6 +1,7 @@
 package org.craft.atom.redis.api;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The atomic commands supported by sharded Redis.
@@ -59,7 +60,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	String mset(String shardkey, String... keysvalues);
-	byte[] mset(String shardkey, byte[]... keysvalues);
+	byte[] mset(byte[] shardkey, byte[]... keysvalues);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#msetnx(String...)}
@@ -68,5 +69,34 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	String msetnx(String shardkey, String... keysvalues);
-	byte[] msetnx(String shardkey, byte[]... keysvalues);
+	byte[] msetnx(byte[] shardkey, byte[]... keysvalues);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------- Lists
+	
+	/**
+	 * @see {@link RedisCommand#blpop(String)}
+	 * @param timeout
+	 * @param keys
+	 * @return A empty map(nil multi-bulk) when no element could be popped and the timeout expired.
+	 *         A map (two-element multi-bulk) with the key (first element) being the name of the key where an element was popped 
+	 *         and the value (second element) being the value of the popped element.
+	 */
+	Map<String, String> blpop(String shardkey, String... keys);
+	Map<byte[], byte[]> blpop(byte[] shardkey, byte[]... keys);
+	Map<String, String> blpop(String shardkey, int timeout, String... keys);
+	Map<byte[], byte[]> blpop(byte[] shardkey, int timeout, byte[]... keys);
+	
+	/**
+	 * @see {@link RedisCommand#brpop(String)}
+	 * @param timeout
+	 * @param keys
+	 * @return A empty map(nil multi-bulk) when no element could be popped and the timeout expired.
+	 *         A map (two-element multi-bulk) with the key (first element) being the name of the key where an element was popped 
+	 *         and the value (second element) being the value of the popped element.
+	 */
+	Map<String, String> brpop(String shardkey, String... keys);
+	Map<byte[], byte[]> brpop(byte[] shardkey, byte[]... keys);
+	Map<String, String> brpop(String shardkey, int timeout, String... keys);
+	Map<byte[], byte[]> brpop(byte[] shardkey, int timeout, byte[]... keys);
 }

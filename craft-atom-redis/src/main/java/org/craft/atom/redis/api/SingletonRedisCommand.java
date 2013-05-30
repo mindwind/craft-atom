@@ -1,6 +1,7 @@
 package org.craft.atom.redis.api;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The atomic commands supported by singleton Redis.
@@ -82,4 +83,33 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 */
 	String msetnx(String... keysvalues);
 	byte[] msetnx(byte[]... keysvalues);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------- Lists
+	
+	/**
+	 * @see {@link RedisCommand#blpop(String)}
+	 * @param timeout
+	 * @param keys
+	 * @return A empty map(nil multi-bulk) when no element could be popped and the timeout expired.
+	 *         A map (two-element multi-bulk) with the key (first element) being the name of the key where an element was popped 
+	 *         and the value (second element) being the value of the popped element.
+	 */
+	Map<String, String> blpop(String... keys);
+	Map<byte[], byte[]> blpop(byte[]... keys);
+	Map<String, String> blpop(int timeout, String... keys);
+	Map<byte[], byte[]> blpop(int timeout, byte[]... keys);
+	
+	/**
+	 * @see {@link RedisCommand#brpop(String)}
+	 * @param timeout
+	 * @param keys
+	 * @return A empty map(nil multi-bulk) when no element could be popped and the timeout expired.
+	 *         A map (two-element multi-bulk) with the key (first element) being the name of the key where an element was popped 
+	 *         and the value (second element) being the value of the popped element.
+	 */
+	Map<String, String> brpop(String... keys);
+	Map<byte[], byte[]> brpop(byte[]... keys);
+	Map<String, String> brpop(int timeout, String... keys);
+	Map<byte[], byte[]> brpop(int timeout, byte[]... keys);
 }

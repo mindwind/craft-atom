@@ -678,7 +678,7 @@ public interface RedisCommand {
 	 * An error is returned if the value stored at key is not a string, because GET only handles string values.
 	 * 
 	 * @param key
-	 * @return the value of key, or nil when key does not exist.
+	 * @return the value of key, or null when key does not exist.
 	 */
 	String get(String key);
 	byte[] get(byte[] key);
@@ -1013,7 +1013,7 @@ public interface RedisCommand {
 	 * 
 	 * @param key
 	 * @param field
-	 * @return the value associated with field, or nil when field is not present in the hash or key does not exist.
+	 * @return the value associated with field, or null when field is not present in the hash or key does not exist.
 	 */
 	String hget(String key, String field);
 	byte[] hget(byte[] key, byte[] field);
@@ -1073,8 +1073,7 @@ public interface RedisCommand {
 	
 	/**
 	 * Available since 2.0.0
-	 * Time complexity: O(N) 
-	 * where N is the size of the hash.
+	 * Time complexity: O(N) where N is the size of the hash.
 	 * 
 	 * <p>
 	 * Returns all field names in the hash stored at key.
@@ -1100,12 +1099,11 @@ public interface RedisCommand {
 	
 	/**
 	 * Available since 2.0.0
-	 * Time complexity: O(N) 
-	 * where N is the number of fields being requested.
+	 * Time complexity: O(N) where N is the number of fields being requested.
 	 * 
 	 * <p>
 	 * Returns the values associated with the specified fields in the hash stored at key.
-	 * For every field that does not exist in the hash, a nil value is returned. 
+	 * For every field that does not exist in the hash, a null value is returned. 
 	 * Because a non-existing keys are treated as empty hashes, running HMGET against a non-existing key will return a list of nil values.
 	 * 
 	 * @param key
@@ -1117,8 +1115,7 @@ public interface RedisCommand {
 	
 	/**
 	 * Available since 2.0.0
-	 * Time complexity: O(N) 
-	 * where N is the number of fields being set.
+	 * Time complexity: O(N) where N is the number of fields being set.
 	 * 
 	 * <p>
 	 * Sets the specified fields to their respective values in the hash stored at key. 
@@ -1167,8 +1164,7 @@ public interface RedisCommand {
 	
 	/**
 	 * Available since 2.0.0
-	 * Time complexity: O(N) 
-	 * where N is the size of the hash.
+	 * Time complexity: O(N) where N is the size of the hash.
 	 * 
 	 * <p>
 	 * Returns all values in the hash stored at key.
@@ -1182,6 +1178,407 @@ public interface RedisCommand {
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
 	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * BLPOP is a blocking list pop primitive. It is the blocking version of LPOP because it blocks the connection when 
+	 * there are no elements to pop from any of the given lists. An element is popped from the head of the first list that is non-empty, 
+	 * with the given keys being checked in the order that they are given.
+	 * 
+	 * <p>
+	 * Non-blocking behavior
+	 * When BLPOP is called, if at least one of the specified keys contains a non-empty list, 
+	 * an element is popped from the head of the list and returned to the caller together with the key it was popped from.
+	 * Keys are checked in the order that they are given. Let's say that the key list1 doesn't exist and list2 and list3 hold non-empty lists. 
+	 * Consider the following command:
+	 * <pre>
+	 * BLPOP list1 list2 list3 0
+	 * </pre>
+	 * BLPOP guarantees to return an element from the list stored at list2 (since it is the first non empty list when 
+	 * checking list1, list2 and list3 in that order).
+	 * 
+	 * <p>
+	 * Blocking behavior
+	 * If none of the specified keys exist, BLPOP blocks the connection until another client performs an LPUSH or RPUSH
+	 * operation against one of the keys.
+	 * Once new data is present on one of the lists, the client returns with the name of the key unblocking it and the popped value.
+	 * When BLPOP causes a client to block and a non-zero timeout is specified, the client will unblock returning a nil 
+	 * multi-bulk value when the specified timeout has expired without a push operation against at least one of the specified keys.
+	 * The timeout argument is interpreted as an integer value specifying the maximum number of seconds to block. 
+	 * A timeout of zero can be used to block infinitely.
+	 * 
+	 * <p>
+	 * What key is served first? What client? What element? Priority ordering details.
+	 * If the client tries to blocks for multiple keys, but at least one key contains elements, 
+	 * the returned key / element pair is the first key from left to right that has one or more elements. 
+	 * In this case the client is not blocked. So for instance BLPOP key1 key2 key3 key4 0, assuming that both key2 and key4 are non-empty, 
+	 * will always return an element from key2.
+	 * If multiple clients are blocked for the same key, the first client to be served is the one that was waiting for 
+	 * more time (the first that blocked for the key). Once a client is unblocked it does not retain any priority, 
+	 * when it blocks again with the next call to BLPOP it will be served accordingly to the number of clients already 
+	 * blocked for the same key, that will all be served before it (from the first to the last that blocked).
+	 * When a client is blocking for multiple keys at the same time, and elements are available at the same time in 
+	 * multiple keys (because of a transaction or a Lua script added elements to multiple lists), 
+	 * the client will be unblocked using the first key that received a push operation (assuming it has enough elements to 
+	 * serve our client, as there may be other clients as well waiting for this key). Basically after the execution of every 
+	 * command Redis will run a list of all the keys that received data AND that have at least a client blocked. 
+	 * The list is ordered by new element arrival time, from the first key that received data to the last. 
+	 * For every key processed, Redis will serve all the clients waiting for that key in a FIFO fashion, as long as there 
+	 * are elements in this key. When the key is empty or there are no longer clients waiting for this key, 
+	 * the next key that received new data in the previous command / transaction / script is processed, and so forth.
+	 * 
+	 * <p>
+	 * Behavior of BLPOP when multiple elements are pushed inside a list.
+	 * There are times when a list can receive multiple elements in the context of the same conceptual command:
+	 * Variadic push operations such as LPUSH mylist a b c.
+	 * After an EXEC of a MULTI block with multiple push operations against the same list.
+	 * Executing a Lua Script with Redis 2.6 or newer.
+	 * When multiple elements are pushed inside a list where there are clients blocking, the behavior is different for Redis 2.4 and Redis 2.6 or newer.
+	 * For Redis 2.6 what happens is that the command performing multiple pushes is executed, 
+	 * and only after the execution of the command the blocked clients are served. Consider this sequence of commands.
+	 * <pre>
+	 * Client A:   BLPOP foo 0
+	 * Client B:   LPUSH foo a b c
+	 * </pre>
+	 * If the above condition happens using a Redis 2.6 server or greater, Client A will be served with the c element, 
+	 * because after the LPUSH command the list contains c,b,a, so taking an element from the left means to return c.
+	 * Instead Redis 2.4 works in a different way: clients are served in the context of the push operation, so as long as 
+	 * LPUSH foo a b c starts pushing the first element to the list, it will be delivered to the Client A, that will receive a (the first element pushed).
+	 * The behavior of Redis 2.4 creates a lot of problems when replicating or persisting data into the AOF file, 
+	 * so the much more generic and semantically simpler behaviour was introduced into Redis 2.6 to prevent problems.
+	 * Note that for the same reason a Lua script or a MULTI/EXEC block may push elements into a list and afterward delete the list. 
+	 * In this case the blocked clients will not be served at all and will continue to be blocked as long as no data is 
+	 * present on the list after the execution of a single command, transaction, or script.
+	 * 
+	 * <p>
+	 * BLPOP inside a MULTI / EXEC transaction
+	 * BLPOP can be used with pipelining (sending multiple commands and reading the replies in batch), 
+	 * however this setup makes sense almost solely when it is the last command of the pipeline.
+	 * Using BLPOP inside a MULTI / EXEC block does not make a lot of sense as it would require blocking the entire 
+	 * server in order to execute the block atomically, which in turn does not allow other clients to perform a push operation. 
+	 * For this reason the behavior of BLPOP inside MULTI / EXEC when the list is empty is to return a nil multi-bulk reply, 
+	 * which is the same thing that happens when the timeout is reached.
+	 * If you like science fiction, think of time flowing at infinite speed inside a MULTI / EXEC block...
+	 * 
+	 * @param key
+	 * @return A null when no element could be popped and the timeout expired.
+	 *         A popped element.
+	 */
+	String blpop(String key);
+	byte[] blpop(byte[] key);
+	String blpop(String key, int timeout);
+	byte[] blpop(byte[] key, int timeout);
 	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * BRPOP is a blocking list pop primitive. It is the blocking version of RPOP because it blocks the connection 
+	 * when there are no elements to pop from any of the given lists. An element is popped from the tail of the first list that is non-empty, 
+	 * with the given keys being checked in the order that they are given.
+	 * See the BLPOP documentation for the exact semantics, since BRPOP is identical to BLPOP with the only difference being that 
+	 * it pops elements from the tail of a list instead of popping from the head.
+	 * 
+	 * @see #blpop(String)
+	 * @param key
+	 * @return A null when no element could be popped and the timeout expired.
+	 *         A popped element.
+	 */
+	String brpop(String key);
+	byte[] brpop(byte[] key);
+	String brpop(String key, int timeout);
+	byte[] brpop(byte[] key, int timeout);
 	
+	/**
+	 * Available since 2.2.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * BRPOPLPUSH is the blocking variant of RPOPLPUSH. When source contains elements, this command behaves exactly like RPOPLPUSH. 
+	 * When source is empty, Redis will block the connection until another client pushes to it or until timeout is reached. 
+	 * A timeout of zero can be used to block infinitely.
+	 * See RPOPLPUSH for more information.
+	 * 
+	 * @param source
+	 * @param destination
+	 * @param timeout
+	 * @return the element being popped from source and pushed to destination. 
+	 * 		   If timeout is reached, a null reply is returned.
+	 */
+	String brpoplpush(String source, String destination, int timeout);
+	byte[] brpoplpush(byte[] source, byte[] destination, int timeout);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(N) where N is the number of elements to traverse to get to the element at index. 
+	 * This makes asking for the first or the last element of the list O(1).
+	 * 
+	 * <p>
+	 * Returns the element at index index in the list stored at key. The index is zero-based, so 0 means the first element, 
+	 * 1 the second element and so on. Negative indices can be used to designate elements starting at the tail of the list. 
+	 * Here, -1 means the last element, -2 means the penultimate and so forth.
+	 * When the value at key is not a list, an error is returned.
+	 * 
+	 * @param key
+	 * @param index
+	 * @return
+	 */
+	String lindex(String key, long index);
+	byte[] lindex(byte[] key, long index);
+	
+	/**
+	 * Available since 2.2.0
+	 * Time complexity: O(N) where N is the number of elements to traverse before seeing the value pivot. T
+	 * his means that inserting somewhere on the left end on the list (head) can be considered O(1) 
+	 * and inserting somewhere on the right end (tail) is O(N).
+	 * 
+	 * <p>
+	 * Inserts value in the list stored at key either before or after the reference value pivot.
+	 * When key does not exist, it is considered an empty list and no operation is performed.
+	 * When pivot can not be found and no operation is performed.
+	 * An error is returned when key exists but does not hold a list value.
+	 * 
+	 * @param key
+	 * @param where
+	 * @param pivot
+	 * @param value
+	 * @return the length of the list after the insert operation, or -1 when the value pivot was not found.
+	 */
+	long linsertbefore(String key, String pivot, String value);
+	long linsertbefore(byte[] key, byte[] pivot, byte[] value);
+	long linsertafter(String key, String pivot, String value);
+	long linsertafter(byte[] key, byte[] pivot, byte[] value);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Returns the length of the list stored at key. If key does not exist, it is interpreted as an empty list and 0 is returned. 
+	 * An error is returned when the value stored at key is not a list.
+	 * 
+	 * @param key
+	 * @return the length of the list at key.
+	 */
+	long llen(String key);
+	long llen(byte[] key);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Removes and returns the first element of the list stored at key.
+	 * 
+	 * @param key
+	 * @return the value of the first element, or null when key does not exist.
+	 */
+	String lpop(String key);
+	byte[] lpop(byte[] key);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Insert all the specified values at the head of the list stored at key. If key does not exist, 
+	 * it is created as empty list before performing the push operations. When key holds a value that is not a list, an error is returned.
+	 * It is possible to push multiple elements using a single command call just specifying multiple arguments at the end of the command. 
+	 * Elements are inserted one after the other to the head of the list, from the leftmost element to the rightmost element. 
+	 * So for instance the command LPUSH mylist a b c will result into a list containing c as first element, b as second element and a as third element.
+	 * 
+	 * <p>
+	 * History
+	 * >= 2.4: Accepts multiple value arguments. In Redis versions older than 2.4 it was possible to push a single value per command.
+	 * 
+	 * @param key
+	 * @param values
+	 * @return the length of the list after the push operations.
+	 */
+	long lpush(String key, String... values);
+	long lpush(byte[] key, byte[]... values);
+	
+	/**
+	 * Available since 2.2.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Inserts value at the head of the list stored at key, only if key already exists and holds a list. 
+	 * In contrary to LPUSH, no operation will be performed when key does not yet exist.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return the length of the list after the push operation.
+	 */
+	long lpushx(String key, String value);
+	long lpushx(byte[] key, byte[] value);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(S+N) where S is the start offset and N is the number of elements in the specified range.
+	 * 
+	 * <p>
+	 * Returns the specified elements of the list stored at key. The offsets start and stop are zero-based indexes,
+	 * with 0 being the first element of the list (the head of the list), 1 being the next element and so on.
+	 * These offsets can also be negative numbers indicating offsets starting at the end of the list. 
+	 * For example, -1 is the last element of the list, -2 the penultimate, and so on.
+	 * 
+	 * <p>
+	 * Consistency with range functions in various programming languages
+	 * Note that if you have a list of numbers from 0 to 100, LRANGE list 0 10 will return 11 elements, that is, the rightmost item is included. 
+	 * This may or may not be consistent with behavior of range-related functions in your programming language of choice 
+	 * (think Ruby's Range.new, Array#slice or Python's range() function).
+	 * 
+	 * <p>
+	 * Out-of-range indexes
+	 * Out of range indexes will not produce an error. If start is larger than the end of the list, an empty list is returned. 
+	 * If stop is larger than the actual end of the list, Redis will treat it like the last element of the list.
+	 * 
+	 * @param key
+	 * @param start
+	 * @param stop
+	 * @return list of elements in the specified range.
+	 */
+	List<String> lrange(String key, long start, long stop);
+	List<byte[]> lrange(byte[] key, long start, long stop);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(N) where N is the length of the list.
+	 * 
+	 * <p>
+	 * Removes the first count occurrences of elements equal to value from the list stored at key. 
+	 * The count argument influences the operation in the following ways:
+	 * count > 0: Remove elements equal to value moving from head to tail.
+	 * count < 0: Remove elements equal to value moving from tail to head.
+	 * count = 0: Remove all elements equal to value.
+	 * For example, LREM list -2 "hello" will remove the last two occurrences of "hello" in the list stored at list.
+	 * Note that non-existing keys are treated like empty lists, so when key does not exist, the command will always return 0.
+	 * 
+	 * @param key
+	 * @param count
+	 * @param value
+	 * @return the number of removed elements.
+	 */
+	long lrem(String key, long count, String value);
+	long lrem(byte[] key, long count, byte[] value);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(N) where N is the length of the list. Setting either the first or the last element of the list is O(1).
+	 * 
+	 * <p>
+	 * Sets the list element at index to value. For more information on the index argument, see LINDEX.
+	 * An error is returned for out of range indexes.
+	 * 
+	 * @param key
+	 * @param index
+	 * @param value
+	 * @return Status code reply, e.g. OK
+	 */
+	String lset(String key, long index, String value);
+	byte[] lset(byte[] key, long index, byte[] value);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(N) where N is the number of elements to be removed by the operation.
+	 * Trim an existing list so that it will contain only the specified range of elements specified. 
+	 * Both start and stop are zero-based indexes, where 0 is the first element of the list (the head), 1 the next element and so on.
+	 * For example: LTRIM foobar 0 2 will modify the list stored at foobar so that only the first three elements of the list will remain.
+	 * start and end can also be negative numbers indicating offsets from the end of the list, where -1 is the last element of the list, 
+	 * -2 the penultimate element and so on.
+	 * Out of range indexes will not produce an error: if start is larger than the end of the list, or start > end, 
+	 * the result will be an empty list (which causes key to be removed). 
+	 * If end is larger than the end of the list, Redis will treat it like the last element of the list.
+	 * A common use of LTRIM is together with LPUSH / RPUSH. For example:
+	 * <pre>
+	 * LPUSH mylist someelement
+	 * LTRIM mylist 0 99
+	 * </pre>
+	 * This pair of commands will push a new element on the list, while making sure that the list will not grow larger than 100 elements. 
+	 * This is very useful when using Redis to store logs for example. 
+	 * It is important to note that when used in this way LTRIM is an O(1) operation because in the average case just one element 
+	 * is removed from the tail of the list.
+	 * 
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return Status code reply, e.g. OK
+	 */
+	String ltrim(String key, long start, long stop);
+	byte[] ltrim(byte[] key, long start, long stop);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Removes and returns the last element of the list stored at key.
+	 * 
+	 * @param key
+	 * @return the value of the last element, or null when key does not exist.
+	 */
+	String rpop(String key);
+	byte[] rpop(byte[] key);
+	
+	/**
+	 * Available since 1.2.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Atomically returns and removes the last element (tail) of the list stored at source, 
+	 * and pushes the element at the first element (head) of the list stored at destination.
+	 * For example: consider source holding the list a,b,c, and destination holding the list x,y,z. 
+	 * Executing RPOPLPUSH results in source holding a,b and destination holding c,x,y,z.
+	 * If source does not exist, the value null is returned and no operation is performed. 
+	 * If source and destination are the same, the operation is equivalent to removing the last element from the list and 
+	 * pushing it as first element of the list, so it can be considered as a list rotation command.
+	 * 
+	 * @param source
+	 * @param destination
+	 * @return the element being popped and pushed.
+	 */
+	String rpoplpush(String source, String destination); 
+	String rpoplpush(byte[] source, byte[] destination); 
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Insert all the specified values at the tail of the list stored at key. 
+	 * If key does not exist, it is created as empty list before performing the push operation. 
+	 * When key holds a value that is not a list, an error is returned.
+	 * It is possible to push multiple elements using a single command call just specifying multiple arguments at the end of the command. 
+	 * Elements are inserted one after the other to the tail of the list, from the leftmost element to the rightmost element. 
+	 * So for instance the command RPUSH mylist a b c will result into a list containing a as first element, b as second element and c as third element.
+	 * 
+	 * <p>
+	 * History
+	 * >= 2.4: Accepts multiple value arguments. In Redis versions older than 2.4 it was possible to push a single value per command.
+	 * 
+	 * @param key
+	 * @param values
+	 * @return the length of the list after the push operation.
+	 */
+	long rpush(String key, String... values);
+	long rpush(byte[] key, byte[]... values);
+	
+	/**
+	 * Available since 2.2.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Inserts value at the tail of the list stored at key, only if key already exists and holds a list. 
+	 * In contrary to RPUSH, no operation will be performed when key does not yet exist.
+	 * 
+	 * @param key
+	 * @param value
+	 * @return the length of the list after the push operation.
+	 */
+	long rpushx(String key, String value);
+	long rpushx(byte[] key, byte[] value);
 }
