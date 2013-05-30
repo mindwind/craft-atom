@@ -22,8 +22,8 @@ public class RedisCacheMain {
 	private static void init() {
 		boolean isShard = true;
 		int timeout = 3000;
-//		rc = new RedisCache(isShard, timeout, "localhost:6379", 2);
-		rc = new RedisCache(isShard, timeout, "redis.com:6379", 2);
+		rc = new RedisCache(isShard, timeout, "localhost:6379", 2);
+//		rc = new RedisCache(isShard, timeout, "redis.com:6379", 2);
 	}
 	
 	public static void before() {
@@ -41,10 +41,10 @@ public class RedisCacheMain {
 		RedisCacheMain rcm = new RedisCacheMain();
 		
 		// case 1
-		for (int i = 0; i < 100; i++) {
-			rcm.testGetAndSet();
-			Thread.sleep(5000);
-		}
+//		for (int i = 0; i < 100; i++) {
+//			rcm.testGetAndSet();
+//			Thread.sleep(5000);
+//		}
 		
 
 //		// case 2
@@ -64,7 +64,30 @@ public class RedisCacheMain {
 		
 		// case 7 
 //		rcm.testTransactionInHighConcurrency();
-
+		
+		// case 8
+		rcm.testHash100000();
+	}
+	
+	public void testHash100000() {
+		long s = System.currentTimeMillis();
+		before();
+		try {
+			Map<String, String> hash = new HashMap<String, String>();
+			for (int i = 0; i < 100000; i++) {
+				hash.put("test-" + i, "" + i);
+			}
+			rc.hmset(key, hash);
+			hash = rc.hgetAll(key);
+			Assert.assertEquals("redis.cache.test.hash100000", 100000, hash.size());
+			System.out.println("testHmset100000");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			long e = System.currentTimeMillis();
+			System.out.println("elapse:" + ( e - s ));
+			after();
+		}
 	}
 	
 	public void testTransactionInHighConcurrency() {
