@@ -121,12 +121,12 @@ public interface RedisCommand {
 	 * Of course, it can be used directly to specify that a given key should expire at a given time in the future.
 	 * 
 	 * @param key
-	 * @param unixTime
+	 * @param timestamp a unix timestamp
 	 * @return 1 if the timeout was set.
 	 *         0 if key does not exist or the timeout could not be set 
 	 */
-	long expireat(String key, long unixTime);
-	long expireat(byte[] key, long unixTime);
+	long expireat(String key, long timestamp);
+	long expireat(byte[] key, long timestamp);
 	
 	/**
 	 * Available since 1.0.0
@@ -189,12 +189,12 @@ public interface RedisCommand {
 	 * @param host
 	 * @param port
 	 * @param key
-	 * @param destinationDb
-	 * @param timeoutInMillis
+	 * @param destinationdb
+	 * @param timeout in milliseconds
 	 * @return OK
 	 */
-	String migrate(String host, int port, String key, int destinationDb, int timeoutInMillis);
-	byte[] migrate(String host, int port, byte[] key, int destinationDb, int timeoutInMillis);
+	String migrate(String host, int port, String key, int destinationdb, int timeout);
+	byte[] migrate(String host, int port, byte[] key, int destinationdb, int timeout);
 	
 	/**
 	 * Available since 1.0.0
@@ -299,12 +299,12 @@ public interface RedisCommand {
 	 * but the Unix time at which the key will expire is specified in milliseconds instead of seconds.
 	 * 
 	 * @param key
-	 * @param unixTime
+	 * @param millisecondstimestamp
 	 * @return 1 if the timeout was set.
 	 *         0 if key does not exist or the timeout could not be set 
 	 */
-	long pexpireat(String key, long unixTime);
-	long pexpireat(byte[] key, long unixTime);
+	long pexpireat(String key, long millisecondstimestamp);
+	long pexpireat(byte[] key, long millisecondstimestamp);
 	
 	/**
 	 * Available since 2.6.0
@@ -376,11 +376,11 @@ public interface RedisCommand {
 	 * 
 	 * @param key
 	 * @param ttl in milliseconds
-	 * @param serializedValue
+	 * @param serializedvalue
 	 * @return The command returns OK on success.
 	 */
-	String restore(String key, long ttl, String serializedValue);
-	byte[] restore(byte[] key, long ttl, String serializedValue);
+	String restore(String key, long ttl, String serializedvalue);
+	byte[] restore(byte[] key, long ttl, byte[] serializedvalue);
 	
 	/**
 	 * Available since 1.0.0
@@ -515,31 +515,31 @@ public interface RedisCommand {
 	List<String> sort(String key, boolean alpha, boolean desc);
 	List<String> sort(String key, int offset, int count);
 	List<String> sort(String key, int offset, int count, boolean alpha, boolean desc);
-	List<String> sort(String key, String byPattern, String... getPatterns);
-	List<String> sort(String key, String byPattern, boolean desc, String... getPatterns);
-	List<String> sort(String key, String byPattern, boolean alpha, boolean desc, String... getPatterns);
-	List<String> sort(String key, String byPattern, int offset, int count, String... getPatterns);
-	List<String> sort(String key, String byPattern, int offset, int count, boolean alpha, boolean desc, String... getPatterns);
-	List<String> sort(String key, String byPattern, String destination);
-	List<String> sort(String key, String byPattern, boolean desc, String destination, String... getPatterns);
-	List<String> sort(String key, String byPattern, boolean alpha, boolean desc, String destination, String... getPatterns);
-	List<String> sort(String key, String byPattern, int offset, int count, String destination, String... getPatterns);
-	List<String> sort(String key, String byPattern, int offset, int count, boolean alpha, boolean desc, String destination, String... getPatterns);
+	List<String> sort(String key, String bypattern, String... getpatterns);
+	List<String> sort(String key, String bypattern, boolean desc, String... getpatterns);
+	List<String> sort(String key, String bypattern, boolean alpha, boolean desc, String... getpatterns);
+	List<String> sort(String key, String bypattern, int offset, int count, String... getpatterns);
+	List<String> sort(String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String... getpatterns);
+	List<String> sort(String key, String bypattern, String destination);
+	List<String> sort(String key, String bypattern, boolean desc, String destination, String... getpatterns);
+	List<String> sort(String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns);
+	List<String> sort(String key, String bypattern, int offset, int count, String destination, String... getpatterns);
+	List<String> sort(String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String destination, String... getpatterns);
 	List<byte[]> sort(byte[] key);
 	List<byte[]> sort(byte[] key, boolean desc);
 	List<byte[]> sort(byte[] key, boolean alpha, boolean desc);
 	List<byte[]> sort(byte[] key, int offset, int count);
 	List<byte[]> sort(byte[] key, int offset, int count, boolean alpha, boolean desc);
-	List<byte[]> sort(byte[] key, String byPattern, String... getPatterns);
-	List<byte[]> sort(byte[] key, String byPattern, boolean desc, String... getPatterns);
-	List<byte[]> sort(byte[] key, String byPattern, boolean alpha, boolean desc, String... getPatterns);
-	List<byte[]> sort(byte[] key, String byPattern, int offset, int count, String... getPatterns);
-	List<byte[]> sort(byte[] key, String byPattern, int offset, int count, boolean alpha, boolean desc, String... getPatterns);
-	List<byte[]> sort(byte[] key, String byPattern, byte[] destination);
-	List<byte[]> sort(byte[] key, String byPattern, boolean desc, byte[] destination, String... getPatterns);
-	List<byte[]> sort(byte[] key, String byPattern, boolean alpha, boolean desc, byte[] destination, String... getPatterns);
-	List<byte[]> sort(byte[] key, String byPattern, int offset, int count, byte[] destination, String... getPatterns);
-	List<byte[]> sort(byte[] key, String byPattern, int offset, int count, boolean alpha, boolean desc, byte[] destination, String... getPatterns);
+	List<byte[]> sort(byte[] key, byte[] bypattern, byte[]... getpatterns);
+	List<byte[]> sort(byte[] key, byte[] bypattern, boolean desc, byte[]... getpatterns);
+	List<byte[]> sort(byte[] key, byte[] bypattern, boolean alpha, boolean desc, byte[]... getpatterns);
+	List<byte[]> sort(byte[] key, byte[] bypattern, int offset, int count, byte[]... getpatterns);
+	List<byte[]> sort(byte[] key, byte[] bypattern, int offset, int count, boolean alpha, boolean desc, byte[]... getpatterns);
+	List<byte[]> sort(byte[] key, byte[] bypattern, byte[] destination);
+	List<byte[]> sort(byte[] key, byte[] bypattern, boolean desc, byte[] destination, byte[]... getpatterns);
+	List<byte[]> sort(byte[] key, byte[] bypattern, boolean alpha, boolean desc, byte[] destination, byte[]... getpatterns);
+	List<byte[]> sort(byte[] key, byte[] bypattern, int offset, int count, byte[] destination, byte[]... getpatterns);
+	List<byte[]> sort(byte[] key, byte[] bypattern, int offset, int count, boolean alpha, boolean desc, byte[] destination, byte[]... getpatterns);
 
 	/**
 	 * Available since 1.0.0
@@ -629,12 +629,12 @@ public interface RedisCommand {
 	 * in the set are treated as if they were zero-padded up to the length of the longest string.
 	 * The same holds true for non-existent keys, that are considered as a stream of zero bytes up to the length of the longest string.
 	 * 
-	 * @param destKey
+	 * @param destkey
 	 * @param keys
 	 * @return The size of the string stored in the destination key, that is equal to the size of the longest input string.
 	 */
-	long bitnot(String destKey, String key);
-	long bitnot(byte[] destKey, byte[] key);
+	long bitnot(String destkey, String key);
+	long bitnot(byte[] destkey, byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -733,7 +733,7 @@ public interface RedisCommand {
 	 * @return the old value stored at key, or null when key did not exist.
 	 */
 	String getset(String key, String value);
-	byte[] getset(byte[] key, String value);
+	byte[] getset(byte[] key, byte[] value);
 	
 	/**
 	 * Available since 1.0.0
@@ -811,7 +811,7 @@ public interface RedisCommand {
 	 * @return
 	 */
 	String psetex(String key, int milliseconds, String value);
-	byte[] psetex(byte[] key, int milliseconds, String value);
+	byte[] psetex(byte[] key, int milliseconds, byte[] value);
 	
 	/**
 	 * Available since 1.0.0
@@ -826,7 +826,7 @@ public interface RedisCommand {
 	 * @return
 	 */
 	String set(String key, String value);
-	byte[] set(byte[] key, String value);
+	byte[] set(byte[] key, byte[] value);
 	
 	/**
 	 * Available since 2.6.12
@@ -1122,11 +1122,11 @@ public interface RedisCommand {
 	 * This command overwrites any existing fields in the hash. If key does not exist, a new key holding a hash is created.
 	 * 
 	 * @param key
-	 * @param hash
+	 * @param fieldvalues
 	 * @return Status code reply, e.g. OK
 	 */
-	String hmset(String key, Map<String, String> hash);
-	byte[] hmset(byte[] key, Map<byte[], byte[]> hash);
+	String hmset(String key, Map<String, String> fieldvalues);
+	byte[] hmset(byte[] key, Map<byte[], byte[]> fieldvalues);
 	
 	/**
 	 * Available since 2.0.0
@@ -1581,4 +1581,132 @@ public interface RedisCommand {
 	 */
 	long rpushx(String key, String value);
 	long rpushx(byte[] key, byte[] value);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------- Sets
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(N) where N is the number of members to be added.
+	 * 
+	 * <p>
+	 * Add the specified members to the set stored at key. Specified members that are already a member of this set are ignored. 
+	 * If key does not exist, a new set is created before adding the specified members.
+	 * An error is returned when the value stored at key is not a set.
+	 * 
+	 * <p>
+	 * History
+	 * >= 2.4: Accepts multiple member arguments. Redis versions before 2.4 are only able to add a single member per call.
+	 * 
+	 * @param key
+	 * @param members
+	 * @return the number of elements that were added to the set, not including all the elements already present into the set.
+	 */
+	long sadd(String key, String... members);
+	long sadd(byte[] key, byte[]... members);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Returns the set cardinality (number of elements) of the set stored at key.
+	 * 
+	 * @param key
+	 * @return the cardinality (number of elements) of the set, or 0 if key does not exist.
+	 */
+	long scard(String key);
+	long scard(byte[] key);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Returns if member is a member of the set stored at key.
+	 * 
+	 * @param key
+	 * @param member
+	 * @return true if the element is a member of the set.
+	 *         false if the element is not a member of the set, or if key does not exist.
+	 */
+	boolean sismember(String key, String member);
+	boolean sismember(byte[] key, byte[] member);
+	
+	/**
+	 * Available since 1.0.0.
+	 * Time complexity: O(N) where N is the set cardinality.
+	 * 
+	 * <p>
+	 * Returns all the members of the set value stored at key.
+	 * This has the same effect as running SINTER with one argument key.
+	 * 
+	 * @param key
+	 * @return 
+	 */
+	Set<String> smembers(String key);
+	Set<byte[]> smembers(byte[] key);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Removes and returns a random element from the set value stored at key.
+	 * This operation is similar to SRANDMEMBER, that returns a random element from a set but does not remove it.
+	 * 
+	 * @param key
+	 * @return the removed element, or null when key does not exist.
+	 */
+	String spop(String key);
+	byte[] spop(byte[] key);
+	
+	/**
+	 * Available since 2.6.0
+	 * Time complexity: O(N) where N is the absolute value of the passed count.
+	 * 
+	 * <p>
+	 * When called with just the key argument, return a random element from the set value stored at key.
+	 * Starting from Redis version 2.6, when called with the additional count argument, 
+	 * return an array of count distinct elements if count is positive. 
+	 * If called with a negative count the behavior changes and the command is allowed to return the same element multiple times. 
+	 * In this case the numer of returned elements is the absolute value of the specified count.
+	 * When called with just the key argument, the operation is similar to SPOP, however while SPOP also removes the randomly selected element from the set, SRANDMEMBER will just return a random element without altering the original set in any way.
+
+	 * @param key
+	 * @return returns an set of elements, or an empty set when key does not exist.
+	 */
+	Set<String> srandmember(String key, int count);
+	Set<byte[]> srandmember(byte[] key, int count);
+	
+	/**
+	 * Available since 1.0.0.
+	 * Time complexity: O(1)
+	 * 
+	 * @see {@link #srandmember(String, int)}
+	 * @param key
+	 * @return returns the randomly selected element, or null when key does not exist
+	 */
+	String srandmember(String key);
+	byte[] srandmember(byte[] key);
+	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(N) where N is the number of members to be removed.
+	 * 
+	 * <p>
+	 * Remove the specified members from the set stored at key. Specified members that are not a member of this set are ignored. 
+	 * If key does not exist, it is treated as an empty set and this command returns 0.
+	 * An error is returned when the value stored at key is not a set.
+	 * 
+	 * <p>
+	 * History
+	 * >= 2.4: Accepts multiple member arguments. Redis versions older than 2.4 can only remove a set member per call.
+	 * 
+	 * @param key
+	 * @param members
+	 * @return the number of members that were removed from the set, not including non existing members.
+	 */
+	long srem(String key, String... members);
+	long srem(byte[] key, byte[]... members);
 }

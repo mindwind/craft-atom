@@ -2,6 +2,7 @@ package org.craft.atom.redis.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The atomic commands supported by sharded Redis.
@@ -37,12 +38,12 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return
 	 */
-	long bitand(String shardkey, String destKey, String... keys);
-	long bitand(byte[] shardkey, byte[] destKey, byte[]... keys);
-	long bitor(String shardkey, String destKey, String... keys);
-	long bitor(byte[] shardkey, byte[] destKey, byte[]... keys);
-	long bitxor(String shardkey, String destKey, String... keys);
-	long bitxor(byte[] shardkey, byte[] destKey, byte[]... keys);
+	long bitand(String shardkey, String destkey, String... keys);
+	long bitand(byte[] shardkey, byte[] destkey, byte[]... keys);
+	long bitor(String shardkey, String destkey, String... keys);
+	long bitor(byte[] shardkey, byte[] destkey, byte[]... keys);
+	long bitxor(String shardkey, String destkey, String... keys);
+	long bitxor(byte[] shardkey, byte[] destkey, byte[]... keys);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#mget(String...)}
@@ -99,4 +100,64 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Map<byte[], byte[]> brpop(byte[] shardkey, byte[]... keys);
 	Map<String, String> brpop(String shardkey, int timeout, String... keys);
 	Map<byte[], byte[]> brpop(byte[] shardkey, int timeout, byte[]... keys);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------- Sets
+	
+	
+	/**
+	 * @see {@link SingletonRedisCommand#sdiff(String...)}
+	 * @param shardkey
+	 * @param keys
+	 * @return
+	 */
+	Set<String> sdiff(String shardkey, String... keys);
+	Set<byte[]> sdiff(byte[] shardkey, byte[]... keys);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#sdiffstore(String, String...)}
+	 * @param destination
+	 * @param keys
+	 * @return
+	 */
+	long sdiffstore(String shardkey, String destination, String... keys);
+	long sdiffstore(byte[] shardkey, byte[] destination, byte[]... keys);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#sinter(String...)}
+	 * @param keys
+	 * @return
+	 */
+	Set<String> sinter(String shardkey, String... keys);
+	Set<byte[]> sinter(byte[] shardkey, byte[]... keys);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#sinterstore(String...)}
+	 * @param shardkey
+	 * @param destination
+	 * @param keys
+	 * @return
+	 */
+	long sinterstore(String shardkey, String destination, String... keys);
+	long sinterstore(byte[] shardkey, byte[] destination, byte[]... keys);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#smove(String, String, String)}
+	 * @param shardkey
+	 * @param source
+	 * @param destination
+	 * @param member
+	 * @return
+	 */
+	long smove(String shardkey, String source, String destination, String member);
+	long smove(byte[] shardkey, byte[] source, byte[] destination, byte[] member);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#sunion(String...)}
+	 * @param shardkey
+	 * @param keys
+	 * @return
+	 */
+	Set<String> sunion(String shardkey, String... keys);
+	Set<byte[]> sunion(byte[] shardkey, byte[]... keys);
 }
