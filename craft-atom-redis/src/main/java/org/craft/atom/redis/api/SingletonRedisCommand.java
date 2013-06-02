@@ -247,4 +247,67 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 */
 	Set<String> sunionstore(String destination, String... keys);
 	Set<byte[]> sunionstore(byte[] destination, byte[]... keys);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(N*K)+O(M*log(M)) worst case with N being the smallest input sorted set, 
+	 * K being the number of input sorted sets and M being the number of elements in the resulting sorted set.
+	 * 
+	 * <p>
+	 * Computes the intersection of sorted sets given by the specified keys, and stores the result in destination. 
+	 * By default, the resulting score of an element is the sum of its scores in the sorted sets where it exists. 
+	 * Because intersection requires an element to be a member of every given sorted set, 
+	 * this results in the score of every element in the resulting sorted set to be equal to the number of input sorted sets.
+	 * For a description of the WEIGHTS and AGGREGATE options, see ZUNIONSTORE.
+	 * If destination already exists, it is overwritten.
+	 * 
+	 * @param destination
+	 * @param keys
+	 * @return the number of elements in the resulting sorted set at destination.
+	 */
+	long zinterstore(String destination, String... keys);
+	long zinterstore(byte[] destination, byte[]... keys);
+	long zinterstoremax(String destination, String... keys);
+	long zinterstoremax(byte[] destination, byte[]... keys);
+	long zinterstoremin(String destination, String... keys);
+	long zinterstoremin(byte[] destination, byte[]... keys);
+	long zinterstore(String destination, Map<String, Integer> weightkeys);
+	long zinterstore(byte[] destination, Map<String, Integer> weightkeys);
+	long zinterstoremax(String destination, Map<String, Integer> weightkeys);
+	long zinterstoremax(byte[] destination, Map<String, Integer> weightkeys);
+	long zinterstoremin(String destination, Map<String, Integer> weightkeys);
+	long zinterstoremin(byte[] destination, Map<String, Integer> weightkeys);
+	
+	/**
+	 * Available since 2.0.0.
+	 * Time complexity: O(N)+O(M log(M)) with N being the sum of the sizes of the input sorted sets, and M being the number of elements in the resulting sorted set.
+	 * 
+	 * <p>
+	 * Computes the union of sorted sets given by the specified keys, and stores the result in destination. 
+	 * By default, the resulting score of an element is the sum of its scores in the sorted sets where it exists.
+	 * Using the WEIGHTS option, it is possible to specify a multiplication factor for each input sorted set. 
+	 * This means that the score of every element in every input sorted set is multiplied by this factor before being 
+	 * passed to the aggregation function. When WEIGHTS is not given, the multiplication factors default to 1.
+	 * With the AGGREGATE option, it is possible to specify how the results of the union are aggregated. 
+	 * This option defaults to SUM, where the score of an element is summed across the inputs where it exists. 
+	 * When this option is set to either MIN or MAX, the resulting set will contain the minimum or maximum score of an 
+	 * element across the inputs where it exists.
+	 * If destination already exists, it is overwritten.
+	 * 
+	 * @param destination
+	 * @param keys
+	 * @return the number of elements in the resulting sorted set at destination.
+	 */
+	long zunionstore(String destination, String... keys);
+	long zunionstore(byte[] destination, byte[]... keys);
+	long zunionstoremax(String destination, String... keys);
+	long zunionstoremax(byte[] destination, byte[]... keys);
+	long zunionstoremin(String destination, String... keys);
+	long zunionstoremin(byte[] destination, byte[]... keys);
+	long zunionstore(String destination, Map<String, Integer> weightkeys);
+	long zunionstore(byte[] destination, Map<String, Integer> weightkeys);
+	long zunionstoremax(String destination, Map<String, Integer> weightkeys);
+	long zunionstoremax(byte[] destination, Map<String, Integer> weightkeys);
+	long zunionstoremin(String destination, Map<String, Integer> weightkeys);
+	long zunionstoremin(byte[] destination, Map<String, Integer> weightkeys);
 }

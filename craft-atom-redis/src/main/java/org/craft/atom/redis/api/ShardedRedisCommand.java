@@ -160,4 +160,61 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 */
 	Set<String> sunion(String shardkey, String... keys);
 	Set<byte[]> sunion(byte[] shardkey, byte[]... keys);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#sunionstore(String, String...)}
+	 * @param shardkey
+	 * @param destination
+	 * @param keys
+	 * @return
+	 */
+	Set<String> sunionstore(String shardkey, String destination, String... keys);
+	Set<byte[]> sunionstore(byte[] stardkey, byte[] destination, byte[]... keys);
+	
+	
+	// ~ -------------------------------------------------------------------------------------------------- Sorted Sets
+	
+	/**
+	 * @see {@link SingletonRedisCommand#zinterstore(String, String...)}
+	 * @param destination
+	 * @param keys
+	 * @return
+	 */
+	long zinterstore(String shardkey, String destination, String... keys);
+	long zinterstore(byte[] shardkey, byte[] destination, byte[]... keys);
+	long zinterstoremax(String shardkey, String destination, String... keys);
+	long zinterstoremax(byte[] shardkey, byte[] destination, byte[]... keys);
+	long zinterstoremin(String shardkey, String destination, String... keys);
+	long zinterstoremin(byte[] shardkey, byte[] destination, byte[]... keys);
+	long zinterstore(String shardkey, String destination, Map<String, Integer> weightkeys);
+	long zinterstore(byte[] shardkey, byte[] destination, Map<String, Integer> weightkeys);
+	long zinterstoremax(String shardkey, String destination, Map<String, Integer> weightkeys);
+	long zinterstoremax(byte[] shardkey, byte[] destination, Map<String, Integer> weightkeys);
+	long zinterstoremin(String shardkey, String destination, Map<String, Integer> weightkeys);
+	long zinterstoremin(byte[] shardkey, byte[] destination, Map<String, Integer> weightkeys);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#zunionstore(String, String...)}
+	 * @param shardkey
+	 * @param destination
+	 * @param keys
+	 * @return
+	 */
+	long zunionstore(String shardkey, String destination, String... keys);
+	long zunionstore(byte[] shardkey, byte[] destination, byte[]... keys);
+	long zunionstoremax(String shardkey, String destination, String... keys);
+	long zunionstoremax(byte[] shardkey, byte[] destination, byte[]... keys);
+	long zunionstoremin(String shardkey, String destination, String... keys);
+	long zunionstoremin(byte[] shardkey, byte[] destination, byte[]... keys);
+	long zunionstore(String shardkey, String destination, Map<String, Integer> weightkeys);
+	long zunionstore(byte[] shardkey, byte[] destination, Map<String, Integer> weightkeys);
+	long zunionstoremax(String shardkey, String destination, Map<String, Integer> weightkeys);
+	long zunionstoremax(byte[] shardkey, byte[] destination, Map<String, Integer> weightkeys);
+	long zunionstoremin(String shardkey, String destination, Map<String, Integer> weightkeys);
+	long zunionstoremin(byte[] shardkey, byte[] destination, Map<String, Integer> weightkeys);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
+	
+	
 }
