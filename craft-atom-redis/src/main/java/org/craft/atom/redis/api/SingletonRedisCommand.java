@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.craft.atom.redis.api.pubsub.BinaryRedisPsubscribeHandler;
+import org.craft.atom.redis.api.pubsub.BinaryRedisSubscribeHandler;
+import org.craft.atom.redis.api.pubsub.RedisPsubscribeHandler;
+import org.craft.atom.redis.api.pubsub.RedisSubscribeHandler;
+
 /**
  * The atomic commands supported by singleton Redis.
  * 
@@ -310,4 +315,41 @@ public interface SingletonRedisCommand extends RedisCommand {
 	long zunionstoremax(byte[] destination, Map<String, Integer> weightkeys);
 	long zunionstoremin(String destination, Map<String, Integer> weightkeys);
 	long zunionstoremin(byte[] destination, Map<String, Integer> weightkeys);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
+	
+	
+	/**
+	 * @see {@link #punsubscribe(RedisPsubscribeHandler, String)}
+	 * @param handler
+	 * @param patterns
+	 */
+	void psubscribe(RedisPsubscribeHandler handler, String... patterns);
+	void psubscribe(BinaryRedisPsubscribeHandler handler, byte[]... patterns);
+	
+	/**
+	 * @see {@link #punsubscribe(RedisPunsubscribeHandler, String)}
+	 * @param handler
+	 * @param patterns
+	 * @return unsubscribed patterns
+	 */
+	List<String> punsubscribe(String... patterns);
+	List<byte[]> punsubscribe(byte[]... patterns);
+	
+	/**
+	 * @see {@link #subscribe(RedisSubscribeHandler, String)}
+	 * @param handler
+	 * @param channels
+	 */
+	void subscribe(RedisSubscribeHandler handler, String... channels);
+	void subscribe(BinaryRedisSubscribeHandler handler, byte[]... channels);
+	
+	/**
+	 * @see {@link #unsubscribe(String)}}
+	 * @param channel
+	 * @return unsubscribed channels
+	 */
+	List<String> unsubscribe(String... channels);
+	List<byte[]> unsubscribe(byte[]... channels);
 }

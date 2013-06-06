@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.craft.atom.redis.api.pubsub.BinaryRedisPsubscribeHandler;
+import org.craft.atom.redis.api.pubsub.BinaryRedisSubscribeHandler;
+import org.craft.atom.redis.api.pubsub.RedisPsubscribeHandler;
+import org.craft.atom.redis.api.pubsub.RedisSubscribeHandler;
+
 /**
  * The basic atomic commands supported by Redis.
  * 
@@ -2027,4 +2032,79 @@ public interface RedisCommand {
 	 */
 	Double zscore(String key, String member);
 	Double zscore(byte[] key, byte[] member);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(N) where N is the number of patterns the client is already subscribed to.
+	 * 
+	 * <p>
+	 * Subscribes the client to the given patterns.
+	 * @param pattern
+	 */
+	void psubscribe(RedisPsubscribeHandler handler, String pattern);
+	void psubscribe(BinaryRedisPsubscribeHandler handler, byte[] pattern);
+	
+	/**
+	 * Available since 2.0.0.
+	 * Time complexity: O(N+M) where N is the number of patterns the client is already subscribed 
+	 * and M is the number of total patterns subscribed in the system (by any client).
+	 * 
+	 * <p>
+	 * Unsubscribes the client from the given patterns, or from all of them if none is given.
+	 * When no patters are specified, the client is unsubscribed from all the previously subscribed patterns. 
+	 * In this case, a message for every unsubscribed pattern will be sent to the client.
+	 * 
+	 * @param pattern
+	 * @return unsubscribed pattern
+	 */
+	String punsubscribe(String pattern);
+	byte[] punsubscribe(byte[] pattern);
+	
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(N+M) where N is the number of clients subscribed to the receiving channel 
+	 * and M is the total number of subscribed patterns (by any client).
+	 * 
+	 * <p>
+	 * Posts a message to the given channel.
+	 * 
+	 * @param channel
+	 * @param message
+	 * @return the number of clients that received the message.
+	 */
+	long publish(String channel, String message);
+	long publish(byte[] channel, byte[] message);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(N) where N is the number of channels to subscribe to.
+	 * 
+	 * <p>
+	 * Subscribes the client to the specified channels.
+	 * Once the client enters the subscribed state it is not supposed to issue any other commands, except for additional SUBSCRIBE, PSUBSCRIBE, UNSUBSCRIBE and PUNSUBSCRIBE commands.
+	 * 
+	 * @param handler
+	 * @param channel
+	 */
+	void subscribe(RedisSubscribeHandler handler, String channel);
+	void subscribe(BinaryRedisSubscribeHandler handler, byte[] channel);
+	
+	/**
+	 * Available since 2.0.0
+	 * Time complexity: O(N) where N is the number of clients already subscribed to a channel.
+	 * 
+	 * <p>
+	 * Unsubscribes the client from the given channels, or from all of them if none is given.
+	 * When no channels are specified, the client is unsubscribed from all the previously subscribed channels. 
+	 * In this case, a message for every unsubscribed channel will be sent to the client.
+	 * 
+	 * @param channel
+	 * @return unsubscribed channel
+	 */
+	String unsubscribe(String channel);
+	byte[] unsubscribe(byte[] channel);
 }

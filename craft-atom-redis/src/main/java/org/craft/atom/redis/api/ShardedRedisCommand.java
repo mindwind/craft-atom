@@ -4,6 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.craft.atom.redis.api.pubsub.BinaryRedisPsubscribeHandler;
+import org.craft.atom.redis.api.pubsub.BinaryRedisSubscribeHandler;
+import org.craft.atom.redis.api.pubsub.RedisPsubscribeHandler;
+import org.craft.atom.redis.api.pubsub.RedisSubscribeHandler;
+
 /**
  * The atomic commands supported by sharded Redis.
  * <p>
@@ -216,5 +221,39 @@ public interface ShardedRedisCommand extends RedisCommand {
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
 	
+	/**
+	 * @see {@link #punsubscribe(RedisPsubscribeHandler, String)}
+	 * @param shardkey
+	 * @param handler
+	 * @param patterns
+	 */
+	void psubscribe(String shardkey, RedisPsubscribeHandler handler, String... patterns);
+	void psubscribe(byte[] shardkey, BinaryRedisPsubscribeHandler handler, byte[]... patterns);
 	
+	/**
+	 * @see {@link #punsubscribe(String)}
+	 * @param shardkey
+	 * @param handler
+	 * @param patterns
+	 * @return unsubscribed patterns
+	 */
+	List<String> punsubscribe(String shardkey, String... patterns);
+	List<byte[]> punsubscribe(byte[] shardkey, byte[]... patterns);
+	
+	/**
+	 * @see {@link #subscribe(RedisSubscribeHandler, String)}
+	 * @param shardkey
+	 * @param handler
+	 * @param channels
+	 */
+	void subscribe(String shardkey, RedisSubscribeHandler handler, String... channels);
+	void subscribe(byte[] shardkey, BinaryRedisSubscribeHandler handler, String... channels);
+	
+	/**
+	 * @see {@link #unsubscribe(String)}}
+	 * @param channel
+	 * @return unsubscribed channels
+	 */
+	List<String> unsubscribe(String shardkey, String... channels);
+	List<byte[]> unsubscribe(byte[] shardkey, byte[]... channels);
 }
