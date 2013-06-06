@@ -2107,4 +2107,98 @@ public interface RedisCommand {
 	 */
 	String unsubscribe(String channel);
 	byte[] unsubscribe(byte[] channel);
+	
+	
+	// ~ --------------------------------------------------------------------------------------------------- Scripting
+	
+	
+	/**
+	 * Available since 2.6.0.
+	 * Time complexity: Depends on the script that is executed.
+	 * 
+	 * <p>
+	 * EVAL and EVALSHA are used to evaluate scripts using the Lua interpreter built into Redis starting from version 2.6.0.
+	 * For details, please see <a href="http://redis.io/commands/eval">Redis Script Document</a>
+	 * 
+	 * @param script
+	 * @return
+	 */
+	Object eval(String script);
+	Object eval(String script, List<String> keys);
+	Object eval(String script, List<String> keys, List<String> args);
+	Object eval(byte[] script);
+	Object eval(byte[] script, List<byte[]> keys);
+	Object eval(byte[] script, List<byte[]> keys, List<byte[]> args);
+	
+	/**
+	 * Available since 2.6.0
+	 * Time complexity: Depends on the script that is executed.
+	 * 
+	 * <p>
+	 * Evaluates a script cached on the server side by its SHA1 digest. 
+	 * Scripts are cached on the server side using the SCRIPT LOAD command. The command is otherwise identical to EVAL.
+	 * 
+	 * @param sha1
+	 * @return
+	 */
+	Object evalsha(String sha1);
+	Object evalsha(String sha1, List<String> keys);
+	Object evalsha(String sha1, List<String> keys, List<String> args);
+	Object evalsha(byte[] sha1);
+	Object evalsha(byte[] sha1, List<byte[]> keys);
+	Object evalsha(byte[] sha1, List<byte[]> keys, List<byte[]> args);
+	
+	/**
+	 * Available since 2.6.0
+	 * Time complexity: O(N) with N being the number of scripts to check (so checking a single script is an O(1) operation).
+	 * 
+	 * <p>
+	 * Returns information about the existence of the scripts in the script cache.
+	 * This command accepts one or more SHA1 digests and returns a list of ones or zeros to signal if the scripts 
+	 * are already defined or not inside the script cache. This can be useful before a pipelining operation to ensure 
+	 * that scripts are loaded (and if not, to load them using SCRIPT LOAD) so that the pipelining operation can be performed 
+	 * solely using EVALSHA instead of EVAL to save bandwidth.
+	 * 
+	 * Please refer to the EVAL documentation for detailed information about Redis Lua scripting.
+	 * 
+	 * @param sha1
+	 * @return true if exists, otherwise false
+	 */
+	boolean scriptexists(String sha1);
+	boolean scriptexists(byte[] sha1);
+	
+	/**
+	 * Available since 2.6.0
+	 * Time complexity: O(N) with N being the number of scripts in cache
+	 * 
+	 * <p>
+	 * Flush the Lua scripts cache.
+	 * Please refer to the EVAL documentation for detailed information about Redis Lua scripting.
+	 * 
+	 * @return Status code reply, e.g. OK
+	 */
+	String scriptflush();
+	
+	/**
+	 * Available since 2.6.0
+	 * Time complexity: O(N) with N being the length in bytes of the script body.
+	 * 
+	 * <p>
+	 * Load a script into the scripts cache, without executing it. 
+	 * After the specified command is loaded into the script cache it will be callable using EVALSHA with the correct SHA1 digest of the script, 
+	 * exactly like after the first successful invocation of EVAL.
+	 * The script is guaranteed to stay in the script cache forever (unless SCRIPT FLUSH is called).
+	 * The command works in the same way even if the script was already present in the script cache.
+	 * Please refer to the EVAL documentation for detailed information about Redis Lua scripting.
+	 * 
+	 * @param script
+	 * @return This command returns the SHA1 digest of the script added into the script cache.
+	 */
+	String scriptload(String script);
+	byte[] scriptload(byte[] script);
+	
+	
+	// ~ --------------------------------------------------------------------------------------------------- Connection
+	
+	
 }

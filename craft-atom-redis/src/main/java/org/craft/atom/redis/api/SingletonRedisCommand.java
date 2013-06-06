@@ -352,4 +352,94 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 */
 	List<String> unsubscribe(String... channels);
 	List<byte[]> unsubscribe(byte[]... channels);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------- Transactions
+	
+	
+	/**
+	 * Available since 2.0.0
+	 * 
+	 * <p>
+	 * Flushes all previously queued commands in a transaction and restores the connection state to normal.
+	 * If WATCH was used, DISCARD unwatches all keys.
+	 * 
+	 * @return always OK.
+	 */
+	String discard();
+	
+	/**
+	 * Available since 1.2.0
+	 * 
+	 * <p>
+	 * Executes all previously queued commands in a transaction and restores the connection state to normal.
+	 * When using WATCH, EXEC will execute commands only if the watched keys were not modified, allowing for a check-and-set mechanism.
+	 * 
+	 * @return each element being the reply to each of the commands in the atomic transaction.
+	 *         When using WATCH, EXEC can return a empty list if the execution was aborted.
+	 */
+	List<Object> exec();
+	
+	/**
+	 * Available since 1.2.0
+	 * 
+	 * <p>
+	 * Marks the start of a transaction block. Subsequent commands will be queued for atomic execution using EXEC.
+	 * 
+	 * @return always OK.
+	 */
+	String multi();
+	
+	/**
+	 * Available since 2.2.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Flushes all the previously watched keys for a transaction.
+	 * If you call EXEC or DISCARD, there's no need to manually call UNWATCH.
+	 * 
+	 * @return always OK.
+	 */
+	String unwatch();
+	
+	/**
+	 * Available since 2.2.0
+	 * Time complexity: O(1) for every key.
+	 * 
+	 * <p>
+	 * Marks the given keys to be watched for conditional execution of a transaction.
+	 * 
+	 * @param keys
+	 * @return always OK.
+	 */
+	String watch(String... keys);
+	
+	
+	// ~ --------------------------------------------------------------------------------------------------- Scripting
+	
+	
+	/**
+	 * @see {@link #scriptexists(String)}
+	 * @param sha1
+	 * @return
+	 */
+	boolean[] scriptexists(String... sha1);
+	boolean[] scriptexists(byte[]... sha1);
+	
+	/**
+	 * Available since 2.6.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Kills the currently executing Lua script, assuming no write operation was yet performed by the script.
+	 * This command is mainly useful to kill a script that is running for too much time(for instance because it entered an infinite loop because of a bug). 
+	 * The script will be killed and the client currently blocked into EVAL will see the command returning with an error.
+	 * If the script already performed write operations it can not be killed in this way because it would violate Lua script atomicity contract. 
+	 * In such a case only SHUTDOWN NOSAVE is able to kill the script, killing the Redis process in an hard way preventing 
+	 * it to persist with half-written information.
+	 * Please refer to the EVAL documentation for detailed information about Redis Lua scripting.
+	 * 
+	 * @return Status code reply, e.g. OK
+	 */
+	String scriptkill();
 }

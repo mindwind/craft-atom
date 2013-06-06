@@ -256,4 +256,98 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 */
 	List<String> unsubscribe(String shardkey, String... channels);
 	List<byte[]> unsubscribe(byte[] shardkey, byte[]... channels);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------- Transactions
+	
+	
+	/**
+	 * @see {@link SingletonRedisCommand#discard()}
+	 * @param shardkey
+	 * @return always OK.
+	 */
+	String discard(String shardkey);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#exec()}}
+	 * @param shardkey
+	 * @return
+	 */
+	List<Object> exec(String shardkey);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#multi()}
+	 * @param shardkey
+	 * @return always OK.
+	 */
+	String multi(String shardkey);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#unwatch()}
+	 * @param shardkey
+	 * @return always OK.
+	 */
+	String unwatch(String shardkey);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#watch(String...)}
+	 * @param shardkey
+	 * @param keys
+	 * @return always OK.
+	 */
+	String watch(String shardkey, String... keys);
+	
+	
+	// ~ --------------------------------------------------------------------------------------------------- Scripting
+	
+	/**
+	 * @see {@link #eval(String)}
+	 * @param shardkey
+	 * @param script
+	 * @return
+	 */
+	Object eval(String shardkey, String script);
+	Object eval(String shardkey, String script, List<String> keys);
+	Object eval(String shardkey, String script, List<String> keys, List<String> args);
+	Object eval(byte[] shardkey, byte[] script);
+	Object eval(byte[] shardkey, byte[] script, List<byte[]> keys);
+	Object eval(byte[] shardkey, byte[] script, List<byte[]> keys, List<byte[]> args);
+	
+	/**
+	 * @see {@link #evalsha(String)}}
+	 * @param shardkey
+	 * @param sha1
+	 * @return
+	 */
+	Object evalsha(String shardkey, String sha1);
+	Object evalsha(String shardkey, String sha1, List<String> keys);
+	Object evalsha(String shardkey, String sha1, List<String> keys, List<String> args);
+	Object evalsha(byte[] sha1);
+	Object evalsha(byte[] sha1, List<byte[]> keys);
+	Object evalsha(byte[] sha1, List<byte[]> keys, List<byte[]> args);
+	
+	/**
+	 * @see {@link #scriptexists(String)}
+	 * @param sha1
+	 * @return
+	 */
+	boolean[] scriptexists(String shardkey, String... sha1);
+	boolean[] scriptexists(byte[] shardkey, byte[]... sha1);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#scriptkill()}
+	 * @param shardkey
+	 * @return
+	 */
+	String scriptkill(String shardkey);
+	
+	/**
+	 * @see {@link #scriptload(String)}
+	 * @param shardkey
+	 * @param script
+	 * @return
+	 */
+	String scriptload(String shardkey, String script);
+	byte[] scriptload(byte[] shardkey, byte[] script);
+	
 }
