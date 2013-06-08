@@ -442,4 +442,28 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return Status code reply, e.g. OK
 	 */
 	String scriptkill();
+	
+	
+	// ~ --------------------------------------------------------------------------------------------------- Connection
+	
+	
+	/**
+	 * Available since 1.0.0
+	 * 
+	 * <p>
+	 * Returns PONG. This command is often used to test if a connection is still alive, or to measure latency.
+	 * 
+	 * @return PONG
+	 */
+	String ping();
+	
+	/**
+	 * Available since 1.0.0
+	 * 
+	 * <p>
+	 * Ask the server to close the connection. The connection is closed as soon as all pending replies have been written to the client.
+	 * 
+	 * @return always OK.
+	 */
+	String quit();
 }

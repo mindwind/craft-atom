@@ -350,4 +350,50 @@ public interface ShardedRedisCommand extends RedisCommand {
 	String scriptload(String shardkey, String script);
 	byte[] scriptload(byte[] shardkey, byte[] script);
 	
+	
+	// ~ --------------------------------------------------------------------------------------------------- Connection
+	
+	/**
+	 * @see {@link #auth(String)}
+	 * @param shardkey
+	 * @param password
+	 * @return
+	 */
+	String auth(String shardkey, String password);
+	byte[] auth(byte[] shardkey, byte[] password);
+	
+	/**
+	 * @see {@link #echo(String)}
+	 * @param shardkey
+	 * @param message
+	 * @return
+	 */
+	String echo(String shardkey, String message);
+	byte[] echo(byte[] shardkey, byte[] message);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#ping()}
+	 * @param shardkey
+	 * @return
+	 */
+	String ping(String shardkey);
+	byte[] ping(byte[] shardkey);
+	
+	/**
+	 * @see {@linkp SingletonRedisCommand#quit()}}
+	 * @param shardkey
+	 * @return
+	 */
+	String quit(String shardkey);
+	byte[] quit(byte[] shardkey);
+	
+	/**
+	 * @see {@link #select(int)}
+	 * @param shardkey
+	 * @param index
+	 * @return
+	 */
+	String select(String shardkey, int index);
+	byte[] select(byte[] shardkey, int index);
+	
 }
