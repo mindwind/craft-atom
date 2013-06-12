@@ -1,4 +1,4 @@
-package org.craft.atom.redis.api.pubsub;
+package org.craft.atom.redis.api.handler;
 
 
 /**
@@ -7,15 +7,15 @@ package org.craft.atom.redis.api.pubsub;
  * @author mindwind
  * @version 1.0, Jun 6, 2013
  */
-public interface BinaryRedisSubscribeHandler {
+public interface RedisSubscribeHandler {
 	
 	/**
 	 * Invoked on subscribe occur.
 	 * 
-	 * @param pattern
+	 * @param channel
 	 * @param no
 	 */
-	void onSubscribe(byte[] pattern, int no);
+	void onSubscribe(String channel, int no);
 	
 	/**
 	 * Invoked on message published to the channel.
@@ -23,5 +23,5 @@ public interface BinaryRedisSubscribeHandler {
 	 * @param channel
 	 * @param message
 	 */
-	void onMessage(byte[] channel, byte[] message);
+	void onMessage(String channel, String message);
 }

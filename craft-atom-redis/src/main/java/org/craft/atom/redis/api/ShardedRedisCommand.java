@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.craft.atom.redis.api.pubsub.BinaryRedisPsubscribeHandler;
-import org.craft.atom.redis.api.pubsub.BinaryRedisSubscribeHandler;
-import org.craft.atom.redis.api.pubsub.RedisPsubscribeHandler;
-import org.craft.atom.redis.api.pubsub.RedisSubscribeHandler;
+import org.craft.atom.redis.api.handler.BinaryRedisPsubscribeHandler;
+import org.craft.atom.redis.api.handler.BinaryRedisSubscribeHandler;
+import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
+import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
 /**
  * The atomic commands supported by sharded Redis.
@@ -335,11 +335,20 @@ public interface ShardedRedisCommand extends RedisCommand {
 	boolean[] scriptexists(byte[] shardkey, byte[]... sha1);
 	
 	/**
+	 * @see {@link SingletonRedisCommand#scriptflush()}}
+	 * @param shardkey
+	 * @return
+	 */
+	String scriptflush(String shardkey);
+	byte[] scriptflush(byte[] shardkey);
+	
+	/**
 	 * @see {@link SingletonRedisCommand#scriptkill()}
 	 * @param shardkey
 	 * @return
 	 */
 	String scriptkill(String shardkey);
+	byte[] scriptkill(byte[] shardkey);
 	
 	/**
 	 * @see {@link #scriptload(String)}
@@ -349,51 +358,5 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 */
 	String scriptload(String shardkey, String script);
 	byte[] scriptload(byte[] shardkey, byte[] script);
-	
-	
-	// ~ --------------------------------------------------------------------------------------------------- Connection
-	
-	/**
-	 * @see {@link #auth(String)}
-	 * @param shardkey
-	 * @param password
-	 * @return
-	 */
-	String auth(String shardkey, String password);
-	byte[] auth(byte[] shardkey, byte[] password);
-	
-	/**
-	 * @see {@link #echo(String)}
-	 * @param shardkey
-	 * @param message
-	 * @return
-	 */
-	String echo(String shardkey, String message);
-	byte[] echo(byte[] shardkey, byte[] message);
-	
-	/**
-	 * @see {@link SingletonRedisCommand#ping()}
-	 * @param shardkey
-	 * @return
-	 */
-	String ping(String shardkey);
-	byte[] ping(byte[] shardkey);
-	
-	/**
-	 * @see {@linkp SingletonRedisCommand#quit()}}
-	 * @param shardkey
-	 * @return
-	 */
-	String quit(String shardkey);
-	byte[] quit(byte[] shardkey);
-	
-	/**
-	 * @see {@link #select(int)}
-	 * @param shardkey
-	 * @param index
-	 * @return
-	 */
-	String select(String shardkey, int index);
-	byte[] select(byte[] shardkey, int index);
 	
 }

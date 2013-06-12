@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.craft.atom.redis.api.pubsub.BinaryRedisPsubscribeHandler;
-import org.craft.atom.redis.api.pubsub.BinaryRedisSubscribeHandler;
-import org.craft.atom.redis.api.pubsub.RedisPsubscribeHandler;
-import org.craft.atom.redis.api.pubsub.RedisSubscribeHandler;
+import org.craft.atom.redis.api.handler.BinaryRedisPsubscribeHandler;
+import org.craft.atom.redis.api.handler.BinaryRedisSubscribeHandler;
+import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
+import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
 /**
  * The basic atomic commands supported by Redis.
@@ -2169,18 +2169,6 @@ public interface RedisCommand {
 	
 	/**
 	 * Available since 2.6.0
-	 * Time complexity: O(N) with N being the number of scripts in cache
-	 * 
-	 * <p>
-	 * Flush the Lua scripts cache.
-	 * Please refer to the EVAL documentation for detailed information about Redis Lua scripting.
-	 * 
-	 * @return Status code reply, e.g. OK
-	 */
-	String scriptflush();
-	
-	/**
-	 * Available since 2.6.0
 	 * Time complexity: O(N) with N being the length in bytes of the script body.
 	 * 
 	 * <p>
@@ -2198,48 +2186,20 @@ public interface RedisCommand {
 	byte[] scriptload(byte[] script);
 	
 	
-	// ~ --------------------------------------------------------------------------------------------------- Connection
-	
-	
-	/**
-	 * Available since 1.0.0
-	 * 
-	 * <p>
-	 * Request for authentication in a password-protected Redis server. 
-	 * Redis can be instructed to require a password before allowing clients to execute commands. 
-	 * This is done using the requirepass directive in the configuration file.
-	 * If password matches the password in the configuration file, the server replies with the OK status code and starts accepting commands.
-	 *  Otherwise, an error is returned and the clients needs to try a new password.
-	 * Note: because of the high performance nature of Redis, it is possible to try a lot of passwords in parallel in very short time, 
-	 * so make sure to generate a strong and very long password so that this attack is infeasible.
-	 * 
-	 * @param password
-	 * @return Status code reply, e.g. OK
-	 */
-	String auth(String password);
-	byte[] auth(byte[] password);
+	// ~ ------------------------------------------------------------------------------------------------------ Server
 	
 	/**
 	 * Available since 1.0.0
 	 * 
 	 * <p>
-	 * Returns message.
+	 * DEBUG OBJECT is a debugging command that should not be used by clients. 
+	 * Check the OBJECT command instead.
 	 * 
-	 * @param message
+	 * @param key
 	 * @return
 	 */
-	String echo(String message);
-	byte[] echo(byte[] message);
+	String debugobject(String key);
+	byte[] debugobject(byte[] key);
 	
-	/**
-	 * Available since 1.0.0
-	 * 
-	 * <p>
-	 * Select the DB with having the specified zero-based numeric index. New connections always use DB 0.
-	 * 
-	 * @param index
-	 * @return Status code reply, e.g. OK
-	 */
-	String select(int index);
 	
 }
