@@ -36,6 +36,12 @@
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
 	</category>
+	
+	<category name="org.jboss.netty" additivity="false">
+		<priority value="debug" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+	</category>
 
 	<root>
 		<priority value="warn" />
