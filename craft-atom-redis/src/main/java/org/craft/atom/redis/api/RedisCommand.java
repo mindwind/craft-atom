@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
 /**
@@ -307,17 +306,6 @@ public interface RedisCommand {
 	 * @return Time to live in milliseconds or -1 when key does not exist or does not have a timeout.
 	 */
 	long pttl(String key);
-	
-	/**
-	 * Available since 1.0.0
-	 * Time complexity: O(1)
-	 * 
-	 * <p>
-	 * Return a random key from the currently selected database.
-	 * 
-	 * @return
-	 */
-	String randomkey();
 	
 	/**
 	 * Available since 1.0.0
@@ -1577,6 +1565,7 @@ public interface RedisCommand {
 	 * When called with just the key argument, the operation is similar to SPOP, however while SPOP also removes the randomly selected element from the set, SRANDMEMBER will just return a random element without altering the original set in any way.
 
 	 * @param key
+	 * @param count
 	 * @return returns an set of elements, or an empty set when key does not exist.
 	 */
 	Set<String> srandmember(String key, int count);
@@ -1747,16 +1736,6 @@ public interface RedisCommand {
 	Set<String> zrangebyscore(String key, String min, String max);
 	Set<String> zrangebyscore(String key, double min, double max, int offset, int count);
 	Set<String> zrangebyscore(String key, String min, String max, int offset, int count);
-	
-	/**
-	 * Available since 2.0
-	 * 
-	 * @see #zrangebyscore(String, double, double)
-	 * @param key
-	 * @param min
-	 * @param max
-	 * @return
-	 */
 	Map<String, Double> zrangebyscorewithscores(String key, double min, double max);
 	Map<String, Double> zrangebyscorewithscores(String key, String min, String max);
 	Map<String, Double> zrangebyscorewithscores(String key, double min, double max, int offset, int count);
@@ -1842,6 +1821,7 @@ public interface RedisCommand {
 	 * The elements are considered to be ordered from the highest to the lowest score. 
 	 * Descending lexicographical order is used for elements with equal score.
 	 * Apart from the reversed ordering, ZREVRANGE is similar to ZRANGE.
+	 * 
 	 * @param key
 	 * @param start
 	 * @param end
@@ -1906,13 +1886,17 @@ public interface RedisCommand {
 	
 	/**
 	 * Available since 2.0.0
-	 * Time complexity: O(N) where N is the number of patterns the client is already subscribed to.
+	 * Time complexity: O(N+M) where N is the number of clients subscribed to the receiving channel 
+	 * and M is the total number of subscribed patterns (by any client).
 	 * 
 	 * <p>
-	 * Subscribes the client to the given patterns.
-	 * @param pattern
+	 * Posts a message to the given channel.
+	 * 
+	 * @param channel
+	 * @param message
+	 * @return the number of clients that received the message.
 	 */
-	void psubscribe(RedisPsubscribeHandler handler, String pattern);
+	long publish(String channel, String message);
 	
 	/**
 	 * Available since 2.0.0.
@@ -1928,20 +1912,6 @@ public interface RedisCommand {
 	 * @return unsubscribed pattern
 	 */
 	String punsubscribe(String pattern);
-	
-	/**
-	 * Available since 2.0.0
-	 * Time complexity: O(N+M) where N is the number of clients subscribed to the receiving channel 
-	 * and M is the total number of subscribed patterns (by any client).
-	 * 
-	 * <p>
-	 * Posts a message to the given channel.
-	 * 
-	 * @param channel
-	 * @param message
-	 * @return the number of clients that received the message.
-	 */
-	long publish(String channel, String message);
 	
 	/**
 	 * Available since 2.0.0

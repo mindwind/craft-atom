@@ -29,9 +29,215 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 */
 	long del(String shardkey, String... keys);
 	
+	/**
+	 * @see {@link #dump(String)}}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	String dump(String shardkey, String key);
+	
+	/**
+	 * @see {@link #exists(String)}}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	boolean exists(String shardkey, String key);
+	
+	/**
+	 * @see {@link #expire(String, int)}
+	 * @param shardkey
+	 * @param key
+	 * @param seconds
+	 * @return
+	 */
+	long expire(String shardkey, String key, int seconds);
+	
+	/**
+	 * @see {@link #expireat(String, long)}}
+	 * @param shardkey
+	 * @param key
+	 * @param timestamp
+	 * @return
+	 */
+	long expireat(String shardkey, String key, long timestamp);
+	
+	/**
+	 * @see {@link #keys(String)}}
+	 * @param shardkey
+	 * @param pattern
+	 * @return
+	 */
+	Set<String> keys(String shardkey, String pattern);
+	
+	/**
+	 * @see {@link #migrate(String, int, String, int, int)}}
+	 * @param shardkey
+	 * @param host
+	 * @param port
+	 * @param key
+	 * @param destinationdb
+	 * @param timeout
+	 * @return
+	 */
+	String migrate(String shardkey, String host, int port, String key, int destinationdb, int timeout);
+	
+	/**
+	 * @see {@link #move(String, int)}
+	 * @param shardkey
+	 * @param key
+	 * @param db
+	 * @return
+	 */
+	long move(String shardkey, String key, int db);
+	
+	/**
+	 * @see {@link #objectrefcount(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long objectrefcount(String shardkey, String key);
+	String objectencoding(String shardkey, String key);
+	long objectidletime(String shardkey, String key);
+	
+	/**
+	 * @see {@link #persist(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long persist(String shardkey, String key);
+	
+	/**
+	 * @see {@link #pexpire(String, int)}}
+	 * @param shardkey
+	 * @param key
+	 * @param milliseconds
+	 * @return
+	 */
+	long pexpire(String shardkey, String key, int milliseconds);
+	
+	/**
+	 * @see {@link #pexpireat(String, long)}}
+	 * @param shardkey
+	 * @param key
+	 * @param millisecondstimestamp
+	 * @return
+	 */
+	long pexpireat(String shardkey, String key, long millisecondstimestamp);
+	
+	/**
+	 * @see {@link #pttl(String)}}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long pttl(String shardkey, String key);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#randomkey()}
+	 * @param shardkey
+	 * @return
+	 */
+	String randomkey(String shardkey);
+	
+	/**
+	 * @see {@link #rename(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param newkey
+	 * @return
+	 */
+	String rename(String shardkey, String key, String newkey);
+	
+	/**
+	 * @see {@link #renamenx(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param newkey
+	 * @return
+	 */
+	long renamenx(String shardkey, String key, String newkey);
+	
+	/**
+	 * @see {@link #restore(String, long, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param ttl
+	 * @param serializedvalue
+	 * @return
+	 */
+	String restore(String shardkey, String key, long ttl, String serializedvalue);
+	
+	/**
+	 * @see {@link #sort(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	List<String> sort(String shardkey, String key);
+	List<String> sort(String shardkey, String key, boolean desc);
+	List<String> sort(String shardkey, String key, boolean alpha, boolean desc);
+	List<String> sort(String shardkey, String key, int offset, int count);
+	List<String> sort(String shardkey, String key, int offset, int count, boolean alpha, boolean desc);
+	List<String> sort(String shardkey, String key, String bypattern, String... getpatterns);
+	List<String> sort(String shardkey, String key, String bypattern, boolean desc, String... getpatterns);
+	List<String> sort(String shardkey, String key, String bypattern, boolean alpha, boolean desc, String... getpatterns);
+	List<String> sort(String shardkey, String key, String bypattern, int offset, int count, String... getpatterns);
+	List<String> sort(String shardkey, String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String... getpatterns);
+	List<String> sort(String shardkey, String key, String bypattern, String destination);
+	List<String> sort(String shardkey, String key, String bypattern, boolean desc, String destination, String... getpatterns);
+	List<String> sort(String shardkey, String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns);
+	List<String> sort(String shardkey, String key, String bypattern, int offset, int count, String destination, String... getpatterns);
+	List<String> sort(String shardkey, String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String destination, String... getpatterns);
+	
+	/**
+	 * @see {@link #ttl(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long ttl(String shardkey, String key);
+	
+	/**
+	 * @see {@link #type(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	String type(String shardkey, String key);
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Strings
 	
+	
+	/**
+	 * @see {@link #append(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	long append(String shardkey, String key, String value);
+	
+	/**
+	 * @see {@link #bitcount(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long bitcount(String shardkey, String key);
+	
+	/**
+	 * @see {@link #bitnot(String, String)}
+	 * @param shardkey
+	 * @param destkey
+	 * @param key
+	 * @return
+	 */
+	long bitnot(String shardkey, String destkey, String key);
 	
 	/**
 	 * @see {@link #bitnot(String, String)}
@@ -43,6 +249,85 @@ public interface ShardedRedisCommand extends RedisCommand {
 	long bitand(String shardkey, String destkey, String... keys);
 	long bitor(String shardkey, String destkey, String... keys);
 	long bitxor(String shardkey, String destkey, String... keys);
+	
+	/**
+	 * @see {@link #decr(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long decr(String shardkey, String key);
+	
+	/**
+	 * @see {@link #decrby(String, long)}
+	 * @param shardkey
+	 * @param key
+	 * @param decrement
+	 * @return
+	 */
+	long decrby(String shardkey, String key, long decrement);
+	
+	/**
+	 * @see {@link #get(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	String get(String shardkey, String key);
+	
+	/**
+	 * @see {@link #getbit(String, long)}
+	 * @param shardkey
+	 * @param key
+	 * @param offset
+	 * @return
+	 */
+	boolean getbit(String shardkey, String key, long offset);
+	
+	/**
+	 * @see {@link #getrange(String, long, long)}
+	 * @param shardkey
+	 * @param key
+	 * @param start
+	 * @param end
+	 * @return
+	 */
+	String getrange(String shardkey, String key, long start, long end);
+	
+	/**
+	 * @see {@link #getset(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	String getset(String shardkey, String key, String value);
+	
+	/**
+	 * @see {@link #incr(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long incr(String shardkey, String key);
+	
+	/**
+	 * @see {@link #incrby(String, long)}
+	 * @param shardkey
+	 * @param key
+	 * @param increment
+	 * @return
+	 */
+	long incrby(String shardkey, String key, long increment);
+	
+	/**
+	 * @see {@link #incrbyfloat(String, double)}
+	 * @param shardkey
+	 * @param key
+	 * @param increment
+	 * @return
+	 */
+	double incrbyfloat(String shardkey, String key, double increment);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#mget(String...)}
@@ -68,11 +353,220 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 */
 	String msetnx(String shardkey, String... keysvalues);
 	
+	/**
+	 * @see {@link #psetex(String, int, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param milliseconds
+	 * @param value
+	 * @return
+	 */
+	String psetex(String shardkey, String key, int milliseconds, String value);
+
+	/**
+	 * @see {@link #set(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	String set(String shardkey, String key, String value);
+	
+	/**
+	 * @see {@link #setxx(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	String setxx(String shardkey, String key, String value);
+	String setnxex(String shardkey, String key, String value, int seconds);
+	String setnxpx(String shardkey, String key, String value, int milliseconds);
+	String setxxex(String shardkey, String key, String value, int seconds);
+	String setxxpx(String shardkey, String key, String value, int milliseconds);
+	
+	/**
+	 * @see {@link #setbit(String, long, boolean)}
+	 * @param shardkey
+	 * @param key
+	 * @param offset
+	 * @param value
+	 * @return
+	 */
+	boolean setbit(String shardkey, String key, long offset, boolean value);
+	
+	/**
+	 * @see {@link #setex(String, int, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param seconds
+	 * @param value
+	 * @return
+	 */
+	String setex(String shardkey, String key, int seconds, String value);
+	
+	/**
+	 * @see {@link #setnx(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	long setnx(String shardkey, String key, String value);
+	
+	/**
+	 * @see {@link #setrange(String, long, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param offset
+	 * @param value
+	 * @return
+	 */
+	long setrange(String shardkey, String key, long offset, String value);
+	
+	/**
+	 * @see {@link #strlen(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long strlen(String shardkey, String key);
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------- Hashes
+	
+	
+	/**
+	 * @see {@link #hdel(String, String...)}
+	 * @param shardkey
+	 * @param key
+	 * @param fields
+	 * @return
+	 */
+	long hdel(String shardkey, String key, String... fields);
+	
+	/**
+	 * @see {@link #hexists(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param field
+	 * @return
+	 */
+	boolean hexists(String shardkey, String key, String field);
+	
+	/**
+	 * @see {@link #hget(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param field
+	 * @return
+	 */
+	String hget(String shardkey, String key, String field);
+	
+	/**
+	 * @see {@link #hgetall(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	Map<String, String> hgetall(String shardkey, String key);
+	
+	/**
+	 * @see {@link #hincrby(String, String, long)}}
+	 * @param shardkey
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	long hincrby(String shardkey, String key, String field, long value);
+	
+	/**
+	 * @see {@link #hincrbyfloat(String, String, double)}
+	 * @param shardkey
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	double hincrbyfloat(String shardkey, String key, String field, double value);
+	
+	/**
+	 * @see {@link #hkeys(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	Set<String> hkeys(String shardkey, String key);
+	
+	/**
+	 * @see {@link #hlen(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long hlen(String shardkey, String key);
+	
+	/**
+	 * @see {@link #hmget(String, String...)}
+	 * @param shardkey
+	 * @param key
+	 * @param fields
+	 * @return
+	 */
+	List<String> hmget(String shardkey, String key, String... fields);
+	
+	/**
+	 * @see {@link #hmset(String, Map)}
+	 * @param shardkey
+	 * @param key
+	 * @param fieldvalues
+	 * @return
+	 */
+	String hmset(String shardkey, String key, Map<String, String> fieldvalues);
+	
+	/**
+	 * @see {@link #hset(String, String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	long hset(String shardkey, String key, String field, String value);
+	
+	/**
+	 * @see {@link #hsetnx(String, String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	long hsetnx(String shardkey, String key, String field, String value);
+	
+	/**
+	 * @see {@link #hvals(String)}k
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	List<String> hvals(String shardkey, String key);
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
 	
 	/**
-	 * @see {@link RedisCommand#blpop(String)}
+	 * @see {@link #blpop(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	String blpop(String shardkey, String key);
+	String blpop(String shardkey, String key, int timeout);
+	
+	/**
+	 * @see {@link #blpop(String)}
 	 * @param timeout
 	 * @param keys
 	 * @return A empty map(nil multi-bulk) when no element could be popped and the timeout expired.
@@ -83,7 +577,16 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Map<String, String> blpop(String shardkey, int timeout, String... keys);
 	
 	/**
-	 * @see {@link RedisCommand#brpop(String)}
+	 * @see {@link #brpop(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	String brpop(String shardkey, String key);
+	String brpop(String shardkey, String key, int timeout);
+	
+	/**
+	 * @see {@link #brpop(String)}
 	 * @param timeout
 	 * @param keys
 	 * @return A empty map(nil multi-bulk) when no element could be popped and the timeout expired.
@@ -93,9 +596,164 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Map<String, String> brpop(String shardkey, String... keys);
 	Map<String, String> brpop(String shardkey, int timeout, String... keys);
 	
+	/**
+	 * @see {@link #brpoplpush(String, String, int)}
+	 * @param shardkey
+	 * @param source
+	 * @param destination
+	 * @param timeout
+	 * @return
+	 */
+	String brpoplpush(String shardkey, String source, String destination, int timeout);
+	
+	/**
+	 * @see {@link #lindex(String, long)}
+	 * @param shardkey
+	 * @param key
+	 * @param index
+	 * @return
+	 */
+	String lindex(String shardkey, String key, long index);
+	
+	/**
+	 * @see {@link #linsertbefore(String, String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param pivot
+	 * @param value
+	 * @return
+	 */
+	long linsertbefore(String shardkey, String key, String pivot, String value);
+	long linsertafter(String shardkey, String key, String pivot, String value);
+	
+	/**
+	 * @see {@link #llen(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long llen(String shardkey, String key);
+	
+	/**
+	 * @see {@link #lpop(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	String lpop(String shardkey, String key);
+	
+	/**
+	 * @see {@link #lpush(String, String...)}
+	 * @param shardkey
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	long lpush(String shardkey, String key, String... values);
+	
+	/**
+	 * @see {@link #lpushx(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	long lpushx(String shardkey, String key, String value);
+	
+	/**
+	 * @see {@link #lrange(String, long, long)}
+	 * @param shardkey
+	 * @param key
+	 * @param start
+	 * @param stop
+	 * @return
+	 */
+	List<String> lrange(String shardkey, String key, long start, long stop);
+	
+	/**
+	 * @see {@link #lrem(String, long, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param count
+	 * @param value
+	 * @return
+	 */
+	long lrem(String shardkey, String key, long count, String value);
+	
+	/**
+	 * @see {@link #lset(String, long, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param index
+	 * @param value
+	 * @return
+	 */
+	String lset(String shardkey, String key, long index, String value);
+	
+	/**
+	 * @see {@link #ltrim(String, long, long)}
+	 * @param shardkey
+	 * @param key
+	 * @param start
+	 * @param stop
+	 * @return
+	 */
+	String ltrim(String shardkey, String key, long start, long stop);
+	
+	/**
+	 * @see {@link #rpop(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	String rpop(String shardkey, String key);
+	
+	/**
+	 * @see {@link #rpoplpush(String, String)}
+	 * @param shardkey
+	 * @param source
+	 * @param destination
+	 * @return
+	 */
+	String rpoplpush(String shardkey, String source, String destination); 
+	
+	/**
+	 * @see {@link #rpush(String, String...)}
+	 * @param shardkey
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	long rpush(String shardkey, String key, String... values);
+	
+	/**
+	 * @see {@link #rpushx(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param value
+	 * @return
+	 */
+	long rpushx(String shardkey, String key, String value);
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Sets
 	
+	/**
+	 * @see {@link #sadd(String, String...)}
+	 * @param shardkey
+	 * @param key
+	 * @param members
+	 * @return
+	 */
+	long sadd(String shardkey, String key, String... members);
+	
+	/**
+	 * @see {@link #scard(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long scard(String shardkey, String key);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#sdiff(String...)}
@@ -130,6 +788,23 @@ public interface ShardedRedisCommand extends RedisCommand {
 	long sinterstore(String shardkey, String destination, String... keys);
 	
 	/**
+	 * @see {@link #sismember(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param member
+	 * @return
+	 */
+	boolean sismember(String shardkey, String key, String member);
+	
+	/**
+	 * @see {@link #smembers(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	Set<String> smembers(String shardkey, String key);
+	
+	/**
 	 * @see {@link SingletonRedisCommand#smove(String, String, String)}
 	 * @param shardkey
 	 * @param source
@@ -138,6 +813,33 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	long smove(String shardkey, String source, String destination, String member);
+	
+	/**
+	 * @see {@link #spop(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	String spop(String shardkey, String key);
+	
+	/**
+	 * @see {@link #srandmember(String)}
+	 * @param shardkey
+	 * @param key
+	 * @param count
+	 * @return
+	 */
+	Set<String> srandmember(String shardkey, String key, int count);
+	String srandmember(String shardkey, String key);
+	
+	/**
+	 * @see {@link #srem(String, String...)}
+	 * @param shardkey
+	 * @param key
+	 * @param members
+	 * @return
+	 */
+	long srem(String shardkey, String key, String... members);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#sunion(String...)}
@@ -160,6 +862,44 @@ public interface ShardedRedisCommand extends RedisCommand {
 	// ~ -------------------------------------------------------------------------------------------------- Sorted Sets
 	
 	/**
+	 * @see {@link #zadd(String, double, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param score
+	 * @param member
+	 * @return
+	 */
+	long zadd(String shardkey, String key, double score, String member);
+	
+	/**
+	 * @see {@link #zcard(String)}
+	 * @param shardkey
+	 * @param key
+	 * @return
+	 */
+	long zcard(String shardkey, String key);
+	
+	/**
+	 * @see {@link #zcount(String, double, double)}
+	 * @param shardkey
+	 * @param key
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	long zcount(String shardkey, String key, double min, double max);
+	
+	/**
+	 * @see {@link #zincrby(String, double, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param score
+	 * @param member
+	 * @return
+	 */
+	double zincrby(String shardkey, String key, double score, String member);
+	
+	/**
 	 * @see {@link SingletonRedisCommand#zinterstore(String, String...)}
 	 * @param destination
 	 * @param keys
@@ -171,6 +911,115 @@ public interface ShardedRedisCommand extends RedisCommand {
 	long zinterstore(String shardkey, String destination, Map<String, Integer> weightkeys);
 	long zinterstoremax(String shardkey, String destination, Map<String, Integer> weightkeys);
 	long zinterstoremin(String shardkey, String destination, Map<String, Integer> weightkeys);
+	
+	/**
+	 * @see {@link #zrange(String, long, long)}
+	 * @param shardkey
+	 * @param key
+	 * @param start
+	 * @param stop
+	 * @return
+	 */
+	Set<String> zrange(String shardkey, String key, long start, long stop);
+	Map<String, Double> zrangewithscores(String shardkey, String key, long start, long stop);
+	
+	/**
+	 * @see {@link #zrangebyscore(String, double, double)}
+	 * @param shardkey
+	 * @param key
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	Set<String> zrangebyscore(String shardkey, String key, double min, double max);
+	Set<String> zrangebyscore(String shardkey, String key, String min, String max);
+	Set<String> zrangebyscore(String shardkey, String key, double min, double max, int offset, int count);
+	Set<String> zrangebyscore(String shardkey, String key, String min, String max, int offset, int count);
+	Map<String, Double> zrangebyscorewithscores(String shardkey, String key, double min, double max);
+	Map<String, Double> zrangebyscorewithscores(String shardkey, String key, String min, String max);
+	Map<String, Double> zrangebyscorewithscores(String shardkey, String key, double min, double max, int offset, int count);
+	Map<String, Double> zrangebyscorewithscores(String shardkey, String key, String min, String max, int offset, int count);
+	
+	/**
+	 * @see {@link #zrank(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param member
+	 * @return
+	 */
+	Long zrank(String shardkey, String key, String member);
+	
+	/**
+	 * @see {@link #zrem(String, String...)}
+	 * @param shardkey
+	 * @param key
+	 * @param members
+	 * @return
+	 */
+	long zrem(String shardkey, String key, String... members);
+	
+	/**
+	 * @see {@link #zremrangebyrank(String, long, long)}
+	 * @param shardkey
+	 * @param key
+	 * @param start
+	 * @param stop
+	 * @return
+	 */
+	long zremrangebyrank(String shardkey, String key, long start, long stop);
+	
+	/**
+	 * @see {@link #zremrangebyscore(String, double, double)}
+	 * @param shardkey
+	 * @param key
+	 * @param min
+	 * @param max
+	 * @return
+	 */
+	long zremrangebyscore(String shardkey, String key, double min, double max);
+	long zremrangebyscore(String shardkey, String key, String min, String max);
+	
+	/**
+	 * @see {@link #zrevrange(String, long, long)}
+	 * @param shardkey
+	 * @param key
+	 * @param start
+	 * @param stop
+	 * @return
+	 */
+	Set<String> zrevrange(String shardkey, String key, long start, long stop);
+	Map<String, Double> zrerangewithscores(String shardkey, String key, long start, long stop);
+	
+	/**
+	 * @see {@link #zrerangebyscore(String, double, double)}
+	 * @param shardkey
+	 * @param key
+	 * @param max
+	 * @param min
+	 * @return
+	 */
+	Set<String> zrerangebyscore(String shardkey, String key, double max, double min);
+	Set<String> zrerangebyscore(String shardkey, String key, String max, String min);
+	Set<String> zrerangebyscore(String shardkey, String key, double max, double min, int offset, int count);
+	Set<String> zrerangebyscore(String shardkey, String key, String max, String min, int offset, int count);
+	
+	/**
+	 * @see {@link #zrerank(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param member
+	 * @return
+	 */
+	Long zrerank(String shardkey, String key, String member);
+	
+	/**
+	 * @see {@link #zscore(String, String)}
+	 * @param shardkey
+	 * @param key
+	 * @param member
+	 * @return
+	 */
+	Double zscore(String shardkey, String key, String member);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#zunionstore(String, String...)}
@@ -190,12 +1039,29 @@ public interface ShardedRedisCommand extends RedisCommand {
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
 	
 	/**
-	 * @see {@link #punsubscribe(RedisPsubscribeHandler, String)}
+	 * @see {@link SingletonRedisCommand#psubscribe(RedisPsubscribeHandler, String)}
 	 * @param shardkey
 	 * @param handler
 	 * @param patterns
 	 */
 	void psubscribe(String shardkey, RedisPsubscribeHandler handler, String... patterns);
+	
+	/**
+	 * @see {@link #publish(String, String)}
+	 * @param shardkey
+	 * @param channel
+	 * @param message
+	 * @return
+	 */
+	long publish(String shardkey, String channel, String message);
+	
+	/**
+	 * @see {@link SingletonRedisCommand#punsubscribe(String)}
+	 * @param shardkey
+	 * @param pattern
+	 * @return
+	 */
+	String punsubscribe(String shardkey, String pattern);
 	
 	/**
 	 * @see {@link #punsubscribe(String)}
@@ -286,9 +1152,11 @@ public interface ShardedRedisCommand extends RedisCommand {
 	
 	/**
 	 * @see {@link #scriptexists(String)}
+	 * @param shardkey
 	 * @param sha1
 	 * @return
 	 */
+	boolean scriptexists(String shardkey, String sha1);
 	boolean[] scriptexists(String shardkey, String... sha1);
 	
 	/**

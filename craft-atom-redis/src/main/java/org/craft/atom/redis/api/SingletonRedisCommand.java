@@ -26,6 +26,17 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 */
 	long del(String... keys);
 	
+	/**
+	 * Available since 1.0.0
+	 * Time complexity: O(1)
+	 * 
+	 * <p>
+	 * Return a random key from the currently selected database.
+	 * 
+	 * @return
+	 */
+	String randomkey();
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Strings
 	
@@ -233,6 +244,10 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return the number of elements in the resulting set
 	 */
 	Set<String> sunionstore(String destination, String... keys);
+	
+	
+	// ~ -------------------------------------------------------------------------------------------------- Sorted Sets
+	
 	
 	/**
 	 * Available since 2.0.0
