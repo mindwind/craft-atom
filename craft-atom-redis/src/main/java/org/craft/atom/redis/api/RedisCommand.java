@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.craft.atom.redis.api.handler.BinaryRedisPsubscribeHandler;
-import org.craft.atom.redis.api.handler.BinaryRedisSubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
@@ -25,7 +23,7 @@ public interface RedisCommand {
 	 * Time complexity: O(N) where N is the number of keys that will be removed. 
 	 * 
 	 * <p>
-	 * When a key toremove holds a value other than a string, 
+	 * When a key to remove holds a value other than a string, 
 	 * the individual complexity for this key is O(M) 
 	 * where M is the number of elements in the list, set, sorted set or hash.
 	 * Removing a single key that holds a string value is O(1).
@@ -38,7 +36,6 @@ public interface RedisCommand {
 	 * @return The number of keys that were removed.
 	 */
 	long del(String key);
-	long del(byte[] key);
 	
 	/**
 	 * Available since 2.6.0
@@ -66,7 +63,6 @@ public interface RedisCommand {
 	 * @return the serialized value
 	 */
 	String dump(String key);
-	byte[] dump(byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -80,7 +76,6 @@ public interface RedisCommand {
 	 *         false if the key does not exist.
 	 */
 	boolean exists(String key);
-	boolean exists(byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -112,7 +107,6 @@ public interface RedisCommand {
      *         0 if key does not exist or the timeout could not be set.
 	 */
 	long expire(String key, int seconds);
-	long expire(byte[] key, int seconds);
 	
 	/**
 	 * Available since 1.2.0
@@ -131,7 +125,6 @@ public interface RedisCommand {
 	 *         0 if key does not exist or the timeout could not be set 
 	 */
 	long expireat(String key, long timestamp);
-	long expireat(byte[] key, long timestamp);
 	
 	/**
 	 * Available since 1.0.0
@@ -158,7 +151,6 @@ public interface RedisCommand {
 	 * @return ist of keys matching pattern.
 	 */
 	Set<String> keys(String pattern);
-	Set<byte[]> keys(byte[] pattern);
 	
 	/**
 	 * Available since 2.6.0 
@@ -199,7 +191,6 @@ public interface RedisCommand {
 	 * @return OK
 	 */
 	String migrate(String host, int port, String key, int destinationdb, int timeout);
-	byte[] migrate(String host, int port, byte[] key, int destinationdb, int timeout);
 	
 	/**
 	 * Available since 1.0.0
@@ -216,7 +207,6 @@ public interface RedisCommand {
 	 *         0 if key was not moved.
 	 */
 	long move(String key, int db);
-	long move(byte[] key, int db);
 	
 	/**
 	 * Available since 2.2.3
@@ -259,11 +249,8 @@ public interface RedisCommand {
 	 * @return
 	 */
 	long objectrefcount(String key);
-	long objectrefcount(byte[] key);
 	String objectencoding(String key);
-	byte[] objectencoding(byte[] key);
 	long objectidletime(String key);
-	long objectidletime(byte[] key);
 	
 	/**
 	 * Available since 2.2.0
@@ -278,7 +265,6 @@ public interface RedisCommand {
 	 *         0 if key does not exist or does not have an associated timeout.
 	 */
 	long persist(String key);
-	long persist(byte[] key);
 	
 	/**
 	 * Available since 2.6.0
@@ -293,7 +279,6 @@ public interface RedisCommand {
 	 *         0 if key does not exist or the timeout could not be set.
 	 */
 	long pexpire(String key, int milliseconds);
-	long pexpire(byte[] key, int milliseconds);
 	
 	/**
 	 * Available since 2.6.0
@@ -309,7 +294,6 @@ public interface RedisCommand {
 	 *         0 if key does not exist or the timeout could not be set 
 	 */
 	long pexpireat(String key, long millisecondstimestamp);
-	long pexpireat(byte[] key, long millisecondstimestamp);
 	
 	/**
 	 * Available since 2.6.0
@@ -323,7 +307,6 @@ public interface RedisCommand {
 	 * @return Time to live in milliseconds or -1 when key does not exist or does not have a timeout.
 	 */
 	long pttl(String key);
-	long pttl(byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -335,7 +318,6 @@ public interface RedisCommand {
 	 * @return
 	 */
 	String randomkey();
-	byte[] randombinarykey();
 	
 	/**
 	 * Available since 1.0.0
@@ -350,7 +332,6 @@ public interface RedisCommand {
 	 * @return The command returns OK on success.
 	 */
 	String rename(String key, String newkey);
-	byte[] rename(byte[] key, byte[] newkey);
 	
 	/**
 	 * Available since 1.0.0
@@ -365,7 +346,6 @@ public interface RedisCommand {
 	 *         0 if newkey already exists.
 	 */
 	long renamenx(String key, String newkey);
-	long renamenx(byte[] key, byte[] newkey);
 	
 	/**
 	 * Available since 2.6.0
@@ -385,7 +365,6 @@ public interface RedisCommand {
 	 * @return The command returns OK on success.
 	 */
 	String restore(String key, long ttl, String serializedvalue);
-	byte[] restore(byte[] key, long ttl, byte[] serializedvalue);
 	
 	/**
 	 * Available since 1.0.0
@@ -530,21 +509,6 @@ public interface RedisCommand {
 	List<String> sort(String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns);
 	List<String> sort(String key, String bypattern, int offset, int count, String destination, String... getpatterns);
 	List<String> sort(String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String destination, String... getpatterns);
-	List<byte[]> sort(byte[] key);
-	List<byte[]> sort(byte[] key, boolean desc);
-	List<byte[]> sort(byte[] key, boolean alpha, boolean desc);
-	List<byte[]> sort(byte[] key, int offset, int count);
-	List<byte[]> sort(byte[] key, int offset, int count, boolean alpha, boolean desc);
-	List<byte[]> sort(byte[] key, byte[] bypattern, byte[]... getpatterns);
-	List<byte[]> sort(byte[] key, byte[] bypattern, boolean desc, byte[]... getpatterns);
-	List<byte[]> sort(byte[] key, byte[] bypattern, boolean alpha, boolean desc, byte[]... getpatterns);
-	List<byte[]> sort(byte[] key, byte[] bypattern, int offset, int count, byte[]... getpatterns);
-	List<byte[]> sort(byte[] key, byte[] bypattern, int offset, int count, boolean alpha, boolean desc, byte[]... getpatterns);
-	List<byte[]> sort(byte[] key, byte[] bypattern, byte[] destination);
-	List<byte[]> sort(byte[] key, byte[] bypattern, boolean desc, byte[] destination, byte[]... getpatterns);
-	List<byte[]> sort(byte[] key, byte[] bypattern, boolean alpha, boolean desc, byte[] destination, byte[]... getpatterns);
-	List<byte[]> sort(byte[] key, byte[] bypattern, int offset, int count, byte[] destination, byte[]... getpatterns);
-	List<byte[]> sort(byte[] key, byte[] bypattern, int offset, int count, boolean alpha, boolean desc, byte[] destination, byte[]... getpatterns);
 
 	/**
 	 * Available since 1.0.0
@@ -558,7 +522,6 @@ public interface RedisCommand {
 	 * @return TTL in seconds, -2 when key does not exist or -1 when key does not have a timeout.
 	 */
 	long ttl(String key);
-	long ttl(byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -572,7 +535,6 @@ public interface RedisCommand {
 	 * @return type of key, or none when key does not exist.
 	 */
 	String type(String key);
-	String type(byte[] key);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Strings
@@ -593,7 +555,6 @@ public interface RedisCommand {
 	 * @return the length of the string after the append operation.
 	 */
 	long append(String key, String value);
-	long append(byte[] key, String value);
 	
 	/**
 	 * Available since 2.6.0
@@ -611,9 +572,6 @@ public interface RedisCommand {
 	 * @return The number of bits set to 1.
 	 */
 	long bitcount(String key);
-	long bitcount(byte[] key);
-	long bitcount(String key, long start, long end);
-	long bitcount(byte[] key, long start, long end);
 	
 	/**
 	 * Available since 2.6.0
@@ -639,7 +597,6 @@ public interface RedisCommand {
 	 * @return The size of the string stored in the destination key, that is equal to the size of the longest input string.
 	 */
 	long bitnot(String destkey, String key);
-	long bitnot(byte[] destkey, byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -655,7 +612,6 @@ public interface RedisCommand {
 	 * @return the value of key after the decrement
 	 */
 	long decr(String key);
-	long decr(byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -672,7 +628,6 @@ public interface RedisCommand {
 	 * @return the value of key after the decrement
 	 */
 	long decrby(String key, long decrement);
-	long decrby(byte[] key, long decrement);
 	
 	/**
 	 * Available since 1.0.0
@@ -686,7 +641,6 @@ public interface RedisCommand {
 	 * @return the value of key, or null when key does not exist.
 	 */
 	String get(String key);
-	byte[] get(byte[] key);
 	
 	/**
 	 * Available since 2.2.0
@@ -703,7 +657,6 @@ public interface RedisCommand {
 	 * @return the bit value stored at offset.
 	 */
 	boolean getbit(String key, long offset);
-	boolean getbit(byte[] key, long offset);
 	
 	/**
 	 * Available since 2.4.0
@@ -723,7 +676,6 @@ public interface RedisCommand {
 	 * @return
 	 */
 	String getrange(String key, long start, long end);
-	byte[] getrange(byte[] key, long start, long end);
 	
 	/**
 	 * Available since 1.0.0
@@ -738,7 +690,6 @@ public interface RedisCommand {
 	 * @return the old value stored at key, or null when key did not exist.
 	 */
 	String getset(String key, String value);
-	byte[] getset(byte[] key, byte[] value);
 	
 	/**
 	 * Available since 1.0.0
@@ -758,7 +709,6 @@ public interface RedisCommand {
 	 * @return the value of key after the increment
 	 */
 	long incr(String key);
-	long incr(byte[] key);
 	
 	/**
 	 * available since 1.0.0
@@ -775,7 +725,6 @@ public interface RedisCommand {
 	 * @return  the value of key after the increment
 	 */
 	long incrby(String key, long increment);
-	long incrby(byte[] key, long increment);
 	
 	/**
 	 * Available since 2.6.0
@@ -801,7 +750,6 @@ public interface RedisCommand {
 	 * @return the value of key after the increment.
 	 */
 	double incrbyfloat(String key, double increment);
-	double incrbyfloat(byte[] key, double increment);
 	
 	/**
 	 * Available since 2.6.0
@@ -816,8 +764,7 @@ public interface RedisCommand {
 	 * @return
 	 */
 	String psetex(String key, int milliseconds, String value);
-	byte[] psetex(byte[] key, int milliseconds, byte[] value);
-	
+
 	/**
 	 * Available since 1.0.0
 	 * Time complexity: O(1)
@@ -831,7 +778,6 @@ public interface RedisCommand {
 	 * @return
 	 */
 	String set(String key, String value);
-	byte[] set(byte[] key, byte[] value);
 	
 	/**
 	 * Available since 2.6.12
@@ -854,15 +800,10 @@ public interface RedisCommand {
 	 *         user specified the NX or XX option but the condition was not met.
 	 */
 	String setxx(String key, String value);
-	byte[] setxx(byte[] key, byte[] value);
 	String setnxex(String key, String value, int seconds);
-	byte[] setnxex(byte[] key, byte[] value, int seconds);
 	String setnxpx(String key, String value, int milliseconds);
-	byte[] setnxpx(byte[] key, byte[] value, int milliseconds);
 	String setxxex(String key, String value, int seconds);
-	byte[] setxxex(byte[] key, byte[] value, int seconds);
 	String setxxpx(String key, String value, int milliseconds);
-	byte[] setxxpx(byte[] key, byte[] value, int milliseconds);
 	
 	/**
 	 * Available since 2.2.0
@@ -888,7 +829,6 @@ public interface RedisCommand {
 	 * @return the original bit value stored at offset
 	 */
 	boolean setbit(String key, long offset, boolean value);
-	boolean setbit(byte[] key, long offset, boolean value);
 	
 	/**
 	 * Available since 2.0.0
@@ -910,7 +850,6 @@ public interface RedisCommand {
 	 * @return Status code reply, e.g. OK
 	 */
 	String setex(String key, int seconds, String value);
-	byte[] setex(byte[] key, int seconds, byte[] value);
 	
 	/**
 	 * Available since 1.0.0.
@@ -926,7 +865,6 @@ public interface RedisCommand {
 	 *         0 if the key was not set
 	 */
 	long setnx(String key, String value);
-	long setnx(byte[] key, byte[] value);
 	
 	/**
 	 * Available since 2.2.0.
@@ -954,7 +892,6 @@ public interface RedisCommand {
 	 * @return
 	 */
 	long setrange(String key, long offset, String value);
-	long setrange(byte[] key, long offset, byte[] value);
 	
 	/**
 	 * Available since 2.2.0.
@@ -967,7 +904,6 @@ public interface RedisCommand {
 	 * @return the length of the string at key, or 0 when key does not exist.
 	 */
 	long strlen(String key);
-	long strlen(byte[] key);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Hashes
@@ -992,7 +928,6 @@ public interface RedisCommand {
 	 * @return the number of fields that were removed from the hash, not including specified but non existing fields.
 	 */
 	long hdel(String key, String... fields);
-	long hdel(byte[] key, String... fields);
 	
 	/**
 	 * Available since 2.0.0
@@ -1007,7 +942,6 @@ public interface RedisCommand {
 	 *         false if the hash does not contain field, or key does not exist.
 	 */
 	boolean hexists(String key, String field);
-	boolean hexists(byte[] key, byte[] field);
 	
 	/**
 	 * Available since 2.0.0
@@ -1021,7 +955,6 @@ public interface RedisCommand {
 	 * @return the value associated with field, or null when field is not present in the hash or key does not exist.
 	 */
 	String hget(String key, String field);
-	byte[] hget(byte[] key, byte[] field);
 	
 	/**
 	 * Available since 2.0.0
@@ -1036,7 +969,6 @@ public interface RedisCommand {
 	 * @return list of fields and their values stored in the hash, or an empty list when key does not exist.
 	 */
 	Map<String, String> hgetall(String key);
-	Map<byte[], byte[]> hgetall(byte[] key);
 	
 	/**
 	 * Available since 2.0.0
@@ -1053,7 +985,6 @@ public interface RedisCommand {
 	 * @return the value at field after the increment operation.
 	 */
 	long hincrby(String key, String field, long value);
-	long hincrby(byte[] key, byte[] field, long value);
 	
 	/**
 	 * Available since 2.6.0
@@ -1074,7 +1005,6 @@ public interface RedisCommand {
 	 * @return the value of field after the increment.
 	 */
 	double hincrbyfloat(String key, String field, double value);
-	double hincrbyfloat(byte[] key, byte[] field, double value);
 	
 	/**
 	 * Available since 2.0.0
@@ -1087,7 +1017,6 @@ public interface RedisCommand {
 	 * @return list of fields in the hash, or an empty list when key does not exist.
 	 */
 	Set<String> hkeys(String key);
-	Set<byte[]> hkeys(byte[] key);
 	
 	/**
 	 * Available since 2.0.0
@@ -1100,7 +1029,6 @@ public interface RedisCommand {
 	 * @return number of fields in the hash, or 0 when key does not exist.
 	 */
 	long hlen(String key);
-	long hlen(byte[] key);
 	
 	/**
 	 * Available since 2.0.0
@@ -1116,7 +1044,6 @@ public interface RedisCommand {
 	 * @return list of values associated with the given fields, in the same order as they are requested.
 	 */
 	List<String> hmget(String key, String... fields);
-	List<byte[]> hmget(byte[] key, byte[]... fields);
 	
 	/**
 	 * Available since 2.0.0
@@ -1131,7 +1058,6 @@ public interface RedisCommand {
 	 * @return Status code reply, e.g. OK
 	 */
 	String hmset(String key, Map<String, String> fieldvalues);
-	byte[] hmset(byte[] key, Map<byte[], byte[]> fieldvalues);
 	
 	/**
 	 * Available since 2.0.0
@@ -1148,7 +1074,6 @@ public interface RedisCommand {
 	 *         0 if field already exists in the hash and the value was updated.
 	 */
 	long hset(String key, String field, String value);
-	long hset(byte[] key, byte[] field, byte[] value);
 	
 	/**
 	 * Available since 2.0.0
@@ -1165,7 +1090,6 @@ public interface RedisCommand {
 	 *         0 if field already exists in the hash and no operation was performed.
 	 */
 	long hsetnx(String key, String field, String value);
-	long hsetnx(byte[] key, byte[] field, byte[] value);
 	
 	/**
 	 * Available since 2.0.0
@@ -1178,7 +1102,6 @@ public interface RedisCommand {
 	 * @return list of values in the hash, or an empty list when key does not exist.
 	 */
 	List<String> hvals(String key);
-	List<byte[]> hvals(byte[] key);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
@@ -1272,9 +1195,7 @@ public interface RedisCommand {
 	 *         A popped element.
 	 */
 	String blpop(String key);
-	byte[] blpop(byte[] key);
 	String blpop(String key, int timeout);
-	byte[] blpop(byte[] key, int timeout);
 	
 	/**
 	 * Available since 2.0.0
@@ -1293,9 +1214,7 @@ public interface RedisCommand {
 	 *         A popped element.
 	 */
 	String brpop(String key);
-	byte[] brpop(byte[] key);
 	String brpop(String key, int timeout);
-	byte[] brpop(byte[] key, int timeout);
 	
 	/**
 	 * Available since 2.2.0
@@ -1314,7 +1233,6 @@ public interface RedisCommand {
 	 * 		   If timeout is reached, a null reply is returned.
 	 */
 	String brpoplpush(String source, String destination, int timeout);
-	byte[] brpoplpush(byte[] source, byte[] destination, int timeout);
 	
 	/**
 	 * Available since 1.0.0
@@ -1332,7 +1250,6 @@ public interface RedisCommand {
 	 * @return
 	 */
 	String lindex(String key, long index);
-	byte[] lindex(byte[] key, long index);
 	
 	/**
 	 * Available since 2.2.0
@@ -1353,9 +1270,7 @@ public interface RedisCommand {
 	 * @return the length of the list after the insert operation, or -1 when the value pivot was not found.
 	 */
 	long linsertbefore(String key, String pivot, String value);
-	long linsertbefore(byte[] key, byte[] pivot, byte[] value);
 	long linsertafter(String key, String pivot, String value);
-	long linsertafter(byte[] key, byte[] pivot, byte[] value);
 	
 	/**
 	 * Available since 1.0.0
@@ -1369,7 +1284,6 @@ public interface RedisCommand {
 	 * @return the length of the list at key.
 	 */
 	long llen(String key);
-	long llen(byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -1382,7 +1296,6 @@ public interface RedisCommand {
 	 * @return the value of the first element, or null when key does not exist.
 	 */
 	String lpop(String key);
-	byte[] lpop(byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -1404,7 +1317,6 @@ public interface RedisCommand {
 	 * @return the length of the list after the push operations.
 	 */
 	long lpush(String key, String... values);
-	long lpush(byte[] key, byte[]... values);
 	
 	/**
 	 * Available since 2.2.0
@@ -1419,7 +1331,6 @@ public interface RedisCommand {
 	 * @return the length of the list after the push operation.
 	 */
 	long lpushx(String key, String value);
-	long lpushx(byte[] key, byte[] value);
 	
 	/**
 	 * Available since 1.0.0
@@ -1448,7 +1359,6 @@ public interface RedisCommand {
 	 * @return list of elements in the specified range.
 	 */
 	List<String> lrange(String key, long start, long stop);
-	List<byte[]> lrange(byte[] key, long start, long stop);
 	
 	/**
 	 * Available since 1.0.0
@@ -1469,7 +1379,6 @@ public interface RedisCommand {
 	 * @return the number of removed elements.
 	 */
 	long lrem(String key, long count, String value);
-	long lrem(byte[] key, long count, byte[] value);
 	
 	/**
 	 * Available since 1.0.0
@@ -1485,7 +1394,6 @@ public interface RedisCommand {
 	 * @return Status code reply, e.g. OK
 	 */
 	String lset(String key, long index, String value);
-	byte[] lset(byte[] key, long index, byte[] value);
 	
 	/**
 	 * Available since 1.0.0
@@ -1514,7 +1422,6 @@ public interface RedisCommand {
 	 * @return Status code reply, e.g. OK
 	 */
 	String ltrim(String key, long start, long stop);
-	byte[] ltrim(byte[] key, long start, long stop);
 	
 	/**
 	 * Available since 1.0.0
@@ -1527,7 +1434,6 @@ public interface RedisCommand {
 	 * @return the value of the last element, or null when key does not exist.
 	 */
 	String rpop(String key);
-	byte[] rpop(byte[] key);
 	
 	/**
 	 * Available since 1.2.0
@@ -1547,7 +1453,6 @@ public interface RedisCommand {
 	 * @return the element being popped and pushed.
 	 */
 	String rpoplpush(String source, String destination); 
-	String rpoplpush(byte[] source, byte[] destination); 
 	
 	/**
 	 * Available since 1.0.0
@@ -1570,7 +1475,6 @@ public interface RedisCommand {
 	 * @return the length of the list after the push operation.
 	 */
 	long rpush(String key, String... values);
-	long rpush(byte[] key, byte[]... values);
 	
 	/**
 	 * Available since 2.2.0
@@ -1585,7 +1489,6 @@ public interface RedisCommand {
 	 * @return the length of the list after the push operation.
 	 */
 	long rpushx(String key, String value);
-	long rpushx(byte[] key, byte[] value);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Sets
@@ -1608,7 +1511,6 @@ public interface RedisCommand {
 	 * @return the number of elements that were added to the set, not including all the elements already present into the set.
 	 */
 	long sadd(String key, String... members);
-	long sadd(byte[] key, byte[]... members);
 	
 	/**
 	 * Available since 1.0.0
@@ -1621,7 +1523,6 @@ public interface RedisCommand {
 	 * @return the cardinality (number of elements) of the set, or 0 if key does not exist.
 	 */
 	long scard(String key);
-	long scard(byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -1636,7 +1537,6 @@ public interface RedisCommand {
 	 *         false if the element is not a member of the set, or if key does not exist.
 	 */
 	boolean sismember(String key, String member);
-	boolean sismember(byte[] key, byte[] member);
 	
 	/**
 	 * Available since 1.0.0.
@@ -1650,7 +1550,6 @@ public interface RedisCommand {
 	 * @return 
 	 */
 	Set<String> smembers(String key);
-	Set<byte[]> smembers(byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -1664,7 +1563,6 @@ public interface RedisCommand {
 	 * @return the removed element, or null when key does not exist.
 	 */
 	String spop(String key);
-	byte[] spop(byte[] key);
 	
 	/**
 	 * Available since 2.6.0
@@ -1682,7 +1580,6 @@ public interface RedisCommand {
 	 * @return returns an set of elements, or an empty set when key does not exist.
 	 */
 	Set<String> srandmember(String key, int count);
-	Set<byte[]> srandmember(byte[] key, int count);
 	
 	/**
 	 * Available since 1.0.0.
@@ -1693,7 +1590,6 @@ public interface RedisCommand {
 	 * @return returns the randomly selected element, or null when key does not exist
 	 */
 	String srandmember(String key);
-	byte[] srandmember(byte[] key);
 	
 	/**
 	 * Available since 1.0.0
@@ -1713,7 +1609,6 @@ public interface RedisCommand {
 	 * @return the number of members that were removed from the set, not including non existing members.
 	 */
 	long srem(String key, String... members);
-	long srem(byte[] key, byte[]... members);
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------- Sorted Sets
@@ -1740,7 +1635,6 @@ public interface RedisCommand {
 	 * @return The number of elements added to the sorted sets, not including elements already existing for which the score was updated.
 	 */
 	long zadd(String key, double score, String member);
-	long zadd(byte[] key, double score, byte[] member);
 	
 	/**
 	 * Available since 1.2.0
@@ -1753,7 +1647,6 @@ public interface RedisCommand {
 	 * @return the cardinality (number of elements) of the sorted set, or 0 if key does not exist.
 	 */
 	long zcard(String key);
-	long zcard(byte[] key);
 	
 	/**
 	 * Available since 2.0.0
@@ -1769,7 +1662,6 @@ public interface RedisCommand {
 	 * @return
 	 */
 	long zcount(String key, double min, double max);
-	long zcount(byte[] key, double min, double max);
 	
 	/**
 	 * Available since 1.2.0
@@ -1789,7 +1681,6 @@ public interface RedisCommand {
 	 * @return the new score of member (a double precision floating point number), represented as string.
 	 */
 	double zincrby(String key, double score, String member);
-	double zincrby(byte[] key, double score, byte[] member);
 	
 	/**
 	 * Available since 1.2.0
@@ -1815,9 +1706,7 @@ public interface RedisCommand {
 	 * @return list of elements in the specified range (optionally with their scores).
 	 */
 	Set<String> zrange(String key, long start, long stop);
-	Set<byte[]> zrange(byte[] key, long start, long stop);
 	Map<String, Double> zrangewithscores(String key, long start, long stop);
-	Map<byte[], Double> zrangewithscores(byte[] key, long start, long stop);
 	
 	/**
 	 * Available since 1.0.5
@@ -1855,13 +1744,9 @@ public interface RedisCommand {
 	 * @return list of elements in the specified score range (optionally with their scores). 
 	 */
 	Set<String> zrangebyscore(String key, double min, double max);
-	Set<byte[]> zrangebyscore(byte[] key, double min, double max);
 	Set<String> zrangebyscore(String key, String min, String max);
-	Set<byte[]> zrangebyscore(byte[] key, byte[] min, byte[] max);
 	Set<String> zrangebyscore(String key, double min, double max, int offset, int count);
-	Set<byte[]> zrangebyscore(byte[] key, double min, double max, int offset, int count);
 	Set<String> zrangebyscore(String key, String min, String max, int offset, int count);
-	Set<byte[]> zrangebyscore(byte[] key, byte[] min, byte[] max, int offset, int count);
 	
 	/**
 	 * Available since 2.0
@@ -1873,13 +1758,9 @@ public interface RedisCommand {
 	 * @return
 	 */
 	Map<String, Double> zrangebyscorewithscores(String key, double min, double max);
-	Map<byte[], Double> zrangebyscorewithscores(byte[] key, double min, double max);
 	Map<String, Double> zrangebyscorewithscores(String key, String min, String max);
-	Map<byte[], Double> zrangebyscorewithscores(byte[] key, byte[] min, byte[] max);
 	Map<String, Double> zrangebyscorewithscores(String key, double min, double max, int offset, int count);
-	Map<byte[], Double> zrangebyscorewithscores(byte[] key, double min, double max, int offset, int count);
 	Map<String, Double> zrangebyscorewithscores(String key, String min, String max, int offset, int count);
-	Map<byte[], Double> zrangebyscorewithscores(byte[] key, byte[] min, byte[] max, int offset, int count);
 	
 	/**
 	 * Available since 2.0.0
@@ -1896,7 +1777,6 @@ public interface RedisCommand {
 	 *         If member does not exist in the sorted set or key does not exist, return null.
 	 */
 	Long zrank(String key, String member);
-	Long zrank(byte[] key, byte[] member);
 	
 	/**
 	 * Available since 1.2.0
@@ -1915,7 +1795,6 @@ public interface RedisCommand {
 	 * @return The number of members removed from the sorted set, not including non existing members.
 	 */
 	long zrem(String key, String... members);
-	long zrem(byte[] key, byte[]... members);
 	
 	/**
 	 * Available since 2.0.0
@@ -1933,7 +1812,6 @@ public interface RedisCommand {
 	 * @return the number of elements removed.
 	 */
 	long zremrangebyrank(String key, long start, long stop);
-	long zremrangebyrank(byte[] key, long start, long stop);
 	
 	/**
 	 * Available since 1.2.0
@@ -1953,9 +1831,7 @@ public interface RedisCommand {
 	 * @return the number of elements removed.
 	 */
 	long zremrangebyscore(String key, double min, double max);
-	long zremrangebyscore(byte[] key, double min, double max);
 	long zremrangebyscore(String key, String min, String max);
-	long zremrangebyscore(byte[] key, byte[] min, byte[] max);
 	
 	/**
 	 * Available since 1.2.0
@@ -1972,9 +1848,7 @@ public interface RedisCommand {
 	 * @return  list of elements in the specified range (optionally with their scores)
 	 */
 	Set<String> zrevrange(String key, long start, long stop);
-	Set<byte[]> zrerange(byte[] key, long start, long stop);
 	Map<String, Double> zrerangewithscores(String key, long start, long stop);
-	Map<byte[], Double> zrerangewithscores(byte[] key, long start, long stop);
 	
 	/**
 	 * Available since 2.2.0
@@ -1993,13 +1867,9 @@ public interface RedisCommand {
 	 * @return list of elements in the specified score range (optionally with their scores)
 	 */
 	Set<String> zrerangebyscore(String key, double max, double min);
-	Set<byte[]> zrerangebyscore(byte[] key, double max, double min);
 	Set<String> zrerangebyscore(String key, String max, String min);
-	Set<byte[]> zrerangebyscore(byte[] key, byte[] max, byte[] min);
 	Set<String> zrerangebyscore(String key, double max, double min, int offset, int count);
-	Set<byte[]> zrerangebyscore(byte[] key, double max, double min, int offset, int count);
 	Set<String> zrerangebyscore(String key, String max, String min, int offset, int count);
-	Set<byte[]> zrerangebyscore(byte[] key, byte[] max, byte[] min, int offset, int count);
 	
 	/**
 	 * Available since 2.0.0
@@ -2016,7 +1886,6 @@ public interface RedisCommand {
 	 *         If member does not exist in the sorted set or key does not exist, return null.
 	 */
 	Long zrerank(String key, String member);
-	Long zrerank(byte[] key, byte[] member);
 	
 	/**
 	 * Available since 1.2.0
@@ -2031,7 +1900,6 @@ public interface RedisCommand {
 	 * @return the score of member (a double precision floating point number), represented as string.
 	 */
 	Double zscore(String key, String member);
-	Double zscore(byte[] key, byte[] member);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
@@ -2045,7 +1913,6 @@ public interface RedisCommand {
 	 * @param pattern
 	 */
 	void psubscribe(RedisPsubscribeHandler handler, String pattern);
-	void psubscribe(BinaryRedisPsubscribeHandler handler, byte[] pattern);
 	
 	/**
 	 * Available since 2.0.0.
@@ -2061,8 +1928,6 @@ public interface RedisCommand {
 	 * @return unsubscribed pattern
 	 */
 	String punsubscribe(String pattern);
-	byte[] punsubscribe(byte[] pattern);
-	
 	
 	/**
 	 * Available since 2.0.0
@@ -2077,7 +1942,6 @@ public interface RedisCommand {
 	 * @return the number of clients that received the message.
 	 */
 	long publish(String channel, String message);
-	long publish(byte[] channel, byte[] message);
 	
 	/**
 	 * Available since 2.0.0
@@ -2091,7 +1955,6 @@ public interface RedisCommand {
 	 * @param channel
 	 */
 	void subscribe(RedisSubscribeHandler handler, String channel);
-	void subscribe(BinaryRedisSubscribeHandler handler, byte[] channel);
 	
 	/**
 	 * Available since 2.0.0
@@ -2106,7 +1969,6 @@ public interface RedisCommand {
 	 * @return unsubscribed channel
 	 */
 	String unsubscribe(String channel);
-	byte[] unsubscribe(byte[] channel);
 	
 	
 	// ~ --------------------------------------------------------------------------------------------------- Scripting
@@ -2126,9 +1988,6 @@ public interface RedisCommand {
 	Object eval(String script);
 	Object eval(String script, List<String> keys);
 	Object eval(String script, List<String> keys, List<String> args);
-	Object eval(byte[] script);
-	Object eval(byte[] script, List<byte[]> keys);
-	Object eval(byte[] script, List<byte[]> keys, List<byte[]> args);
 	
 	/**
 	 * Available since 2.6.0
@@ -2144,9 +2003,6 @@ public interface RedisCommand {
 	Object evalsha(String sha1);
 	Object evalsha(String sha1, List<String> keys);
 	Object evalsha(String sha1, List<String> keys, List<String> args);
-	Object evalsha(byte[] sha1);
-	Object evalsha(byte[] sha1, List<byte[]> keys);
-	Object evalsha(byte[] sha1, List<byte[]> keys, List<byte[]> args);
 	
 	/**
 	 * Available since 2.6.0
@@ -2165,7 +2021,6 @@ public interface RedisCommand {
 	 * @return true if exists, otherwise false
 	 */
 	boolean scriptexists(String sha1);
-	boolean scriptexists(byte[] sha1);
 	
 	/**
 	 * Available since 2.6.0
@@ -2183,7 +2038,6 @@ public interface RedisCommand {
 	 * @return This command returns the SHA1 digest of the script added into the script cache.
 	 */
 	String scriptload(String script);
-	byte[] scriptload(byte[] script);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Server
@@ -2199,7 +2053,5 @@ public interface RedisCommand {
 	 * @return
 	 */
 	String debugobject(String key);
-	byte[] debugobject(byte[] key);
-	
 	
 }

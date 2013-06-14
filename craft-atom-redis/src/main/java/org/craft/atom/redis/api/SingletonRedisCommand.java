@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.craft.atom.redis.api.handler.BinaryRedisMonitorHandler;
-import org.craft.atom.redis.api.handler.BinaryRedisPsubscribeHandler;
-import org.craft.atom.redis.api.handler.BinaryRedisSubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisMonitorHandler;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
@@ -28,7 +25,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	long del(String... keys);
-	long del(byte[]... keys);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Strings
@@ -41,11 +37,8 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	long bitand(String destkey, String... keys);
-	long bitand(byte[] destkey, byte[]... keys);
 	long bitor(String destkey, String... keys);
-	long bitor(byte[] destkey, byte[]... keys);
 	long bitxor(String destkey, String... keys);
-	long bitxor(byte[] destkey, byte[]... keys);
 	
 	/**
 	 * Available since 1.0.0
@@ -59,7 +52,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	List<String> mget(String... keys);
-	List<byte[]> mget(byte[]... keys);
 	
 	/**
 	 * Available since 1.0.1
@@ -74,7 +66,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	String mset(String... keysvalues);
-	byte[] mset(byte[]... keysvalues);
 	
 	/**
 	 * Available since 1.0.1.
@@ -90,7 +81,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	String msetnx(String... keysvalues);
-	byte[] msetnx(byte[]... keysvalues);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
@@ -104,9 +94,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 *         and the value (second element) being the value of the popped element.
 	 */
 	Map<String, String> blpop(String... keys);
-	Map<byte[], byte[]> blpop(byte[]... keys);
 	Map<String, String> blpop(int timeout, String... keys);
-	Map<byte[], byte[]> blpop(int timeout, byte[]... keys);
 	
 	/**
 	 * @see {@link RedisCommand#brpop(String)}
@@ -117,9 +105,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 *         and the value (second element) being the value of the popped element.
 	 */
 	Map<String, String> brpop(String... keys);
-	Map<byte[], byte[]> brpop(byte[]... keys);
 	Map<String, String> brpop(int timeout, String... keys);
-	Map<byte[], byte[]> brpop(int timeout, byte[]... keys);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Sets
@@ -144,7 +130,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return list with members of the resulting set.
 	 */
 	Set<String> sdiff(String... keys);
-	Set<byte[]> sdiff(byte[]... keys);
 	
 	/**
 	 * Available since 1.0.0.
@@ -159,7 +144,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	long sdiffstore(String destination, String... keys);
-	long sdiffstore(byte[] destination, byte[]... keys);
 	
 	/**
 	 * Available since 1.0.0
@@ -181,7 +165,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return list with members of the resulting set.
 	 */
 	Set<String> sinter(String... keys);
-	Set<byte[]> sinter(byte[]... keys);
 	
 	/**
 	 * Available since 1.0.0.
@@ -196,7 +179,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return the number of elements in the resulting set.
 	 */
 	long sinterstore(String destination, String... keys);
-	long sinterstore(byte[] destination, byte[]... keys);
 	
 	/**
 	 * Available since 1.0.0
@@ -217,7 +199,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 *         0 if the element is not a member of source and no operation was performed.
 	 */
 	long smove(String source, String destination, String member);
-	long smove(byte[] source, byte[] destination, byte[] member);
 	
 	/**
 	 * Available since 1.0.0
@@ -238,7 +219,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return list with members of the resulting set.
 	 */
 	Set<String> sunion(String... keys);
-	Set<byte[]> sunion(byte[]... keys);
 	
 	/**
 	 * Available since 1.0.0
@@ -253,7 +233,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return the number of elements in the resulting set
 	 */
 	Set<String> sunionstore(String destination, String... keys);
-	Set<byte[]> sunionstore(byte[] destination, byte[]... keys);
 	
 	/**
 	 * Available since 2.0.0
@@ -273,17 +252,11 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return the number of elements in the resulting sorted set at destination.
 	 */
 	long zinterstore(String destination, String... keys);
-	long zinterstore(byte[] destination, byte[]... keys);
 	long zinterstoremax(String destination, String... keys);
-	long zinterstoremax(byte[] destination, byte[]... keys);
 	long zinterstoremin(String destination, String... keys);
-	long zinterstoremin(byte[] destination, byte[]... keys);
 	long zinterstore(String destination, Map<String, Integer> weightkeys);
-	long zinterstore(byte[] destination, Map<String, Integer> weightkeys);
 	long zinterstoremax(String destination, Map<String, Integer> weightkeys);
-	long zinterstoremax(byte[] destination, Map<String, Integer> weightkeys);
 	long zinterstoremin(String destination, Map<String, Integer> weightkeys);
-	long zinterstoremin(byte[] destination, Map<String, Integer> weightkeys);
 	
 	/**
 	 * Available since 2.0.0.
@@ -306,17 +279,11 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return the number of elements in the resulting sorted set at destination.
 	 */
 	long zunionstore(String destination, String... keys);
-	long zunionstore(byte[] destination, byte[]... keys);
 	long zunionstoremax(String destination, String... keys);
-	long zunionstoremax(byte[] destination, byte[]... keys);
 	long zunionstoremin(String destination, String... keys);
-	long zunionstoremin(byte[] destination, byte[]... keys);
 	long zunionstore(String destination, Map<String, Integer> weightkeys);
-	long zunionstore(byte[] destination, Map<String, Integer> weightkeys);
 	long zunionstoremax(String destination, Map<String, Integer> weightkeys);
-	long zunionstoremax(byte[] destination, Map<String, Integer> weightkeys);
 	long zunionstoremin(String destination, Map<String, Integer> weightkeys);
-	long zunionstoremin(byte[] destination, Map<String, Integer> weightkeys);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
@@ -328,7 +295,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @param patterns
 	 */
 	void psubscribe(RedisPsubscribeHandler handler, String... patterns);
-	void psubscribe(BinaryRedisPsubscribeHandler handler, byte[]... patterns);
 	
 	/**
 	 * @see {@link #punsubscribe(RedisPunsubscribeHandler, String)}
@@ -337,7 +303,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return unsubscribed patterns
 	 */
 	List<String> punsubscribe(String... patterns);
-	List<byte[]> punsubscribe(byte[]... patterns);
 	
 	/**
 	 * @see {@link #subscribe(RedisSubscribeHandler, String)}
@@ -345,7 +310,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @param channels
 	 */
 	void subscribe(RedisSubscribeHandler handler, String... channels);
-	void subscribe(BinaryRedisSubscribeHandler handler, byte[]... channels);
 	
 	/**
 	 * @see {@link #unsubscribe(String)}}
@@ -353,7 +317,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return unsubscribed channels
 	 */
 	List<String> unsubscribe(String... channels);
-	List<byte[]> unsubscribe(byte[]... channels);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------- Transactions
@@ -426,7 +389,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	boolean[] scriptexists(String... sha1);
-	boolean[] scriptexists(byte[]... sha1);
 	
 	/**
 	 * Available since 2.6.0
@@ -477,7 +439,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return Status code reply, e.g. OK
 	 */
 	String auth(String password);
-	byte[] auth(byte[] password);
 	
 	/**
 	 * Available since 1.0.0
@@ -489,7 +450,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	String echo(String message);
-	byte[] echo(byte[] message);
 	
 	/**
 	 * Available since 1.0.0
@@ -670,7 +630,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return OK if the connection name was successfully set.
 	 */
 	String clientsetname(String connectionName);
-	byte[] clientsetname(byte[] connectionName);
 	
 	/**
 	 * Available since 2.0.0
@@ -711,7 +670,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	String configget(String parameter);
-	byte[] configget(byte[] parameter);
 	
 	/**
 	 * Available since 2.0.0
@@ -769,7 +727,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return  OK when the configuration was set properly. Otherwise an error is returned.
 	 */
 	String configset(String parameter, String value);
-	byte[] configset(byte[] parameter, byte[] value);
 	
 	/**
 	 * Available since 1.0.0
@@ -1041,7 +998,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 */
 	String info();
 	String info(String section);
-	byte[] info(byte[] section);
 	
 	/**
 	 * Available since 1.0.0
@@ -1122,7 +1078,6 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @param handler
 	 */
 	void monitor(RedisMonitorHandler handler);
-	void monitor(BinaryRedisMonitorHandler handler);
 	
 	/**
 	 * Available since 1.0.0
