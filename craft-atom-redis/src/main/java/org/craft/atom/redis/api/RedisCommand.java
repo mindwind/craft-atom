@@ -8,6 +8,13 @@ import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
 /**
  * The basic atomic commands supported by Redis.
+ * <p>
+ * 
+ * <b>Transaction</b><br>
+ * - You can begin a transaction by invoke <code>multi()</code> method.<br>
+ * - A transaction execution must in one thread.<br>
+ * - A transaction should be end with <code>discard()</code> or <code>exec()</code><br>
+ * - <code>watch()</code> should be paired with <code>exec</code>, <code>discard()</code> or <code>unwatch()</code>
  * 
  * @author mindwind
  * @version 1.0, May 3, 2013
@@ -754,16 +761,16 @@ public interface RedisCommand {
 	String psetex(String key, int milliseconds, String value);
 
 	/**
-	 * Available since 1.0.0
+	 * Available since 1.0.0<br>
 	 * Time complexity: O(1)
 	 * 
 	 * <p>
-	 * Set key to hold the string value. If key already holds a value, it is overwritten, regardless of its type. 
+	 * Set key to hold the string value. If key already holds a value, it is overwritten, regardless of its type. <br>
 	 * Any previous time to live associated with the key is discarded on successful SET operation.
 	 * 
 	 * @param key
 	 * @param value
-	 * @return
+	 * @return OK if SET was executed correctly. 
 	 */
 	String set(String key, String value);
 	
@@ -771,19 +778,19 @@ public interface RedisCommand {
 	 * Available since 2.6.12
 	 * 
 	 * <p>
-	 * Options
-	 * Starting with Redis 2.6.12 SET supports a set of options that modify its behavior:
-	 * SET key value [EX seconds] [PX milliseconds] [NX|XX]
-	 * EX seconds -- Set the specified expire time, in seconds.
-	 * PX milliseconds -- Set the specified expire time, in milliseconds.
-	 * NX -- Only set the key if it does not already exist.
-	 * XX -- Only set the key if it already exist.
+	 * Options<br>
+	 * Starting with Redis 2.6.12 SET supports a set of options that modify its behavior:<br>
+	 * SET key value [EX seconds] [PX milliseconds] [NX|XX]<br>
+	 * EX seconds -- Set the specified expire time, in seconds.<br>
+	 * PX milliseconds -- Set the specified expire time, in milliseconds.<br>
+	 * NX -- Only set the key if it does not already exist.<br>
+	 * XX -- Only set the key if it already exist.<br>
 	 * Note: Since the SET command options can replace SETNX, SETEX, PSETEX, it is possible that in future versions of 
 	 *       Redis these three commands will be deprecated and finally removed.
 	 * 
 	 * @param key
 	 * @param value
-	 * @return OK if SET was executed correctly. 
+	 * @return OK if SET was executed correctly. <br>
 	 *         Null multi-bulk reply: a Null Bulk Reply is returned if the SET operation was not performed becase the 
 	 *         user specified the NX or XX option but the condition was not met.
 	 */

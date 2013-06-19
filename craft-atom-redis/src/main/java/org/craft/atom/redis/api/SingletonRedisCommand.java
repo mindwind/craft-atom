@@ -334,7 +334,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	List<String> unsubscribe(String... channels);
 	
 	
-	// ~ ------------------------------------------------------------------------------------------------- Transactions
+	// ~ ------------------------------------------------------------------------------------------------ Transactions
 	
 	
 	/**
