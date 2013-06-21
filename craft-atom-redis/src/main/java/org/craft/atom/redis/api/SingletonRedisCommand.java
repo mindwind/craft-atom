@@ -24,7 +24,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return
 	 */
-	long del(String... keys);
+	Long del(String... keys);
 	
 	/**
 	 * Available since 1.0.0
@@ -47,9 +47,9 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return
 	 */
-	long bitand(String destkey, String... keys);
-	long bitor(String destkey, String... keys);
-	long bitxor(String destkey, String... keys);
+	Long bitand(String destkey, String... keys);
+	Long bitor(String destkey, String... keys);
+	Long bitxor(String destkey, String... keys);
 	
 	/**
 	 * Available since 1.0.0
@@ -154,7 +154,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return
 	 */
-	long sdiffstore(String destination, String... keys);
+	Long sdiffstore(String destination, String... keys);
 	
 	/**
 	 * Available since 1.0.0
@@ -189,7 +189,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return the number of elements in the resulting set.
 	 */
-	long sinterstore(String destination, String... keys);
+	Long sinterstore(String destination, String... keys);
 	
 	/**
 	 * Available since 1.0.0
@@ -209,7 +209,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return 1 if the element is moved.
 	 *         0 if the element is not a member of source and no operation was performed.
 	 */
-	long smove(String source, String destination, String member);
+	Long smove(String source, String destination, String member);
 	
 	/**
 	 * Available since 1.0.0
@@ -266,12 +266,12 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return the number of elements in the resulting sorted set at destination.
 	 */
-	long zinterstore(String destination, String... keys);
-	long zinterstoremax(String destination, String... keys);
-	long zinterstoremin(String destination, String... keys);
-	long zinterstore(String destination, Map<String, Integer> weightkeys);
-	long zinterstoremax(String destination, Map<String, Integer> weightkeys);
-	long zinterstoremin(String destination, Map<String, Integer> weightkeys);
+	Long zinterstore(String destination, String... keys);
+	Long zinterstoremax(String destination, String... keys);
+	Long zinterstoremin(String destination, String... keys);
+	Long zinterstore(String destination, Map<String, Integer> weightkeys);
+	Long zinterstoremax(String destination, Map<String, Integer> weightkeys);
+	Long zinterstoremin(String destination, Map<String, Integer> weightkeys);
 	
 	/**
 	 * Available since 2.0.0.
@@ -293,12 +293,12 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return the number of elements in the resulting sorted set at destination.
 	 */
-	long zunionstore(String destination, String... keys);
-	long zunionstoremax(String destination, String... keys);
-	long zunionstoremin(String destination, String... keys);
-	long zunionstore(String destination, Map<String, Integer> weightkeys);
-	long zunionstoremax(String destination, Map<String, Integer> weightkeys);
-	long zunionstoremin(String destination, Map<String, Integer> weightkeys);
+	Long zunionstore(String destination, String... keys);
+	Long zunionstoremax(String destination, String... keys);
+	Long zunionstoremin(String destination, String... keys);
+	Long zunionstore(String destination, Map<String, Integer> weightkeys);
+	Long zunionstoremax(String destination, Map<String, Integer> weightkeys);
+	Long zunionstoremin(String destination, Map<String, Integer> weightkeys);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
@@ -403,7 +403,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @param sha1
 	 * @return
 	 */
-	boolean[] scriptexists(String... sha1);
+	Boolean[] scriptexists(String... sha1);
 	
 	/**
 	 * Available since 2.6.0
@@ -750,7 +750,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * Return the number of keys in the currently-selected database.
 	 * @return
 	 */
-	long dbsize();
+	Long dbsize();
 	
 	/**
 	 * Available since 1.0.0
@@ -1023,7 +1023,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * 
 	 * @return an UNIX time stamp.
 	 */
-	long lastsave();
+	Long lastsave();
 	
 	/**
 	 * Available since 1.0.0
@@ -1215,7 +1215,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	List<Slowlog> slowlogget();
 	List<Slowlog> slowlogget(long no);
 	String slowlogreset();
-	long slowloglen();
+	Long slowloglen();
 	
 	/**
 	 * Available since 1.0.0
@@ -1230,7 +1230,7 @@ public interface SingletonRedisCommand extends RedisCommand {
      * Returns the current time in milliseconds
 	 * @return the difference, measured in milliseconds, between the current time and midnight, January 1, 1970 UTC.
 	 */
-	long time();
+	Long time();
 	
 	/**
 	 * Available since 2.6.0
@@ -1240,5 +1240,5 @@ public interface SingletonRedisCommand extends RedisCommand {
      * Returns the current time in microseconds
 	 * @return the difference, measured in microseconds, between the current time and midnight, January 1, 1970 UTC.
 	 */
-	long microtime();
+	Long microtime();
 }

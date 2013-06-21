@@ -81,7 +81,7 @@ public interface RedisCommand {
 	 * @return true if the key exists.
 	 *         false if the key does not exist.
 	 */
-	boolean exists(String key);
+	Boolean exists(String key);
 	
 	/**
 	 * Available since 1.0.0
@@ -112,7 +112,7 @@ public interface RedisCommand {
 	 * @return 1 if the timeout was set.
      *         0 if key does not exist or the timeout could not be set.
 	 */
-	long expire(String key, int seconds);
+	Long expire(String key, int seconds);
 	
 	/**
 	 * Available since 1.2.0
@@ -130,7 +130,7 @@ public interface RedisCommand {
 	 * @return 1 if the timeout was set.
 	 *         0 if key does not exist or the timeout could not be set 
 	 */
-	long expireat(String key, long timestamp);
+	Long expireat(String key, long timestamp);
 	
 	/**
 	 * Available since 1.0.0
@@ -212,7 +212,7 @@ public interface RedisCommand {
 	 * @return 1 if key was moved.
 	 *         0 if key was not moved.
 	 */
-	long move(String key, int db);
+	Long move(String key, int db);
 	
 	/**
 	 * Available since 2.2.3
@@ -254,9 +254,9 @@ public interface RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long objectrefcount(String key);
+	Long objectrefcount(String key);
 	String objectencoding(String key);
-	long objectidletime(String key);
+	Long objectidletime(String key);
 	
 	/**
 	 * Available since 2.2.0
@@ -270,7 +270,7 @@ public interface RedisCommand {
 	 * @return 1 if the timeout was removed.
 	 *         0 if key does not exist or does not have an associated timeout.
 	 */
-	long persist(String key);
+	Long persist(String key);
 	
 	/**
 	 * Available since 2.6.0
@@ -284,7 +284,7 @@ public interface RedisCommand {
 	 * @return 1 if the timeout was set.
 	 *         0 if key does not exist or the timeout could not be set.
 	 */
-	long pexpire(String key, int milliseconds);
+	Long pexpire(String key, int milliseconds);
 	
 	/**
 	 * Available since 2.6.0
@@ -299,7 +299,7 @@ public interface RedisCommand {
 	 * @return 1 if the timeout was set.
 	 *         0 if key does not exist or the timeout could not be set 
 	 */
-	long pexpireat(String key, long millisecondstimestamp);
+	Long pexpireat(String key, long millisecondstimestamp);
 	
 	/**
 	 * Available since 2.6.0
@@ -312,7 +312,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return Time to live in milliseconds or -1 when key does not exist or does not have a timeout.
 	 */
-	long pttl(String key);
+	Long pttl(String key);
 	
 	/**
 	 * Available since 1.0.0
@@ -340,7 +340,7 @@ public interface RedisCommand {
 	 * @return 1 if key was renamed to newkey.
 	 *         0 if newkey already exists.
 	 */
-	long renamenx(String key, String newkey);
+	Long renamenx(String key, String newkey);
 	
 	/**
 	 * Available since 2.6.0
@@ -499,11 +499,19 @@ public interface RedisCommand {
 	List<String> sort(String key, String bypattern, boolean alpha, boolean desc, String... getpatterns);
 	List<String> sort(String key, String bypattern, int offset, int count, String... getpatterns);
 	List<String> sort(String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String... getpatterns);
-	List<String> sort(String key, String bypattern, String destination);
-	List<String> sort(String key, String bypattern, boolean desc, String destination, String... getpatterns);
-	List<String> sort(String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns);
-	List<String> sort(String key, String bypattern, int offset, int count, String destination, String... getpatterns);
-	List<String> sort(String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String destination, String... getpatterns);
+	
+	/**
+	 * @see #sort(String)
+	 * @param key
+	 * @param bypattern
+	 * @param destination
+	 * @return The number of elements of the list at destination.
+	 */
+	Long sort(String key, String bypattern, String destination);
+	Long sort(String key, String bypattern, boolean desc, String destination, String... getpatterns);
+	Long sort(String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns);
+	Long sort(String key, String bypattern, int offset, int count, String destination, String... getpatterns);
+	Long sort(String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String destination, String... getpatterns);
 
 	/**
 	 * Available since 1.0.0
@@ -516,7 +524,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return TTL in seconds, -2 when key does not exist or -1 when key does not have a timeout.
 	 */
-	long ttl(String key);
+	Long ttl(String key);
 	
 	/**
 	 * Available since 1.0.0
@@ -549,7 +557,7 @@ public interface RedisCommand {
 	 * @param value
 	 * @return the length of the string after the append operation.
 	 */
-	long append(String key, String value);
+	Long append(String key, String value);
 	
 	/**
 	 * Available since 2.6.0
@@ -566,7 +574,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return The number of bits set to 1.
 	 */
-	long bitcount(String key);
+	Long bitcount(String key);
 	
 	/**
 	 * Available since 2.6.0
@@ -584,14 +592,14 @@ public interface RedisCommand {
 	 * <p>
 	 * Handling of strings with different lengths
 	 * When an operation is performed between strings having different lengths, all the strings shorter than the longest string 
-	 * in the set are treated as if they were zero-padded up to the length of the longest string.
+	 * in the set are treated as if they were zero-padded up to the length of the Longest string.
 	 * The same holds true for non-existent keys, that are considered as a stream of zero bytes up to the length of the longest string.
 	 * 
 	 * @param destkey
 	 * @param keys
 	 * @return The size of the string stored in the destination key, that is equal to the size of the longest input string.
 	 */
-	long bitnot(String destkey, String key);
+	Long bitnot(String destkey, String key);
 	
 	/**
 	 * Available since 1.0.0
@@ -606,7 +614,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return the value of key after the decrement
 	 */
-	long decr(String key);
+	Long decr(String key);
 	
 	/**
 	 * Available since 1.0.0
@@ -622,7 +630,7 @@ public interface RedisCommand {
 	 * @param decrement
 	 * @return the value of key after the decrement
 	 */
-	long decrby(String key, long decrement);
+	Long decrby(String key, long decrement);
 	
 	/**
 	 * Available since 1.0.0
@@ -651,7 +659,7 @@ public interface RedisCommand {
 	 * @param offset
 	 * @return the bit value stored at offset.
 	 */
-	boolean getbit(String key, long offset);
+	Boolean getbit(String key, long offset);
 	
 	/**
 	 * Available since 2.4.0
@@ -703,7 +711,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return the value of key after the increment
 	 */
-	long incr(String key);
+	Long incr(String key);
 	
 	/**
 	 * available since 1.0.0
@@ -719,7 +727,7 @@ public interface RedisCommand {
 	 * @param increment
 	 * @return  the value of key after the increment
 	 */
-	long incrby(String key, long increment);
+	Long incrby(String key, long increment);
 	
 	/**
 	 * Available since 2.6.0
@@ -744,7 +752,7 @@ public interface RedisCommand {
 	 * @param increment
 	 * @return the value of key after the increment.
 	 */
-	double incrbyfloat(String key, double increment);
+	Double incrbyfloat(String key, double increment);
 	
 	/**
 	 * Available since 2.6.0
@@ -823,7 +831,7 @@ public interface RedisCommand {
 	 * @param value true means bit is set 1, otherwise 0
 	 * @return the original bit value stored at offset
 	 */
-	boolean setbit(String key, long offset, boolean value);
+	Boolean setbit(String key, long offset, boolean value);
 	
 	/**
 	 * Available since 2.0.0
@@ -859,7 +867,7 @@ public interface RedisCommand {
 	 * @return 1 if the key was set
 	 *         0 if the key was not set
 	 */
-	long setnx(String key, String value);
+	Long setnx(String key, String value);
 	
 	/**
 	 * Available since 2.2.0.
@@ -886,7 +894,7 @@ public interface RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	long setrange(String key, long offset, String value);
+	Long setrange(String key, long offset, String value);
 	
 	/**
 	 * Available since 2.2.0.
@@ -898,7 +906,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return the length of the string at key, or 0 when key does not exist.
 	 */
-	long strlen(String key);
+	Long strlen(String key);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Hashes
@@ -922,7 +930,7 @@ public interface RedisCommand {
 	 * @param fields
 	 * @return the number of fields that were removed from the hash, not including specified but non existing fields.
 	 */
-	long hdel(String key, String... fields);
+	Long hdel(String key, String... fields);
 	
 	/**
 	 * Available since 2.0.0
@@ -936,7 +944,7 @@ public interface RedisCommand {
 	 * @return true if the hash contains field.
 	 *         false if the hash does not contain field, or key does not exist.
 	 */
-	boolean hexists(String key, String field);
+	Boolean hexists(String key, String field);
 	
 	/**
 	 * Available since 2.0.0
@@ -979,7 +987,7 @@ public interface RedisCommand {
 	 * @param value
 	 * @return the value at field after the increment operation.
 	 */
-	long hincrby(String key, String field, long value);
+	Long hincrby(String key, String field, long value);
 	
 	/**
 	 * Available since 2.6.0
@@ -999,7 +1007,7 @@ public interface RedisCommand {
 	 * @param value
 	 * @return the value of field after the increment.
 	 */
-	double hincrbyfloat(String key, String field, double value);
+	Double hincrbyfloat(String key, String field, double value);
 	
 	/**
 	 * Available since 2.0.0
@@ -1023,7 +1031,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return number of fields in the hash, or 0 when key does not exist.
 	 */
-	long hlen(String key);
+	Long hlen(String key);
 	
 	/**
 	 * Available since 2.0.0
@@ -1068,7 +1076,7 @@ public interface RedisCommand {
 	 * @return 1 if field is a new field in the hash and value was set.
 	 *         0 if field already exists in the hash and the value was updated.
 	 */
-	long hset(String key, String field, String value);
+	Long hset(String key, String field, String value);
 	
 	/**
 	 * Available since 2.0.0
@@ -1084,7 +1092,7 @@ public interface RedisCommand {
 	 * @return 1 if field is a new field in the hash and value was set.
 	 *         0 if field already exists in the hash and no operation was performed.
 	 */
-	long hsetnx(String key, String field, String value);
+	Long hsetnx(String key, String field, String value);
 	
 	/**
 	 * Available since 2.0.0
@@ -1264,8 +1272,8 @@ public interface RedisCommand {
 	 * @param value
 	 * @return the length of the list after the insert operation, or -1 when the value pivot was not found.
 	 */
-	long linsertbefore(String key, String pivot, String value);
-	long linsertafter(String key, String pivot, String value);
+	Long linsertbefore(String key, String pivot, String value);
+	Long linsertafter(String key, String pivot, String value);
 	
 	/**
 	 * Available since 1.0.0
@@ -1278,7 +1286,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return the length of the list at key.
 	 */
-	long llen(String key);
+	Long llen(String key);
 	
 	/**
 	 * Available since 1.0.0
@@ -1311,7 +1319,7 @@ public interface RedisCommand {
 	 * @param values
 	 * @return the length of the list after the push operations.
 	 */
-	long lpush(String key, String... values);
+	Long lpush(String key, String... values);
 	
 	/**
 	 * Available since 2.2.0
@@ -1325,7 +1333,7 @@ public interface RedisCommand {
 	 * @param value
 	 * @return the length of the list after the push operation.
 	 */
-	long lpushx(String key, String value);
+	Long lpushx(String key, String value);
 	
 	/**
 	 * Available since 1.0.0
@@ -1373,7 +1381,7 @@ public interface RedisCommand {
 	 * @param value
 	 * @return the number of removed elements.
 	 */
-	long lrem(String key, long count, String value);
+	Long lrem(String key, long count, String value);
 	
 	/**
 	 * Available since 1.0.0
@@ -1469,7 +1477,7 @@ public interface RedisCommand {
 	 * @param values
 	 * @return the length of the list after the push operation.
 	 */
-	long rpush(String key, String... values);
+	Long rpush(String key, String... values);
 	
 	/**
 	 * Available since 2.2.0
@@ -1483,7 +1491,7 @@ public interface RedisCommand {
 	 * @param value
 	 * @return the length of the list after the push operation.
 	 */
-	long rpushx(String key, String value);
+	Long rpushx(String key, String value);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Sets
@@ -1505,7 +1513,7 @@ public interface RedisCommand {
 	 * @param members
 	 * @return the number of elements that were added to the set, not including all the elements already present into the set.
 	 */
-	long sadd(String key, String... members);
+	Long sadd(String key, String... members);
 	
 	/**
 	 * Available since 1.0.0
@@ -1517,7 +1525,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return the cardinality (number of elements) of the set, or 0 if key does not exist.
 	 */
-	long scard(String key);
+	Long scard(String key);
 	
 	/**
 	 * Available since 1.0.0
@@ -1531,7 +1539,7 @@ public interface RedisCommand {
 	 * @return true if the element is a member of the set.
 	 *         false if the element is not a member of the set, or if key does not exist.
 	 */
-	boolean sismember(String key, String member);
+	Boolean sismember(String key, String member);
 	
 	/**
 	 * Available since 1.0.0.
@@ -1604,7 +1612,7 @@ public interface RedisCommand {
 	 * @param members
 	 * @return the number of members that were removed from the set, not including non existing members.
 	 */
-	long srem(String key, String... members);
+	Long srem(String key, String... members);
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------- Sorted Sets
@@ -1630,7 +1638,7 @@ public interface RedisCommand {
 	 * @param member
 	 * @return The number of elements added to the sorted sets, not including elements already existing for which the score was updated.
 	 */
-	long zadd(String key, double score, String member);
+	Long zadd(String key, double score, String member);
 	
 	/**
 	 * Available since 1.2.0
@@ -1642,7 +1650,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return the cardinality (number of elements) of the sorted set, or 0 if key does not exist.
 	 */
-	long zcard(String key);
+	Long zcard(String key);
 	
 	/**
 	 * Available since 2.0.0
@@ -1657,7 +1665,7 @@ public interface RedisCommand {
 	 * @param max
 	 * @return
 	 */
-	long zcount(String key, double min, double max);
+	Long zcount(String key, double min, double max);
 	
 	/**
 	 * Available since 1.2.0
@@ -1676,7 +1684,7 @@ public interface RedisCommand {
 	 * @param member
 	 * @return the new score of member (a double precision floating point number), represented as string.
 	 */
-	double zincrby(String key, double score, String member);
+	Double zincrby(String key, double score, String member);
 	
 	/**
 	 * Available since 1.2.0
@@ -1780,7 +1788,7 @@ public interface RedisCommand {
 	 * @param members
 	 * @return The number of members removed from the sorted set, not including non existing members.
 	 */
-	long zrem(String key, String... members);
+	Long zrem(String key, String... members);
 	
 	/**
 	 * Available since 2.0.0
@@ -1797,7 +1805,7 @@ public interface RedisCommand {
 	 * @param stop
 	 * @return the number of elements removed.
 	 */
-	long zremrangebyrank(String key, long start, long stop);
+	Long zremrangebyrank(String key, long start, long stop);
 	
 	/**
 	 * Available since 1.2.0
@@ -1816,8 +1824,8 @@ public interface RedisCommand {
 	 * @param max
 	 * @return the number of elements removed.
 	 */
-	long zremrangebyscore(String key, double min, double max);
-	long zremrangebyscore(String key, String min, String max);
+	Long zremrangebyscore(String key, double min, double max);
+	Long zremrangebyscore(String key, String min, String max);
 	
 	/**
 	 * Available since 1.2.0
@@ -1903,7 +1911,7 @@ public interface RedisCommand {
 	 * @param message
 	 * @return the number of clients that received the message.
 	 */
-	long publish(String channel, String message);
+	Long publish(String channel, String message);
 	
 	/**
 	 * Available since 2.0.0.
@@ -1997,7 +2005,7 @@ public interface RedisCommand {
 	 * @param sha1
 	 * @return true if exists, otherwise false
 	 */
-	boolean scriptexists(String sha1);
+	Boolean scriptexists(String sha1);
 	
 	/**
 	 * Available since 2.6.0

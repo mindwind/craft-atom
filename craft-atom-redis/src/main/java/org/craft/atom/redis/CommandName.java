@@ -19,7 +19,9 @@ public enum CommandName {
 	KEYS,
 	MIGRATE,
 	MOVE,
-	OBJECT,
+	OBJECT_REFCOUNT,
+	OBJECT_ENCODING,
+	OBJECT_IDLETIME,
 	PERSIST,
 	PEXPIRE,
 	PEXPIREAT,
@@ -29,6 +31,20 @@ public enum CommandName {
 	RENAMENX,
 	RESTORE,
 	SORT,
+	SORT_DESC,
+	SORT_ALPHA_DESC,
+	SORT_OFFSET_COUNT,
+	SORT_OFFSET_COUNT_ALPHA_DESC,
+	SORT_BY_GET,
+	SORT_BY_GET_DESC,
+	SORT_BY_GET_ALPHA_DESC,
+	SORT_BY_GET_OFFSET_COUNT,
+	SORT_BY_GET_OFFSET_COUNT_ALPHA_DESC,
+	SORT_BY_DESTINATION,
+	SORT_BY_GET_DESC_DESTINATION,
+	SORT_BY_GET_ALPHA_DESC_DESTINATION,
+	SORT_BY_GET_OFFSET_COUNT_DESTINATION,
+	SORT_BY_GET_OFFSET_COUNT_ALPHA_DESC_DESTINATION,
 	TTL,
 	TYPE,
 	
@@ -76,6 +92,47 @@ public enum CommandName {
 	HSET,
 	HSETNX,
 	HVALS,
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------- Lists
+	
+	
+	BLPOP,
+	BRPOP,
+	BRPOPLPUSH,
+	LINDEX,
+	LINSERT,
+	LLEN,
+	LPOP,
+	LPUSH,
+	LPUSHX,
+	LRANGE,
+	LREM,
+	LSET,
+	LTRIM,
+	RPOP,
+	RPOPLPUSH,
+	RPUSH,
+	RPUSHX,
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------- Sets
+	
+	
+	SADD,
+	SCARD,
+	SDIFF,
+	SDIFFSTORE,
+	SINTER,
+	SINTERSTORE,
+	SISMEMBER,
+	SMEMBERS,
+	SMOVE,
+	SPOP,
+	SRANDMEMBER,
+	SREM,
+	SUNION,
+	SUNIONSTORE,
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------ Transactions

@@ -1,6 +1,7 @@
 package org.craft.atom.redis;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -26,18 +27,31 @@ public class SingletonRedisMain {
 	}
 	
 	private static void before(String desc) {
-		System.out.println("case ------> " + desc);
+		System.out.println("case --> " + desc);
+		redis.del(K);
 	}
 	
 	private static void after() {
-		redis.del(K);
+		
 	}
 	
 	public static void main(String[] args) throws Exception {
 		init();
 		
-		// ~ -------------------------------------------------------------------------------------------- Transactions
+		// Keys
+		testDel();
+		testExists();
+//		testExpire();
+//		testExpireat();
+		testKeys();
+		testSortByGet();
 		
+		// Hashes
+		
+		// Lists
+		testLpushLrangeLlen();
+		
+		// Transactions
 		testMultiExec();
 		testWatchMultiExec();
 		testMultiDiscard();
@@ -46,6 +60,93 @@ public class SingletonRedisMain {
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
+	
+	
+	private static void testLpushLrangeLlen() {
+		before("testLpush");
+		
+		long len = redis.lpush(K, "1", "2", "3");
+		Assert.assertEquals(3, len);
+		len = redis.llen(K);
+		Assert.assertEquals(3, len);
+		List<String> l = redis.lrange(K, 0, -1);
+		Assert.assertEquals("1", l.get(2));
+		
+		after();
+	}
+	
+	private static void testSortByGet() {
+		before("testSortByGet");
+		
+		redis.lpush(K, "1", "2", "3");
+		redis.set("w_1", "3");
+		redis.set("w_2", "2");
+		redis.set("w_3", "1");
+		redis.set("o_1", "1-aaa");
+		redis.set("o_2", "2-bbb");
+		redis.set("o_3", "3-ccc");
+		List<String> l = redis.sort(K, "w_*");
+		Assert.assertEquals("1", l.get(2));
+		l = redis.sort(K, "w_*", new String[] { "o_*" });
+		Assert.assertEquals("1-aaa", l.get(2));
+		
+		after();
+	}
+	
+	private static void testKeys() {
+		before("testKeys");
+		
+		redis.set(K, V);
+		Set<String> keys = redis.keys("test*");
+		Assert.assertTrue(keys.size() > 0);
+		
+		after();
+	}
+	
+	private static void testExpireat() throws InterruptedException {
+		before("testExpireat");
+		
+		redis.set(K, V);
+		redis.expireat(K, (System.currentTimeMillis() + 2000) / 1000);
+		Thread.sleep(3000);
+		boolean b = redis.exists(K);
+		Assert.assertEquals(false, b);
+		
+		after();
+	}
+	
+	private static void testExpire() throws InterruptedException {
+		before("testExpire");
+		
+		redis.set(K, V);
+		redis.expire(K, 3);
+		Thread.sleep(4000);
+		boolean b = redis.exists(K);
+		Assert.assertEquals(false, b);
+		
+		after();
+	}
+	
+	private static void testExists() {
+		before("testExists");
+		
+		redis.set(K, V);
+		boolean b = redis.exists(K);
+		Assert.assertEquals(true, b);
+		
+		after();
+	}
+	
+	private static void testDel() {
+		before("testDel");
+		
+		redis.set(K, V);
+		redis.del(K);
+		boolean b = redis.exists(K);
+		Assert.assertEquals(false, b);
+		
+		after();
+	}
 	
 	private static void testWatchUnwatchMultiExec() {
 		before("testWatchUnwatchMultiExec");

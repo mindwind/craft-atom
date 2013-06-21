@@ -17,6 +17,7 @@ import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.SortingParams;
 import redis.clients.jedis.Transaction;
 import redis.clients.jedis.exceptions.JedisConnectionException;
 import redis.clients.jedis.exceptions.JedisDataException;
@@ -25,6 +26,7 @@ import redis.clients.jedis.exceptions.JedisDataException;
  * @author mindwind
  * @version 1.0, Jun 15, 2013
  */
+@SuppressWarnings("unchecked")
 public class SingletonRedis extends AbstractRedis implements SingletonRedisCommand {
 	
 	private static final ThreadLocal<Transaction> THREAD_LOCAL_TRANSACTION = new ThreadLocal<Transaction>();
@@ -119,6 +121,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		pool = new JedisPool(poolConfig, host, port, timeoutInMillis, password, database);
 	}
 	
+	
 	// ~ --------------------------------------------------------------------------------------------------------- Keys
 	
 
@@ -128,229 +131,559 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 	
 	private long del0(Jedis j, Transaction t, String key) {
-		long r = 0;
 		if (t != null) {
-			t.del(key);
-		} else {
-			r = j.del(key);
+			t.del(key); return 0;
 		}
-		return r;
+		
+		return j.del(key);
 	}
 
 	@Override
 	public String dump(String key) {
-		// TODO Auto-generated method stub
+		return (String) executeCommand(CommandName.DUMP, new Object[] { key });
+	}
+	
+	private String dump0(Jedis j, Transaction t, String key) {
+		if (t != null) {
+			// TODO t.dump(key); return null;
+		}
+		
+//		return j.dump(key);
 		return null;
 	}
 
 	@Override
-	public boolean exists(String key) {
-		// TODO Auto-generated method stub
-		return false;
+	public Boolean exists(String key) {
+		return (Boolean) executeCommand(CommandName.EXISTS, new Object[] { key });
+	}
+	
+	private Boolean exists0(Jedis j, Transaction t, String key) {
+		if (t != null) {
+			t.exists(key); return null;
+		}
+		
+		return j.exists(key);
 	}
 
 	@Override
-	public long expire(String key, int seconds) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Long expire(String key, int seconds) {
+		return (Long) executeCommand(CommandName.EXPIRE, new Object[] { key, seconds });
+	}
+	
+	private Long expire0(Jedis j, Transaction t, String key, int seconds) {
+		if (t != null) {
+			t.expire(key, seconds); return null;
+		}
+		
+		return j.expire(key, seconds);
 	}
 
 	@Override
-	public long expireat(String key, long timestamp) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Long expireat(String key, long timestamp) {
+		return (Long) executeCommand(CommandName.EXPIREAT, new Object[] { key, timestamp });
+	}
+	
+	private Long expireat0(Jedis j, Transaction t, String key, long timestamp) {
+		if (t != null) {
+			t.expireAt(key, timestamp); return null;
+		}
+		
+		return j.expireAt(key, timestamp);
 	}
 
 	@Override
 	public Set<String> keys(String pattern) {
-		// TODO Auto-generated method stub
-		return null;
+		return (Set<String>) executeCommand(CommandName.KEYS, new Object[] { pattern });
+	}
+	
+	private Set<String> keys0(Jedis j, Transaction t, String pattern) {
+		if (t != null) {
+			t.keys(pattern); return null;
+		}
+		
+		return j.keys(pattern);
 	}
 
 	@Override
-	public String migrate(String host, int port, String key, int destinationdb,
-			int timeout) {
-		// TODO Auto-generated method stub
-		return null;
+	public String migrate(String host, int port, String key, int destinationdb, int timeout) {
+		return (String) executeCommand(CommandName.MIGRATE, new Object[] { host, port, key, destinationdb, timeout });
+	}
+	
+	private String migrate0(Jedis j, Transaction t, String host, int port, String key, int destinationdb, int timeout) {
+		return null; // TODO
 	}
 
 	@Override
-	public long move(String key, int db) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Long move(String key, int db) {
+		return (Long) executeCommand(CommandName.MOVE, new Object[] { key, db });
+	}
+	
+	private Long move0(Jedis j, Transaction t, String key, int db) {
+		if (t != null) {
+			t.move(key, db); return null;
+		}
+		
+		return j.move(key, db);
 	}
 
 	@Override
-	public long objectrefcount(String key) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Long objectrefcount(String key) {
+		return (Long) executeCommand(CommandName.OBJECT_REFCOUNT, new Object[] { key });
+	}
+	
+	private Long objectrefcount0(Jedis j, Transaction t, String key) {
+		if (t != null) {
+			// TODO
+		}
+		
+		return j.objectRefcount(key);
 	}
 
 	@Override
 	public String objectencoding(String key) {
-		// TODO Auto-generated method stub
+		return (String) executeCommand(CommandName.OBJECT_ENCODING, new Object[] { key });
+	}
+	
+	private String objectencoding0(Jedis j, Transaction t, String key) {
+		if (t != null) {
+			// TODO
+		}
+		
+		return j.objectEncoding(key);
+	}
+
+	@Override
+	public Long objectidletime(String key) {
+		return (Long) executeCommand(CommandName.OBJECT_IDLETIME, new Object[] { key });
+	}
+	
+	private Long objectidletime0(Jedis j, Transaction t, String key) {
+		if (t != null) {
+			// TODO
+		}
+		
+		return j.objectIdletime(key);
+	}
+
+	@Override
+	public Long persist(String key) {
+		return (Long) executeCommand(CommandName.PERSIST, new Object[] { key });
+	}
+	
+	private Long persist0(Jedis j, Transaction t, String key) {
+		if (t != null) {
+			t.persist(key); return null;
+		}
+		
+		return j.persist(key);
+	}
+
+	@Override
+	public Long pexpire(String key, int milliseconds) {
+		return (Long) executeCommand(CommandName.PEXPIRE, new Object[] { key });
+	}
+	
+	private Long pexpire0(Jedis j, Transaction t, String key, int milliseconds) {
+		if (t != null) {
+			// TODO
+		}
+		
 		return null;
 	}
 
 	@Override
-	public long objectidletime(String key) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Long pexpireat(String key, long millisecondstimestamp) {
+		return (Long) executeCommand(CommandName.PEXPIREAT, new Object[] { key, millisecondstimestamp });
+	}
+	
+	private Long pexpireat0(Jedis j, Transaction t, String key, long millisecondstimestamp) {
+		if (t != null) {
+			// TODO return null;
+		}
+		
+		return null;
 	}
 
 	@Override
-	public long persist(String key) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Long pttl(String key) {
+		return (Long) executeCommand(CommandName.PTTL, new Object[] { key });
 	}
-
+	
+	private Long pttl0(Jedis j, Transaction t, String key) {
+		if (t != null) {
+			// TODO
+		}
+		
+		return null;
+	}
+	
 	@Override
-	public long pexpire(String key, int milliseconds) {
-		// TODO Auto-generated method stub
-		return 0;
+	public String randomkey() {
+		return (String) executeCommand(CommandName.RENAME, new Object[] {});
 	}
-
-	@Override
-	public long pexpireat(String key, long millisecondstimestamp) {
-		// TODO Auto-generated method stub
-		return 0;
+	
+	private String randomkey0(Jedis j, Transaction t) {
+		if (t != null) {
+			t.randomKey(); return null;
+		}
+		
+		return j.randomKey();
 	}
-
-	@Override
-	public long pttl(String key) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	
 
 	@Override
 	public String rename(String key, String newkey) {
-		// TODO Auto-generated method stub
-		return null;
+		return (String) executeCommand(CommandName.RENAME, new Object[] { key, newkey });
+	}
+	
+	private String rename0(Jedis j, Transaction t, String key, String newkey) {
+		if (t != null) {
+			t.rename(key, newkey); return null;
+		}
+		
+		return j.rename(key, newkey);
 	}
 
 	@Override
-	public long renamenx(String key, String newkey) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Long renamenx(String key, String newkey) {
+		return (Long) executeCommand(CommandName.RENAMENX, new Object[] { key, newkey });
+	}
+	
+	private Long renamenx0(Jedis j, Transaction t, String key, String newkey) {
+		if (t != null) {
+			t.renamenx(key, newkey); return null;
+		}
+		
+		return j.renamenx(key, newkey);
 	}
 
 	@Override
 	public String restore(String key, long ttl, String serializedvalue) {
-		// TODO Auto-generated method stub
+		return (String) executeCommand(CommandName.RESTORE, new Object[] { key, ttl, serializedvalue });
+	}
+	
+	private String restore0(Jedis j, Transaction t, String key, long ttl, String serializedvalue) {
+		if (t != null) {
+			// TODO
+		}
+		
 		return null;
 	}
 
 	@Override
 	public List<String> sort(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return (List<String>) executeCommand(CommandName.SORT, new Object[] { key });
+	}
+	
+	private List<String> sort0(Jedis j, Transaction t, String key) {
+		if (t != null) {
+			t.sort(key); return null;
+		}
+		
+		return j.sort(key);
 	}
 
 	@Override
 	public List<String> sort(String key, boolean desc) {
-		// TODO Auto-generated method stub
-		return null;
+		return (List<String>) executeCommand(CommandName.SORT_DESC, new Object[] { key, desc });
+	}
+	
+	private List<String> sort0(Jedis j, Transaction t, String key, boolean desc) {
+		SortingParams sp = new SortingParams();
+		if (desc) {
+			sp.desc();
+		}
+		
+		if (t != null) {
+			t.sort(key, sp); return null;
+		}
+		
+		return j.sort(key, sp);
 	}
 
 	@Override
 	public List<String> sort(String key, boolean alpha, boolean desc) {
-		// TODO Auto-generated method stub
-		return null;
+		return (List<String>) executeCommand(CommandName.SORT_ALPHA_DESC, new Object[] { key, alpha, desc });
+	}
+	
+	private List<String> sort0(Jedis j, Transaction t, String key, boolean alpha, boolean desc) {
+		SortingParams sp = new SortingParams();
+		if (desc) {
+			sp.desc();
+		}
+		if (alpha) { 
+			sp.alpha() ;
+		}
+		
+		if (t != null) {
+			t.sort(key, sp); return null;
+		}
+		
+		return j.sort(key, sp);
 	}
 
 	@Override
 	public List<String> sort(String key, int offset, int count) {
-		// TODO Auto-generated method stub
-		return null;
+		return (List<String>) executeCommand(CommandName.SORT_OFFSET_COUNT, new Object[] { key, offset, count });
+	}
+	
+	private List<String> sort0(Jedis j, Transaction t, String key, int offset, int count) {
+		if (t != null) {
+			t.sort(key, new SortingParams().limit(offset, count)); return null;
+		}
+		
+		return j.sort(key, new SortingParams().limit(offset, count));
 	}
 
 	@Override
-	public List<String> sort(String key, int offset, int count, boolean alpha,
-			boolean desc) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> sort(String key, int offset, int count, boolean alpha, boolean desc) {
+		return (List<String>) executeCommand(CommandName.SORT_OFFSET_COUNT_ALPHA_DESC, new Object[] { key, offset, count, alpha, desc });
+	}
+	
+	private List<String> sort0(Jedis j, Transaction t, String key, int offset, int count, boolean alpha, boolean desc) {
+		SortingParams sp = new SortingParams();
+		if (desc) {
+			sp.desc();
+		}
+		if (alpha) { 
+			sp.alpha() ;
+		}
+		sp.limit(offset, count);
+		
+		if (t != null) {
+			t.sort(key, sp); return null;
+		}
+		
+		return j.sort(key, sp);
 	}
 
 	@Override
-	public List<String> sort(String key, String bypattern,
-			String... getpatterns) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> sort(String key, String bypattern, String... getpatterns) {
+		return (List<String>) executeCommand(CommandName.SORT_BY_GET, new Object[] { key, bypattern, getpatterns });
+	}
+	
+	private List<String> sort0(Jedis j, Transaction t, String key, String bypattern, String... getpatterns) {
+		SortingParams sp = new SortingParams();
+		sp.by(bypattern);
+		sp.get(getpatterns);
+		
+		if (t != null) {
+			t.sort(key, sp); return null;
+		}
+		
+		return j.sort(key, sp);
 	}
 
 	@Override
-	public List<String> sort(String key, String bypattern, boolean desc,
-			String... getpatterns) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> sort(String key, String bypattern, boolean desc, String... getpatterns) {
+		return (List<String>) executeCommand(CommandName.SORT_BY_GET_DESC, new Object[] { key, bypattern, desc, getpatterns });
+	}
+	
+	private List<String> sort0(Jedis j, Transaction t, String key, String bypattern, boolean desc, String... getpatterns) {
+		SortingParams sp = new SortingParams();
+		sp.by(bypattern);
+		sp.get(getpatterns);
+		if (desc) {
+			sp.desc();
+		}
+		
+		if (t != null) {
+			t.sort(key, sp); return null;
+		}
+		
+		return j.sort(key, sp);
 	}
 
 	@Override
-	public List<String> sort(String key, String bypattern, boolean alpha,
-			boolean desc, String... getpatterns) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> sort(String key, String bypattern, boolean alpha, boolean desc, String... getpatterns) {
+		return (List<String>) executeCommand(CommandName.SORT_BY_GET_ALPHA_DESC, new Object[] { key, bypattern, alpha, desc, getpatterns });
+	}
+	
+	private List<String> sort0(Jedis j, Transaction t, String key, String bypattern, boolean alpha, boolean desc, String... getpatterns) {
+		SortingParams sp = new SortingParams();
+		sp.by(bypattern);
+		sp.get(getpatterns);
+		if (alpha) {
+			sp.alpha();
+		}
+		if (desc) {
+			sp.desc();
+		}
+		
+		if (t != null) {
+			t.sort(key, sp); return null;
+		}
+		
+		return j.sort(key, sp);
 	}
 
 	@Override
-	public List<String> sort(String key, String bypattern, int offset,
-			int count, String... getpatterns) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> sort(String key, String bypattern, int offset, int count, String... getpatterns) {
+		return (List<String>) executeCommand(CommandName.SORT_BY_GET_OFFSET_COUNT, new Object[] { key, bypattern, offset, count, getpatterns });
+	}
+	
+	private List<String> sort0(Jedis j, Transaction t, String key, String bypattern, int offset, int count, String... getpatterns) {
+		SortingParams sp = new SortingParams();
+		sp.by(bypattern);
+		sp.get(getpatterns);
+		sp.limit(offset, count);
+		
+		if (t != null) {
+			t.sort(key, sp); return null;
+		}
+		
+		return j.sort(key, sp);
 	}
 
 	@Override
-	public List<String> sort(String key, String bypattern, int offset,
-			int count, boolean alpha, boolean desc, String... getpatterns) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<String> sort(String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String... getpatterns) {
+		return (List<String>) executeCommand(CommandName.SORT_BY_GET_OFFSET_COUNT_ALPHA_DESC, new Object[] { key, bypattern, offset, count, alpha, desc, getpatterns });
+	}
+	
+	private List<String> sort0(Jedis j, Transaction t, String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String... getpatterns) {
+		SortingParams sp = new SortingParams();
+		sp.by(bypattern);
+		sp.get(getpatterns);
+		sp.limit(offset, count);
+		if (alpha) {
+			sp.alpha();
+		}
+		if (desc) {
+			sp.desc();
+		}
+		
+		if (t != null) {
+			t.sort(key, sp); return null;
+		}
+		
+		return j.sort(key, sp);
 	}
 
 	@Override
-	public List<String> sort(String key, String bypattern, String destination) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long sort(String key, String bypattern, String destination) {
+		return (Long) executeCommand(CommandName.SORT_BY_DESTINATION, new Object[] { key, bypattern, destination });
+	}
+	
+	private Long sort0(Jedis j, Transaction t, String key, String bypattern, String destination) {
+		SortingParams sp = new SortingParams();
+		sp.by(bypattern);
+		
+		if (t != null) {
+			t.sort(key, sp, destination); return null;
+		}
+		
+		return j.sort(key, sp, destination);
 	}
 
 	@Override
-	public List<String> sort(String key, String bypattern, boolean desc,
-			String destination, String... getpatterns) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long sort(String key, String bypattern, boolean desc, String destination, String... getpatterns) {
+		return (Long) executeCommand(CommandName.SORT_BY_GET_DESC_DESTINATION, new Object[] { key, bypattern, desc, destination, getpatterns });
+	}
+	
+	private Long sort0(Jedis j, Transaction t, String key, String bypattern, boolean desc, String destination, String... getpatterns) {
+		SortingParams sp = new SortingParams();
+		sp.by(bypattern);
+		sp.get(getpatterns);
+		if (desc) {
+			sp.desc();
+		}
+		
+		if (t != null) {
+			t.sort(key, sp, destination); return null;
+		}
+		
+		return j.sort(key, sp, destination);
 	}
 
 	@Override
-	public List<String> sort(String key, String bypattern, boolean alpha,
-			boolean desc, String destination, String... getpatterns) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long sort(String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns) {
+		return (Long) executeCommand(CommandName.SORT_BY_GET_ALPHA_DESC_DESTINATION, new Object[] { key, bypattern, alpha, desc, destination, getpatterns });
+	}
+	
+	private Long sort0(Jedis j, Transaction t, String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns) {
+		SortingParams sp = new SortingParams();
+		sp.by(bypattern);
+		sp.get(getpatterns);
+		if (alpha) {
+			sp.alpha();
+		}
+		if (desc) {
+			sp.desc();
+		}
+		
+		if (t != null) {
+			t.sort(key, sp, destination); return null;
+		}
+		
+		return j.sort(key, sp, destination);
 	}
 
 	@Override
-	public List<String> sort(String key, String bypattern, int offset,
-			int count, String destination, String... getpatterns) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long sort(String key, String bypattern, int offset, int count, String destination, String... getpatterns) {
+		return (Long) executeCommand(CommandName.SORT_BY_GET_OFFSET_COUNT_DESTINATION, new Object[] { key, bypattern, offset, count, destination, getpatterns });
+	}
+	
+	private Long sort0(Jedis j, Transaction t, String key, String bypattern, int offset, int count, String destination, String... getpatterns) {
+		SortingParams sp = new SortingParams();
+		sp.by(bypattern);
+		sp.get(getpatterns);
+		sp.limit(offset, count);
+		
+		if (t != null) {
+			t.sort(key, sp, destination); return null;
+		}
+		
+		return j.sort(key, sp, destination);
 	}
 
 	@Override
-	public List<String> sort(String key, String bypattern, int offset,
-			int count, boolean alpha, boolean desc, String destination,
-			String... getpatterns) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long sort(String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String destination, String... getpatterns) {
+		return (Long) executeCommand(CommandName.SORT_BY_GET_OFFSET_COUNT_ALPHA_DESC_DESTINATION, new Object[] { key, bypattern, offset, count, alpha, desc, destination, getpatterns });
+	}
+	
+	private Long sort0(Jedis j, Transaction t, String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String destination, String... getpatterns) {
+		SortingParams sp = new SortingParams();
+		sp.by(bypattern);
+		sp.get(getpatterns);
+		sp.limit(offset, count);
+		if (alpha) {
+			sp.alpha();
+		}
+		if (desc) {
+			sp.desc();
+		}
+		
+		if (t != null) {
+			t.sort(key, sp, destination); return null;
+		}
+		
+		return j.sort(key, sp, destination);
 	}
 
 	@Override
-	public long ttl(String key) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Long ttl(String key) {
+		return (Long) executeCommand(CommandName.TTL, new Object[] { key });
+	}
+	
+	private Long ttl0(Jedis j, Transaction t, String key) {
+		if (t != null) {
+			t.ttl(key); return null;
+		}
+		
+		return j.ttl(key);
 	}
 
 	@Override
 	public String type(String key) {
-		// TODO Auto-generated method stub
-		return null;
+		return (String) executeCommand(CommandName.TYPE, new Object[] { key });
+	}
+	
+	private String type0(Jedis j, Transaction t, String key) {
+		if (t != null) {
+			t.type(key); return null;
+		}
+		
+		return j.type(key);
 	}
 	
 	
@@ -358,33 +691,33 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	
 
 	@Override
-	public long append(String key, String value) {
+	public Long append(String key, String value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
-	public long bitcount(String key) {
+	public Long bitcount(String key) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
-	public long bitnot(String destkey, String key) {
+	public Long bitnot(String destkey, String key) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
-	public long decr(String key) {
+	public Long decr(String key) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
-	public long decrby(String key, long decrement) {
+	public Long decrby(String key, long decrement) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
@@ -393,17 +726,15 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 	
 	private String get0(Jedis j, Transaction t, String key) {
-		String r = null;
 		if (t != null) {
-			t.get(key);
-		} else {
-			r = j.get(key);
+			t.get(key); return null;
 		}
-		return r;
+		
+		return j.get(key);
 	}
 
 	@Override
-	public boolean getbit(String key, long offset) {
+	public Boolean getbit(String key, long offset) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -421,21 +752,21 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long incr(String key) {
+	public Long incr(String key) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long incrby(String key, long increment) {
+	public Long incrby(String key, long increment) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public double incrbyfloat(String key, double increment) {
+	public Double incrbyfloat(String key, double increment) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
@@ -450,13 +781,11 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 	
 	private String set0(Jedis j, Transaction t, String key, String value) {
-		String r = null;
 		if (t != null) {
-			t.set(key, value);
-		} else {
-			r = j.set(key, value);
+			t.set(key, value); return null;
 		}
-		return r;
+		
+		return j.set(key, value);
 	}
 
 	@Override
@@ -490,7 +819,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public boolean setbit(String key, long offset, boolean value) {
+	public Boolean setbit(String key, long offset, boolean value) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -502,31 +831,31 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long setnx(String key, String value) {
+	public Long setnx(String key, String value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long setrange(String key, long offset, String value) {
+	public Long setrange(String key, long offset, String value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long strlen(String key) {
+	public Long strlen(String key) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long hdel(String key, String... fields) {
+	public Long hdel(String key, String... fields) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public boolean hexists(String key, String field) {
+	public Boolean hexists(String key, String field) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -544,15 +873,15 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long hincrby(String key, String field, long value) {
+	public Long hincrby(String key, String field, long value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public double hincrbyfloat(String key, String field, double value) {
+	public Double hincrbyfloat(String key, String field, double value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
@@ -562,9 +891,9 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long hlen(String key) {
+	public Long hlen(String key) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -580,15 +909,15 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long hset(String key, String field, String value) {
+	public Long hset(String key, String field, String value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long hsetnx(String key, String field, String value) {
+	public Long hsetnx(String key, String field, String value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -634,21 +963,28 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long linsertbefore(String key, String pivot, String value) {
+	public Long linsertbefore(String key, String pivot, String value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long linsertafter(String key, String pivot, String value) {
+	public Long linsertafter(String key, String pivot, String value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long llen(String key) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Long llen(String key) {
+		return (Long) executeCommand(CommandName.LLEN, key);
+	}
+	
+	private Long llen0(Jedis j, Transaction t, String key) {
+		if (t != null) {
+			t.llen(key); return null;
+		}
+		
+		return j.llen(key);
 	}
 
 	@Override
@@ -658,27 +994,41 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long lpush(String key, String... values) {
-		// TODO Auto-generated method stub
-		return 0;
+	public Long lpush(String key, String... values) {
+		return (Long) executeCommand(CommandName.LPUSH, key, values);
+	}
+	
+	private Long lpush0(Jedis j, Transaction t, String key, String... values) {
+		if (t != null) {
+			t.lpush(key, values); return null;
+		}
+		
+		return j.lpush(key, values);
 	}
 
 	@Override
-	public long lpushx(String key, String value) {
+	public Long lpushx(String key, String value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
 	public List<String> lrange(String key, long start, long stop) {
-		// TODO Auto-generated method stub
-		return null;
+		return (List<String>) executeCommand(CommandName.LRANGE, key, start, stop);
+	}
+	
+	private List<String> lrange0(Jedis j, Transaction t, String key, long start, long stop) {
+		if (t != null) {
+			t.lrange(key, start, stop); return null;
+		}
+		
+		return j.lrange(key, start, stop);
 	}
 
 	@Override
-	public long lrem(String key, long count, String value) {
+	public Long lrem(String key, long count, String value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -706,31 +1056,31 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long rpush(String key, String... values) {
+	public Long rpush(String key, String... values) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long rpushx(String key, String value) {
+	public Long rpushx(String key, String value) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long sadd(String key, String... members) {
+	public Long sadd(String key, String... members) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long scard(String key) {
+	public Long scard(String key) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public boolean sismember(String key, String member) {
+	public Boolean sismember(String key, String member) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -760,33 +1110,33 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long srem(String key, String... members) {
+	public Long srem(String key, String... members) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zadd(String key, double score, String member) {
+	public Long zadd(String key, double score, String member) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zcard(String key) {
+	public Long zcard(String key) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zcount(String key, double min, double max) {
+	public Long zcount(String key, double min, double max) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public double zincrby(String key, double score, String member) {
+	public Double zincrby(String key, double score, String member) {
 		// TODO Auto-generated method stub
-		return 0;
+		return null;
 	}
 
 	@Override
@@ -863,27 +1213,27 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long zrem(String key, String... members) {
+	public Long zrem(String key, String... members) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zremrangebyrank(String key, long start, long stop) {
+	public Long zremrangebyrank(String key, long start, long stop) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zremrangebyscore(String key, double min, double max) {
+	public Long zremrangebyscore(String key, double min, double max) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zremrangebyscore(String key, String min, String max) {
+	public Long zremrangebyscore(String key, String min, String max) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -938,9 +1288,9 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long publish(String channel, String message) {
+	public Long publish(String channel, String message) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -998,7 +1348,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public boolean scriptexists(String sha1) {
+	public Boolean scriptexists(String sha1) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -1016,33 +1366,27 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long del(String... keys) {
+	public Long del(String... keys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public String randomkey() {
+	public Long bitand(String destkey, String... keys) {
 		// TODO Auto-generated method stub
-		return null;
+		return 0L;
 	}
 
 	@Override
-	public long bitand(String destkey, String... keys) {
+	public Long bitor(String destkey, String... keys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long bitor(String destkey, String... keys) {
+	public Long bitxor(String destkey, String... keys) {
 		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public long bitxor(String destkey, String... keys) {
-		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -1094,9 +1438,9 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long sdiffstore(String destination, String... keys) {
+	public Long sdiffstore(String destination, String... keys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -1106,15 +1450,15 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long sinterstore(String destination, String... keys) {
+	public Long sinterstore(String destination, String... keys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long smove(String source, String destination, String member) {
+	public Long smove(String source, String destination, String member) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -1130,79 +1474,79 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long zinterstore(String destination, String... keys) {
+	public Long zinterstore(String destination, String... keys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zinterstoremax(String destination, String... keys) {
+	public Long zinterstoremax(String destination, String... keys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zinterstoremin(String destination, String... keys) {
+	public Long zinterstoremin(String destination, String... keys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zinterstore(String destination, Map<String, Integer> weightkeys) {
+	public Long zinterstore(String destination, Map<String, Integer> weightkeys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zinterstoremax(String destination,
+	public Long zinterstoremax(String destination,
 			Map<String, Integer> weightkeys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zinterstoremin(String destination,
+	public Long zinterstoremin(String destination,
 			Map<String, Integer> weightkeys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zunionstore(String destination, String... keys) {
+	public Long zunionstore(String destination, String... keys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zunionstoremax(String destination, String... keys) {
+	public Long zunionstoremax(String destination, String... keys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zunionstoremin(String destination, String... keys) {
+	public Long zunionstoremin(String destination, String... keys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zunionstore(String destination, Map<String, Integer> weightkeys) {
+	public Long zunionstore(String destination, Map<String, Integer> weightkeys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zunionstoremax(String destination,
+	public Long zunionstoremax(String destination,
 			Map<String, Integer> weightkeys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long zunionstoremin(String destination,
+	public Long zunionstoremin(String destination,
 			Map<String, Integer> weightkeys) {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -1254,7 +1598,6 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object> exec() {
 		return (List<Object>) executeCommand(CommandName.EXEC, new Object[] {});
@@ -1334,7 +1677,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	
 
 	@Override
-	public boolean[] scriptexists(String... sha1) {
+	public Boolean[] scriptexists(String... sha1) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -1436,9 +1779,9 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long dbsize() {
+	public Long dbsize() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -1472,9 +1815,9 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long lastsave() {
+	public Long lastsave() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -1526,9 +1869,9 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long slowloglen() {
+	public Long slowloglen() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
@@ -1538,15 +1881,15 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public long time() {
+	public Long time() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 
 	@Override
-	public long microtime() {
+	public Long microtime() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 0L;
 	}
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
@@ -1561,7 +1904,77 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 			// Keys
 			case DEL:
 				return del0(j, t, (String) args[0]);
-			
+			case DUMP: // TODO                 
+				return dump0(j, t, (String) args[0]);   
+			case EXISTS:
+				return exists0(j, t, (String) args[0]);
+			case EXPIRE:
+				return expire0(j, t, (String) args[0], (Integer) args[1]);
+			case EXPIREAT:
+				return expireat0(j, t, (String) args[0], (Long) args[1]);
+			case KEYS:
+				return keys0(j, t, (String) args[0]);
+			case MIGRATE: // TODO
+				return migrate0(j, t, (String) args[0], (Integer) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
+			case MOVE:
+				return move0(j, t, (String) args[0], (Integer) args[1]);
+			case OBJECT_REFCOUNT:
+				return objectrefcount0(j, t, (String) args[0]);
+			case OBJECT_ENCODING:
+				return objectencoding0(j, t, (String) args[0]);
+			case OBJECT_IDLETIME:
+				return objectidletime0(j, t, (String) args[0]);
+			case PERSIST:
+				return persist0(j, t, (String) args[0]);
+			case PEXPIRE: // TODO
+				return pexpire0(j, t, (String) args[0], (Integer) args[1]);
+			case PEXPIREAT: // TODO
+				return pexpireat0(j, t, (String) args[0], (Long) args[1]);
+			case PTTL: // TODO
+				return pttl0(j, t, (String) args[0]);
+			case RANDOMKEY:
+				return randomkey0(j, t);
+			case RENAME:
+				return rename0(j, t, (String) args[0], (String) args[1]);
+			case RENAMENX:
+				return renamenx0(j, t, (String) args[0], (String) args[1]);
+			case RESTORE:
+				return restore0(j, t, (String) args[0], (Long) args[1], (String) args[2]);
+			case SORT:
+				return sort0(j, t, (String) args[0]);
+			case SORT_DESC:
+				return sort0(j, t, (String) args[0], (Boolean) args[1]);
+			case SORT_ALPHA_DESC:
+				return sort0(j, t, (String) args[0], (Boolean) args[1], (Boolean) args[2]);
+			case SORT_OFFSET_COUNT:
+				return sort0(j, t, (String) args[0], (Integer) args[1], (Integer) args[2]);
+			case SORT_OFFSET_COUNT_ALPHA_DESC:
+				return sort0(j, t, (String) args[0], (Integer) args[1], (Integer) args[2], (Boolean) args[3], (Boolean) args[4]);
+			case SORT_BY_GET:
+				return sort0(j, t, (String) args[0], (String) args[1], (String[]) args[2]);
+			case SORT_BY_GET_DESC:
+				return sort0(j, t, (String) args[0], (String) args[1], (Boolean) args[2], (String[]) args[3]);
+			case SORT_BY_GET_ALPHA_DESC:
+				return sort0(j, t, (String) args[0], (String) args[1], (Boolean) args[2], (Boolean) args[3], (String[]) args[4]);
+			case SORT_BY_GET_OFFSET_COUNT:
+				return sort0(j, t, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (String[]) args[4]);
+			case SORT_BY_GET_OFFSET_COUNT_ALPHA_DESC:
+				return sort0(j, t, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (Boolean) args[4], (Boolean) args[5], (String[]) args[6]);
+			case SORT_BY_DESTINATION:
+				return sort0(j, t, (String) args[0], (String) args[1], (String) args[2]);
+			case SORT_BY_GET_DESC_DESTINATION:
+				return sort0(j, t, (String) args[0], (String) args[1], (Boolean) args[2], (String) args[3], (String[]) args[4]);
+			case SORT_BY_GET_ALPHA_DESC_DESTINATION:
+				return sort0(j, t, (String) args[0], (String) args[1], (Boolean) args[2], (Boolean) args[3], (String) args[4], (String[]) args[5]);
+			case SORT_BY_GET_OFFSET_COUNT_DESTINATION:
+				return sort0(j, t, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (String) args[4], (String[]) args[5]);
+			case SORT_BY_GET_OFFSET_COUNT_ALPHA_DESC_DESTINATION:				
+				return sort0(j, t, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (Boolean) args[4], (Boolean) args[5], (String) args[6], (String[]) args[7]);
+			case TTL:
+				return ttl0(j, t, (String) args[0]);
+			case TYPE:
+				return type0(j, t, (String) args[0]);
+				
 			// Strings
 			case APPEND:
 			case BITCOUNT:
@@ -1587,6 +2000,18 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 			case SETNX:
 			case SETRANGE:
 			case STRLEN:
+			
+			// Hashes
+				
+			// Lists
+			case LLEN:
+				return llen0(j, t, (String) args[0]);
+			case LPOP:
+			case LPUSH:
+				return lpush0(j, t, (String) args[0], (String[]) args[1]);
+			case LPUSHX:
+			case LRANGE:
+				return lrange0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
 				
 			// Transactions
 			case DISCARD:
@@ -1600,7 +2025,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 			case WATCH:
 				return watch0(j, (String[]) args[0]);
 			default:
-				throw new IllegalArgumentException();
+				throw new IllegalArgumentException("Wrong command");
 			}
 		} catch (JedisConnectionException e) {
 			pool.returnBrokenResource(j);

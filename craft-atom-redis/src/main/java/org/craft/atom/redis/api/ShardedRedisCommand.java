@@ -27,7 +27,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return
 	 */
-	long del(String shardkey, String... keys);
+	Long del(String shardkey, String... keys);
 	
 	/**
 	 * @see {@link #dump(String)}}
@@ -43,7 +43,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	boolean exists(String shardkey, String key);
+	Boolean exists(String shardkey, String key);
 	
 	/**
 	 * @see {@link #expire(String, int)}
@@ -52,7 +52,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param seconds
 	 * @return
 	 */
-	long expire(String shardkey, String key, int seconds);
+	Long expire(String shardkey, String key, int seconds);
 	
 	/**
 	 * @see {@link #expireat(String, long)}}
@@ -61,7 +61,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param timestamp
 	 * @return
 	 */
-	long expireat(String shardkey, String key, long timestamp);
+	Long expireat(String shardkey, String key, long timestamp);
 	
 	/**
 	 * @see {@link #keys(String)}}
@@ -90,7 +90,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param db
 	 * @return
 	 */
-	long move(String shardkey, String key, int db);
+	Long move(String shardkey, String key, int db);
 	
 	/**
 	 * @see {@link #objectrefcount(String)}
@@ -98,9 +98,9 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long objectrefcount(String shardkey, String key);
+	Long objectrefcount(String shardkey, String key);
 	String objectencoding(String shardkey, String key);
-	long objectidletime(String shardkey, String key);
+	Long objectidletime(String shardkey, String key);
 	
 	/**
 	 * @see {@link #persist(String)}
@@ -108,7 +108,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long persist(String shardkey, String key);
+	Long persist(String shardkey, String key);
 	
 	/**
 	 * @see {@link #pexpire(String, int)}}
@@ -117,7 +117,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param milliseconds
 	 * @return
 	 */
-	long pexpire(String shardkey, String key, int milliseconds);
+	Long pexpire(String shardkey, String key, int milliseconds);
 	
 	/**
 	 * @see {@link #pexpireat(String, long)}}
@@ -126,7 +126,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param millisecondstimestamp
 	 * @return
 	 */
-	long pexpireat(String shardkey, String key, long millisecondstimestamp);
+	Long pexpireat(String shardkey, String key, long millisecondstimestamp);
 	
 	/**
 	 * @see {@link #pttl(String)}}
@@ -134,7 +134,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long pttl(String shardkey, String key);
+	Long pttl(String shardkey, String key);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#randomkey()}
@@ -159,7 +159,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param newkey
 	 * @return
 	 */
-	long renamenx(String shardkey, String key, String newkey);
+	Long renamenx(String shardkey, String key, String newkey);
 	
 	/**
 	 * @see {@link #restore(String, long, String)}
@@ -199,7 +199,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long ttl(String shardkey, String key);
+	Long ttl(String shardkey, String key);
 	
 	/**
 	 * @see {@link #type(String)}
@@ -220,7 +220,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	long append(String shardkey, String key, String value);
+	Long append(String shardkey, String key, String value);
 	
 	/**
 	 * @see {@link #bitcount(String)}
@@ -228,7 +228,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long bitcount(String shardkey, String key);
+	Long bitcount(String shardkey, String key);
 	
 	/**
 	 * @see {@link #bitnot(String, String)}
@@ -237,7 +237,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long bitnot(String shardkey, String destkey, String key);
+	Long bitnot(String shardkey, String destkey, String key);
 	
 	/**
 	 * @see {@link #bitnot(String, String)}
@@ -246,9 +246,9 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return
 	 */
-	long bitand(String shardkey, String destkey, String... keys);
-	long bitor(String shardkey, String destkey, String... keys);
-	long bitxor(String shardkey, String destkey, String... keys);
+	Long bitand(String shardkey, String destkey, String... keys);
+	Long bitor(String shardkey, String destkey, String... keys);
+	Long bitxor(String shardkey, String destkey, String... keys);
 	
 	/**
 	 * @see {@link #decr(String)}
@@ -256,7 +256,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long decr(String shardkey, String key);
+	Long decr(String shardkey, String key);
 	
 	/**
 	 * @see {@link #decrby(String, long)}
@@ -265,7 +265,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param decrement
 	 * @return
 	 */
-	long decrby(String shardkey, String key, long decrement);
+	Long decrby(String shardkey, String key, long decrement);
 	
 	/**
 	 * @see {@link #get(String)}
@@ -282,7 +282,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param offset
 	 * @return
 	 */
-	boolean getbit(String shardkey, String key, long offset);
+	Boolean getbit(String shardkey, String key, long offset);
 	
 	/**
 	 * @see {@link #getrange(String, long, long)}
@@ -309,7 +309,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long incr(String shardkey, String key);
+	Long incr(String shardkey, String key);
 	
 	/**
 	 * @see {@link #incrby(String, long)}
@@ -318,7 +318,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param increment
 	 * @return
 	 */
-	long incrby(String shardkey, String key, long increment);
+	Long incrby(String shardkey, String key, long increment);
 	
 	/**
 	 * @see {@link #incrbyfloat(String, double)}
@@ -327,7 +327,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param increment
 	 * @return
 	 */
-	double incrbyfloat(String shardkey, String key, double increment);
+	Double incrbyfloat(String shardkey, String key, double increment);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#mget(String...)}
@@ -393,7 +393,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	boolean setbit(String shardkey, String key, long offset, boolean value);
+	Boolean setbit(String shardkey, String key, long offset, boolean value);
 	
 	/**
 	 * @see {@link #setex(String, int, String)}
@@ -412,7 +412,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	long setnx(String shardkey, String key, String value);
+	Long setnx(String shardkey, String key, String value);
 	
 	/**
 	 * @see {@link #setrange(String, long, String)}
@@ -422,7 +422,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	long setrange(String shardkey, String key, long offset, String value);
+	Long setrange(String shardkey, String key, long offset, String value);
 	
 	/**
 	 * @see {@link #strlen(String)}
@@ -430,7 +430,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long strlen(String shardkey, String key);
+	Long strlen(String shardkey, String key);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Hashes
@@ -443,7 +443,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param fields
 	 * @return
 	 */
-	long hdel(String shardkey, String key, String... fields);
+	Long hdel(String shardkey, String key, String... fields);
 	
 	/**
 	 * @see {@link #hexists(String, String)}
@@ -452,7 +452,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param field
 	 * @return
 	 */
-	boolean hexists(String shardkey, String key, String field);
+	Boolean hexists(String shardkey, String key, String field);
 	
 	/**
 	 * @see {@link #hget(String, String)}
@@ -479,7 +479,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	long hincrby(String shardkey, String key, String field, long value);
+	Long hincrby(String shardkey, String key, String field, long value);
 	
 	/**
 	 * @see {@link #hincrbyfloat(String, String, double)}
@@ -489,7 +489,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	double hincrbyfloat(String shardkey, String key, String field, double value);
+	Double hincrbyfloat(String shardkey, String key, String field, double value);
 	
 	/**
 	 * @see {@link #hkeys(String)}
@@ -505,7 +505,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long hlen(String shardkey, String key);
+	Long hlen(String shardkey, String key);
 	
 	/**
 	 * @see {@link #hmget(String, String...)}
@@ -533,7 +533,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	long hset(String shardkey, String key, String field, String value);
+	Long hset(String shardkey, String key, String field, String value);
 	
 	/**
 	 * @see {@link #hsetnx(String, String, String)}
@@ -543,7 +543,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	long hsetnx(String shardkey, String key, String field, String value);
+	Long hsetnx(String shardkey, String key, String field, String value);
 	
 	/**
 	 * @see {@link #hvals(String)}k
@@ -623,8 +623,8 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	long linsertbefore(String shardkey, String key, String pivot, String value);
-	long linsertafter(String shardkey, String key, String pivot, String value);
+	Long linsertbefore(String shardkey, String key, String pivot, String value);
+	Long linsertafter(String shardkey, String key, String pivot, String value);
 	
 	/**
 	 * @see {@link #llen(String)}
@@ -632,7 +632,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long llen(String shardkey, String key);
+	Long llen(String shardkey, String key);
 	
 	/**
 	 * @see {@link #lpop(String)}
@@ -649,7 +649,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param values
 	 * @return
 	 */
-	long lpush(String shardkey, String key, String... values);
+	Long lpush(String shardkey, String key, String... values);
 	
 	/**
 	 * @see {@link #lpushx(String, String)}
@@ -658,7 +658,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	long lpushx(String shardkey, String key, String value);
+	Long lpushx(String shardkey, String key, String value);
 	
 	/**
 	 * @see {@link #lrange(String, long, long)}
@@ -678,7 +678,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	long lrem(String shardkey, String key, long count, String value);
+	Long lrem(String shardkey, String key, long count, String value);
 	
 	/**
 	 * @see {@link #lset(String, long, String)}
@@ -724,7 +724,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param values
 	 * @return
 	 */
-	long rpush(String shardkey, String key, String... values);
+	Long rpush(String shardkey, String key, String... values);
 	
 	/**
 	 * @see {@link #rpushx(String, String)}
@@ -733,7 +733,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	long rpushx(String shardkey, String key, String value);
+	Long rpushx(String shardkey, String key, String value);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Sets
@@ -745,7 +745,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param members
 	 * @return
 	 */
-	long sadd(String shardkey, String key, String... members);
+	Long sadd(String shardkey, String key, String... members);
 	
 	/**
 	 * @see {@link #scard(String)}
@@ -753,7 +753,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long scard(String shardkey, String key);
+	Long scard(String shardkey, String key);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#sdiff(String...)}
@@ -769,7 +769,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return
 	 */
-	long sdiffstore(String shardkey, String destination, String... keys);
+	Long sdiffstore(String shardkey, String destination, String... keys);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#sinter(String...)}
@@ -785,7 +785,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return
 	 */
-	long sinterstore(String shardkey, String destination, String... keys);
+	Long sinterstore(String shardkey, String destination, String... keys);
 	
 	/**
 	 * @see {@link #sismember(String, String)}
@@ -794,7 +794,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param member
 	 * @return
 	 */
-	boolean sismember(String shardkey, String key, String member);
+	Boolean sismember(String shardkey, String key, String member);
 	
 	/**
 	 * @see {@link #smembers(String)}
@@ -812,7 +812,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param member
 	 * @return
 	 */
-	long smove(String shardkey, String source, String destination, String member);
+	Long smove(String shardkey, String source, String destination, String member);
 	
 	/**
 	 * @see {@link #spop(String)}
@@ -839,7 +839,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param members
 	 * @return
 	 */
-	long srem(String shardkey, String key, String... members);
+	Long srem(String shardkey, String key, String... members);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#sunion(String...)}
@@ -869,7 +869,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param member
 	 * @return
 	 */
-	long zadd(String shardkey, String key, double score, String member);
+	Long zadd(String shardkey, String key, double score, String member);
 	
 	/**
 	 * @see {@link #zcard(String)}
@@ -877,7 +877,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param key
 	 * @return
 	 */
-	long zcard(String shardkey, String key);
+	Long zcard(String shardkey, String key);
 	
 	/**
 	 * @see {@link #zcount(String, double, double)}
@@ -887,7 +887,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param max
 	 * @return
 	 */
-	long zcount(String shardkey, String key, double min, double max);
+	Long zcount(String shardkey, String key, double min, double max);
 	
 	/**
 	 * @see {@link #zincrby(String, double, String)}
@@ -897,7 +897,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param member
 	 * @return
 	 */
-	double zincrby(String shardkey, String key, double score, String member);
+	Double zincrby(String shardkey, String key, double score, String member);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#zinterstore(String, String...)}
@@ -905,12 +905,12 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return
 	 */
-	long zinterstore(String shardkey, String destination, String... keys);
-	long zinterstoremax(String shardkey, String destination, String... keys);
-	long zinterstoremin(String shardkey, String destination, String... keys);
-	long zinterstore(String shardkey, String destination, Map<String, Integer> weightkeys);
-	long zinterstoremax(String shardkey, String destination, Map<String, Integer> weightkeys);
-	long zinterstoremin(String shardkey, String destination, Map<String, Integer> weightkeys);
+	Long zinterstore(String shardkey, String destination, String... keys);
+	Long zinterstoremax(String shardkey, String destination, String... keys);
+	Long zinterstoremin(String shardkey, String destination, String... keys);
+	Long zinterstore(String shardkey, String destination, Map<String, Integer> weightkeys);
+	Long zinterstoremax(String shardkey, String destination, Map<String, Integer> weightkeys);
+	Long zinterstoremin(String shardkey, String destination, Map<String, Integer> weightkeys);
 	
 	/**
 	 * @see {@link #zrange(String, long, long)}
@@ -956,7 +956,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param members
 	 * @return
 	 */
-	long zrem(String shardkey, String key, String... members);
+	Long zrem(String shardkey, String key, String... members);
 	
 	/**
 	 * @see {@link #zremrangebyrank(String, long, long)}
@@ -966,7 +966,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param stop
 	 * @return
 	 */
-	long zremrangebyrank(String shardkey, String key, long start, long stop);
+	Long zremrangebyrank(String shardkey, String key, long start, long stop);
 	
 	/**
 	 * @see {@link #zremrangebyscore(String, double, double)}
@@ -976,8 +976,8 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param max
 	 * @return
 	 */
-	long zremrangebyscore(String shardkey, String key, double min, double max);
-	long zremrangebyscore(String shardkey, String key, String min, String max);
+	Long zremrangebyscore(String shardkey, String key, double min, double max);
+	Long zremrangebyscore(String shardkey, String key, String min, String max);
 	
 	/**
 	 * @see {@link #zrevrange(String, long, long)}
@@ -1028,12 +1028,12 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return
 	 */
-	long zunionstore(String shardkey, String destination, String... keys);
-	long zunionstoremax(String shardkey, String destination, String... keys);
-	long zunionstoremin(String shardkey, String destination, String... keys);
-	long zunionstore(String shardkey, String destination, Map<String, Integer> weightkeys);
-	long zunionstoremax(String shardkey, String destination, Map<String, Integer> weightkeys);
-	long zunionstoremin(String shardkey, String destination, Map<String, Integer> weightkeys);
+	Long zunionstore(String shardkey, String destination, String... keys);
+	Long zunionstoremax(String shardkey, String destination, String... keys);
+	Long zunionstoremin(String shardkey, String destination, String... keys);
+	Long zunionstore(String shardkey, String destination, Map<String, Integer> weightkeys);
+	Long zunionstoremax(String shardkey, String destination, Map<String, Integer> weightkeys);
+	Long zunionstoremin(String shardkey, String destination, Map<String, Integer> weightkeys);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
@@ -1053,7 +1053,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param message
 	 * @return
 	 */
-	long publish(String shardkey, String channel, String message);
+	Long publish(String shardkey, String channel, String message);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#punsubscribe(String)}
@@ -1156,8 +1156,8 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param sha1
 	 * @return
 	 */
-	boolean scriptexists(String shardkey, String sha1);
-	boolean[] scriptexists(String shardkey, String... sha1);
+	Boolean scriptexists(String shardkey, String sha1);
+	Boolean[] scriptexists(String shardkey, String... sha1);
 	
 	/**
 	 * @see {@link SingletonRedisCommand#scriptflush()}}
