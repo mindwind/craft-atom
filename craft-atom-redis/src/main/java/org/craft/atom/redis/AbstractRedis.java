@@ -7,5 +7,6 @@ package org.craft.atom.redis;
 public abstract class AbstractRedis {
 	
 	protected static final String OK = "OK";
+	protected static final String TRANSACTION_UNSUPPORTED = "Command [%s] is not supported in transaction context.";
 	
 }

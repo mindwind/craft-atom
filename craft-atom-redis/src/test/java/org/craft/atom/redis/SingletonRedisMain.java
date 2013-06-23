@@ -41,8 +41,8 @@ public class SingletonRedisMain {
 		// Keys
 		testDel();
 		testExists();
-//		testExpire();
-//		testExpireat();
+		testExpire();
+		testExpireat();
 		testKeys();
 		testSortByGet();
 		
@@ -50,6 +50,7 @@ public class SingletonRedisMain {
 		
 		// Lists
 		testLpushLrangeLlen();
+		testBlpop();
 		
 		// Transactions
 		testMultiExec();
@@ -61,6 +62,51 @@ public class SingletonRedisMain {
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
 	
+	
+	private static void testBlpop() throws InterruptedException {
+		before("testBlpop");
+		
+		final Lock lock = new ReentrantLock();
+		final Condition c = lock.newCondition();
+		
+		Thread t1 = new Thread(new Runnable() {	
+			@Override
+			public void run() {
+				String v = redis.blpop(K);
+				Assert.assertEquals("3", v);
+				lock.lock();
+				try {
+					c.signal();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					lock.unlock();
+				}
+			}
+		});
+		
+		Thread t2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				redis.lpush(K, "1", "2", "3");
+			}
+		});
+		
+		t1.start();
+		Thread.sleep(1000);
+		t2.start();
+		
+		lock.lock();
+		try {
+			c.await();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			lock.unlock();
+		}
+		
+		after();
+	}
 	
 	private static void testLpushLrangeLlen() {
 		before("testLpush");

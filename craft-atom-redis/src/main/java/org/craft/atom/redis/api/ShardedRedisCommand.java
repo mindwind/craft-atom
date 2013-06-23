@@ -351,7 +351,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param keysvalues
 	 * @return
 	 */
-	String msetnx(String shardkey, String... keysvalues);
+	Long msetnx(String shardkey, String... keysvalues);
 	
 	/**
 	 * @see {@link #psetex(String, int, String)}
@@ -476,20 +476,20 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param shardkey
 	 * @param key
 	 * @param field
-	 * @param value
+	 * @param increment
 	 * @return
 	 */
-	Long hincrby(String shardkey, String key, String field, long value);
+	Long hincrby(String shardkey, String key, String field, long increment);
 	
 	/**
 	 * @see {@link #hincrbyfloat(String, String, double)}
 	 * @param shardkey
 	 * @param key
 	 * @param field
-	 * @param value
+	 * @param increment
 	 * @return
 	 */
-	Double hincrbyfloat(String shardkey, String key, String field, double value);
+	Double hincrbyfloat(String shardkey, String key, String field, double increment);
 	
 	/**
 	 * @see {@link #hkeys(String)}
@@ -856,7 +856,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return
 	 */
-	Set<String> sunionstore(String shardkey, String destination, String... keys);
+	Long sunionstore(String shardkey, String destination, String... keys);
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------- Sorted Sets
@@ -991,7 +991,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Map<String, Double> zrerangewithscores(String shardkey, String key, long start, long stop);
 	
 	/**
-	 * @see {@link #zrerangebyscore(String, double, double)}
+	 * @see {@link #zrevrangebyscore(String, double, double)}
 	 * @param shardkey
 	 * @param key
 	 * @param max
@@ -1002,9 +1002,13 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Set<String> zrerangebyscore(String shardkey, String key, String max, String min);
 	Set<String> zrerangebyscore(String shardkey, String key, double max, double min, int offset, int count);
 	Set<String> zrerangebyscore(String shardkey, String key, String max, String min, int offset, int count);
+	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, double min, double max);
+	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, String min, String max);
+	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, double min, double max, int offset, int count);
+	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, String min, String max, int offset, int count);
 	
 	/**
-	 * @see {@link #zrerank(String, String)}
+	 * @see {@link #zrevrank(String, String)}
 	 * @param shardkey
 	 * @param key
 	 * @param member
@@ -1038,8 +1042,9 @@ public interface ShardedRedisCommand extends RedisCommand {
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
 	
+	
 	/**
-	 * @see {@link SingletonRedisCommand#psubscribe(RedisPsubscribeHandler, String)}
+	 * @see {@link #psubscribe(RedisPsubscribeHandler, String)}
 	 * @param shardkey
 	 * @param handler
 	 * @param patterns
@@ -1079,6 +1084,14 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param channels
 	 */
 	void subscribe(String shardkey, RedisSubscribeHandler handler, String... channels);
+	
+	/**
+	 * @see {@link #unsubscribe(String)}}
+	 * @param shardkey
+	 * @param channel
+	 * @return unsubscribed channel
+	 */
+	String unsubscribe(String shardkey, String channel);
 	
 	/**
 	 * @see {@link #unsubscribe(String)}}

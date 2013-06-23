@@ -89,9 +89,10 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * MSETNX is atomic, so all given keys are set at once. It is not possible for clients to see that some of the keys were updated while others are unchanged.
 	 * 
 	 * @param keysvalues
-	 * @return
+	 * @return 1 if the all the keys were set.<br>
+	 * 	       0 if no key was set (at least one key already existed).<br>
 	 */
-	String msetnx(String... keysvalues);
+	Long msetnx(String... keysvalues);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
@@ -152,7 +153,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * 
 	 * @param destination
 	 * @param keys
-	 * @return
+	 * @return the number of elements in the resulting set.
 	 */
 	Long sdiffstore(String destination, String... keys);
 	
@@ -243,7 +244,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @param keys
 	 * @return the number of elements in the resulting set
 	 */
-	Set<String> sunionstore(String destination, String... keys);
+	Long sunionstore(String destination, String... keys);
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------- Sorted Sets
@@ -305,7 +306,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	
 	
 	/**
-	 * @see {@link #punsubscribe(RedisPsubscribeHandler, String)}
+	 * @see {@link #psubscribe(RedisPsubscribeHandler, String)}
 	 * @param handler
 	 * @param patterns
 	 */
@@ -641,10 +642,10 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * Every new connection starts without an assigned name.
 	 * Tip: setting names to connections is a good way to debug connection leaks due to bugs in the application using Redis.
 	 * 
-	 * @param connectionName
+	 * @param connectionname
 	 * @return OK if the connection name was successfully set.
 	 */
-	String clientsetname(String connectionName);
+	String clientsetname(String connectionname);
 	
 	/**
 	 * Available since 2.0.0
@@ -682,9 +683,9 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * and after 300 seconds if there are at least 10 changes to the datasets, will be reported by CONFIG GET as "900 1 300 10".
 	 * 
 	 * @param parameter
-	 * @return
+	 * @return a list of configuration parameters
 	 */
-	String configget(String parameter);
+	List<String> configget(String parameter);
 	
 	/**
 	 * Available since 2.0.0
@@ -1213,7 +1214,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	List<Slowlog> slowlogget();
-	List<Slowlog> slowlogget(long no);
+	List<Slowlog> slowlogget(long len);
 	String slowlogreset();
 	Long slowloglen();
 	

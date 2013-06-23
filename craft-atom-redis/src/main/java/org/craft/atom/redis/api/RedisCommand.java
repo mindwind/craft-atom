@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
 /**
@@ -15,6 +16,13 @@ import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
  * - A transaction execution must in one thread.<br>
  * - A transaction should be end with <code>discard()</code> or <code>exec()</code><br>
  * - <code>watch()</code> should be paired with <code>exec</code>, <code>discard()</code> or <code>unwatch()</code>
+ * In most cases, transaction should be used:
+ * <pre><tt>
+ *     redis.multi();
+ *     redis.xx1()
+ *     redis.xx2()
+ *     redis.exec();
+ * </tt></pre>
  * 
  * @author mindwind
  * @version 1.0, May 3, 2013
@@ -41,7 +49,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return The number of keys that were removed.
 	 */
-	long del(String key);
+	Long del(String key);
 	
 	/**
 	 * Available since 2.6.0
@@ -984,10 +992,10 @@ public interface RedisCommand {
 	 * 
 	 * @param key
 	 * @param field
-	 * @param value
+	 * @param increment
 	 * @return the value at field after the increment operation.
 	 */
-	Long hincrby(String key, String field, long value);
+	Long hincrby(String key, String field, long increment);
 	
 	/**
 	 * Available since 2.6.0
@@ -1004,10 +1012,10 @@ public interface RedisCommand {
 	 * 
 	 * @param key
 	 * @param field
-	 * @param value
+	 * @param increment
 	 * @return the value of field after the increment.
 	 */
-	Double hincrbyfloat(String key, String field, double value);
+	Double hincrbyfloat(String key, String field, double increment);
 	
 	/**
 	 * Available since 2.0.0
@@ -1861,10 +1869,14 @@ public interface RedisCommand {
 	 * @param min
 	 * @return list of elements in the specified score range (optionally with their scores)
 	 */
-	Set<String> zrerangebyscore(String key, double max, double min);
-	Set<String> zrerangebyscore(String key, String max, String min);
-	Set<String> zrerangebyscore(String key, double max, double min, int offset, int count);
-	Set<String> zrerangebyscore(String key, String max, String min, int offset, int count);
+	Set<String> zrevrangebyscore(String key, double max, double min);
+	Set<String> zrevrangebyscore(String key, String max, String min);
+	Set<String> zrevrangebyscore(String key, double max, double min, int offset, int count);
+	Set<String> zrevrangebyscore(String key, String max, String min, int offset, int count);
+	Map<String, Double> zrevrangebyscorewithscores(String key, double min, double max);
+	Map<String, Double> zrevrangebyscorewithscores(String key, String min, String max);
+	Map<String, Double> zrevrangebyscorewithscores(String key, double min, double max, int offset, int count);
+	Map<String, Double> zrevrangebyscorewithscores(String key, String min, String max, int offset, int count);
 	
 	/**
 	 * Available since 2.0.0
@@ -1880,7 +1892,7 @@ public interface RedisCommand {
 	 * @return If member exists in the sorted set, return the rank of member.
 	 *         If member does not exist in the sorted set or key does not exist, return null.
 	 */
-	Long zrerank(String key, String member);
+	Long zrevrank(String key, String member);
 	
 	/**
 	 * Available since 1.2.0
@@ -1898,6 +1910,18 @@ public interface RedisCommand {
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
+	
+	/**
+	 * Available since 2.0.0<br>
+	 * Time complexity: O(N) where N is the number of patterns the client is already subscribed to. <br>
+	 * 
+	 * <p>
+	 * Subscribes the client to the given patterns.
+	 * 
+	 * @param handler
+	 * @param pattern
+	 */
+	void psubscribe(RedisPsubscribeHandler handler, String pattern);
 	
 	/**
 	 * Available since 2.0.0
