@@ -1851,7 +1851,7 @@ public interface RedisCommand {
 	 * @return  list of elements in the specified range (optionally with their scores)
 	 */
 	Set<String> zrevrange(String key, long start, long stop);
-	Map<String, Double> zrerangewithscores(String key, long start, long stop);
+	Map<String, Double> zrevrangewithscores(String key, long start, long stop);
 	
 	/**
 	 * Available since 2.2.0
@@ -1873,10 +1873,10 @@ public interface RedisCommand {
 	Set<String> zrevrangebyscore(String key, String max, String min);
 	Set<String> zrevrangebyscore(String key, double max, double min, int offset, int count);
 	Set<String> zrevrangebyscore(String key, String max, String min, int offset, int count);
-	Map<String, Double> zrevrangebyscorewithscores(String key, double min, double max);
-	Map<String, Double> zrevrangebyscorewithscores(String key, String min, String max);
-	Map<String, Double> zrevrangebyscorewithscores(String key, double min, double max, int offset, int count);
-	Map<String, Double> zrevrangebyscorewithscores(String key, String min, String max, int offset, int count);
+	Map<String, Double> zrevrangebyscorewithscores(String key, double max, double min);
+	Map<String, Double> zrevrangebyscorewithscores(String key, String max, String min);
+	Map<String, Double> zrevrangebyscorewithscores(String key, double max, double min, int offset, int count);
+	Map<String, Double> zrevrangebyscorewithscores(String key, String max, String min, int offset, int count);
 	
 	/**
 	 * Available since 2.0.0

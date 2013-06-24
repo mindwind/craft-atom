@@ -1165,7 +1165,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.HINCRBY, key, field, increment);
 	}
 	
-	private Long hincrby(Jedis j, Transaction t, String key, String field, long increment) {
+	private Long hincrby0(Jedis j, Transaction t, String key, String field, long increment) {
 		if (t != null) {
 			t.hincrBy(key, field, increment); return null;
 		}
@@ -1289,16 +1289,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 
 	@Override
 	public String blpop(String key, int timeout) {
-		return (String) executeCommand(CommandEnum.BLPOP, key, timeout);
-	}
-	
-	private String blpop0(Jedis j, Transaction t, String key, int timeout) {
-		if (t != null) {
-			// TODO
-		}
-		
-		List<String> l = j.blpop(timeout, key);
-		Map<String, String> map = convert4bpop(l);
+		Map<String, String> map = blpop(0, key);
 		return map.get(key);
 	}
 	
@@ -1309,7 +1300,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	
 	@Override
 	public Map<String, String> blpop(int timeout, String... keys) {
-		return (Map<String, String>) executeCommand(CommandEnum.BLPOP_KEYS, new Object[] { keys });
+		return (Map<String, String>) executeCommand(CommandEnum.BLPOP, new Object[] { keys });
 	}
 	
 	private Map<String, String> blpop0(Jedis j, Transaction t, int timeout, String... keys) {
@@ -1338,16 +1329,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 
 	@Override
 	public String brpop(String key, int timeout) {
-		return (String) executeCommand(CommandEnum.BRPOP, timeout);
-	}
-	
-	private String brpop0(Jedis j, Transaction t, String key, int timeout) {
-		if (t != null) {
-			// TODO
-		}
-		
-		List<String> l = j.brpop(timeout, key);
-		Map<String, String> map = convert4bpop(l);
+		Map<String, String> map = brpop(0, key);
 		return map.get(key);
 	}
 	
@@ -1358,7 +1340,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 
 	@Override
 	public Map<String, String> brpop(int timeout, String... keys) {
-		return (Map<String, String>) executeCommand(CommandEnum.BRPOP_KEYS, timeout, keys);
+		return (Map<String, String>) executeCommand(CommandEnum.BRPOP, timeout, keys);
 	}
 	
 	private Map<String, String> brpop0(Jedis j, Transaction t, int timeout, String... keys) {
@@ -1611,7 +1593,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	
 	@Override
 	public Set<String> sdiff(String... keys) {
-		return (Set<String>) executeCommand(CommandEnum.SDIFF, keys);
+		return (Set<String>) executeCommand(CommandEnum.SDIFF, new Object[] { keys });
 	}
 	
 	private Set<String> sdiff0(Jedis j, Transaction t, String... keys) {
@@ -1689,8 +1671,15 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	
 	@Override
 	public Long smove(String source, String destination, String member) {
-		// TODO Auto-generated method stub
-		return 0L;
+		return (Long) executeCommand(CommandEnum.SMOVE, source, destination, member);
+	}
+	
+	private Long smove0(Jedis j, Transaction t, String source, String destination, String member) {
+		if (t != null) {
+			t.smove(source, destination, member); return null;
+		}
+		
+		return j.smove(source, destination, member);
 	}
 
 	@Override
@@ -1705,10 +1694,20 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		
 		return j.spop(key);
 	}
+	
+	@Override
+	public String srandmember(String key) {
+		Set<String> set = srandmember(key, 1);
+		if (set.isEmpty()) {
+			return null;
+		} else {
+			return set.iterator().next();
+		}
+	}
 
 	@Override
 	public Set<String> srandmember(String key, int count) {
-		return (Set<String>) executeCommand(CommandEnum.SRANDMEMBER_COUNT, key, count);
+		return (Set<String>) executeCommand(CommandEnum.SRANDMEMBER, key, count);
 	}
 	
 	private Set<String> srandmember0(Jedis j, Transaction t, String key, int count) {
@@ -1717,19 +1716,6 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		}
 		
 		return null;
-	}
-
-	@Override
-	public String srandmember(String key) {
-		return (String) executeCommand(CommandEnum.SRANDMEMBER_COUNT, key);
-	}
-	
-	private String srandmember0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.srandmember(key); return null;
-		}
-		
-		return j.srandmember(key);
 	}
 
 	@Override
@@ -1763,7 +1749,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.SUNIONSTORE, destination, keys);
 	}
 	
-	private Long sunionstore(Jedis j, Transaction t, String destination, String... keys) {
+	private Long sunionstore0(Jedis j, Transaction t, String destination, String... keys) {
 		if (t != null) {
 			t.sunionstore(destination, keys); return null;
 		}
@@ -1781,7 +1767,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.ZADD, key, score, member);
 	}
 	
-	private Long zadd(Jedis j, Transaction t, String key, double score, String member) {
+	private Long zadd0(Jedis j, Transaction t, String key, double score, String member) {
 		if (t != null) {
 			t.zadd(key, score, member); return null;
 		}
@@ -1807,7 +1793,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.ZCOUNT, key, min, max);
 	}
 	
-	private Long zcount(Jedis j, Transaction t, String key, double min, double max) {
+	private Long zcount0(Jedis j, Transaction t, String key, double min, double max) {
 		if (t != null) {
 			t.zcount(key, min, max); return null;
 		}
@@ -1872,7 +1858,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS, destination, weightkeys);
 	}
 	
-	private Long zinterstore0(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zinterstore_weights(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
@@ -1903,7 +1889,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS_MAX, destination, weightkeys);
 	}
 	
-	private Long zinterstoremax0(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zinterstore_weights_max(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
@@ -1920,7 +1906,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS_MIN, destination, weightkeys);
 	}
 	
-	private Long zinterstoremin0(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zinterstore_weights_min(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
@@ -1986,7 +1972,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Set<String>) executeCommand(CommandEnum.ZRANGEBYSCORE_STRING, key, min, max);
 	}
 	
-	private Set<String> zrangebyscore0(Jedis j, Transaction t, String key, String min, String max) {
+	private Set<String> zrangebyscore_string(Jedis j, Transaction t, String key, String min, String max) {
 		if (t != null) {
 			t.zrangeByScore(key, min, max); return null;
 		}
@@ -1999,7 +1985,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Set<String>) executeCommand(CommandEnum.ZRANGEBYSCORE_OFFSET_COUNT, key, min, max, offset, count);
 	}
 	
-	private Set<String> zrangebyscore0(Jedis j, Transaction t, String key, double min, double max, int offset, int count) {
+	private Set<String> zrangebyscore_offset_count(Jedis j, Transaction t, String key, double min, double max, int offset, int count) {
 		if (t != null) {
 			t.zrangeByScore(key, min, max, offset, count); return null;
 		}
@@ -2012,7 +1998,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Set<String>) executeCommand(CommandEnum.ZRANGEBYSCORE_OFFSET_COUNT_STRING, key, min, max, offset, count);
 	}
 	
-	private Set<String> zrangebyscore0(Jedis j, Transaction t, String key, String min, String max, int offset, int count) {
+	private Set<String> zrangebyscore_offset_count_string(Jedis j, Transaction t, String key, String min, String max, int offset, int count) {
 		if (t != null) {
 //			t.zrangeByScore(key, min, max, offset, count); return null; TODO
 		}
@@ -2040,7 +2026,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_STRING, key, min, max);
 	}
 	
-	private Map<String, Double> zrangebyscorewithscores0(Jedis j, Transaction t, String key, String min, String max) {
+	private Map<String, Double> zrangebyscorewithscores_string(Jedis j, Transaction t, String key, String min, String max) {
 		if (t != null) {
 			// TODO
 		}
@@ -2055,7 +2041,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, min, max);
 	}
 	
-	private Map<String, Double> zrangebyscorewithscores0(Jedis j, Transaction t, String key, double min, double max, int offset, int count) {
+	private Map<String, Double> zrangebyscorewithscores_offset_count(Jedis j, Transaction t, String key, double min, double max, int offset, int count) {
 		if (t != null) {
 			// TODO
 		}
@@ -2070,7 +2056,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, min, max);
 	}
 	
-	private Map<String, Double> zrangebyscorewithscores0(Jedis j, Transaction t, String key, String min, String max, int offset, int count) {
+	private Map<String, Double> zrangebyscorewithscores_offset_count_string(Jedis j, Transaction t, String key, String min, String max, int offset, int count) {
 		if (t != null) {
 			// TODO
 		}
@@ -2137,7 +2123,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.ZREMRANGEBYSCORE_STRING, key, min, max);
 	}
 	
-	private Long zremrangebyscore0(Jedis j, Transaction t, String key, String min, String max) {
+	private Long zremrangebyscore_string(Jedis j, Transaction t, String key, String min, String max) {
 		if (t != null) {
 //			t.zremrangeByScore(key, min, max); return null; TODO
 		}
@@ -2150,7 +2136,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Set<String>) executeCommand(CommandEnum.ZREVRANGE, key, start, stop);
 	}
 	
-	private Set<String> zrevrange(Jedis j, Transaction t, String key, long start, long stop) {
+	private Set<String> zrevrange0(Jedis j, Transaction t, String key, long start, long stop) {
 		if (t != null) {
 //			t.zrevrange(key, start, stop); return null; TODO
 		}
@@ -2159,11 +2145,11 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 
 	@Override
-	public Map<String, Double> zrerangewithscores(String key, long start, long stop) {
+	public Map<String, Double> zrevrangewithscores(String key, long start, long stop) {
 		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGE_WITHSCORES, key, start, stop);
 	}
 	
-	private Map<String, Double> zrerangewithscores0(Jedis j, Transaction t, String key, long start, long stop) {
+	private Map<String, Double> zrevrangewithscores0(Jedis j, Transaction t, String key, long start, long stop) {
 		if (t != null) {
 			// TODO
 		}
@@ -2191,7 +2177,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Set<String>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_STRING, key, max, min);
 	}
 	
-	private Set<String> zrevrangebyscore(Jedis j, Transaction t, String key, String max, String min) {
+	private Set<String> zrevrangebyscore_string(Jedis j, Transaction t, String key, String max, String min) {
 		if (t != null) {
 			t.zrevrangeByScore(key, max, min); return null;
 		}
@@ -2204,7 +2190,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Set<String>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_OFFSET_COUNT, key, max, min, offset, count);
 	}
 	
-	private Set<String> zrevrangebyscore(Jedis j, Transaction t, String key, double max, double min, int offset, int count) {
+	private Set<String> zrevrangebyscore_offset_count(Jedis j, Transaction t, String key, double max, double min, int offset, int count) {
 		if (t != null) {
 			t.zrevrangeByScore(key, max, min, offset, count); return null;
 		}
@@ -2217,7 +2203,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Set<String>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_OFFSET_COUNT_STRING, key, max, min, offset, count);
 	}
 	
-	private Set<String> zrevrangebyscore(Jedis j, Transaction t, String key, String max, String min, int offset, int count) {
+	private Set<String> zrevrangebyscore_offset_count_string(Jedis j, Transaction t, String key, String max, String min, int offset, int count) {
 		if (t != null) {
 //			t.zrevrangeByScore(key, max, min, offset, count); return null; TODO
 		}
@@ -2226,61 +2212,61 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	}
 	
 	@Override
-	public Map<String, Double> zrevrangebyscorewithscores(String key, double min, double max) {
-		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES, key, min, max);
+	public Map<String, Double> zrevrangebyscorewithscores(String key, double max, double min) {
+		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES, key, max, min);
 	}
 	
-	private Map<String, Double> zrevrangebyscorewithscores0(Jedis j, Transaction t, String key, double min, double max) {
+	private Map<String, Double> zrevrangebyscorewithscores0(Jedis j, Transaction t, String key, double max, double min) {
 		if (t != null) {
 			// TODO
 		}
 		
-		Set<Tuple> set = j.zrevrangeByScoreWithScores(key, min, max);
+		Set<Tuple> set = j.zrevrangeByScoreWithScores(key, max, min);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
 	}
 
 	@Override
-	public Map<String, Double> zrevrangebyscorewithscores(String key, String min, String max) {
-		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_STRING, key, min, max);
+	public Map<String, Double> zrevrangebyscorewithscores(String key, String max, String min) {
+		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_STRING, key, max, min);
 	}
 	
-	private Map<String, Double> zrevrangebyscorewithscores0(Jedis j, Transaction t, String key, String min, String max) {
+	private Map<String, Double> zrevrangebyscorewithscores_string(Jedis j, Transaction t, String key, String max, String min) {
 		if (t != null) {
 			// TODO
 		}
 		
-		Set<Tuple> set = j.zrangeByScoreWithScores(key, min, max);
+		Set<Tuple> set = j.zrangeByScoreWithScores(key, max, min);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
 	}
 
 	@Override
-	public Map<String, Double> zrevrangebyscorewithscores(String key, double min, double max, int offset, int count) {
-		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, min, max);
+	public Map<String, Double> zrevrangebyscorewithscores(String key, double max, double min, int offset, int count) {
+		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, max, min);
 	}
 	
-	private Map<String, Double> zrevrangebyscorewithscores0(Jedis j, Transaction t, String key, double min, double max, int offset, int count) {
+	private Map<String, Double> zrevrangebyscorewithscores_offset_count(Jedis j, Transaction t, String key, double max, double min, int offset, int count) {
 		if (t != null) {
 			// TODO
 		}
 		
-		Set<Tuple> set = j.zrevrangeByScoreWithScores(key, min, max, offset, count);
+		Set<Tuple> set = j.zrevrangeByScoreWithScores(key, max, min, offset, count);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
 	}
 
 	@Override
-	public Map<String, Double> zrevrangebyscorewithscores(String key, String min, String max, int offset, int count) {
-		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, min, max);
+	public Map<String, Double> zrevrangebyscorewithscores(String key, String max, String min, int offset, int count) {
+		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, max, min);
 	}
 	
-	private Map<String, Double> zrevrangebyscorewithscores0(Jedis j, Transaction t, String key, String min, String max, int offset, int count) {
+	private Map<String, Double> zrevrangebyscorewithscores_offset_count_string(Jedis j, Transaction t, String key, String max, String min, int offset, int count) {
 		if (t != null) {
 			// TODO
 		}
 		
-		Set<Tuple> set = j.zrevrangeByScoreWithScores(key, min, max, offset, count);
+		Set<Tuple> set = j.zrevrangeByScoreWithScores(key, max, min, offset, count);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
 	}
@@ -2290,7 +2276,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.ZREVRANK, key, member);
 	}
 	
-	private Long zrerank0(Jedis j, Transaction t, String key, String member) {
+	private Long zrevrank0(Jedis j, Transaction t, String key, String member) {
 		if (t != null) {
 			t.zrevrank(key, member); return null;
 		}
@@ -2355,7 +2341,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS, destination, weightkeys);
 	}
 	
-	private Long zunionstore0(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zunionstore_weights(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
@@ -2372,7 +2358,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS_MAX, destination, weightkeys);
 	}
 	
-	private Long zunionstoremax0(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zunionstore_weights_max(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
@@ -2389,7 +2375,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS_MIN, destination, weightkeys);
 	}
 	
-	private Long zunionstoremin0(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zunionstore_weights_min(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
@@ -2415,7 +2401,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		executeCommand(CommandEnum.PSUBSCRIBE, handler, patterns);
 	}
 	
-	private void psubscribe0(Jedis j, Transaction t, final RedisPsubscribeHandler handler, String... patterns) {
+	private String psubscribe0(Jedis j, Transaction t, final RedisPsubscribeHandler handler, String... patterns) {
 		if (t != null) {
 			throw new RedisOperationException(String.format(TRANSACTION_UNSUPPORTED, "PSUBSCRIBE"));
 		}
@@ -2432,6 +2418,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 			}
 		};
 		j.psubscribe(jps, patterns);
+		return OK;
 	}
 
 	@Override
@@ -2459,7 +2446,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	
 	@Override
 	public List<String> punsubscribe(String... patterns) {
-		return (List<String>) executeCommand(CommandEnum.PUNSUBSCRIBE, patterns);
+		return (List<String>) executeCommand(CommandEnum.PUNSUBSCRIBE, new Object[] { patterns });
 	}
 	
 	private List<String> punsubscribe0(Jedis j, Transaction t, String... patterns) {
@@ -2480,7 +2467,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		executeCommand(CommandEnum.SUBSCRIBE, handler, channels);
 	}
 	
-	private void subscribe0(Jedis j, Transaction t, final RedisSubscribeHandler handler, String... channels) {
+	private String subscribe0(Jedis j, Transaction t, final RedisSubscribeHandler handler, String... channels) {
 		if (t != null) {
 			throw new RedisOperationException(String.format(TRANSACTION_UNSUPPORTED, "SUBSCRIBE"));
 		}
@@ -2499,6 +2486,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 			
 		};
 		j.subscribe(jps, channels);
+		return OK;
 	}
 
 	@Override
@@ -2513,7 +2501,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	
 	@Override
 	public List<String> unsubscribe(String... channels) {
-		return (List<String>) executeCommand(CommandEnum.UNSUBSCRIBE, channels);
+		return (List<String>) executeCommand(CommandEnum.UNSUBSCRIBE, new Object[] { channels });
 	}
 	
 	private List<String> unsubscribe0(Jedis j, Transaction t, String... channels) {
@@ -2682,10 +2670,10 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	
 	@Override
 	public Boolean[] scriptexists(String... sha1) {
-		return (Boolean[]) executeCommand(CommandEnum.SCRIPT_EXISTS, sha1);
+		return (Boolean[]) executeCommand(CommandEnum.SCRIPT_EXISTS, new Object[] { sha1 });
 	}
 	
-	private Boolean[] scriptexists(Jedis j, Transaction t, String... sha1) {
+	private Boolean[] scriptexists0(Jedis j, Transaction t, String... sha1) {
 		if (t != null) {
 			// TODO
 		}
@@ -2793,7 +2781,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		return (String) executeCommand(CommandEnum.SELECT, index);
 	}
 	
-	private String select(Jedis j, Transaction t, int index) {
+	private String select0(Jedis j, Transaction t, int index) {
 		if (t != null) {
 			t.select(index); return null;
 		}
@@ -2937,16 +2925,20 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	
 	@Override
 	public String debugobject(String key) {
-		return debug(DebugParams.OBJECT(key));
+		return (String) executeCommand(CommandEnum.DEBUG_OBJECT, key);
+	}
+	
+	private String debugobject0(Jedis j, Transaction t, String key) {
+		return debug0(j, t, DebugParams.OBJECT(key));
 	}
 
 	@Override
 	public String debugsegfault() {
-		return debug(DebugParams.SEGFAULT());
+		return (String) executeCommand(CommandEnum.DEBUG_SEGFAULT);
 	}
 	
-	private String debug(DebugParams params) {
-		return (String) executeCommand(CommandEnum.DEBUG_OBJECT, params);
+	private String debugsegfault0(Jedis j, Transaction t) {
+		return debug0(j, t, DebugParams.SEGFAULT());
 	}
 	
 	private String debug0(Jedis j, Transaction t, DebugParams params) {
@@ -3023,7 +3015,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		executeCommand(CommandEnum.MONITOR, handler);
 	}
 	
-	private void monitor0(Jedis j, Transaction t, final RedisMonitorHandler handler) {
+	private String monitor0(Jedis j, Transaction t, final RedisMonitorHandler handler) {
 		if (t != null) {
 			throw new RedisOperationException(String.format(TRANSACTION_UNSUPPORTED, "MONITOR"));
 		}
@@ -3036,6 +3028,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 			
 		};
 		j.monitor(jm);
+		return OK;
 	}
 
 	@Override
@@ -3159,12 +3152,13 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		executeCommand(CommandEnum.SYNC);
 	}
 	
-	private void sync0(Jedis j, Transaction t) {
+	private String sync0(Jedis j, Transaction t) {
 		if (t != null) {
 			// TODO
 		}
 		
 		j.sync();
+		return OK;
 	}
 
 	@Override
@@ -3276,8 +3270,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 			case TYPE:
 				return type0(j, t, (String) args[0]);
 				
-			// Strings
-				
+			// Strings			
 			case APPEND:
 				return append0(j, t, (String) args[0], (String) args[1]);
 			case BITCOUNT:
@@ -3342,32 +3335,198 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 			// Hashes
 			case HDEL:
 				return hdel0(j, t, (String) args[0], (String[]) args[1]);
+			case HEXISTS:
+				return hexists0(j, t, (String) args[0], (String) args[1]);
+			case HGET:
+				return hget0(j, t, (String) args[0], (String) args[1]);
+			case HGETALL:
+				return hgetall0(j, t, (String) args[0]);
+			case HINCRBY:
+				return hincrby0(j, t, (String) args[0], (String) args[1], (Long) args[2]);
+			case HINCRBYFLOAT:
+				return hincrbyfloat0(j, t, (String) args[0], (String) args[1], (Double) args[2]);
+			case HKEYS:
+				return hkeys0(j, t, (String) args[0]);
+			case HLEN:
+				return hlen0(j, t, (String) args[0], (String) args[1]);
+			case HMGET:
+				return hmget0(j, t, (String) args[0], (String[]) args[1]);
+			case HMSET:
+				return hmset0(j, t, (String) args[0], (Map<String, String>) args[1]);
+			case HSET:
+				return hset0(j, t, (String) args[0], (String) args[1], (String) args[2]);
+			case HSETNX:
+				return hsetnx0(j, t, (String) args[0], (String) args[1], (String) args[2]);
+			case HVALS:
+				return hvals0(j, t, (String) args[0]);
 				
 			// Lists
 			case BLPOP:
-				return blpop0(j, t, (String) args[0], (Integer) args[1]);
-			case BLPOP_KEYS:
+				return blpop0(j, t, (Integer) args[0], (String[]) args[1]);
 			case BRPOP:
-			case BRPOP_KEYS:
+				return brpop0(j, t, (Integer) args[0], (String[]) args[1]);
 			case BRPOPLPUSH:
+				return brpoplpush0(j, t, (String) args[0], (String) args[1], (Integer) args[2]);
 			case LINDEX:
+				return lindex0(j, t, (String) args[0], (Long) args[1]);
 			case LINSERT_BEFORE:
+				return linsertbefore0(j, t, (String) args[0], (String) args[1], (String) args[2]);
 			case LINSERT_AFTER:
+				return linsertafter0(j, t, (String) args[0], (String) args[1], (String) args[2]);
 			case LLEN:
 				return llen0(j, t, (String) args[0]);
 			case LPOP:
+				return lpop0(j, t, (String) args[0]);
 			case LPUSH:
 				return lpush0(j, t, (String) args[0], (String[]) args[1]);
 			case LPUSHX:
+				return lpushx0(j, t, (String) args[0], (String) args[1]);
 			case LRANGE:
 				return lrange0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
 			case LREM:
+				return lrem0(j, t, (String) args[0], (Long) args[1], (String) args[2]);
 			case LSET:
+				return lset0(j, t, (String) args[0], (Long) args[1], (String) args[2]);
 			case LTRIM:
+				return ltrim0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
 			case RPOP:
+				return rpop0(j, t, (String) args[0]);
 			case RPOPLPUSH:
+				return rpoplpush0(j, t, (String) args[0], (String) args[1]);
 			case RPUSH:
+				return rpush0(j, t, (String) args[0], (String[]) args[1]);
 			case RPUSHX:
+				return rpushx0(j, t, (String) args[0], (String) args[1]);
+				
+			// Sets
+			case SADD:
+				return sadd0(j, t, (String) args[0], (String[]) args[1]);
+			case SCARD:
+				return scard0(j, t, (String) args[0]);
+			case SDIFF:
+				return sdiff0(j, t, (String[]) args[0]);
+			case SDIFFSTORE:
+				return sdiffstore0(j, t, (String) args[0], (String[]) args[0]);
+			case SINTER:
+				return sinter0(j, t, (String) args[0]);
+			case SINTERSTORE:
+				return sinterstore0(j, t, (String) args[0], (String[]) args[1]);
+			case SISMEMBER:
+				return sismember0(j, t, (String) args[0], (String) args[1]);
+			case SMEMBERS:
+				return smembers0(j, t, (String) args[0]);
+			case SMOVE:
+				return smove0(j, t, (String) args[0], (String) args[1], (String) args[2]);
+			case SPOP:
+				return spop0(j, t, (String) args[0]);
+			case SRANDMEMBER:
+				return srandmember0(j, t, (String) args[0], (Integer) args[1]);
+			case SREM:
+				return srem0(j, t, (String) args[0], (String[]) args[1]);
+			case SUNION:
+				return sunion0(j, t, (String[]) args[0]);
+			case SUNIONSTORE:
+				return sunionstore0(j, t, (String) args[0], (String[]) args[1]);
+				
+			// Sorted Set
+			case ZADD:
+				return zadd0(j, t, (String) args[0], (Double) args[1], (String) args[2]);
+			case ZCARD:
+				return zcard0(j, t, (String) args[0]);
+			case ZCOUNT:
+				return zcount0(j, t, (String) args[0], (Double) args[1], (Double) args[2]);
+			case ZINCRBY:
+				return zincrby0(j, t, (String) args[0], (Double) args[1], (String) args[2]);
+			case ZINTERSTORE:
+				return zinterstore0(j, t, (String) args[0], (String[]) args[1]);
+			case ZINTERSTORE_MAX:
+				return zinterstoremax0(j, t, (String) args[0], (String[]) args[1]);
+			case ZINTERSTORE_MIN:
+				return zinterstoremin0(j, t, (String) args[0], (String[]) args[1]);
+			case ZINTERSTORE_WEIGHTS:
+				return zinterstore_weights(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+			case ZINTERSTORE_WEIGHTS_MAX:
+				return zinterstore_weights_max(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+			case ZINTERSTORE_WEIGHTS_MIN:
+				return zinterstore_weights_min(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+			case ZRANGE:
+				return zrange0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+			case ZRANGE_WITHSCORES:
+				return zrangewithscores0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+			case ZRANGEBYSCORE:
+				return zrangebyscore0(j, t, (String) args[0], (Double) args[1], (Double) args[2]);
+			case ZRANGEBYSCORE_STRING:
+				return zrangebyscore_string(j, t, (String) args[0], (String) args[1], (String) args[2]);
+			case ZRANGEBYSCORE_OFFSET_COUNT:
+				return zrangebyscore_offset_count(j, t, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
+			case ZRANGEBYSCORE_OFFSET_COUNT_STRING:
+				return zrangebyscore_offset_count_string(j, t, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
+			case ZRANGEBYSCORE_WITHSCORES:
+				return zrangebyscorewithscores0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+			case ZRANGEBYSCORE_WITHSCORES_STRING:
+				return zrangebyscorewithscores_string(j, t, (String) args[0], (String) args[1], (String) args[2]);
+			case ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT:
+				return zrangebyscorewithscores_offset_count(j, t, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
+			case ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING:
+				return zrangebyscorewithscores_offset_count_string(j, t, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
+			case ZRANK:
+				return zrank0(j, t, (String) args[0], (String) args[1]);
+			case ZREM:
+				return zrem0(j, t, (String) args[0], (String[]) args[1]);
+			case ZREMRANGEBYRANK:
+				return zremrangebyrank0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+			case ZREMRANGEBYSCORE:
+				return zremrangebyscore0(j, t, (String) args[0], (Double) args[1], (Double) args[2]);
+			case ZREMRANGEBYSCORE_STRING:
+				return zremrangebyscore_string(j, t, (String) args[0], (String) args[1], (String) args[2]);
+			case ZREVRANGE:
+				return zrevrange0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+			case ZREVRANGE_WITHSCORES:
+				return zrevrangewithscores0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+			case ZREVRANGEBYSCORE:
+				return zrevrangebyscore0(j, t, (String) args[0], (Double) args[1], (Double) args[2]);
+			case ZREVRANGEBYSCORE_STRING:
+				return zrevrangebyscore_string(j, t, (String) args[0], (String) args[1], (String) args[2]);
+			case ZREVRANGEBYSCORE_OFFSET_COUNT:
+				return zrevrangebyscore_offset_count(j, t, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
+			case ZREVRANGEBYSCORE_OFFSET_COUNT_STRING:
+				return zrevrangebyscore_offset_count_string(j, t, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
+			case ZREVRANGEBYSCORE_WITHSCORES:
+				return zrevrangebyscorewithscores0(j, t, (String) args[0], (Double) args[1], (Double) args[2]);
+			case ZREVRANGEBYSCORE_WITHSCORES_STRING:
+				return zrevrangebyscorewithscores_string(j, t, (String) args[0], (String) args[1], (String) args[2]);
+			case ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT:
+				return zrevrangebyscorewithscores_offset_count(j, t, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
+			case ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING:
+				return zrevrangebyscorewithscores_offset_count_string(j, t, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
+			case ZREVRANK:
+				return zrevrank0(j, t, (String) args[0], (String) args[1]);
+			case ZSCORE:
+				return zscore0(j, t, (String) args[0], (String) args[1]);
+			case ZUNIONSTORE:
+				return zunionstore0(j, t, (String) args[0], (String[]) args[1]);
+			case ZUNIONSTORE_MAX:
+				return zunionstoremax0(j, t, (String) args[0], (String[]) args[1]);
+			case ZUNIONSTORE_MIN:
+				return zunionstoremin0(j, t, (String) args[0], (String[]) args[1]);
+			case ZUNIONSTORE_WEIGHTS:
+				return zunionstore_weights(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+			case ZUNIONSTORE_WEIGHTS_MAX:
+				return zunionstore_weights_max(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+			case ZUNIONSTORE_WEIGHTS_MIN:
+				return zunionstore_weights_min(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+			
+			// Pub/Sub
+			case PSUBSCRIBE:
+				return psubscribe0(j, t, (RedisPsubscribeHandler) args[0], (String[]) args[1]);
+			case PUBLISH:
+				return publish0(j, t, (String) args[0], (String) args[1]);
+			case PUNSUBSCRIBE:
+				return punsubscribe0(j, t, (String[]) args[0]);
+			case SUBSCRIBE:
+				return subscribe0(j, t, (RedisSubscribeHandler) args[0], (String[]) args[1]);
+			case UNSUBSCRIBE:
+				return unsubscribe0(j, t, (String[]) args[0]);
 				
 			// Transactions
 			case DISCARD:
@@ -3380,6 +3539,90 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 				return unwatch0(j, t);
 			case WATCH:
 				return watch0(j, (String[]) args[0]);
+				
+			// Scripting
+			case EVAL:
+				return eval0(j, t, (String) args[0], (List<String>) args[1], (List<String>) args[2]);
+			case EVALSHA:
+				return evalsha0(j, t, (String) args[0], (List<String>) args[1], (List<String>) args[2]);
+			case SCRIPT_EXISTS:
+				return scriptexists0(j, t, (String) args[0]);
+			case SCRIPT_FLUSH:
+				return scriptflush0(j, t);
+			case SCRIPT_KILL:
+				return scriptkill0(j, t);
+			case SCRIPT_LOAD:
+				return scriptload0(j, t, (String) args[0]);
+				
+			// Connection
+			case AUTH:
+				return auth0(j, t, (String) args[0]);
+			case ECHO:
+				return echo0(j, t, (String) args[0]);
+			case PING:
+				return ping0(j, t);
+			case QUIT:
+				return quit0(j, t);
+			case SELECT:
+				return select0(j, t, (Integer) args[0]);
+				
+			// Server
+			case BGREWRITEAOF:
+				return bgrewriteaof0(j, t);
+			case BGSAVE:
+				return bgsave0(j, t);
+			case CLIENT_KILL:
+				return clientkill0(j, t, (String) args[0], (Integer) args[1]);
+			case CLIENT_LIST:
+				return clientlist0(j, t);
+			case CLIENT_GETNAME:
+				return clientgetname0(j, t);
+			case CLIENT_SETNAME:
+				return clientsetname0(j, t, (String) args[0]);
+			case CONFIG_GET:
+				return configget0(j, t, (String) args[0]);
+			case CONFIG_SET:
+				return configset0(j, t, (String) args[0], (String) args[1]);
+			case CONFIG_RESETSTAT:
+				return configresetstat0(j, t);
+			case DBSIZE:
+				return dbsize0(j, t);
+			case DEBUG_OBJECT:
+				return debugobject0(j, t, (String) args[0]);
+			case DEBUG_SEGFAULT:
+				return debugsegfault0(j, t);
+			case FLUSH_ALL:
+				return flushall0(j, t);
+			case FLUSH_DB:
+				return flushdb0(j, t);
+			case INFO:
+				return info0(j, t, (String) args[0]);
+			case LAST_SAVE:
+				return lastsave0(j, t);
+			case MONITOR:
+				return monitor0(j, t, (RedisMonitorHandler) args[0]);
+			case SAVE:
+				return save0(j, t);
+			case SHUTDOWN:
+				return shutdown0(j, t, (Boolean) args[0]);
+			case SLAVEOF:
+				return slaveof0(j, t, (String) args[0], (Integer) args[1]);
+			case SLAVEOF_NONOE:
+				return slaveofnoone(j, t);
+			case SLOWLOG_LEN:
+				return slowloglen0(j, t);
+			case SLOWLOG_GET:
+				return slowlogget0(j, t);
+			case SLOWLOG_GET_LEN:
+				return slowlogget0(j, t, (Integer) args[0]);
+			case SLOWLOG_RESET:
+				return slowlogreset0(j, t);
+			case SYNC:
+				return sync0(j, t);
+			case TIME: 
+				return time0(j, t);
+			case TIME_MICRO:
+				return microtime0(j, t);
 			default:
 				throw new IllegalArgumentException("Wrong command");
 			}

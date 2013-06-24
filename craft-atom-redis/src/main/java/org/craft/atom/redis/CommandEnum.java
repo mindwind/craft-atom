@@ -107,9 +107,7 @@ public enum CommandEnum {
 	
 	
 	BLPOP,
-	BLPOP_KEYS,
 	BRPOP,
-	BRPOP_KEYS,
 	BRPOPLPUSH,
 	LINDEX,
 	LINSERT_BEFORE,
@@ -266,5 +264,6 @@ public enum CommandEnum {
 	SLOWLOG_RESET,
 	SYNC,
 	TIME, 
-	TIME_MICRO,
+	TIME_MICRO
+	
 }

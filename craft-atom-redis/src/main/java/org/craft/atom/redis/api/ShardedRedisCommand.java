@@ -988,7 +988,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @return
 	 */
 	Set<String> zrevrange(String shardkey, String key, long start, long stop);
-	Map<String, Double> zrerangewithscores(String shardkey, String key, long start, long stop);
+	Map<String, Double> zrevrangewithscores(String shardkey, String key, long start, long stop);
 	
 	/**
 	 * @see {@link #zrevrangebyscore(String, double, double)}
@@ -998,14 +998,14 @@ public interface ShardedRedisCommand extends RedisCommand {
 	 * @param min
 	 * @return
 	 */
-	Set<String> zrerangebyscore(String shardkey, String key, double max, double min);
-	Set<String> zrerangebyscore(String shardkey, String key, String max, String min);
-	Set<String> zrerangebyscore(String shardkey, String key, double max, double min, int offset, int count);
-	Set<String> zrerangebyscore(String shardkey, String key, String max, String min, int offset, int count);
-	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, double min, double max);
-	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, String min, String max);
-	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, double min, double max, int offset, int count);
-	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, String min, String max, int offset, int count);
+	Set<String> zrevrangebyscore(String shardkey, String key, double max, double min);
+	Set<String> zrevrangebyscore(String shardkey, String key, String max, String min);
+	Set<String> zrevrangebyscore(String shardkey, String key, double max, double min, int offset, int count);
+	Set<String> zrevrangebyscore(String shardkey, String key, String max, String min, int offset, int count);
+	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, double max, double min);
+	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, String max, String min);
+	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, double max, double min, int offset, int count);
+	Map<String, Double> zrevrangebyscorewithscores(String shardkey, String key, String max, String min, int offset, int count);
 	
 	/**
 	 * @see {@link #zrevrank(String, String)}
