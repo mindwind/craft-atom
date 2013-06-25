@@ -20,10 +20,10 @@ public class SingletonRedisMain {
 	private static final int PORT = 6379;
 	private static final String K = "test-key";
 	private static final String V = "test-value";
-	private static SingletonRedis redis;
+	private static DefaultRedis redis;
 	
 	private static void init() {
-		redis = new SingletonRedis(HOST, PORT);
+		redis = new DefaultRedis(HOST, PORT);
 	}
 	
 	private static void before(String desc) {

@@ -9,12 +9,12 @@ import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
 /**
- * The atomic commands supported by singleton Redis.
+ * The singleton redis client.
  * 
  * @author mindwind
  * @version 1.0, May 4, 2013
  */
-public interface SingletonRedisCommand extends RedisCommand {
+public interface Redis extends BaseRedis {
 	
 	// ~ --------------------------------------------------------------------------------------------------------- Keys
 	
@@ -98,7 +98,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
 	
 	/**
-	 * @see {@link RedisCommand#blpop(String)}
+	 * @see {@link BaseRedis#blpop(String)}
 	 * @param timeout
 	 * @param keys
 	 * @return A empty map(nil multi-bulk) when no element could be popped and the timeout expired.
@@ -109,7 +109,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	Map<String, String> blpop(int timeout, String... keys);
 	
 	/**
-	 * @see {@link RedisCommand#brpop(String)}
+	 * @see {@link BaseRedis#brpop(String)}
 	 * @param timeout
 	 * @param keys
 	 * @return A empty map(nil multi-bulk) when no element could be popped and the timeout expired.
@@ -1000,7 +1000,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * The commandstats section provides statistics based on the command type, including the number of calls, 
 	 * the total CPU time consumed by these commands, and the average CPU consumed per command execution.
 	 * For each command type, the following line is added:
-	 * cmdstat_XXX:calls=XXX,usec=XXX,usecpercall=XXX
+	 * cmdstat_XXX:calls=xxx,usec=xxx,usecpercall=xxx
 	 * 
 	 * The cluster section currently only contains a unique field:
 	 * cluster_enabled: Indicate Redis cluster is enabled
@@ -1008,7 +1008,7 @@ public interface SingletonRedisCommand extends RedisCommand {
 	 * The keyspace section provides statistics on the main dictionary of each database. The statistics are the number of keys, 
 	 * and the number of keys with an expiration.
 	 * For each database, the following line is added:
-	 * dbXXX:keys=XXX,expires=XXX
+	 * dbXXX:keys=xxx,expires=xxx
 	 * 
 	 * @return as a collection of text lines.
 	 */

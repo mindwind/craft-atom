@@ -8,7 +8,7 @@ import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
 /**
- * The atomic commands supported by sharded Redis.
+ * The sharded redis client.
  * <p>
  * In <code>ShardedRedisCommand</code>, use <tt>shardKey</tt> force certain keys to go to the same shard.<br>
  * In fact we use <tt>shardKey</tt> to select shard, so we can guarantee atomicity of command.
@@ -16,7 +16,7 @@ import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
  * @author mindwind
  * @version 1.0, May 4, 2013
  */
-public interface ShardedRedisCommand extends RedisCommand {
+public interface ShardedRedis extends BaseRedis {
 	
 	// ~ --------------------------------------------------------------------------------------------------------- Keys
 	
@@ -137,7 +137,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Long pttl(String shardkey, String key);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#randomkey()}
+	 * @see {@link Redis#randomkey()}
 	 * @param shardkey
 	 * @return
 	 */
@@ -330,7 +330,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Double incrbyfloat(String shardkey, String key, double increment);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#mget(String...)}
+	 * @see {@link Redis#mget(String...)}
 	 * @param shardkey
 	 * @param keys
 	 * @return
@@ -338,7 +338,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	List<String> mget(String shardkey, String... keys);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#mset(String...)}
+	 * @see {@link Redis#mset(String...)}
 	 * @param shardkey
 	 * @param keysvalues
 	 * @return
@@ -346,7 +346,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	String mset(String shardkey, String... keysvalues);
 
 	/**
-	 * @see {@link SingletonRedisCommand#msetnx(String...)}
+	 * @see {@link Redis#msetnx(String...)}
 	 * @param shardkey
 	 * @param keysvalues
 	 * @return
@@ -756,7 +756,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Long scard(String shardkey, String key);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#sdiff(String...)}
+	 * @see {@link Redis#sdiff(String...)}
 	 * @param shardkey
 	 * @param keys
 	 * @return
@@ -764,7 +764,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Set<String> sdiff(String shardkey, String... keys);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#sdiffstore(String, String...)}
+	 * @see {@link Redis#sdiffstore(String, String...)}
 	 * @param destination
 	 * @param keys
 	 * @return
@@ -772,14 +772,14 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Long sdiffstore(String shardkey, String destination, String... keys);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#sinter(String...)}
+	 * @see {@link Redis#sinter(String...)}
 	 * @param keys
 	 * @return
 	 */
 	Set<String> sinter(String shardkey, String... keys);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#sinterstore(String...)}
+	 * @see {@link Redis#sinterstore(String...)}
 	 * @param shardkey
 	 * @param destination
 	 * @param keys
@@ -805,7 +805,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Set<String> smembers(String shardkey, String key);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#smove(String, String, String)}
+	 * @see {@link Redis#smove(String, String, String)}
 	 * @param shardkey
 	 * @param source
 	 * @param destination
@@ -842,7 +842,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Long srem(String shardkey, String key, String... members);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#sunion(String...)}
+	 * @see {@link Redis#sunion(String...)}
 	 * @param shardkey
 	 * @param keys
 	 * @return
@@ -850,7 +850,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Set<String> sunion(String shardkey, String... keys);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#sunionstore(String, String...)}
+	 * @see {@link Redis#sunionstore(String, String...)}
 	 * @param shardkey
 	 * @param destination
 	 * @param keys
@@ -900,7 +900,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Double zincrby(String shardkey, String key, double score, String member);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#zinterstore(String, String...)}
+	 * @see {@link Redis#zinterstore(String, String...)}
 	 * @param destination
 	 * @param keys
 	 * @return
@@ -1026,7 +1026,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Double zscore(String shardkey, String key, String member);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#zunionstore(String, String...)}
+	 * @see {@link Redis#zunionstore(String, String...)}
 	 * @param shardkey
 	 * @param destination
 	 * @param keys
@@ -1061,7 +1061,7 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Long publish(String shardkey, String channel, String message);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#punsubscribe(String)}
+	 * @see {@link Redis#punsubscribe(String)}
 	 * @param shardkey
 	 * @param pattern
 	 * @return
@@ -1105,35 +1105,35 @@ public interface ShardedRedisCommand extends RedisCommand {
 	
 	
 	/**
-	 * @see {@link SingletonRedisCommand#discard()}
+	 * @see {@link Redis#discard()}
 	 * @param shardkey
 	 * @return always OK.
 	 */
 	String discard(String shardkey);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#exec()}}
+	 * @see {@link Redis#exec()}}
 	 * @param shardkey
 	 * @return
 	 */
 	List<Object> exec(String shardkey);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#multi()}
+	 * @see {@link Redis#multi()}
 	 * @param shardkey
 	 * @return always OK.
 	 */
 	String multi(String shardkey);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#unwatch()}
+	 * @see {@link Redis#unwatch()}
 	 * @param shardkey
 	 * @return always OK.
 	 */
 	String unwatch(String shardkey);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#watch(String...)}
+	 * @see {@link Redis#watch(String...)}
 	 * @param shardkey
 	 * @param keys
 	 * @return always OK.
@@ -1173,14 +1173,14 @@ public interface ShardedRedisCommand extends RedisCommand {
 	Boolean[] scriptexists(String shardkey, String... sha1);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#scriptflush()}}
+	 * @see {@link Redis#scriptflush()}}
 	 * @param shardkey
 	 * @return
 	 */
 	String scriptflush(String shardkey);
 	
 	/**
-	 * @see {@link SingletonRedisCommand#scriptkill()}
+	 * @see {@link Redis#scriptkill()}
 	 * @param shardkey
 	 * @return
 	 */

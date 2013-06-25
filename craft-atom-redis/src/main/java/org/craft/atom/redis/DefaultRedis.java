@@ -13,7 +13,7 @@ import org.craft.atom.redis.api.RedisConnectionException;
 import org.craft.atom.redis.api.RedisDataException;
 import org.craft.atom.redis.api.RedisException;
 import org.craft.atom.redis.api.RedisOperationException;
-import org.craft.atom.redis.api.SingletonRedisCommand;
+import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.Slowlog;
 import org.craft.atom.redis.api.handler.RedisMonitorHandler;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
@@ -40,7 +40,7 @@ import redis.clients.jedis.exceptions.JedisDataException;
  * @version 1.0, Jun 15, 2013
  */
 @SuppressWarnings("unchecked")
-public class SingletonRedis extends AbstractRedis implements SingletonRedisCommand {
+public class DefaultRedis extends AbstractRedis implements Redis {
 	
 	private static final ThreadLocal<Transaction> THREAD_LOCAL_TRANSACTION = new ThreadLocal<Transaction>();
 	private static final ThreadLocal<Jedis> THREAD_LOCAL_JEDIS = new ThreadLocal<Jedis>();
@@ -55,20 +55,20 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 	
 	// ~ ---------------------------------------------------------------------------------------------------------
 	
-	public SingletonRedis(String host, int port) {
+	public DefaultRedis(String host, int port) {
 		this.host = host;
 		this.port = port;
 		init();
 	}
 	
-	public SingletonRedis(String host, int port, int timeoutInMillis) {
+	public DefaultRedis(String host, int port, int timeoutInMillis) {
 		this.host = host;
 		this.port = port;
 		this.timeoutInMillis = timeoutInMillis;
 		init();
 	}
 	
-	public SingletonRedis(String host, int port, int timeoutInMillis, int poolSize) {
+	public DefaultRedis(String host, int port, int timeoutInMillis, int poolSize) {
 		this.host = host;
 		this.port = port;
 		this.timeoutInMillis = timeoutInMillis;
@@ -76,7 +76,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		init();
 	}
 	
-	public SingletonRedis(String host, int port, int timeoutInMillis, Config poolConfig) {
+	public DefaultRedis(String host, int port, int timeoutInMillis, Config poolConfig) {
 		this.host = host;
 		this.port = port;
 		this.timeoutInMillis = timeoutInMillis;
@@ -84,7 +84,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		init();
 	}
 	
-	public SingletonRedis(String host, int port, int timeoutInMillis, int poolSize, String password) {
+	public DefaultRedis(String host, int port, int timeoutInMillis, int poolSize, String password) {
 		this.host = host;
 		this.port = port;
 		this.timeoutInMillis = timeoutInMillis;
@@ -93,7 +93,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		init();
 	}
 	
-	public SingletonRedis(String host, int port, int timeoutInMillis, Config poolConfig, String password) {
+	public DefaultRedis(String host, int port, int timeoutInMillis, Config poolConfig, String password) {
 		this.host = host;
 		this.port = port;
 		this.timeoutInMillis = timeoutInMillis;
@@ -102,7 +102,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		init();
 	}
 	
-	public SingletonRedis(String host, int port, int timeoutInMillis, int poolSize, String password, int database) {
+	public DefaultRedis(String host, int port, int timeoutInMillis, int poolSize, String password, int database) {
 		this.host = host;
 		this.port = port;
 		this.timeoutInMillis = timeoutInMillis;
@@ -112,7 +112,7 @@ public class SingletonRedis extends AbstractRedis implements SingletonRedisComma
 		init();
 	}
 
-	public SingletonRedis(String host, int port, int timeoutInMillis, Config poolConfig, String password, int database) {
+	public DefaultRedis(String host, int port, int timeoutInMillis, Config poolConfig, String password, int database) {
 		this.host = host;
 		this.port = port;
 		this.timeoutInMillis = timeoutInMillis;

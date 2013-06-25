@@ -8,7 +8,7 @@ import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
 /**
- * The basic atomic commands supported by Redis.
+ * The basic redis client.
  * <p>
  * 
  * <b>Transaction</b><br>
@@ -27,7 +27,7 @@ import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
  * @author mindwind
  * @version 1.0, May 3, 2013
  */
-public interface RedisCommand {
+public interface BaseRedis {
 
 	// ~ --------------------------------------------------------------------------------------------------------- Keys
 
