@@ -9,11 +9,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.pool.impl.GenericObjectPool.Config;
+import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.RedisConnectionException;
 import org.craft.atom.redis.api.RedisDataException;
 import org.craft.atom.redis.api.RedisException;
 import org.craft.atom.redis.api.RedisOperationException;
-import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.Slowlog;
 import org.craft.atom.redis.api.handler.RedisMonitorHandler;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
@@ -137,11 +137,6 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 	
 	// ~ --------------------------------------------------------------------------------------------------------- Keys
 	
-
-	@Override
-	public Long del(String key) {
-		return (Long) del(new String[] { key });
-	}
 	
 	@Override
 	public Long del(String... keys) {
@@ -2392,11 +2387,6 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 	
 	
 	@Override
-	public void psubscribe(RedisPsubscribeHandler handler, String pattern) {
-		psubscribe(handler, new String[] { pattern });
-	}
-	
-	@Override
 	public void psubscribe(RedisPsubscribeHandler handler, String... patterns) {
 		executeCommand(CommandEnum.PSUBSCRIBE, handler, patterns);
 	}
@@ -2435,16 +2425,6 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 	}
 	
 	@Override
-	public String punsubscribe(String pattern) {
-		List<String> l = punsubscribe(new String[] { pattern });
-		if (l.size() > 0) {
-			return l.get(0);
-		} else {
-			return null;
-		}
-	}
-	
-	@Override
 	public List<String> punsubscribe(String... patterns) {
 		return (List<String>) executeCommand(CommandEnum.PUNSUBSCRIBE, new Object[] { patterns });
 	}
@@ -2455,11 +2435,6 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		}
 		
 		return null;
-	}
-
-	@Override
-	public void subscribe(RedisSubscribeHandler handler, String channel) {
-		subscribe(handler, new String[] { channel });
 	}
 	
 	@Override
@@ -2487,16 +2462,6 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		};
 		j.subscribe(jps, channels);
 		return OK;
-	}
-
-	@Override
-	public String unsubscribe(String channel) {
-		List<String> l = unsubscribe(new String[] { channel });
-		if (l.size() > 0) {
-			return l.get(0);
-		} else {
-			return null;
-		}
 	}
 	
 	@Override
@@ -3714,8 +3679,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 	@Override
 	public String toString() {
 		return String
-				.format("SingletonRedis [host=%s, password=%s, port=%s, timeoutInMillis=%s, database=%s, poolConfig=%s]",
-						                 host,    password,    port,    timeoutInMillis,    database,    poolConfig);
+				.format("Redis [host=%s, password=%s, port=%s, timeoutInMillis=%s, database=%s, poolConfig=%s]",
+						        host,    password,    port,    timeoutInMillis,    database,    poolConfig);
 	}
 
 }

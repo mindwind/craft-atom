@@ -14,7 +14,7 @@ import org.craft.atom.redis.api.RedisDataException;
  * @author mindwind
  * @version 1.0, Jun 19, 2013
  */
-public class SingletonRedisMain {
+public class RedisMain {
 	
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT = 6379;
