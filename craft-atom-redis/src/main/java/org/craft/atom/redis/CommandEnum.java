@@ -193,6 +193,7 @@ public enum CommandEnum {
 	ZUNIONSTORE_WEIGHTS_MAX,
 	ZUNIONSTORE_WEIGHTS_MIN,
 	
+	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 	
 	

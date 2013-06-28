@@ -13,7 +13,7 @@ import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.RedisConnectionException;
 import org.craft.atom.redis.api.RedisDataException;
 import org.craft.atom.redis.api.RedisException;
-import org.craft.atom.redis.api.RedisOperationException;
+import org.craft.atom.redis.api.RedisTransaction;
 import org.craft.atom.redis.api.Slowlog;
 import org.craft.atom.redis.api.handler.RedisMonitorHandler;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
@@ -40,15 +40,15 @@ import redis.clients.jedis.exceptions.JedisDataException;
  * @version 1.0, Jun 15, 2013
  */
 @SuppressWarnings("unchecked")
-public class DefaultRedis extends AbstractRedis implements Redis {
+public class DefaultRedis implements Redis {
 	
-	private static final ThreadLocal<Transaction> THREAD_LOCAL_TRANSACTION = new ThreadLocal<Transaction>();
+	private static final String OK = "OK";
 	private static final ThreadLocal<Jedis> THREAD_LOCAL_JEDIS = new ThreadLocal<Jedis>();
 	
 	private String host;
 	private String password;
 	private int port = 6379;
-	private int timeoutInMillis = 2000;
+	private int timeout = 2000;
 	private int database = 0;
 	private Config poolConfig = poolConfig(100);
 	private JedisPool pool;
@@ -61,61 +61,61 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		init();
 	}
 	
-	public DefaultRedis(String host, int port, int timeoutInMillis) {
+	public DefaultRedis(String host, int port, int timeout) {
 		this.host = host;
 		this.port = port;
-		this.timeoutInMillis = timeoutInMillis;
+		this.timeout = timeout;
 		init();
 	}
 	
-	public DefaultRedis(String host, int port, int timeoutInMillis, int poolSize) {
+	public DefaultRedis(String host, int port, int timeout, int poolSize) {
 		this.host = host;
 		this.port = port;
-		this.timeoutInMillis = timeoutInMillis;
+		this.timeout = timeout;
 		this.poolConfig = poolConfig(poolSize);
 		init();
 	}
 	
-	public DefaultRedis(String host, int port, int timeoutInMillis, Config poolConfig) {
+	public DefaultRedis(String host, int port, int timeout, Config poolConfig) {
 		this.host = host;
 		this.port = port;
-		this.timeoutInMillis = timeoutInMillis;
+		this.timeout = timeout;
 		this.poolConfig = poolConfig;
 		init();
 	}
 	
-	public DefaultRedis(String host, int port, int timeoutInMillis, int poolSize, String password) {
+	public DefaultRedis(String host, int port, int timeout, int poolSize, String password) {
 		this.host = host;
 		this.port = port;
-		this.timeoutInMillis = timeoutInMillis;
+		this.timeout = timeout;
 		this.poolConfig = poolConfig(poolSize);
 		this.password = password;
 		init();
 	}
 	
-	public DefaultRedis(String host, int port, int timeoutInMillis, Config poolConfig, String password) {
+	public DefaultRedis(String host, int port, int timeout, Config poolConfig, String password) {
 		this.host = host;
 		this.port = port;
-		this.timeoutInMillis = timeoutInMillis;
+		this.timeout = timeout;
 		this.poolConfig = poolConfig;
 		this.password = password;
 		init();
 	}
 	
-	public DefaultRedis(String host, int port, int timeoutInMillis, int poolSize, String password, int database) {
+	public DefaultRedis(String host, int port, int timeout, int poolSize, String password, int database) {
 		this.host = host;
 		this.port = port;
-		this.timeoutInMillis = timeoutInMillis;
+		this.timeout = timeout;
 		this.poolConfig = poolConfig(poolSize);
 		this.password = password;
 		this.database = database;
 		init();
 	}
 
-	public DefaultRedis(String host, int port, int timeoutInMillis, Config poolConfig, String password, int database) {
+	public DefaultRedis(String host, int port, int timeout, Config poolConfig, String password, int database) {
 		this.host = host;
 		this.port = port;
-		this.timeoutInMillis = timeoutInMillis;
+		this.timeout = timeout;
 		this.poolConfig = poolConfig;
 		this.password = password;
 		this.database = database;
@@ -131,7 +131,35 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 	}
 	
 	private void init() {
-		pool = new JedisPool(poolConfig, host, port, timeoutInMillis, password, database);
+		pool = new JedisPool(poolConfig, host, port, timeout, password, database);
+	}
+	
+	
+	// ~ ---------------------------------------------------------------------------------------------------------
+	
+	
+	public String host() {
+		return host;
+	}
+	
+	public int port() {
+		return port;
+	}
+
+	public String password() {
+		return password;
+	}
+
+	public int timeout() {
+		return timeout;
+	}
+
+	public int database() {
+		return database;
+	}
+
+	public Config config() {
+		return poolConfig;
 	}
 	
 	
@@ -143,11 +171,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.DEL, new Object[] { keys });
 	}
 	
-	private Long del0(Jedis j, Transaction t, String... keys) {
-		if (t != null) {
-			t.del(keys); return null;
-		}
-		
+	private Long del0(Jedis j, String... keys) {
 		return j.del(keys);
 	}
 
@@ -156,12 +180,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.DUMP, new Object[] { key });
 	}
 	
-	private String dump0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			// TODO t.dump(key); return null;
-		}
-		
-//		return j.dump(key);
+	private String dump0(Jedis j, String key) {
+//		return j.dump(key); TODO
 		return null;
 	}
 
@@ -170,11 +190,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Boolean) executeCommand(CommandEnum.EXISTS, new Object[] { key });
 	}
 	
-	private Boolean exists0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.exists(key); return null;
-		}
-		
+	private Boolean exists0(Jedis j, String key) {
 		return j.exists(key);
 	}
 
@@ -183,11 +199,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.EXPIRE, new Object[] { key, seconds });
 	}
 	
-	private Long expire0(Jedis j, Transaction t, String key, int seconds) {
-		if (t != null) {
-			t.expire(key, seconds); return null;
-		}
-		
+	private Long expire0(Jedis j, String key, int seconds) {
 		return j.expire(key, seconds);
 	}
 
@@ -196,11 +208,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.EXPIREAT, new Object[] { key, timestamp });
 	}
 	
-	private Long expireat0(Jedis j, Transaction t, String key, long timestamp) {
-		if (t != null) {
-			t.expireAt(key, timestamp); return null;
-		}
-		
+	private Long expireat0(Jedis j, String key, long timestamp) {
 		return j.expireAt(key, timestamp);
 	}
 
@@ -209,11 +217,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.KEYS, new Object[] { pattern });
 	}
 	
-	private Set<String> keys0(Jedis j, Transaction t, String pattern) {
-		if (t != null) {
-			t.keys(pattern); return null;
-		}
-		
+	private Set<String> keys0(Jedis j, String pattern) {
 		return j.keys(pattern);
 	}
 
@@ -222,11 +226,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.MIGRATE, new Object[] { host, port, key, destinationdb, timeout });
 	}
 	
-	private String migrate0(Jedis j, Transaction t, String host, int port, String key, int destinationdb, int timeout) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String migrate0(Jedis j, String host, int port, String key, int destinationdb, int timeout) {
 		return null;
 	}
 
@@ -235,11 +235,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.MOVE, new Object[] { key, db });
 	}
 	
-	private Long move0(Jedis j, Transaction t, String key, int db) {
-		if (t != null) {
-			t.move(key, db); return null;
-		}
-		
+	private Long move0(Jedis j, String key, int db) {
 		return j.move(key, db);
 	}
 
@@ -248,11 +244,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.OBJECT_REFCOUNT, new Object[] { key });
 	}
 	
-	private Long objectrefcount0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Long objectrefcount0(Jedis j, String key) {
 		return j.objectRefcount(key);
 	}
 
@@ -261,11 +253,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.OBJECT_ENCODING, new Object[] { key });
 	}
 	
-	private String objectencoding0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String objectencoding0(Jedis j, String key) {
 		return j.objectEncoding(key);
 	}
 
@@ -274,11 +262,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.OBJECT_IDLETIME, new Object[] { key });
 	}
 	
-	private Long objectidletime0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Long objectidletime0(Jedis j, String key) {
 		return j.objectIdletime(key);
 	}
 
@@ -287,11 +271,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.PERSIST, new Object[] { key });
 	}
 	
-	private Long persist0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.persist(key); return null;
-		}
-		
+	private Long persist0(Jedis j, String key) {
 		return j.persist(key);
 	}
 
@@ -300,11 +280,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.PEXPIRE, new Object[] { key });
 	}
 	
-	private Long pexpire0(Jedis j, Transaction t, String key, int milliseconds) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Long pexpire0(Jedis j, String key, int milliseconds) {
+		// TODO
 		return null;
 	}
 
@@ -313,11 +290,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.PEXPIREAT, new Object[] { key, millisecondstimestamp });
 	}
 	
-	private Long pexpireat0(Jedis j, Transaction t, String key, long millisecondstimestamp) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Long pexpireat0(Jedis j, String key, long millisecondstimestamp) {
+		// TODO
 		return null;
 	}
 
@@ -326,11 +300,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.PTTL, new Object[] { key });
 	}
 	
-	private Long pttl0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Long pttl0(Jedis j, String key) {
+		// TODO
 		return null;
 	}
 	
@@ -339,25 +310,16 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.RANDOMKEY, new Object[] {});
 	}
 	
-	private String randomkey0(Jedis j, Transaction t) {
-		if (t != null) {
-			t.randomKey(); return null;
-		}
-		
+	private String randomkey0(Jedis j) {
 		return j.randomKey();
 	}
-	
 
 	@Override
 	public String rename(String key, String newkey) {
 		return (String) executeCommand(CommandEnum.RENAME, new Object[] { key, newkey });
 	}
 	
-	private String rename0(Jedis j, Transaction t, String key, String newkey) {
-		if (t != null) {
-			t.rename(key, newkey); return null;
-		}
-		
+	private String rename0(Jedis j, String key, String newkey) {
 		return j.rename(key, newkey);
 	}
 
@@ -366,11 +328,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.RENAMENX, new Object[] { key, newkey });
 	}
 	
-	private Long renamenx0(Jedis j, Transaction t, String key, String newkey) {
-		if (t != null) {
-			t.renamenx(key, newkey); return null;
-		}
-		
+	private Long renamenx0(Jedis j, String key, String newkey) {
 		return j.renamenx(key, newkey);
 	}
 
@@ -379,11 +337,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.RESTORE, new Object[] { key, ttl, serializedvalue });
 	}
 	
-	private String restore0(Jedis j, Transaction t, String key, long ttl, String serializedvalue) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String restore0(Jedis j, String key, long ttl, String serializedvalue) {
+		// TODO
 		return null;
 	}
 
@@ -392,11 +347,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.SORT, new Object[] { key });
 	}
 	
-	private List<String> sort0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.sort(key); return null;
-		}
-		
+	private List<String> sort0(Jedis j, String key) {
 		return j.sort(key);
 	}
 
@@ -405,14 +356,10 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.SORT_DESC, new Object[] { key, desc });
 	}
 	
-	private List<String> sort_desc(Jedis j, Transaction t, String key, boolean desc) {
+	private List<String> sort_desc(Jedis j, String key, boolean desc) {
 		SortingParams sp = new SortingParams();
 		if (desc) {
 			sp.desc();
-		}
-		
-		if (t != null) {
-			t.sort(key, sp); return null;
 		}
 		
 		return j.sort(key, sp);
@@ -423,7 +370,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.SORT_ALPHA_DESC, new Object[] { key, alpha, desc });
 	}
 	
-	private List<String> sort_alpha_desc(Jedis j, Transaction t, String key, boolean alpha, boolean desc) {
+	private List<String> sort_alpha_desc(Jedis j, String key, boolean alpha, boolean desc) {
 		SortingParams sp = new SortingParams();
 		if (desc) {
 			sp.desc();
@@ -431,11 +378,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		if (alpha) { 
 			sp.alpha() ;
 		}
-		
-		if (t != null) {
-			t.sort(key, sp); return null;
-		}
-		
+
 		return j.sort(key, sp);
 	}
 
@@ -444,11 +387,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.SORT_OFFSET_COUNT, new Object[] { key, offset, count });
 	}
 	
-	private List<String> sort_offset_count(Jedis j, Transaction t, String key, int offset, int count) {
-		if (t != null) {
-			t.sort(key, new SortingParams().limit(offset, count)); return null;
-		}
-		
+	private List<String> sort_offset_count(Jedis j, String key, int offset, int count) {
 		return j.sort(key, new SortingParams().limit(offset, count));
 	}
 
@@ -457,7 +396,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.SORT_OFFSET_COUNT_ALPHA_DESC, new Object[] { key, offset, count, alpha, desc });
 	}
 	
-	private List<String> sort_offset_count_alpha_desc(Jedis j, Transaction t, String key, int offset, int count, boolean alpha, boolean desc) {
+	private List<String> sort_offset_count_alpha_desc(Jedis j, String key, int offset, int count, boolean alpha, boolean desc) {
 		SortingParams sp = new SortingParams();
 		if (desc) {
 			sp.desc();
@@ -467,10 +406,6 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		}
 		sp.limit(offset, count);
 		
-		if (t != null) {
-			t.sort(key, sp); return null;
-		}
-		
 		return j.sort(key, sp);
 	}
 
@@ -479,14 +414,10 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.SORT_BY_GET, new Object[] { key, bypattern, getpatterns });
 	}
 	
-	private List<String> sort_by_get(Jedis j, Transaction t, String key, String bypattern, String... getpatterns) {
+	private List<String> sort_by_get(Jedis j, String key, String bypattern, String... getpatterns) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
 		sp.get(getpatterns);
-		
-		if (t != null) {
-			t.sort(key, sp); return null;
-		}
 		
 		return j.sort(key, sp);
 	}
@@ -496,16 +427,12 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.SORT_BY_DESC_GET, new Object[] { key, bypattern, desc, getpatterns });
 	}
 	
-	private List<String> sort_by_desc_get(Jedis j, Transaction t, String key, String bypattern, boolean desc, String... getpatterns) {
+	private List<String> sort_by_desc_get(Jedis j, String key, String bypattern, boolean desc, String... getpatterns) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
 		sp.get(getpatterns);
 		if (desc) {
 			sp.desc();
-		}
-		
-		if (t != null) {
-			t.sort(key, sp); return null;
 		}
 		
 		return j.sort(key, sp);
@@ -516,7 +443,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.SORT_BY_ALPHA_DESC_GET, new Object[] { key, bypattern, alpha, desc, getpatterns });
 	}
 	
-	private List<String> sort_by_alpha_desc_get(Jedis j, Transaction t, String key, String bypattern, boolean alpha, boolean desc, String... getpatterns) {
+	private List<String> sort_by_alpha_desc_get(Jedis j, String key, String bypattern, boolean alpha, boolean desc, String... getpatterns) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
 		sp.get(getpatterns);
@@ -525,10 +452,6 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		}
 		if (desc) {
 			sp.desc();
-		}
-		
-		if (t != null) {
-			t.sort(key, sp); return null;
 		}
 		
 		return j.sort(key, sp);
@@ -539,16 +462,11 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.SORT_BY_OFFSET_COUNT_GET, new Object[] { key, bypattern, offset, count, getpatterns });
 	}
 	
-	private List<String> sort_by_offset_count_get(Jedis j, Transaction t, String key, String bypattern, int offset, int count, String... getpatterns) {
+	private List<String> sort_by_offset_count_get(Jedis j, String key, String bypattern, int offset, int count, String... getpatterns) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
 		sp.get(getpatterns);
 		sp.limit(offset, count);
-		
-		if (t != null) {
-			t.sort(key, sp); return null;
-		}
-		
 		return j.sort(key, sp);
 	}
 
@@ -557,7 +475,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.SORT_BY_OFFSET_COUNT_ALPHA_DESC_GET, new Object[] { key, bypattern, offset, count, alpha, desc, getpatterns });
 	}
 	
-	private List<String> sort_by_offset_count_alpha_desc_get(Jedis j, Transaction t, String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String... getpatterns) {
+	private List<String> sort_by_offset_count_alpha_desc_get(Jedis j, String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String... getpatterns) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
 		sp.get(getpatterns);
@@ -567,10 +485,6 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		}
 		if (desc) {
 			sp.desc();
-		}
-		
-		if (t != null) {
-			t.sort(key, sp); return null;
 		}
 		
 		return j.sort(key, sp);
@@ -581,13 +495,9 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SORT_BY_DESTINATION, new Object[] { key, bypattern, destination });
 	}
 	
-	private Long sort_by_destination(Jedis j, Transaction t, String key, String bypattern, String destination) {
+	private Long sort_by_destination(Jedis j, String key, String bypattern, String destination) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
-		
-		if (t != null) {
-			t.sort(key, sp, destination); return null;
-		}
 		
 		return j.sort(key, sp, destination);
 	}
@@ -597,16 +507,12 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SORT_BY_DESC_DESTINATION_GET, new Object[] { key, bypattern, desc, destination, getpatterns });
 	}
 	
-	private Long sort_by_desc_destination_get(Jedis j, Transaction t, String key, String bypattern, boolean desc, String destination, String... getpatterns) {
+	private Long sort_by_desc_destination_get(Jedis j, String key, String bypattern, boolean desc, String destination, String... getpatterns) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
 		sp.get(getpatterns);
 		if (desc) {
 			sp.desc();
-		}
-		
-		if (t != null) {
-			t.sort(key, sp, destination); return null;
 		}
 		
 		return j.sort(key, sp, destination);
@@ -617,7 +523,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SORT_BY_ALPHA_DESC_DESTINATION_GET, new Object[] { key, bypattern, alpha, desc, destination, getpatterns });
 	}
 	
-	private Long sort_by_alpha_desc_destination_get(Jedis j, Transaction t, String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns) {
+	private Long sort_by_alpha_desc_destination_get(Jedis j, String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
 		sp.get(getpatterns);
@@ -626,10 +532,6 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		}
 		if (desc) {
 			sp.desc();
-		}
-		
-		if (t != null) {
-			t.sort(key, sp, destination); return null;
 		}
 		
 		return j.sort(key, sp, destination);
@@ -640,15 +542,11 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SORT_BY_OFFSET_COUNT_DESTINATION_GET, new Object[] { key, bypattern, offset, count, destination, getpatterns });
 	}
 	
-	private Long sort_by_offset_count_destination_get(Jedis j, Transaction t, String key, String bypattern, int offset, int count, String destination, String... getpatterns) {
+	private Long sort_by_offset_count_destination_get(Jedis j, String key, String bypattern, int offset, int count, String destination, String... getpatterns) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
 		sp.get(getpatterns);
 		sp.limit(offset, count);
-		
-		if (t != null) {
-			t.sort(key, sp, destination); return null;
-		}
 		
 		return j.sort(key, sp, destination);
 	}
@@ -658,7 +556,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SORT_BY_OFFSET_COUNT_ALPHA_DESC_DESTINATION_GET, new Object[] { key, bypattern, offset, count, alpha, desc, destination, getpatterns });
 	}
 	
-	private Long sort_by_offset_count_alpha_desc_destination_get(Jedis j, Transaction t, String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String destination, String... getpatterns) {
+	private Long sort_by_offset_count_alpha_desc_destination_get(Jedis j, String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String destination, String... getpatterns) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
 		sp.get(getpatterns);
@@ -670,10 +568,6 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 			sp.desc();
 		}
 		
-		if (t != null) {
-			t.sort(key, sp, destination); return null;
-		}
-		
 		return j.sort(key, sp, destination);
 	}
 
@@ -682,11 +576,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.TTL, new Object[] { key });
 	}
 	
-	private Long ttl0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.ttl(key); return null;
-		}
-		
+	private Long ttl0(Jedis j, String key) {
 		return j.ttl(key);
 	}
 
@@ -695,11 +585,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.TYPE, new Object[] { key });
 	}
 	
-	private String type0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.type(key); return null;
-		}
-		
+	private String type0(Jedis j, String key) {
 		return j.type(key);
 	}
 	
@@ -712,11 +598,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.APPEND, key, value);
 	}
 	
-	private Long append0(Jedis j, Transaction t, String key, String value) {
-		if (t != null) {
-			t.append(key, value); return null;
-		}
-		
+	private Long append0(Jedis j, String key, String value) {
 		return j.append(key, value);
 	}
 
@@ -725,11 +607,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.BITCOUNT, key);
 	}
 	
-	private Long bitcount0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.bitcount(key); return null;
-		}
-		
+	private Long bitcount0(Jedis j, String key) {
 		return j.bitcount(key);
 	}
 
@@ -738,11 +616,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.BITNOT, destkey, key);
 	}
 	
-	private Long bitnot0(Jedis j, Transaction t, String destkey, String key) {
-		if (t != null) {
-			t.bitop(BitOP.NOT, destkey, key); return null;
-		}
-		
+	private Long bitnot0(Jedis j, String destkey, String key) {
 		return j.bitop(BitOP.NOT, destkey, key);
 	}
 	
@@ -751,11 +625,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.BITAND, destkey, keys);
 	}
 	
-	private Long bitand0(Jedis j, Transaction t, String destkey, String... keys) {
-		if (t != null) {
-			t.bitop(BitOP.AND, destkey, keys); return null;
-		}
-		
+	private Long bitand0(Jedis j, String destkey, String... keys) {
 		return j.bitop(BitOP.AND, destkey, keys);
 	}
 
@@ -764,11 +634,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.BITOR, destkey, keys);
 	}
 	
-	private Long bitor0(Jedis j, Transaction t, String destkey, String... keys) {
-		if (t != null) {
-			t.bitop(BitOP.OR, destkey, keys); return null;
-		}
-		
+	private Long bitor0(Jedis j, String destkey, String... keys) {
 		return j.bitop(BitOP.OR, destkey, keys);
 	}
 
@@ -777,11 +643,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.BITXOR, destkey, keys);
 	}
 	
-	private Long bitxor0(Jedis j, Transaction t, String destkey, String... keys) {
-		if (t != null) {
-			t.bitop(BitOP.XOR, destkey, keys); return null;
-		}
-		
+	private Long bitxor0(Jedis j, String destkey, String... keys) {
 		return j.bitop(BitOP.XOR, destkey, keys);
 	}
 
@@ -790,11 +652,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.DECR, key);
 	}
 	
-	private Long decr0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.decr(key); return null;
-		}
-		
+	private Long decr0(Jedis j, String key) {
 		return j.decr(key);
 	}
 
@@ -803,11 +661,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.DECRBY, key, decrement);
 	}
 	
-	private Long decrby0(Jedis j, Transaction t, String key, long decrement) {
-		if (t != null) {
-			t.decrBy(key, decrement);
-		}
-		
+	private Long decrby0(Jedis j, String key, long decrement) {
 		return j.decrBy(key, decrement);
 	}
 
@@ -816,11 +670,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.GET, key);
 	}
 	
-	private String get0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.get(key); return null;
-		}
-		
+	private String get0(Jedis j, String key) {
 		return j.get(key);
 	}
 
@@ -829,11 +679,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Boolean) executeCommand(CommandEnum.GETBIT, key, offset);
 	}
 	
-	private Boolean getbit0(Jedis j, Transaction t, String key, long offset) {
-		if (t != null) {
-			t.getbit(key, offset); return null;
-		}
-		
+	private Boolean getbit0(Jedis j, String key, long offset) {
 		return j.getbit(key, offset);
 	}
 
@@ -842,11 +688,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.GETRANGE, key, start, end);
 	}
 	
-	private String getrange0(Jedis j, Transaction t, String key, long start, long end) {
-		if (t != null) {
-			t.getrange(key, start, end); return null;
-		}
-		
+	private String getrange0(Jedis j, String key, long start, long end) {
 		return j.getrange(key, start, end);
 	}
 
@@ -855,11 +697,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.GETSET, key, value);
 	}
 	
-	private String getset0(Jedis j, Transaction t, String key, String value) {
-		if (t != null) {
-			t.getSet(key, value); return null;
-		}
-		
+	private String getset0(Jedis j, String key, String value) {
 		return j.getSet(key, value);
 	}
 
@@ -868,11 +706,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.INCR, key);
 	}
 	
-	private Long incr0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.incr(key); return null;
-		}
-		
+	private Long incr0(Jedis j, String key) {
 		return j.incr(key);
 	}
 
@@ -881,11 +715,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.INCRBY, key, increment);
 	}
 	
-	private Long incrby0(Jedis j, Transaction t, String key, long increment) {
-		if (t != null) {
-			t.incrBy(key, increment); return null;
-		}
-		
+	private Long incrby0(Jedis j, String key, long increment) {
 		return j.incrBy(key, increment);
 	}
 
@@ -894,11 +724,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Double) executeCommand(CommandEnum.INCRBYFLOAT, key, increment);
 	}
 	
-	private Double incrbyfloat(Jedis j, Transaction t, String key, double increment) {
-		if (t != null) {
-//			return TODO
-		}
-		
+	private Double incrbyfloat0(Jedis j, String key, double increment) {
+		// TODO
 		return null;
 	}
 	
@@ -907,11 +734,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.MGET, new Object[] { keys });
 	}
 	
-	private List<String> mget0(Jedis j, Transaction t, String... keys) {
-		if (t != null) {
-			t.mget(keys); return null;
-		}
-		
+	private List<String> mget0(Jedis j, String... keys) {
 		return j.mget(keys);
 	}
 
@@ -920,11 +743,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.MSET, new Object[] { keysvalues });
 	}
 	
-	private String mset0(Jedis j, Transaction t, String... keysvalues) {
-		if (t != null) {
-			t.mset(keysvalues); return null;
-		}
-		
+	private String mset0(Jedis j, String... keysvalues) {
 		return j.mset(keysvalues);
 	}
 
@@ -933,11 +752,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.MSETNX, new Object[] { keysvalues });
 	}
 	
-	private Long msetnx0(Jedis j, Transaction t, String... keysvalues) {
-		if (t != null) {
-			t.msetnx(keysvalues); return null;
-		}
-		
+	private Long msetnx0(Jedis j, String... keysvalues) {
 		return j.msetnx(keysvalues);
 	}
 
@@ -947,11 +762,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.PSETEX, milliseconds, value);
 	}
 	
-	private String psetex0(Jedis j, Transaction t, String key, int milliseconds, String value) {
-		if (t != null) {
-			// TOOD
-		}
-		
+	private String psetex0(Jedis j, String key, int milliseconds, String value) {
+		// TODO
 		return null;
 	}
 
@@ -960,11 +772,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SET, key, value);
 	}
 	
-	private String set0(Jedis j, Transaction t, String key, String value) {
-		if (t != null) {
-			t.set(key, value); return null;
-		}
-		
+	private String set0(Jedis j, String key, String value) {
 		return j.set(key, value);
 	}
 
@@ -973,11 +781,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SETXX, key, value);
 	}
 	
-	private String setxx0(Jedis j, Transaction t, String key, String value) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String setxx0(Jedis j, String key, String value) {
+		// TODO
 		return null;
 	}
 
@@ -986,11 +791,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SETNXEX, key, value, seconds);
 	}
 	
-	private String setnxex0(Jedis j, Transaction t, String key, String value, int seconds) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String setnxex0(Jedis j, String key, String value, int seconds) {
+		// TODO
 		return null;
 	}
 
@@ -999,11 +801,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SETNXPX, key, value, milliseconds);
 	}
 	
-	private String setnxpx0(Jedis j, Transaction t, String key, String value, int milliseconds) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String setnxpx0(Jedis j, String key, String value, int milliseconds) {
+		// TODO
 		return null;
 	}
 
@@ -1012,11 +811,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SETXXEX, key, value, seconds);
 	}
 	
-	private String setxxex0(Jedis j, Transaction t, String key, String value, int seconds) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String setxxex0(Jedis j, String key, String value, int seconds) {
+		// TODO
 		return null;
 	}
 
@@ -1025,11 +821,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SETXXPX, key, value, milliseconds);
 	}
 	
-	private String setxxpx0(Jedis j, Transaction t, String key, String value, int milliseconds) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String setxxpx0(Jedis j, String key, String value, int milliseconds) {
+		// TODO
 		return null;
 	}
 	
@@ -1038,11 +831,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Boolean) executeCommand(CommandEnum.SETBIT, key, offset, value);
 	}
 	
-	private Boolean setbit0(Jedis j, Transaction t, String key, long offset, boolean value) {
-		if (t != null) {
-			t.setbit(key, offset, value); return null;
-		}
-		
+	private Boolean setbit0(Jedis j, String key, long offset, boolean value) {
 		return j.setbit(key, offset, value);
 	}
 
@@ -1051,11 +840,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SETEX, key, seconds, value);
 	}
 	
-	private String setex0(Jedis j, Transaction t, String key, int seconds, String value) {
-		if (t != null) {
-			t.setex(key, seconds, value); return null;
-		}
-		
+	private String setex0(Jedis j, String key, int seconds, String value) {
 		return j.setex(key, seconds, value);
 	}
 
@@ -1064,11 +849,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SETNX, key, value);
 	}
 	
-	private Long setnx0(Jedis j, Transaction t, String key, String value) {
-		if (t != null) {
-			t.setnx(key, value); return null;
-		}
-		
+	private Long setnx0(Jedis j, String key, String value) {
 		return j.setnx(key, value);
 	}
 
@@ -1077,11 +858,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SETRANGE, key, offset, value);
 	}
 	
-	private Long setrange0(Jedis j, Transaction t, String key, long offset, String value) {
-		if (t != null) {
-			t.setrange(key, offset, value); return null;
-		}
-		
+	private Long setrange0(Jedis j, String key, long offset, String value) {
 		return j.setrange(key, offset, value);
 	}
 
@@ -1090,11 +867,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.STRLEN, key);
 	}
 	
-	private Long strlen0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.strlen(key); return null;
-		}
-		
+	private Long strlen0(Jedis j, String key) {
 		return j.strlen(key);
 	}
 	
@@ -1108,11 +881,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.HDEL, key, fields);
 	}
 	
-	private Long hdel0(Jedis j, Transaction t, String key, String... fields) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Long hdel0(Jedis j, String key, String... fields) {
 		return j.hdel(key, fields);
 	}
 
@@ -1121,11 +890,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Boolean) executeCommand(CommandEnum.HEXISTS, key, field);
 	}
 	
-	private Boolean hexists0(Jedis j, Transaction t, String key, String field) {
-		if (t != null) {
-			t.hexists(key, field); return null;
-		}
-		
+	private Boolean hexists0(Jedis j, String key, String field) {
 		return j.hexists(key, field);
 	}
 
@@ -1134,11 +899,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.HGET, key, field);
 	}
 	
-	private String hget0(Jedis j, Transaction t, String key, String field) {
-		if (t != null) {
-			t.hget(key, field); return null;
-		}
-		
+	private String hget0(Jedis j, String key, String field) {
 		return j.hget(key, field);
 	}
 
@@ -1147,11 +908,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, String>) executeCommand(CommandEnum.HGETALL, key);
 	}
 	
-	private Map<String, String> hgetall0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.hgetAll(key); return null;
-		}
-		
+	private Map<String, String> hgetall0(Jedis j, String key) {
 		return j.hgetAll(key);
 	}
 
@@ -1160,11 +917,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.HINCRBY, key, field, increment);
 	}
 	
-	private Long hincrby0(Jedis j, Transaction t, String key, String field, long increment) {
-		if (t != null) {
-			t.hincrBy(key, field, increment); return null;
-		}
-		
+	private Long hincrby0(Jedis j, String key, String field, long increment) {
 		return j.hincrBy(key, field, increment);
  	}
 
@@ -1173,11 +926,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Double) executeCommand(CommandEnum.HINCRBYFLOAT, key, field, increment);
 	}
 	
-	private Double hincrbyfloat0(Jedis j, Transaction t, String key, String field, double increment) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Double hincrbyfloat0(Jedis j, String key, String field, double increment) {
 		return null;
 	}
 
@@ -1186,11 +935,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.HKEYS, key);
 	}
 	
-	private Set<String> hkeys0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.hkeys(key); return null;
-		}
-		
+	private Set<String> hkeys0(Jedis j, String key) {
 		return j.hkeys(key);
 	}
 
@@ -1199,11 +944,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.HLEN, key);
 	}
 	
-	private Long hlen0(Jedis j, Transaction t, String key, String field) {
-		if (t != null) {
-			t.hlen(key); return null;
-		}
-		
+	private Long hlen0(Jedis j, String key, String field) {
 		return j.hlen(key);
 	}
 
@@ -1212,11 +953,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.HMGET, key, fields);
 	}
 	
-	private List<String> hmget0(Jedis j, Transaction t, String key, String... fields) {
-		if (t != null) {
-			t.hmget(key, fields); return null;
-		}
-		
+	private List<String> hmget0(Jedis j, String key, String... fields) {
 		return j.hmget(key, fields);
 	}
 
@@ -1225,11 +962,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.HMSET, fieldvalues);
 	}
 	
-	private String hmset0(Jedis j, Transaction t, String key, Map<String, String> fieldvalues) {
-		if (t != null) {
-			t.hmset(key, fieldvalues); return null;
-		}
-		
+	private String hmset0(Jedis j, String key, Map<String, String> fieldvalues) {
 		return j.hmset(key, fieldvalues);
 	}
 
@@ -1238,11 +971,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.HSET, key, field, value);
 	}
 	
-	private Long hset0(Jedis j, Transaction t, String key, String field, String value) {
-		if (t != null) {
-			t.hset(key, field, value); return null;
-		}
-		
+	private Long hset0(Jedis j, String key, String field, String value) {
 		return j.hset(key, field, value);
 	}
 
@@ -1251,11 +980,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.HSETNX, key, field, value);
 	}
 	
-	private Long hsetnx0(Jedis j, Transaction t, String key, String field, String value) {
-		if (t != null) {
-			t.hsetnx(key, field, value); return null;
-		}
-		
+	private Long hsetnx0(Jedis j, String key, String field, String value) {
 		return j.hsetnx(key, field, value);
 	}
 
@@ -1264,11 +989,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.HVALS, key);
 	}
 	
-	private List<String> hvals0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.hvals(key); return null;
-		}
-		
+	private List<String> hvals0(Jedis j, String key) {
 		return j.hvals(key);
 	}
 	
@@ -1295,14 +1016,10 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 	
 	@Override
 	public Map<String, String> blpop(int timeout, String... keys) {
-		return (Map<String, String>) executeCommand(CommandEnum.BLPOP, new Object[] { keys });
+		return (Map<String, String>) executeCommand(CommandEnum.BLPOP, new Object[] { timeout, keys });
 	}
 	
-	private Map<String, String> blpop0(Jedis j, Transaction t, int timeout, String... keys) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Map<String, String> blpop0(Jedis j, int timeout, String... keys) {
 		List<String> l = j.blpop(timeout, keys);
 		return convert4bpop(l);
 	}
@@ -1338,11 +1055,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, String>) executeCommand(CommandEnum.BRPOP, timeout, keys);
 	}
 	
-	private Map<String, String> brpop0(Jedis j, Transaction t, int timeout, String... keys) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Map<String, String> brpop0(Jedis j, int timeout, String... keys) {
 		List<String> l = j.brpop(timeout, keys);
 		return convert4bpop(l);
 	}
@@ -1353,11 +1066,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.BRPOPLPUSH, source, destination, timeout);
 	}
 	
-	private String brpoplpush0(Jedis j, Transaction t, String source, String  destination, int timeout) {
-		if (t != null) {
-			t.brpoplpush(source, destination, timeout); return null;
-		}
-		
+	private String brpoplpush0(Jedis j, String source, String  destination, int timeout) {
 		return j.brpoplpush(source, destination, timeout);
 	}
 
@@ -1366,11 +1075,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.LINDEX, key, index);
 	}
 	
-	private String lindex0(Jedis j, Transaction t, String key, long index) {
-		if (t != null) {
-//			t.lindex(key, index); TODO
-		}
-		
+	private String lindex0(Jedis j, String key, long index) {
 		return j.lindex(key, index);
 	}
 
@@ -1379,11 +1084,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.LINSERT_BEFORE, key, pivot, value);
 	}
 	
-	private Long linsertbefore0(Jedis j, Transaction t, String key, String pivot, String value) {
-		if (t != null) {
-			t.linsert(key, LIST_POSITION.BEFORE, pivot, value); return null;
-		}
-		
+	private Long linsertbefore0(Jedis j, String key, String pivot, String value) {
 		return j.linsert(key, LIST_POSITION.BEFORE, pivot, value);
 	}
 
@@ -1392,11 +1093,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.LINSERT_AFTER, key, pivot, value);
 	}
 	
-	private Long linsertafter0(Jedis j, Transaction t, String key, String pivot, String value) {
-		if (t != null) {
-			t.linsert(key, LIST_POSITION.AFTER, pivot, value); return null;
-		}
-		
+	private Long linsertafter0(Jedis j, String key, String pivot, String value) {
 		return j.linsert(key, LIST_POSITION.AFTER, pivot, value);
 	}
 
@@ -1405,11 +1102,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.LLEN, key);
 	}
 	
-	private Long llen0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.llen(key); return null;
-		}
-		
+	private Long llen0(Jedis j, String key) {
 		return j.llen(key);
 	}
 
@@ -1418,11 +1111,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.LPOP, key);
 	}
 	
-	private String lpop0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.lpop(key); return null;
-		}
-		
+	private String lpop0(Jedis j, String key) {
 		return j.lpop(key);
 	}
 
@@ -1431,11 +1120,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.LPUSH, key, values);
 	}
 	
-	private Long lpush0(Jedis j, Transaction t, String key, String... values) {
-		if (t != null) {
-			t.lpush(key, values); return null;
-		}
-		
+	private Long lpush0(Jedis j, String key, String... values) {
 		return j.lpush(key, values);
 	}
 
@@ -1444,11 +1129,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.LPUSHX, key, value);
 	}
 	
-	private Long lpushx0(Jedis j, Transaction t, String key, String value) {
-		if (t != null) {
-			t.lpushx(key, value); return null;
-		}
-		
+	private Long lpushx0(Jedis j, String key, String value) {
 		return j.lpushx(key, value);
 	}
 
@@ -1457,11 +1138,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.LRANGE, key, start, stop);
 	}
 	
-	private List<String> lrange0(Jedis j, Transaction t, String key, long start, long stop) {
-		if (t != null) {
-			t.lrange(key, start, stop); return null;
-		}
-		
+	private List<String> lrange0(Jedis j, String key, long start, long stop) {
 		return j.lrange(key, start, stop);
 	}
 
@@ -1470,11 +1147,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.LREM, key, count, value);
 	}
 	
-	private Long lrem0(Jedis j, Transaction t, String key, long count, String value) {
-		if (t != null) {
-			t.lrem(key, count, value); return null;
-		}
-		
+	private Long lrem0(Jedis j, String key, long count, String value) {
 		return j.lrem(key, count, value);
 	}
 
@@ -1483,11 +1156,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.LSET, key, index, value);
 	}
 	
-	private String lset0(Jedis j, Transaction t, String key, long index, String value) {
-		if (t != null) {
-			t.lset(key, index, value); return null;
-		}
-		
+	private String lset0(Jedis j, String key, long index, String value) {
 		return j.lset(key, index, value);
 	}
 
@@ -1496,11 +1165,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.LTRIM, key, start, stop);
 	}
 	
-	private String ltrim0(Jedis j, Transaction t, String key, long start, long stop) {
-		if (t != null) {
-			t.ltrim(key, start, stop); return null;
-		}
-		
+	private String ltrim0(Jedis j, String key, long start, long stop) {
 		return j.ltrim(key, start, stop);
 	}
 
@@ -1509,11 +1174,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.RPOP, key);
 	}
 	
-	private String rpop0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.rpop(key); return null;
-		}
-		
+	private String rpop0(Jedis j, String key) {
 		return j.rpop(key);
 	}
 
@@ -1522,11 +1183,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.RPOPLPUSH, source, destination);
 	}
 	
-	private String rpoplpush0(Jedis j, Transaction t, String source, String destination) {
-		if (t != null) {
-			t.rpoplpush(source, destination); return null;
-		}
-		
+	private String rpoplpush0(Jedis j, String source, String destination) {
 		return j.rpoplpush(source, destination);
 	}
 
@@ -1535,11 +1192,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.RPUSH, key, values);
 	}
 	
-	private Long rpush0(Jedis j, Transaction t, String key, String... values) {
-		if (t != null) {
-			t.rpush(key, values); return null;
-		}
-		
+	private Long rpush0(Jedis j, String key, String... values) {
 		return j.rpush(key, values);
 	}
 
@@ -1548,11 +1201,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.RPUSHX, key, value);
 	}
 	
-	private Long rpushx0(Jedis j, Transaction t, String key, String value) {
-		if (t != null) {
-			t.rpushx(key, value); return null;
-		}
-		
+	private Long rpushx0(Jedis j, String key, String value) {
 		return j.rpushx(key, value);
 	}
 	
@@ -1565,11 +1214,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SADD, new Object[] { members });
 	}
 	
-	private Long sadd0(Jedis j, Transaction t, String key, String... members) {
-		if (t != null) {
-			t.sadd(key, members); return null;
-		}
-		
+	private Long sadd0(Jedis j, String key, String... members) {
 		return j.sadd(key, members);
 	}
 
@@ -1578,11 +1223,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SCARD, key);
 	}
 	
-	private Long scard0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.scard(key); return null;
-		}
-		
+	private Long scard0(Jedis j, String key) {
 		return j.scard(key);
 	}
 	
@@ -1591,11 +1232,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.SDIFF, new Object[] { keys });
 	}
 	
-	private Set<String> sdiff0(Jedis j, Transaction t, String... keys) {
-		if (t != null) {
-			t.sdiff(keys); return null;
-		}
-		
+	private Set<String> sdiff0(Jedis j, String... keys) {
 		return j.sdiff(keys);
 	}
 
@@ -1604,11 +1241,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SDIFFSTORE, destination, keys);
 	}
 	
-	private Long sdiffstore0(Jedis j, Transaction t, String destination, String... keys) {
-		if (t != null) {
-			t.sdiffstore(destination, keys); return null;
-		}
-		
+	private Long sdiffstore0(Jedis j, String destination, String... keys) {
 		return j.sdiffstore(destination, keys);
 	}
 
@@ -1617,11 +1250,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.SINTER, new Object[] { keys });
 	}
 	
-	private Set<String> sinter0(Jedis j, Transaction t, String... keys) {
-		if (t != null) {
-			t.sinter(keys); return null;
-		}
-		
+	private Set<String> sinter0(Jedis j, String... keys) {
 		return j.sinter(keys);
 	}
 
@@ -1630,11 +1259,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SINTERSTORE, destination, keys);
 	}
 	
-	private Long sinterstore0(Jedis j, Transaction t, String destination, String... keys) {
-		if (t != null) {
-			t.sinterstore(destination, keys); return null;
-		}
-		
+	private Long sinterstore0(Jedis j, String destination, String... keys) {
 		return j.sinterstore(destination, keys);
 	}
 
@@ -1643,11 +1268,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Boolean) executeCommand(CommandEnum.SISMEMBER, key, member);
 	}
 	
-	private Boolean sismember0(Jedis j, Transaction t, String key, String member) {
-		if (t != null) {
-			t.sismember(key, member); return null;
-		}
-		
+	private Boolean sismember0(Jedis j, String key, String member) {
 		return j.sismember(key, member);
 	}
 
@@ -1656,11 +1277,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.SMEMBERS, key);
 	}
 	
-	private Set<String> smembers0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.smembers(key); return null;
-		}
-		
+	private Set<String> smembers0(Jedis j, String key) {
 		return j.smembers(key);
 	}
 	
@@ -1669,11 +1286,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SMOVE, source, destination, member);
 	}
 	
-	private Long smove0(Jedis j, Transaction t, String source, String destination, String member) {
-		if (t != null) {
-			t.smove(source, destination, member); return null;
-		}
-		
+	private Long smove0(Jedis j, String source, String destination, String member) {
 		return j.smove(source, destination, member);
 	}
 
@@ -1682,11 +1295,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SPOP, key);
 	}
 	
-	private String spop0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.spop(key); return null;
-		}
-		
+	private String spop0(Jedis j, String key) {
 		return j.spop(key);
 	}
 	
@@ -1705,11 +1314,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.SRANDMEMBER, key, count);
 	}
 	
-	private Set<String> srandmember0(Jedis j, Transaction t, String key, int count) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Set<String> srandmember0(Jedis j, String key, int count) {
+		// TODO
 		return null;
 	}
 
@@ -1718,11 +1324,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SREM, key, members);
 	}
 	
-	private Long srem0(Jedis j, Transaction t, String key, String... members) {
-		if (t != null) {
-//			t.srem(key, members); return null; TODO
-		}
-		
+	private Long srem0(Jedis j, String key, String... members) {
 		return j.srem(key, members);
 	}
 	
@@ -1731,11 +1333,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.SUNION, new Object[] { keys });
 	}
 	
-	private Set<String> sunion0(Jedis j, Transaction t, String... keys) {
-		if (t != null) {
-			t.sunion(keys); return null;
-		}
-		
+	private Set<String> sunion0(Jedis j, String... keys) {
 		return j.sunion(keys);
 	}
 
@@ -1744,11 +1342,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SUNIONSTORE, destination, keys);
 	}
 	
-	private Long sunionstore0(Jedis j, Transaction t, String destination, String... keys) {
-		if (t != null) {
-			t.sunionstore(destination, keys); return null;
-		}
-		
+	private Long sunionstore0(Jedis j, String destination, String... keys) {
 		return j.sunionstore(destination, keys);
 	}
 	
@@ -1762,11 +1356,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZADD, key, score, member);
 	}
 	
-	private Long zadd0(Jedis j, Transaction t, String key, double score, String member) {
-		if (t != null) {
-			t.zadd(key, score, member); return null;
-		}
-		
+	private Long zadd0(Jedis j, String key, double score, String member) {
 		return j.zadd(key, score, member);
 	}
 
@@ -1775,11 +1365,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZCARD, key);
 	}
 	
-	private Long zcard0(Jedis j, Transaction t, String key) {
-		if (t != null) {
-			t.zcard(key); return null;
-		}
-		
+	private Long zcard0(Jedis j, String key) {
 		return j.zcard(key);
 	}
 
@@ -1788,11 +1374,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZCOUNT, key, min, max);
 	}
 	
-	private Long zcount0(Jedis j, Transaction t, String key, double min, double max) {
-		if (t != null) {
-			t.zcount(key, min, max); return null;
-		}
-		
+	private Long zcount0(Jedis j, String key, double min, double max) {
 		return j.zcount(key, min, max);
 	}
 
@@ -1801,11 +1383,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Double) executeCommand(CommandEnum.ZINCRBY, key, score, member);
 	}
 	
-	private Double zincrby0(Jedis j, Transaction t, String key, double score, String member) {
-		if (t != null) {
-			t.zincrby(key, score, member); return null;
-		}
-		
+	private Double zincrby0(Jedis j, String key, double score, String member) {
 		return j.zincrby(key, score, member);
 	}
 	
@@ -1814,11 +1392,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE, destination, keys);
 	}
 	
-	private Long zinterstore0(Jedis j, Transaction t, String destination, String... keys) {
-		if (t != null) {
-			t.zinterstore(destination, keys); return null;
-		}
-		
+	private Long zinterstore0(Jedis j, String destination, String... keys) {
 		return j.zinterstore(destination, keys);
 	}
 
@@ -1827,11 +1401,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE_MAX, destination, keys);
 	}
 	
-	private Long zinterstoremax0(Jedis j, Transaction t, String destination, String... keys) {
-		if (t != null) {
-			t.zinterstore(destination, new ZParams().aggregate(Aggregate.MAX), keys);
-		}
-		
+	private Long zinterstoremax0(Jedis j, String destination, String... keys) {
 		return j.zinterstore(destination, new ZParams().aggregate(Aggregate.MAX), keys);
 	}
 
@@ -1840,11 +1410,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE_MIN, destination, keys);
 	}
 	
-	private Long zinterstoremin0(Jedis j, Transaction t, String destination, String... keys) {
-		if (t != null) {
-			t.zinterstore(destination, new ZParams().aggregate(Aggregate.MIN), keys);
-		}
-		
+	private Long zinterstoremin0(Jedis j, String destination, String... keys) {
 		return j.zinterstore(destination, new ZParams().aggregate(Aggregate.MIN), keys);
 	}
 
@@ -1853,15 +1419,10 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS, destination, weightkeys);
 	}
 	
-	private Long zinterstore_weights(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zinterstore_weights(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
-		
-		if (t != null) {
-			t.zinterstore(destination, new ZParams().weights(weights), keys); return null;
-		}
-		
 		return j.zinterstore(destination, new ZParams().weights(weights), keys);
 	}
 	
@@ -1884,15 +1445,10 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS_MAX, destination, weightkeys);
 	}
 	
-	private Long zinterstore_weights_max(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zinterstore_weights_max(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
-		
-		if (t != null) {
-			t.zinterstore(destination, new ZParams().weights(weights).aggregate(Aggregate.MAX), keys); return null;
-		}
-		
 		return j.zinterstore(destination, new ZParams().weights(weights).aggregate(Aggregate.MAX), keys);
 	}
 
@@ -1901,15 +1457,10 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS_MIN, destination, weightkeys);
 	}
 	
-	private Long zinterstore_weights_min(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zinterstore_weights_min(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
-		
-		if (t != null) {
-			t.zinterstore(destination, new ZParams().weights(weights).aggregate(Aggregate.MIN), keys); return null;
-		}
-		
 		return j.zinterstore(destination, new ZParams().weights(weights).aggregate(Aggregate.MIN), keys);
 	}
 
@@ -1918,11 +1469,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.ZRANGE, key, start, stop);
 	}
 	
-	private Set<String> zrange0(Jedis j, Transaction t, String key, long start, long stop) {
-		if (t != null) {
-//			t.zrange(key, start, end) return null; TODO
-		}
-		
+	private Set<String> zrange0(Jedis j, String key, long start, long stop) {
 		return j.zrange(key, start, stop);
 	}
 
@@ -1931,11 +1478,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGE_WITHSCORES, key, start, stop);
 	}
 	
-	private Map<String, Double> zrangewithscores0(Jedis j, Transaction t, String key, long start, long stop) {
-		if (t != null) {
-//			t.zrangeWithScores(key, start, stop); return null;  TODO
-		}
-		
+	private Map<String, Double> zrangewithscores0(Jedis j, String key, long start, long stop) {
 		Set<Tuple> set = j.zrangeWithScores(key, start, stop);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
@@ -1954,11 +1497,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.ZRANGEBYSCORE, key, min, max);
 	}
 	
-	private Set<String> zrangebyscore0(Jedis j, Transaction t, String key, double min, double max) {
-		if (t != null) {
-			t.zrangeByScore(key, min, max); return null;
-		}
-		
+	private Set<String> zrangebyscore0(Jedis j, String key, double min, double max) {
 		return j.zrangeByScore(key, min, max);
 	}
 
@@ -1967,11 +1506,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.ZRANGEBYSCORE_STRING, key, min, max);
 	}
 	
-	private Set<String> zrangebyscore_string(Jedis j, Transaction t, String key, String min, String max) {
-		if (t != null) {
-			t.zrangeByScore(key, min, max); return null;
-		}
-		
+	private Set<String> zrangebyscore_string(Jedis j, String key, String min, String max) {
 		return j.zrangeByScore(key, min, max);
 	}
 
@@ -1980,11 +1515,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.ZRANGEBYSCORE_OFFSET_COUNT, key, min, max, offset, count);
 	}
 	
-	private Set<String> zrangebyscore_offset_count(Jedis j, Transaction t, String key, double min, double max, int offset, int count) {
-		if (t != null) {
-			t.zrangeByScore(key, min, max, offset, count); return null;
-		}
-		
+	private Set<String> zrangebyscore_offset_count(Jedis j, String key, double min, double max, int offset, int count) {
 		return j.zrangeByScore(key, min, max, offset, count);
 	}
 
@@ -1993,11 +1524,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.ZRANGEBYSCORE_OFFSET_COUNT_STRING, key, min, max, offset, count);
 	}
 	
-	private Set<String> zrangebyscore_offset_count_string(Jedis j, Transaction t, String key, String min, String max, int offset, int count) {
-		if (t != null) {
-//			t.zrangeByScore(key, min, max, offset, count); return null; TODO
-		}
-		
+	private Set<String> zrangebyscore_offset_count_string(Jedis j, String key, String min, String max, int offset, int count) {
 		return j.zrangeByScore(key, min, max, offset, count);
 	}
 
@@ -2006,11 +1533,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES, key, min, max);
 	}
 	
-	private Map<String, Double> zrangebyscorewithscores0(Jedis j, Transaction t, String key, double min, double max) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Map<String, Double> zrangebyscorewithscores0(Jedis j, String key, double min, double max) {
 		Set<Tuple> set = j.zrangeByScoreWithScores(key, min, max);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
@@ -2021,11 +1544,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_STRING, key, min, max);
 	}
 	
-	private Map<String, Double> zrangebyscorewithscores_string(Jedis j, Transaction t, String key, String min, String max) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Map<String, Double> zrangebyscorewithscores_string(Jedis j, String key, String min, String max) {
 		Set<Tuple> set = j.zrangeByScoreWithScores(key, min, max);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
@@ -2036,11 +1555,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, min, max);
 	}
 	
-	private Map<String, Double> zrangebyscorewithscores_offset_count(Jedis j, Transaction t, String key, double min, double max, int offset, int count) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Map<String, Double> zrangebyscorewithscores_offset_count(Jedis j, String key, double min, double max, int offset, int count) {
 		Set<Tuple> set = j.zrangeByScoreWithScores(key, min, max, offset, count);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
@@ -2051,11 +1566,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, min, max);
 	}
 	
-	private Map<String, Double> zrangebyscorewithscores_offset_count_string(Jedis j, Transaction t, String key, String min, String max, int offset, int count) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Map<String, Double> zrangebyscorewithscores_offset_count_string(Jedis j, String key, String min, String max, int offset, int count) {
 		Set<Tuple> set = j.zrangeByScoreWithScores(key, min, max, offset, count);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
@@ -2066,11 +1577,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZRANK, key, member);
 	}
 	
-	private Long zrank0(Jedis j, Transaction t, String key, String member) {
-		if (t != null) {
-			t.zrank(key, member); return null;
-		}
-		
+	private Long zrank0(Jedis j, String key, String member) {
 		return j.zrank(key, member);
 	}
 
@@ -2079,11 +1586,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZREM, key, members);
 	}
 	
-	private Long zrem0(Jedis j, Transaction t, String key, String... members) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Long zrem0(Jedis j, String key, String... members) {
 		return j.zrem(key, members);
 	}
 
@@ -2092,11 +1595,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZREMRANGEBYRANK, key, start, stop);
 	}
 	
-	private Long zremrangebyrank0(Jedis j, Transaction t, String key, long start, long stop) {
-		if (t != null) {
-//			t.zremrangeByRank(key, start, stop); return null; TODO
-		}
-		
+	private Long zremrangebyrank0(Jedis j, String key, long start, long stop) {
 		return j.zremrangeByRank(key, start, stop);
 	}
 
@@ -2105,11 +1604,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZREMRANGEBYSCORE, key, min, max);
 	}
 	
-	private Long zremrangebyscore0(Jedis j, Transaction t, String key, double min, double max) {
-		if (t != null) {
-			t.zremrangeByScore(key, min, max); return null;
-		}
-		
+	private Long zremrangebyscore0(Jedis j, String key, double min, double max) {
 		return j.zremrangeByScore(key, min, max);
 	}
 
@@ -2118,11 +1613,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZREMRANGEBYSCORE_STRING, key, min, max);
 	}
 	
-	private Long zremrangebyscore_string(Jedis j, Transaction t, String key, String min, String max) {
-		if (t != null) {
-//			t.zremrangeByScore(key, min, max); return null; TODO
-		}
-		
+	private Long zremrangebyscore_string(Jedis j, String key, String min, String max) {
 		return j.zremrangeByScore(key, min, max);
 	}
 
@@ -2131,11 +1622,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.ZREVRANGE, key, start, stop);
 	}
 	
-	private Set<String> zrevrange0(Jedis j, Transaction t, String key, long start, long stop) {
-		if (t != null) {
-//			t.zrevrange(key, start, stop); return null; TODO
-		}
-		
+	private Set<String> zrevrange0(Jedis j, String key, long start, long stop) {
 		return j.zrevrange(key, start, stop);
 	}
 
@@ -2144,11 +1631,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGE_WITHSCORES, key, start, stop);
 	}
 	
-	private Map<String, Double> zrevrangewithscores0(Jedis j, Transaction t, String key, long start, long stop) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Map<String, Double> zrevrangewithscores0(Jedis j, String key, long start, long stop) {
 		Set<Tuple> set = j.zrevrangeWithScores(key, start, stop);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
@@ -2159,11 +1642,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.ZREVRANGEBYSCORE, key, max, min);
 	}
 	
-	private Set<String> zrevrangebyscore0(Jedis j, Transaction t, String key, double max, double min) {
-		if (t != null) {
-			t.zrevrangeByScore(key, max, min); return null;
-		}
-		
+	private Set<String> zrevrangebyscore0(Jedis j, String key, double max, double min) {
 		return j.zrevrangeByScore(key, max, min);
 	}
 
@@ -2172,11 +1651,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_STRING, key, max, min);
 	}
 	
-	private Set<String> zrevrangebyscore_string(Jedis j, Transaction t, String key, String max, String min) {
-		if (t != null) {
-			t.zrevrangeByScore(key, max, min); return null;
-		}
-		
+	private Set<String> zrevrangebyscore_string(Jedis j, String key, String max, String min) {
 		return j.zrevrangeByScore(key, max, min);
 	}
 
@@ -2185,11 +1660,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_OFFSET_COUNT, key, max, min, offset, count);
 	}
 	
-	private Set<String> zrevrangebyscore_offset_count(Jedis j, Transaction t, String key, double max, double min, int offset, int count) {
-		if (t != null) {
-			t.zrevrangeByScore(key, max, min, offset, count); return null;
-		}
-		
+	private Set<String> zrevrangebyscore_offset_count(Jedis j, String key, double max, double min, int offset, int count) {
 		return j.zrevrangeByScore(key, max, min, offset, count);
 	}
 
@@ -2198,11 +1669,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Set<String>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_OFFSET_COUNT_STRING, key, max, min, offset, count);
 	}
 	
-	private Set<String> zrevrangebyscore_offset_count_string(Jedis j, Transaction t, String key, String max, String min, int offset, int count) {
-		if (t != null) {
-//			t.zrevrangeByScore(key, max, min, offset, count); return null; TODO
-		}
-		
+	private Set<String> zrevrangebyscore_offset_count_string(Jedis j, String key, String max, String min, int offset, int count) {
 		return j.zrevrangeByScore(key, max, min, offset, count);
 	}
 	
@@ -2211,11 +1678,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES, key, max, min);
 	}
 	
-	private Map<String, Double> zrevrangebyscorewithscores0(Jedis j, Transaction t, String key, double max, double min) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Map<String, Double> zrevrangebyscorewithscores0(Jedis j, String key, double max, double min) {
 		Set<Tuple> set = j.zrevrangeByScoreWithScores(key, max, min);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
@@ -2226,11 +1689,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_STRING, key, max, min);
 	}
 	
-	private Map<String, Double> zrevrangebyscorewithscores_string(Jedis j, Transaction t, String key, String max, String min) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Map<String, Double> zrevrangebyscorewithscores_string(Jedis j, String key, String max, String min) {
 		Set<Tuple> set = j.zrangeByScoreWithScores(key, max, min);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
@@ -2241,11 +1700,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, max, min);
 	}
 	
-	private Map<String, Double> zrevrangebyscorewithscores_offset_count(Jedis j, Transaction t, String key, double max, double min, int offset, int count) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Map<String, Double> zrevrangebyscorewithscores_offset_count(Jedis j, String key, double max, double min, int offset, int count) {
 		Set<Tuple> set = j.zrevrangeByScoreWithScores(key, max, min, offset, count);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
@@ -2256,11 +1711,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, max, min);
 	}
 	
-	private Map<String, Double> zrevrangebyscorewithscores_offset_count_string(Jedis j, Transaction t, String key, String max, String min, int offset, int count) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Map<String, Double> zrevrangebyscorewithscores_offset_count_string(Jedis j, String key, String max, String min, int offset, int count) {
 		Set<Tuple> set = j.zrevrangeByScoreWithScores(key, max, min, offset, count);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
@@ -2271,11 +1722,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZREVRANK, key, member);
 	}
 	
-	private Long zrevrank0(Jedis j, Transaction t, String key, String member) {
-		if (t != null) {
-			t.zrevrank(key, member); return null;
-		}
-		
+	private Long zrevrank0(Jedis j, String key, String member) {
 		return j.zrevrank(key, member);
 	}
 
@@ -2284,11 +1731,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Double) executeCommand(CommandEnum.ZSCORE, key, member);
 	}
 	
-	private Double zscore0(Jedis j, Transaction t, String key, String member) {
-		if (t != null) {
-			t.zscore(key, member); return null;
-		}
-		
+	private Double zscore0(Jedis j, String key, String member) {
 		return j.zscore(key, member);
 	}
 	
@@ -2297,11 +1740,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE, destination, keys);
 	}
 	
-	private Long zunionstore0(Jedis j, Transaction t, String destination, String... keys) {
-		if (t != null) {
-			t.zunionstore(destination, keys); return null;
-		}
-		
+	private Long zunionstore0(Jedis j, String destination, String... keys) {
 		return j.zunionstore(destination, keys);
 	}
 
@@ -2310,11 +1749,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE_MAX, destination, keys);
 	}
 	
-	private Long zunionstoremax0(Jedis j, Transaction t, String destination, String... keys) {
-		if (t != null) {
-			t.zunionstore(destination, new ZParams().aggregate(Aggregate.MAX), keys);
-		}
-		
+	private Long zunionstoremax0(Jedis j, String destination, String... keys) {
 		return j.zunionstore(destination, new ZParams().aggregate(Aggregate.MAX), keys);
 	}
 
@@ -2323,11 +1758,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE_MIN, destination, keys);
 	}
 	
-	private Long zunionstoremin0(Jedis j, Transaction t, String destination, String... keys) {
-		if (t != null) {
-			t.zunionstore(destination, new ZParams().aggregate(Aggregate.MIN), keys);
-		}
-		
+	private Long zunionstoremin0(Jedis j, String destination, String... keys) {
 		return j.zunionstore(destination, new ZParams().aggregate(Aggregate.MIN), keys);
 	}
 
@@ -2336,15 +1767,10 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS, destination, weightkeys);
 	}
 	
-	private Long zunionstore_weights(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zunionstore_weights(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
-		
-		if (t != null) {
-			t.zunionstore(destination, new ZParams().weights(weights), keys); return null;
-		}
-		
 		return j.zunionstore(destination, new ZParams().weights(weights), keys);
 	}
 
@@ -2353,15 +1779,10 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS_MAX, destination, weightkeys);
 	}
 	
-	private Long zunionstore_weights_max(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zunionstore_weights_max(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
-		
-		if (t != null) {
-			t.zunionstore(destination, new ZParams().weights(weights).aggregate(Aggregate.MAX), keys); return null;
-		}
-		
 		return j.zunionstore(destination, new ZParams().weights(weights).aggregate(Aggregate.MAX), keys);
 	}
 
@@ -2370,15 +1791,10 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS_MIN, destination, weightkeys);
 	}
 	
-	private Long zunionstore_weights_min(Jedis j, Transaction t, String destination, Map<String, Integer> weightkeys) {
+	private Long zunionstore_weights_min(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
 		int [] weights = (int[]) objs[1];
-		
-		if (t != null) {
-			t.zunionstore(destination, new ZParams().weights(weights).aggregate(Aggregate.MIN), keys); return null;
-		}
-		
 		return j.zunionstore(destination, new ZParams().weights(weights).aggregate(Aggregate.MIN), keys);
 	}
 	
@@ -2391,11 +1807,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		executeCommand(CommandEnum.PSUBSCRIBE, handler, patterns);
 	}
 	
-	private String psubscribe0(Jedis j, Transaction t, final RedisPsubscribeHandler handler, String... patterns) {
-		if (t != null) {
-			throw new RedisOperationException(String.format(TRANSACTION_UNSUPPORTED, "PSUBSCRIBE"));
-		}
-		
+	private String psubscribe0(Jedis j, final RedisPsubscribeHandler handler, String... patterns) {
 		JedisPubSub jps = new JedisPubSubAdapter() {
 			@Override
 			public void onPSubscribe(String pattern, int subscribedChannels) {
@@ -2416,11 +1828,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.PUBLISH, channel, message);
 	}
 	
-	private Long publish0(Jedis j, Transaction t, String channel, String message) {
-		if (t != null) {
-			t.publish(channel, message); return null;
-		}
-		
+	private Long publish0(Jedis j, String channel, String message) {
 		return j.publish(channel, message);
 	}
 	
@@ -2429,11 +1837,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.PUNSUBSCRIBE, new Object[] { patterns });
 	}
 	
-	private List<String> punsubscribe0(Jedis j, Transaction t, String... patterns) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private List<String> punsubscribe0(Jedis j, String... patterns) {
 		return null;
 	}
 	
@@ -2442,11 +1846,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		executeCommand(CommandEnum.SUBSCRIBE, handler, channels);
 	}
 	
-	private String subscribe0(Jedis j, Transaction t, final RedisSubscribeHandler handler, String... channels) {
-		if (t != null) {
-			throw new RedisOperationException(String.format(TRANSACTION_UNSUPPORTED, "SUBSCRIBE"));
-		}
-		
+	private String subscribe0(Jedis j, final RedisSubscribeHandler handler, String... channels) {
 		JedisPubSub jps = new JedisPubSubAdapter() {
 
 			@Override
@@ -2469,11 +1869,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.UNSUBSCRIBE, new Object[] { channels });
 	}
 	
-	private List<String> unsubscribe0(Jedis j, Transaction t, String... channels) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private List<String> unsubscribe0(Jedis j, String... channels) {
+		// TODO
 		return null;
 	}
 	
@@ -2490,43 +1887,40 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 	// WATCH ... -> ... MULTI ... -> ... EXEC
 	
 	@Override
-	public String discard() {
-		return (String) executeCommand(CommandEnum.DISCARD, new Object[] {});
+	public String discard(RedisTransaction t) {
+		return (String) executeCommand(CommandEnum.DISCARD, new Object[] { t });
 	}
 	
-	private String discard0(Transaction t) {
+	private String discard0(DefaultRedisTransaction t) {
 		try {
 			return t.discard();
 		} finally {
-			unsetTransaction();
+			unbind();
 		}
 	}
 
 	@Override
-	public List<Object> exec() {
-		return (List<Object>) executeCommand(CommandEnum.EXEC, new Object[] {});
+	public List<Object> exec(RedisTransaction t) {
+		return (List<Object>) executeCommand(CommandEnum.EXEC, new Object[] { t });
 	}
 	
-	private List<Object> exec0(Transaction t) {
+	private List<Object> exec0(DefaultRedisTransaction t) {
 		try {
-			if (t == null) {
-				throw new RedisDataException("ERR EXEC without MULTI");
-			}
 			return t.exec();
 		} finally {
-			unsetTransaction();
+			unbind();
 		}
 	}
 
 	@Override
-	public String multi() {
-		return (String) executeCommand(CommandEnum.MULTI, new Object[] {});
+	public RedisTransaction multi() {
+		return (RedisTransaction) executeCommand(CommandEnum.MULTI, new Object[] {});
 	}
 	
-	private String multi0(Jedis j) {
+	private RedisTransaction multi0(Jedis j) {
 		Transaction t = j.multi();
-		setTransaction(t, j);
-		return OK;
+		bind(j);
+		return new DefaultRedisTransaction(j, t, this);
 	}
 
 	@Override
@@ -2534,16 +1928,11 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.UNWATCH, new Object[] {});
 	}
 	
-	private String unwatch0(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-			return "";
-		} else {
-			try {
-				return j.unwatch();
-			} finally {
-				unsetWatch();
-			}
+	private String unwatch0(Jedis j) {
+		try {
+			return j.unwatch();
+		} finally {
+			unbind();
 		}
 	}
 
@@ -2554,26 +1943,20 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 	
 	private String watch0(Jedis j, String... keys) {
 		String r = j.watch(keys);
-		setWatch(j);
+		bind(j);
 		return r;
 	}
 	
-	private void setTransaction(Transaction t, Jedis j) {
-		THREAD_LOCAL_JEDIS.set(j);
-		THREAD_LOCAL_TRANSACTION.set(t);
-	}
-	
-	private void unsetTransaction() {
-		THREAD_LOCAL_JEDIS.remove();
-		THREAD_LOCAL_TRANSACTION.remove();
-	}
-	
-	private void setWatch(Jedis j) {
+	private void bind(Jedis j) {
 		THREAD_LOCAL_JEDIS.set(j);
 	}
 	
-	private void unsetWatch() {
+	private void unbind() {
 		THREAD_LOCAL_JEDIS.remove();
+	}
+	
+	private boolean isBound() {
+		return THREAD_LOCAL_JEDIS.get() != null;
 	}
 	
 	
@@ -2596,11 +1979,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return executeCommand(CommandEnum.EVAL, script, keys, args);
 	}
 	
-	private Object eval0(Jedis j, Transaction t, String script, List<String> keys, List<String> args) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Object eval0(Jedis j, String script, List<String> keys, List<String> args) {
 		return j.eval(script, keys, args);
 	}
 
@@ -2620,11 +1999,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return executeCommand(CommandEnum.EVALSHA, sha1, keys, args);
 	}
 	
-	private Object evalsha0(Jedis j, Transaction t, String script, List<String> keys, List<String> args) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Object evalsha0(Jedis j, String script, List<String> keys, List<String> args) {
 		return j.evalsha(script, keys, args);
 	}
 
@@ -2638,11 +2013,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Boolean[]) executeCommand(CommandEnum.SCRIPT_EXISTS, new Object[] { sha1 });
 	}
 	
-	private Boolean[] scriptexists0(Jedis j, Transaction t, String... sha1) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Boolean[] scriptexists0(Jedis j, String... sha1) {
 		return j.scriptExists(sha1).toArray(new Boolean[sha1.length]);
 	}
 
@@ -2651,11 +2022,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SCRIPT_FLUSH);
 	}
 	
-	private String scriptflush0(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String scriptflush0(Jedis j) {
 		return j.scriptFlush();
 	}
 
@@ -2664,11 +2031,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SCRIPT_KILL);
 	}
 	
-	private String scriptkill0(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String scriptkill0(Jedis j) {
 		return j.scriptKill();
 	}
 	
@@ -2677,11 +2040,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SCRIPT_LOAD);
 	}
 	
-	private String scriptload0(Jedis j, Transaction t, String script) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String scriptload0(Jedis j, String script) {
 		return j.scriptLoad(script);
 	}
 	
@@ -2694,24 +2053,19 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.AUTH, password);
 	}
 	
-	private String auth0(Jedis j, Transaction t, String password) {
-		if (t != null) {
-			// TODO
-		}
-		
-		return j.auth(password);
+	private String auth0(String password) {
+		pool.destroy();
+		this.password = password;
+		pool = new JedisPool(poolConfig, host, port, timeout, password, database);
+		return OK;
 	}
-
+	
 	@Override
 	public String echo(String message) {
 		return (String) executeCommand(CommandEnum.ECHO, message);
 	}
-	
-	private String echo0(Jedis j, Transaction t, String message) {
-		if (t != null) {
-			t.echo(message); return null;
-		}
-		
+
+	private String echo0(Jedis j, String message) {
 		return j.echo(message);
 	}
 
@@ -2720,11 +2074,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.PING);
 	}
 	
-	private String ping0(Jedis j, Transaction t) {
-		if (t != null) {
-			t.ping(); return null;
-		}
-		
+	private String ping0(Jedis j) {
 		return j.ping();
 	}
 
@@ -2733,12 +2083,9 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.QUIT);
 	}
 	
-	private String quit0(Jedis j, Transaction t) {
-		if (t != null) {
-			throw new RedisOperationException(String.format(TRANSACTION_UNSUPPORTED, "QUIT"));
-		}
-		
-		return j.quit();
+	private String quit0() {
+		pool.destroy();
+		return OK;
 	}
 
 	@Override
@@ -2746,11 +2093,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SELECT, index);
 	}
 	
-	private String select0(Jedis j, Transaction t, int index) {
-		if (t != null) {
-			t.select(index); return null;
-		}
-		
+	private String select0(Jedis j, int index) {
 		return j.select(index);
 	}
 	
@@ -2763,11 +2106,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.BGREWRITEAOF);
 	}
 	
-	private String bgrewriteaof0(Jedis j, Transaction t) {
-		if (t != null) {
-			t.bgrewriteaof(); return null;
-		}
-		
+	private String bgrewriteaof0(Jedis j) {
 		return j.bgrewriteaof();
 	}
 
@@ -2776,11 +2115,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.BGSAVE);
 	}
 	
-	private String bgsave0(Jedis j, Transaction t) {
-		if (t != null) {
-			t.bgsave(); return null;
-		}
-		
+	private String bgsave0(Jedis j) {
 		return j.bgsave();
 	}
 
@@ -2789,11 +2124,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.CLIENT_GETNAME);
 	}
 	
-	private String clientgetname0(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String clientgetname0(Jedis j) {
+		// TODO
 		return null;
 	}
 
@@ -2802,11 +2134,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.CLIENT_KILL, ip, port);
 	}
 	
-	private String clientkill0(Jedis j, Transaction t, String ip, int port) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String clientkill0(Jedis j, String ip, int port) {
 		return null;
 	}
 
@@ -2815,11 +2143,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<String>) executeCommand(CommandEnum.CLIENT_LIST);
 	}
 	
-	private List<String> clientlist0(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private List<String> clientlist0(Jedis j) {
 		return null;
 	}
 
@@ -2828,25 +2152,27 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.CLIENT_SETNAME, connectionname);
 	}
 	
-	private String clientsetname0(Jedis j, Transaction t, String connectionname) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String clientsetname0(Jedis j, String connectionname) {
 		return null;
 	}
 
 	@Override
-	public List<String> configget(String parameter) {
-		return (List<String>) executeCommand(CommandEnum.CONFIG_GET, parameter);
+	public Map<String, String> configget(String parameter) {
+		return (Map<String, String>) executeCommand(CommandEnum.CONFIG_GET, parameter);
 	}
 	
-	private List<String> configget0(Jedis j, Transaction t, String parameter) {
-		if (t != null) {
-			t.configGet(parameter); return null;
+	private Map<String, String> configget0(Jedis j, String parameter) {
+		Map<String, String> map = new LinkedHashMap<String, String>();
+		List<String> l = j.configGet(parameter);
+		for (int i = 0; i < l.size(); i += 2) {
+			String name = l.get(i);
+			String value = null;
+			if (i + 1 < l.size()) {
+				value = l.get(i + 1);
+			}
+			map.put(name, value);
 		}
-		
-		return j.configGet(parameter);
+		return map;
 	}
 
 	@Override
@@ -2854,11 +2180,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.CONFIG_RESETSTAT);
 	}
 	
-	private String configresetstat0(Jedis j, Transaction t) {
-		if (t != null) {
-			t.configResetStat(); return null;
-		}
-		
+	private String configresetstat0(Jedis j) {
 		return j.configResetStat();
 	}
 
@@ -2867,11 +2189,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.CONFIG_SET, parameter, value);
 	}
 	
-	private String configset0(Jedis j, Transaction t, String parameter, String value) {
-		if (t != null) {
-			t.configSet(parameter, value); return null;
-		}
-		
+	private String configset0(Jedis j, String parameter, String value) {
 		return j.configSet(parameter, value);
 	}
 
@@ -2880,11 +2198,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.DBSIZE);
 	}
 	
-	private Long dbsize0(Jedis j, Transaction t) {
-		if (t != null) {
-			t.dbSize(); return null;
-		}
-		
+	private Long dbsize0(Jedis j) {
 		return j.dbSize();
 	}
 	
@@ -2893,8 +2207,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.DEBUG_OBJECT, key);
 	}
 	
-	private String debugobject0(Jedis j, Transaction t, String key) {
-		return debug0(j, t, DebugParams.OBJECT(key));
+	private String debugobject0(Jedis j, String key) {
+		return debug0(j, DebugParams.OBJECT(key));
 	}
 
 	@Override
@@ -2902,15 +2216,11 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.DEBUG_SEGFAULT);
 	}
 	
-	private String debugsegfault0(Jedis j, Transaction t) {
-		return debug0(j, t, DebugParams.SEGFAULT());
+	private String debugsegfault0(Jedis j) {
+		return debug0(j, DebugParams.SEGFAULT());
 	}
 	
-	private String debug0(Jedis j, Transaction t, DebugParams params) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String debug0(Jedis j, DebugParams params) {
 		return j.debug(params);
 	}
 
@@ -2919,11 +2229,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.FLUSH_ALL);
 	}
 	
-	private String flushall0(Jedis j, Transaction t) {
-		if (t != null) {
-			t.flushAll(); return null;
-		}
-		
+	private String flushall0(Jedis j) {
 		return j.flushAll();
 	}
 
@@ -2932,11 +2238,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.FLUSH_DB);
 	}
 	
-	private String flushdb0(Jedis j, Transaction t) {
-		if (t != null) {
-			t.flushDB(); return null;
-		}
-		
+	private String flushdb0(Jedis j) {
 		return j.flushDB();
 	}
 
@@ -2950,11 +2252,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.INFO, section);
 	}
 	
-	private String info0(Jedis j, Transaction t, String section) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String info0(Jedis j, String section) {
 		if (section == null) {
 			return j.info();
 		} else {
@@ -2967,11 +2265,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.LAST_SAVE);
 	}
 	
-	private Long lastsave0(Jedis j, Transaction t) {
-		if (t != null) {
-			t.lastsave(); return null;
-		}
-		
+	private Long lastsave0(Jedis j) {
 		return j.lastsave();
 	}
 
@@ -2980,11 +2274,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		executeCommand(CommandEnum.MONITOR, handler);
 	}
 	
-	private String monitor0(Jedis j, Transaction t, final RedisMonitorHandler handler) {
-		if (t != null) {
-			throw new RedisOperationException(String.format(TRANSACTION_UNSUPPORTED, "MONITOR"));
-		}
-		
+	private String monitor0(Jedis j, final RedisMonitorHandler handler) {
 		JedisMonitor jm = new JedisMonitor() {
 			@Override
 			public void onCommand(String command) {
@@ -3001,11 +2291,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SAVE);
 	}
 	
-	private String save0(Jedis j, Transaction t) {
-		if (t != null) {
-			t.save(); return null;
-		}
-		
+	private String save0(Jedis j) {
 		return j.save();
 	}
 
@@ -3014,11 +2300,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SHUTDOWN, save);
 	}
 	
-	private String shutdown0(Jedis j, Transaction t, boolean save) {
-		if (t != null) {
-			t.shutdown(); return null;
-		}
-		
+	private String shutdown0(Jedis j, boolean save) {
 		return j.shutdown();
 	}
 
@@ -3027,11 +2309,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SLAVEOF, host, port);
 	}
 	
-	private String slaveof0(Jedis j, Transaction t, String host, int port) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String slaveof0(Jedis j, String host, int port) {
 		return j.slaveof(host, port);
 	}
 
@@ -3040,11 +2318,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SLAVEOF_NONOE);
 	}
 	
-	private String slaveofnoone(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String slaveofnoone(Jedis j) {
 		return j.slaveofNoOne();
 	}
 
@@ -3053,11 +2327,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<Slowlog>) executeCommand(CommandEnum.SLOWLOG_GET);
 	}
 	
-	private List<Slowlog> slowlogget0(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private List<Slowlog> slowlogget0(Jedis j) {
 		List<redis.clients.util.Slowlog> logs = j.slowlogGet();
 		return convert4slowlog(logs);
 	}
@@ -3077,11 +2347,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (List<Slowlog>) executeCommand(CommandEnum.SLOWLOG_GET_LEN);
 	}
 	
-	private List<Slowlog> slowlogget0(Jedis j, Transaction t, long len) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private List<Slowlog> slowlogget0(Jedis j, long len) {
 		List<redis.clients.util.Slowlog> logs = j.slowlogGet(len);
 		return convert4slowlog(logs);
 	}
@@ -3091,11 +2357,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SLOWLOG_RESET);
 	}
 	
-	private String slowlogreset0(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String slowlogreset0(Jedis j) {
 		return j.slowlogReset();
 	}
 
@@ -3104,11 +2366,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.SLOWLOG_LEN);
 	}
 	
-	private Long slowloglen0(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Long slowloglen0(Jedis j) {
 		return j.slowlogLen();
 	}
 
@@ -3117,11 +2375,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		executeCommand(CommandEnum.SYNC);
 	}
 	
-	private String sync0(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private String sync0(Jedis j) {
 		j.sync();
 		return OK;
 	}
@@ -3131,11 +2385,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.TIME);
 	}
 	
-	private Long time0(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Long time0(Jedis j) {
+		// TODO
 		return null;
 	}
 
@@ -3144,450 +2395,446 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.TIME_MICRO);
 	}
 	
-	private Long microtime0(Jedis j, Transaction t) {
-		if (t != null) {
-			// TODO
-		}
-		
+	private Long microtime0(Jedis j) {
 		return null;
 	}
+	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
 	
 	private Object executeCommand(CommandEnum cmd, Object... args) {
 		Jedis j = jedis();
-		Transaction t = transaction();
 		
 		try {
 			switch (cmd) {
 			// Keys
 			case DEL:
-				return del0(j, t, (String[]) args[0]);
+				return del0(j, (String[]) args[0]);
 			case DUMP:         
-				return dump0(j, t, (String) args[0]);   
+				return dump0(j, (String) args[0]);   
 			case EXISTS:
-				return exists0(j, t, (String) args[0]);
+				return exists0(j, (String) args[0]);
 			case EXPIRE:
-				return expire0(j, t, (String) args[0], (Integer) args[1]);
+				return expire0(j, (String) args[0], (Integer) args[1]);
 			case EXPIREAT:
-				return expireat0(j, t, (String) args[0], (Long) args[1]);
+				return expireat0(j, (String) args[0], (Long) args[1]);
 			case KEYS:
-				return keys0(j, t, (String) args[0]);
+				return keys0(j, (String) args[0]);
 			case MIGRATE: 
-				return migrate0(j, t, (String) args[0], (Integer) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
+				return migrate0(j, (String) args[0], (Integer) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
 			case MOVE:
-				return move0(j, t, (String) args[0], (Integer) args[1]);
+				return move0(j, (String) args[0], (Integer) args[1]);
 			case OBJECT_REFCOUNT:
-				return objectrefcount0(j, t, (String) args[0]);
+				return objectrefcount0(j, (String) args[0]);
 			case OBJECT_ENCODING:
-				return objectencoding0(j, t, (String) args[0]);
+				return objectencoding0(j, (String) args[0]);
 			case OBJECT_IDLETIME:
-				return objectidletime0(j, t, (String) args[0]);
+				return objectidletime0(j, (String) args[0]);
 			case PERSIST:
-				return persist0(j, t, (String) args[0]);
+				return persist0(j, (String) args[0]);
 			case PEXPIRE: 
-				return pexpire0(j, t, (String) args[0], (Integer) args[1]);
+				return pexpire0(j, (String) args[0], (Integer) args[1]);
 			case PEXPIREAT: 
-				return pexpireat0(j, t, (String) args[0], (Long) args[1]);
+				return pexpireat0(j, (String) args[0], (Long) args[1]);
 			case PTTL: 
-				return pttl0(j, t, (String) args[0]);
+				return pttl0(j, (String) args[0]);
 			case RANDOMKEY:
-				return randomkey0(j, t);
+				return randomkey0(j);
 			case RENAME:
-				return rename0(j, t, (String) args[0], (String) args[1]);
+				return rename0(j, (String) args[0], (String) args[1]);
 			case RENAMENX:
-				return renamenx0(j, t, (String) args[0], (String) args[1]);
+				return renamenx0(j, (String) args[0], (String) args[1]);
 			case RESTORE:
-				return restore0(j, t, (String) args[0], (Long) args[1], (String) args[2]);
+				return restore0(j, (String) args[0], (Long) args[1], (String) args[2]);
 			case SORT:
-				return sort0(j, t, (String) args[0]);
+				return sort0(j, (String) args[0]);
 			case SORT_DESC:
-				return sort_desc(j, t, (String) args[0], (Boolean) args[1]);
+				return sort_desc(j, (String) args[0], (Boolean) args[1]);
 			case SORT_ALPHA_DESC:
-				return sort_alpha_desc(j, t, (String) args[0], (Boolean) args[1], (Boolean) args[2]);
+				return sort_alpha_desc(j, (String) args[0], (Boolean) args[1], (Boolean) args[2]);
 			case SORT_OFFSET_COUNT:
-				return sort_offset_count(j, t, (String) args[0], (Integer) args[1], (Integer) args[2]);
+				return sort_offset_count(j, (String) args[0], (Integer) args[1], (Integer) args[2]);
 			case SORT_OFFSET_COUNT_ALPHA_DESC:
-				return sort_offset_count_alpha_desc(j, t, (String) args[0], (Integer) args[1], (Integer) args[2], (Boolean) args[3], (Boolean) args[4]);
+				return sort_offset_count_alpha_desc(j, (String) args[0], (Integer) args[1], (Integer) args[2], (Boolean) args[3], (Boolean) args[4]);
 			case SORT_BY_GET:
-				return sort_by_get(j, t, (String) args[0], (String) args[1], (String[]) args[2]);
+				return sort_by_get(j, (String) args[0], (String) args[1], (String[]) args[2]);
 			case SORT_BY_DESC_GET:
-				return sort_by_desc_get(j, t, (String) args[0], (String) args[1], (Boolean) args[2], (String[]) args[3]);
+				return sort_by_desc_get(j, (String) args[0], (String) args[1], (Boolean) args[2], (String[]) args[3]);
 			case SORT_BY_ALPHA_DESC_GET:
-				return sort_by_alpha_desc_get(j, t, (String) args[0], (String) args[1], (Boolean) args[2], (Boolean) args[3], (String[]) args[4]);
+				return sort_by_alpha_desc_get(j, (String) args[0], (String) args[1], (Boolean) args[2], (Boolean) args[3], (String[]) args[4]);
 			case SORT_BY_OFFSET_COUNT_GET:
-				return sort_by_offset_count_get(j, t, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (String[]) args[4]);
+				return sort_by_offset_count_get(j, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (String[]) args[4]);
 			case SORT_BY_OFFSET_COUNT_ALPHA_DESC_GET:
-				return sort_by_offset_count_alpha_desc_get(j, t, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (Boolean) args[4], (Boolean) args[5], (String[]) args[6]);
+				return sort_by_offset_count_alpha_desc_get(j, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (Boolean) args[4], (Boolean) args[5], (String[]) args[6]);
 			case SORT_BY_DESTINATION:
-				return sort_by_destination(j, t, (String) args[0], (String) args[1], (String) args[2]);
+				return sort_by_destination(j, (String) args[0], (String) args[1], (String) args[2]);
 			case SORT_BY_DESC_DESTINATION_GET:
-				return sort_by_desc_destination_get(j, t, (String) args[0], (String) args[1], (Boolean) args[2], (String) args[3], (String[]) args[4]);
+				return sort_by_desc_destination_get(j, (String) args[0], (String) args[1], (Boolean) args[2], (String) args[3], (String[]) args[4]);
 			case SORT_BY_ALPHA_DESC_DESTINATION_GET:
-				return sort_by_alpha_desc_destination_get(j, t, (String) args[0], (String) args[1], (Boolean) args[2], (Boolean) args[3], (String) args[4], (String[]) args[5]);
+				return sort_by_alpha_desc_destination_get(j, (String) args[0], (String) args[1], (Boolean) args[2], (Boolean) args[3], (String) args[4], (String[]) args[5]);
 			case SORT_BY_OFFSET_COUNT_DESTINATION_GET:
-				return sort_by_offset_count_destination_get(j, t, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (String) args[4], (String[]) args[5]);
+				return sort_by_offset_count_destination_get(j, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (String) args[4], (String[]) args[5]);
 			case SORT_BY_OFFSET_COUNT_ALPHA_DESC_DESTINATION_GET:				
-				return sort_by_offset_count_alpha_desc_destination_get(j, t, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (Boolean) args[4], (Boolean) args[5], (String) args[6], (String[]) args[7]);
+				return sort_by_offset_count_alpha_desc_destination_get(j, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (Boolean) args[4], (Boolean) args[5], (String) args[6], (String[]) args[7]);
 			case TTL:
-				return ttl0(j, t, (String) args[0]);
+				return ttl0(j, (String) args[0]);
 			case TYPE:
-				return type0(j, t, (String) args[0]);
+				return type0(j, (String) args[0]);
 				
 			// Strings			
 			case APPEND:
-				return append0(j, t, (String) args[0], (String) args[1]);
+				return append0(j, (String) args[0], (String) args[1]);
 			case BITCOUNT:
-				return bitcount0(j, t, (String) args[0]);
+				return bitcount0(j, (String) args[0]);
 			case BITNOT:
-				return bitnot0(j, t, (String) args[0], (String) args[1]);
+				return bitnot0(j, (String) args[0], (String) args[1]);
 			case BITAND:
-				return bitand0(j, t, (String) args[0], (String) args[1]);
+				return bitand0(j, (String) args[0], (String) args[1]);
 			case BITOR:
-				return bitor0(j, t, (String) args[0], (String) args[1]);
+				return bitor0(j, (String) args[0], (String) args[1]);
 			case BITXOR:
-				return bitxor0(j, t, (String) args[0], (String) args[1]);
+				return bitxor0(j, (String) args[0], (String) args[1]);
 			case DECR:
-				return decr0(j, t, (String) args[0]);
+				return decr0(j, (String) args[0]);
 			case DECRBY:
-				return decrby0(j, t, (String) args[0], (Long) args[1]);
+				return decrby0(j, (String) args[0], (Long) args[1]);
 			case GET:
-				return get0(j, t, (String) args[0]);
+				return get0(j, (String) args[0]);
 			case GETBIT:
-				return getbit0(j, t, (String) args[0], (Long) args[1]);
+				return getbit0(j, (String) args[0], (Long) args[1]);
 			case GETRANGE:
-				return getrange0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+				return getrange0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case GETSET:
-				return getset0(j, t, (String) args[0], (String) args[1]);
+				return getset0(j, (String) args[0], (String) args[1]);
 			case INCR:
-				return incr0(j, t, (String) args[0]);
+				return incr0(j, (String) args[0]);
 			case INCRBY:
-				return incrby0(j, t, (String) args[0], (Long) args[1]);
+				return incrby0(j, (String) args[0], (Long) args[1]);
 			case INCRBYFLOAT:
-				return incrbyfloat(j, t, (String) args[0], (Long) args[1]);
+				return incrbyfloat0(j, (String) args[0], (Long) args[1]);
 			case MGET:
-				return mget0(j, t, (String[]) args[0]);
+				return mget0(j, (String[]) args[0]);
 			case MSET:
-				return mset0(j, t, (String[]) args[0]);
+				return mset0(j, (String[]) args[0]);
 			case MSETNX:
-				return msetnx0(j, t, (String[]) args[0]);
+				return msetnx0(j, (String[]) args[0]);
 			case PSETEX:
-				return psetex0(j, t, (String) args[0], (Integer) args[1], (String) args[2]);
+				return psetex0(j, (String) args[0], (Integer) args[1], (String) args[2]);
 			case SET:
-				return set0(j, t, (String) args[0], (String) args[1]);
+				return set0(j, (String) args[0], (String) args[1]);
 			case SETXX:
-				return setxx0(j, t, (String) args[0], (String) args[1]);
+				return setxx0(j, (String) args[0], (String) args[1]);
 			case SETNXEX:
-				return setnxex0(j, t, (String) args[0], (String) args[1], (Integer) args[2]);
+				return setnxex0(j, (String) args[0], (String) args[1], (Integer) args[2]);
 			case SETNXPX:
-				return setnxpx0(j, t, (String) args[0], (String) args[1], (Integer) args[2]);
+				return setnxpx0(j, (String) args[0], (String) args[1], (Integer) args[2]);
 			case SETXXEX:
-				return setxxex0(j, t, (String) args[0], (String) args[1], (Integer) args[2]);
+				return setxxex0(j, (String) args[0], (String) args[1], (Integer) args[2]);
 			case SETXXPX:
-				return setxxpx0(j, t, (String) args[0], (String) args[1], (Integer) args[2]);
+				return setxxpx0(j, (String) args[0], (String) args[1], (Integer) args[2]);
 			case SETBIT:
-				return setbit0(j, t, (String) args[0], (Long) args[1], (Boolean) args[2]);
+				return setbit0(j, (String) args[0], (Long) args[1], (Boolean) args[2]);
 			case SETEX:
-				return setex0(j, t, (String) args[0], (Integer) args[1], (String) args[2]);
+				return setex0(j, (String) args[0], (Integer) args[1], (String) args[2]);
 			case SETNX:
-				return setnx0(j, t, (String) args[0], (String) args[1]);
+				return setnx0(j, (String) args[0], (String) args[1]);
 			case SETRANGE:
-				return setrange0(j, t, (String) args[0], (Long) args[1], (String) args[2]);
+				return setrange0(j, (String) args[0], (Long) args[1], (String) args[2]);
 			case STRLEN:
-				return strlen0(j, t, (String) args[0]);
+				return strlen0(j, (String) args[0]);
 				
 			// Hashes
 			case HDEL:
-				return hdel0(j, t, (String) args[0], (String[]) args[1]);
+				return hdel0(j, (String) args[0], (String[]) args[1]);
 			case HEXISTS:
-				return hexists0(j, t, (String) args[0], (String) args[1]);
+				return hexists0(j, (String) args[0], (String) args[1]);
 			case HGET:
-				return hget0(j, t, (String) args[0], (String) args[1]);
+				return hget0(j, (String) args[0], (String) args[1]);
 			case HGETALL:
-				return hgetall0(j, t, (String) args[0]);
+				return hgetall0(j, (String) args[0]);
 			case HINCRBY:
-				return hincrby0(j, t, (String) args[0], (String) args[1], (Long) args[2]);
+				return hincrby0(j, (String) args[0], (String) args[1], (Long) args[2]);
 			case HINCRBYFLOAT:
-				return hincrbyfloat0(j, t, (String) args[0], (String) args[1], (Double) args[2]);
+				return hincrbyfloat0(j, (String) args[0], (String) args[1], (Double) args[2]);
 			case HKEYS:
-				return hkeys0(j, t, (String) args[0]);
+				return hkeys0(j, (String) args[0]);
 			case HLEN:
-				return hlen0(j, t, (String) args[0], (String) args[1]);
+				return hlen0(j, (String) args[0], (String) args[1]);
 			case HMGET:
-				return hmget0(j, t, (String) args[0], (String[]) args[1]);
+				return hmget0(j, (String) args[0], (String[]) args[1]);
 			case HMSET:
-				return hmset0(j, t, (String) args[0], (Map<String, String>) args[1]);
+				return hmset0(j, (String) args[0], (Map<String, String>) args[1]);
 			case HSET:
-				return hset0(j, t, (String) args[0], (String) args[1], (String) args[2]);
+				return hset0(j, (String) args[0], (String) args[1], (String) args[2]);
 			case HSETNX:
-				return hsetnx0(j, t, (String) args[0], (String) args[1], (String) args[2]);
+				return hsetnx0(j, (String) args[0], (String) args[1], (String) args[2]);
 			case HVALS:
-				return hvals0(j, t, (String) args[0]);
+				return hvals0(j, (String) args[0]);
 				
 			// Lists
 			case BLPOP:
-				return blpop0(j, t, (Integer) args[0], (String[]) args[1]);
+				return blpop0(j, (Integer) args[0], (String[]) args[1]);
 			case BRPOP:
-				return brpop0(j, t, (Integer) args[0], (String[]) args[1]);
+				return brpop0(j, (Integer) args[0], (String[]) args[1]);
 			case BRPOPLPUSH:
-				return brpoplpush0(j, t, (String) args[0], (String) args[1], (Integer) args[2]);
+				return brpoplpush0(j, (String) args[0], (String) args[1], (Integer) args[2]);
 			case LINDEX:
-				return lindex0(j, t, (String) args[0], (Long) args[1]);
+				return lindex0(j, (String) args[0], (Long) args[1]);
 			case LINSERT_BEFORE:
-				return linsertbefore0(j, t, (String) args[0], (String) args[1], (String) args[2]);
+				return linsertbefore0(j, (String) args[0], (String) args[1], (String) args[2]);
 			case LINSERT_AFTER:
-				return linsertafter0(j, t, (String) args[0], (String) args[1], (String) args[2]);
+				return linsertafter0(j, (String) args[0], (String) args[1], (String) args[2]);
 			case LLEN:
-				return llen0(j, t, (String) args[0]);
+				return llen0(j, (String) args[0]);
 			case LPOP:
-				return lpop0(j, t, (String) args[0]);
+				return lpop0(j, (String) args[0]);
 			case LPUSH:
-				return lpush0(j, t, (String) args[0], (String[]) args[1]);
+				return lpush0(j, (String) args[0], (String[]) args[1]);
 			case LPUSHX:
-				return lpushx0(j, t, (String) args[0], (String) args[1]);
+				return lpushx0(j, (String) args[0], (String) args[1]);
 			case LRANGE:
-				return lrange0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+				return lrange0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case LREM:
-				return lrem0(j, t, (String) args[0], (Long) args[1], (String) args[2]);
+				return lrem0(j, (String) args[0], (Long) args[1], (String) args[2]);
 			case LSET:
-				return lset0(j, t, (String) args[0], (Long) args[1], (String) args[2]);
+				return lset0(j, (String) args[0], (Long) args[1], (String) args[2]);
 			case LTRIM:
-				return ltrim0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+				return ltrim0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case RPOP:
-				return rpop0(j, t, (String) args[0]);
+				return rpop0(j, (String) args[0]);
 			case RPOPLPUSH:
-				return rpoplpush0(j, t, (String) args[0], (String) args[1]);
+				return rpoplpush0(j, (String) args[0], (String) args[1]);
 			case RPUSH:
-				return rpush0(j, t, (String) args[0], (String[]) args[1]);
+				return rpush0(j, (String) args[0], (String[]) args[1]);
 			case RPUSHX:
-				return rpushx0(j, t, (String) args[0], (String) args[1]);
+				return rpushx0(j, (String) args[0], (String) args[1]);
 				
 			// Sets
 			case SADD:
-				return sadd0(j, t, (String) args[0], (String[]) args[1]);
+				return sadd0(j, (String) args[0], (String[]) args[1]);
 			case SCARD:
-				return scard0(j, t, (String) args[0]);
+				return scard0(j, (String) args[0]);
 			case SDIFF:
-				return sdiff0(j, t, (String[]) args[0]);
+				return sdiff0(j, (String[]) args[0]);
 			case SDIFFSTORE:
-				return sdiffstore0(j, t, (String) args[0], (String[]) args[0]);
+				return sdiffstore0(j, (String) args[0], (String[]) args[0]);
 			case SINTER:
-				return sinter0(j, t, (String) args[0]);
+				return sinter0(j, (String) args[0]);
 			case SINTERSTORE:
-				return sinterstore0(j, t, (String) args[0], (String[]) args[1]);
+				return sinterstore0(j, (String) args[0], (String[]) args[1]);
 			case SISMEMBER:
-				return sismember0(j, t, (String) args[0], (String) args[1]);
+				return sismember0(j, (String) args[0], (String) args[1]);
 			case SMEMBERS:
-				return smembers0(j, t, (String) args[0]);
+				return smembers0(j, (String) args[0]);
 			case SMOVE:
-				return smove0(j, t, (String) args[0], (String) args[1], (String) args[2]);
+				return smove0(j, (String) args[0], (String) args[1], (String) args[2]);
 			case SPOP:
-				return spop0(j, t, (String) args[0]);
+				return spop0(j, (String) args[0]);
 			case SRANDMEMBER:
-				return srandmember0(j, t, (String) args[0], (Integer) args[1]);
+				return srandmember0(j, (String) args[0], (Integer) args[1]);
 			case SREM:
-				return srem0(j, t, (String) args[0], (String[]) args[1]);
+				return srem0(j, (String) args[0], (String[]) args[1]);
 			case SUNION:
-				return sunion0(j, t, (String[]) args[0]);
+				return sunion0(j, (String[]) args[0]);
 			case SUNIONSTORE:
-				return sunionstore0(j, t, (String) args[0], (String[]) args[1]);
+				return sunionstore0(j, (String) args[0], (String[]) args[1]);
 				
 			// Sorted Set
 			case ZADD:
-				return zadd0(j, t, (String) args[0], (Double) args[1], (String) args[2]);
+				return zadd0(j, (String) args[0], (Double) args[1], (String) args[2]);
 			case ZCARD:
-				return zcard0(j, t, (String) args[0]);
+				return zcard0(j, (String) args[0]);
 			case ZCOUNT:
-				return zcount0(j, t, (String) args[0], (Double) args[1], (Double) args[2]);
+				return zcount0(j, (String) args[0], (Double) args[1], (Double) args[2]);
 			case ZINCRBY:
-				return zincrby0(j, t, (String) args[0], (Double) args[1], (String) args[2]);
+				return zincrby0(j, (String) args[0], (Double) args[1], (String) args[2]);
 			case ZINTERSTORE:
-				return zinterstore0(j, t, (String) args[0], (String[]) args[1]);
+				return zinterstore0(j, (String) args[0], (String[]) args[1]);
 			case ZINTERSTORE_MAX:
-				return zinterstoremax0(j, t, (String) args[0], (String[]) args[1]);
+				return zinterstoremax0(j, (String) args[0], (String[]) args[1]);
 			case ZINTERSTORE_MIN:
-				return zinterstoremin0(j, t, (String) args[0], (String[]) args[1]);
+				return zinterstoremin0(j, (String) args[0], (String[]) args[1]);
 			case ZINTERSTORE_WEIGHTS:
-				return zinterstore_weights(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+				return zinterstore_weights(j, (String) args[0], (Map<String, Integer>) args[1]);
 			case ZINTERSTORE_WEIGHTS_MAX:
-				return zinterstore_weights_max(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+				return zinterstore_weights_max(j, (String) args[0], (Map<String, Integer>) args[1]);
 			case ZINTERSTORE_WEIGHTS_MIN:
-				return zinterstore_weights_min(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+				return zinterstore_weights_min(j, (String) args[0], (Map<String, Integer>) args[1]);
 			case ZRANGE:
-				return zrange0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+				return zrange0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case ZRANGE_WITHSCORES:
-				return zrangewithscores0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+				return zrangewithscores0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case ZRANGEBYSCORE:
-				return zrangebyscore0(j, t, (String) args[0], (Double) args[1], (Double) args[2]);
+				return zrangebyscore0(j, (String) args[0], (Double) args[1], (Double) args[2]);
 			case ZRANGEBYSCORE_STRING:
-				return zrangebyscore_string(j, t, (String) args[0], (String) args[1], (String) args[2]);
+				return zrangebyscore_string(j, (String) args[0], (String) args[1], (String) args[2]);
 			case ZRANGEBYSCORE_OFFSET_COUNT:
-				return zrangebyscore_offset_count(j, t, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
+				return zrangebyscore_offset_count(j, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
 			case ZRANGEBYSCORE_OFFSET_COUNT_STRING:
-				return zrangebyscore_offset_count_string(j, t, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
+				return zrangebyscore_offset_count_string(j, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
 			case ZRANGEBYSCORE_WITHSCORES:
-				return zrangebyscorewithscores0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+				return zrangebyscorewithscores0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case ZRANGEBYSCORE_WITHSCORES_STRING:
-				return zrangebyscorewithscores_string(j, t, (String) args[0], (String) args[1], (String) args[2]);
+				return zrangebyscorewithscores_string(j, (String) args[0], (String) args[1], (String) args[2]);
 			case ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT:
-				return zrangebyscorewithscores_offset_count(j, t, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
+				return zrangebyscorewithscores_offset_count(j, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
 			case ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING:
-				return zrangebyscorewithscores_offset_count_string(j, t, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
+				return zrangebyscorewithscores_offset_count_string(j, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
 			case ZRANK:
-				return zrank0(j, t, (String) args[0], (String) args[1]);
+				return zrank0(j, (String) args[0], (String) args[1]);
 			case ZREM:
-				return zrem0(j, t, (String) args[0], (String[]) args[1]);
+				return zrem0(j, (String) args[0], (String[]) args[1]);
 			case ZREMRANGEBYRANK:
-				return zremrangebyrank0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+				return zremrangebyrank0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case ZREMRANGEBYSCORE:
-				return zremrangebyscore0(j, t, (String) args[0], (Double) args[1], (Double) args[2]);
+				return zremrangebyscore0(j, (String) args[0], (Double) args[1], (Double) args[2]);
 			case ZREMRANGEBYSCORE_STRING:
-				return zremrangebyscore_string(j, t, (String) args[0], (String) args[1], (String) args[2]);
+				return zremrangebyscore_string(j, (String) args[0], (String) args[1], (String) args[2]);
 			case ZREVRANGE:
-				return zrevrange0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+				return zrevrange0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case ZREVRANGE_WITHSCORES:
-				return zrevrangewithscores0(j, t, (String) args[0], (Long) args[1], (Long) args[2]);
+				return zrevrangewithscores0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case ZREVRANGEBYSCORE:
-				return zrevrangebyscore0(j, t, (String) args[0], (Double) args[1], (Double) args[2]);
+				return zrevrangebyscore0(j, (String) args[0], (Double) args[1], (Double) args[2]);
 			case ZREVRANGEBYSCORE_STRING:
-				return zrevrangebyscore_string(j, t, (String) args[0], (String) args[1], (String) args[2]);
+				return zrevrangebyscore_string(j, (String) args[0], (String) args[1], (String) args[2]);
 			case ZREVRANGEBYSCORE_OFFSET_COUNT:
-				return zrevrangebyscore_offset_count(j, t, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
+				return zrevrangebyscore_offset_count(j, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
 			case ZREVRANGEBYSCORE_OFFSET_COUNT_STRING:
-				return zrevrangebyscore_offset_count_string(j, t, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
+				return zrevrangebyscore_offset_count_string(j, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
 			case ZREVRANGEBYSCORE_WITHSCORES:
-				return zrevrangebyscorewithscores0(j, t, (String) args[0], (Double) args[1], (Double) args[2]);
+				return zrevrangebyscorewithscores0(j, (String) args[0], (Double) args[1], (Double) args[2]);
 			case ZREVRANGEBYSCORE_WITHSCORES_STRING:
-				return zrevrangebyscorewithscores_string(j, t, (String) args[0], (String) args[1], (String) args[2]);
+				return zrevrangebyscorewithscores_string(j, (String) args[0], (String) args[1], (String) args[2]);
 			case ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT:
-				return zrevrangebyscorewithscores_offset_count(j, t, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
+				return zrevrangebyscorewithscores_offset_count(j, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
 			case ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING:
-				return zrevrangebyscorewithscores_offset_count_string(j, t, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
+				return zrevrangebyscorewithscores_offset_count_string(j, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
 			case ZREVRANK:
-				return zrevrank0(j, t, (String) args[0], (String) args[1]);
+				return zrevrank0(j, (String) args[0], (String) args[1]);
 			case ZSCORE:
-				return zscore0(j, t, (String) args[0], (String) args[1]);
+				return zscore0(j, (String) args[0], (String) args[1]);
 			case ZUNIONSTORE:
-				return zunionstore0(j, t, (String) args[0], (String[]) args[1]);
+				return zunionstore0(j, (String) args[0], (String[]) args[1]);
 			case ZUNIONSTORE_MAX:
-				return zunionstoremax0(j, t, (String) args[0], (String[]) args[1]);
+				return zunionstoremax0(j, (String) args[0], (String[]) args[1]);
 			case ZUNIONSTORE_MIN:
-				return zunionstoremin0(j, t, (String) args[0], (String[]) args[1]);
+				return zunionstoremin0(j, (String) args[0], (String[]) args[1]);
 			case ZUNIONSTORE_WEIGHTS:
-				return zunionstore_weights(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+				return zunionstore_weights(j, (String) args[0], (Map<String, Integer>) args[1]);
 			case ZUNIONSTORE_WEIGHTS_MAX:
-				return zunionstore_weights_max(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+				return zunionstore_weights_max(j, (String) args[0], (Map<String, Integer>) args[1]);
 			case ZUNIONSTORE_WEIGHTS_MIN:
-				return zunionstore_weights_min(j, t, (String) args[0], (Map<String, Integer>) args[1]);
+				return zunionstore_weights_min(j, (String) args[0], (Map<String, Integer>) args[1]);
 			
 			// Pub/Sub
 			case PSUBSCRIBE:
-				return psubscribe0(j, t, (RedisPsubscribeHandler) args[0], (String[]) args[1]);
+				return psubscribe0(j, (RedisPsubscribeHandler) args[0], (String[]) args[1]);
 			case PUBLISH:
-				return publish0(j, t, (String) args[0], (String) args[1]);
+				return publish0(j, (String) args[0], (String) args[1]);
 			case PUNSUBSCRIBE:
-				return punsubscribe0(j, t, (String[]) args[0]);
+				return punsubscribe0(j, (String[]) args[0]);
 			case SUBSCRIBE:
-				return subscribe0(j, t, (RedisSubscribeHandler) args[0], (String[]) args[1]);
+				return subscribe0(j, (RedisSubscribeHandler) args[0], (String[]) args[1]);
 			case UNSUBSCRIBE:
-				return unsubscribe0(j, t, (String[]) args[0]);
+				return unsubscribe0(j, (String[]) args[0]);
 				
 			// Transactions
 			case DISCARD:
-				return discard0(t);
+				return discard0((DefaultRedisTransaction) args[0]);
 			case EXEC:
-				return exec0(t);
+				return exec0((DefaultRedisTransaction) args[0]);
 			case MULTI:
 				return multi0(j);
 			case UNWATCH:
-				return unwatch0(j, t);
+				return unwatch0(j);
 			case WATCH:
 				return watch0(j, (String[]) args[0]);
 				
 			// Scripting
 			case EVAL:
-				return eval0(j, t, (String) args[0], (List<String>) args[1], (List<String>) args[2]);
+				return eval0(j, (String) args[0], (List<String>) args[1], (List<String>) args[2]);
 			case EVALSHA:
-				return evalsha0(j, t, (String) args[0], (List<String>) args[1], (List<String>) args[2]);
+				return evalsha0(j, (String) args[0], (List<String>) args[1], (List<String>) args[2]);
 			case SCRIPT_EXISTS:
-				return scriptexists0(j, t, (String) args[0]);
+				return scriptexists0(j, (String) args[0]);
 			case SCRIPT_FLUSH:
-				return scriptflush0(j, t);
+				return scriptflush0(j);
 			case SCRIPT_KILL:
-				return scriptkill0(j, t);
+				return scriptkill0(j);
 			case SCRIPT_LOAD:
-				return scriptload0(j, t, (String) args[0]);
+				return scriptload0(j, (String) args[0]);
 				
 			// Connection
 			case AUTH:
-				return auth0(j, t, (String) args[0]);
+				return auth0((String) args[0]);
 			case ECHO:
-				return echo0(j, t, (String) args[0]);
+				return echo0(j, (String) args[0]);
 			case PING:
-				return ping0(j, t);
+				return ping0(j);
 			case QUIT:
-				return quit0(j, t);
+				return quit0();
 			case SELECT:
-				return select0(j, t, (Integer) args[0]);
+				return select0(j, (Integer) args[0]);
 				
 			// Server
 			case BGREWRITEAOF:
-				return bgrewriteaof0(j, t);
+				return bgrewriteaof0(j);
 			case BGSAVE:
-				return bgsave0(j, t);
+				return bgsave0(j);
 			case CLIENT_KILL:
-				return clientkill0(j, t, (String) args[0], (Integer) args[1]);
+				return clientkill0(j, (String) args[0], (Integer) args[1]);
 			case CLIENT_LIST:
-				return clientlist0(j, t);
+				return clientlist0(j);
 			case CLIENT_GETNAME:
-				return clientgetname0(j, t);
+				return clientgetname0(j);
 			case CLIENT_SETNAME:
-				return clientsetname0(j, t, (String) args[0]);
+				return clientsetname0(j, (String) args[0]);
 			case CONFIG_GET:
-				return configget0(j, t, (String) args[0]);
+				return configget0(j, (String) args[0]);
 			case CONFIG_SET:
-				return configset0(j, t, (String) args[0], (String) args[1]);
+				return configset0(j, (String) args[0], (String) args[1]);
 			case CONFIG_RESETSTAT:
-				return configresetstat0(j, t);
+				return configresetstat0(j);
 			case DBSIZE:
-				return dbsize0(j, t);
+				return dbsize0(j);
 			case DEBUG_OBJECT:
-				return debugobject0(j, t, (String) args[0]);
+				return debugobject0(j, (String) args[0]);
 			case DEBUG_SEGFAULT:
-				return debugsegfault0(j, t);
+				return debugsegfault0(j);
 			case FLUSH_ALL:
-				return flushall0(j, t);
+				return flushall0(j);
 			case FLUSH_DB:
-				return flushdb0(j, t);
+				return flushdb0(j);
 			case INFO:
-				return info0(j, t, (String) args[0]);
+				return info0(j, (String) args[0]);
 			case LAST_SAVE:
-				return lastsave0(j, t);
+				return lastsave0(j);
 			case MONITOR:
-				return monitor0(j, t, (RedisMonitorHandler) args[0]);
+				return monitor0(j, (RedisMonitorHandler) args[0]);
 			case SAVE:
-				return save0(j, t);
+				return save0(j);
 			case SHUTDOWN:
-				return shutdown0(j, t, (Boolean) args[0]);
+				return shutdown0(j, (Boolean) args[0]);
 			case SLAVEOF:
-				return slaveof0(j, t, (String) args[0], (Integer) args[1]);
+				return slaveof0(j, (String) args[0], (Integer) args[1]);
 			case SLAVEOF_NONOE:
-				return slaveofnoone(j, t);
+				return slaveofnoone(j);
 			case SLOWLOG_LEN:
-				return slowloglen0(j, t);
+				return slowloglen0(j);
 			case SLOWLOG_GET:
-				return slowlogget0(j, t);
+				return slowlogget0(j);
 			case SLOWLOG_GET_LEN:
-				return slowlogget0(j, t, (Integer) args[0]);
+				return slowlogget0(j, (Integer) args[0]);
 			case SLOWLOG_RESET:
-				return slowlogreset0(j, t);
+				return slowlogreset0(j);
 			case SYNC:
-				return sync0(j, t);
+				return sync0(j);
 			case TIME: 
-				return time0(j, t);
+				return time0(j);
 			case TIME_MICRO:
-				return microtime0(j, t);
+				return microtime0(j);
 			default:
 				throw new IllegalArgumentException("Wrong command");
 			}
@@ -3599,8 +2846,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 		}
 	}
 	
-	private RedisException handleException(Exception e, Jedis j) {
-		unsetTransaction();
+	RedisException handleException(Exception e, Jedis j) {
+		unbind();
 		
 		if (e instanceof JedisConnectionException) {
 			pool.returnBrokenResource(j);
@@ -3611,24 +2858,7 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 			return new RedisDataException(e);
 		}
 		
-		if (e instanceof RedisConnectionException) {
-			pool.returnBrokenResource(j);
-			return (RedisConnectionException) e;
-		}
-		
-		if (e instanceof RedisDataException) {
-			return (RedisDataException) e;
-		}
-		
-		if (e instanceof RedisOperationException) {
-			return (RedisOperationException) e;
-		}
-		
 		return new RedisException(e);
-	}
-	
-	private Transaction transaction() {
-		return THREAD_LOCAL_TRANSACTION.get();
 	}
 	
 	private Jedis jedis() {
@@ -3642,7 +2872,8 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 	}
 	
 	private void release(CommandEnum cn, Jedis j) {
-		if (CommandEnum.MULTI == cn || CommandEnum.WATCH == cn) {
+		if (CommandEnum.MULTI == cn || CommandEnum.WATCH == cn || isBound()) {
+			// in transaction context don't return jedis connection to pool.
 			return;
 		} else {
 			pool.returnResource(j);
@@ -3652,35 +2883,39 @@ public class DefaultRedis extends AbstractRedis implements Redis {
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 
-	public String getHost() {
-		return host;
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((host == null) ? 0 : host.hashCode());
+		result = prime * result + port;
+		return result;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public int getTimeoutInMillis() {
-		return timeoutInMillis;
-	}
-
-	public int getDatabase() {
-		return database;
-	}
-
-	public Config getPoolConfig() {
-		return poolConfig;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		DefaultRedis other = (DefaultRedis) obj;
+		if (host == null) {
+			if (other.host != null)
+				return false;
+		} else if (!host.equals(other.host))
+			return false;
+		if (port != other.port)
+			return false;
+		return true;
 	}
 
 	@Override
 	public String toString() {
 		return String
-				.format("Redis [host=%s, password=%s, port=%s, timeoutInMillis=%s, database=%s, poolConfig=%s]",
-						        host,    password,    port,    timeoutInMillis,    database,    poolConfig);
+				.format("Redis [host=%s, password=%s, port=%s, timeout=%s, database=%s, poolConfig=%s]",
+						        host,    password,    port,    timeout,    database,    poolConfig);
 	}
 
 }

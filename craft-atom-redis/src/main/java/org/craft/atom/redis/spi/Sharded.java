@@ -2,7 +2,7 @@ package org.craft.atom.redis.spi;
 
 import java.util.List;
 
-import org.craft.atom.redis.api.Redis;
+import org.craft.atom.redis.api.RedisCommand;
 
 /**
  * Implements this interface to provide custom sharded algorithm.
@@ -10,21 +10,21 @@ import org.craft.atom.redis.api.Redis;
  * @author mindwind
  * @version 1.0, Jun 25, 2013
  */
-public interface Sharded {
+public interface Sharded<R extends RedisCommand> {
 
 	/**
-	 * Get redis shard.
+	 * Return redis shard by shardkey
 	 * 
 	 * @param shardkey
 	 * @return
 	 */
-	Redis getShard(String shardkey);
+	R shard(String shardkey);
 	
 	/**
 	 * Get all redis shards.
 	 * 
 	 * @return
 	 */
-	List<Redis> getAllShards();
+	List<R> shards();
 	
 }

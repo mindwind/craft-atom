@@ -9,6 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import junit.framework.Assert;
 
 import org.craft.atom.redis.api.RedisDataException;
+import org.craft.atom.redis.api.RedisTransaction;
 
 /**
  * @author mindwind
@@ -201,9 +202,9 @@ public class RedisMain {
 		redis.watch(wkey);
 		redis.set(wkey, "1");
 		redis.unwatch();
-		redis.multi();
-		redis.set(K, V);
-		redis.exec();
+		RedisTransaction t = redis.multi();
+		t.set(K, V);
+		redis.exec(t);
 		String v = redis.get(K);
 		Assert.assertEquals(V, v);
 		
@@ -213,12 +214,12 @@ public class RedisMain {
 	private static void testMultiDiscard() {
 		before("testMultiDiscard");
 		
-		redis.multi();
-		redis.set(K, V);
-		redis.get(K);
-		redis.discard();
+		RedisTransaction t = redis.multi();
+		t.set(K, V);
+		t.get(K);
+		redis.discard(t);
 		try {
-			redis.exec();
+			redis.exec(t);
 			Assert.fail();
 		} catch (RedisDataException e) {
 		}
@@ -240,9 +241,9 @@ public class RedisMain {
 				try {
 					redis.watch(wkey);
 					c1.await();
-					redis.multi();
-					redis.set(K, V);
-					redis.exec();
+					RedisTransaction t = redis.multi();
+					t.set(K, V);
+					redis.exec(t);
 					c2.signal();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -286,10 +287,10 @@ public class RedisMain {
 	private static void testMultiExec() {
 		before("testMultiExec");
 		
-		redis.multi();
-		redis.set(K, V);
-		redis.get(K);
-		List<Object> r = redis.exec();
+		RedisTransaction t = redis.multi();
+		t.set(K, V);
+		t.get(K);
+		List<Object> r = redis.exec(t);
 		Assert.assertEquals(2, r.size());
 		Assert.assertEquals(V, r.get(1));
 		

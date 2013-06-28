@@ -1,12 +1,14 @@
 package org.craft.atom.redis;
 
+import org.craft.atom.redis.api.RedisCommand;
+
 /**
  * @author mindwind
- * @version 1.0, Jun 18, 2013
+ * @version 1.0, Jun 26, 2013
  */
-public abstract class AbstractRedis {
+public abstract class AbstractRedis implements RedisCommand {
 	
-	protected static final String OK = "OK";
-	protected static final String TRANSACTION_UNSUPPORTED = "Command [%s] is not supported in transaction context.";
+	
+	
 	
 }
