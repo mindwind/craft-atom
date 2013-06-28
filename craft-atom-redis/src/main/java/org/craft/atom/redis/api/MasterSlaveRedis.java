@@ -30,14 +30,6 @@ public interface MasterSlaveRedis extends RedisCommand {
 	void master(int index);
 	
 	/**
-	 * Set master node by index with option of rebuild chain.
-	 * 
-	 * @param index
-	 * @param rebuild
-	 */
-	void master(int index, boolean rebuild);
-	
-	/**
 	 * Return master redis node.
 	 * 
 	 * @return
@@ -57,11 +49,6 @@ public interface MasterSlaveRedis extends RedisCommand {
 	 * @return
 	 */
 	List<Redis> chain();
-	
-	/**
-	 * Rebuild master-slave chain structure by current master index.
-	 */
-	void rebuild();
 	
 	/**
 	 * Reset master-slave chain, using zero-index node as the master. 

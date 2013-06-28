@@ -25,7 +25,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	
 	
 	// ~ ---------------------------------------------------------------------------------------------------------
-	
+
 	
 	public DefaultMasterSlaveRedis(List<Redis> chain) {
 		this(chain, 0);
@@ -63,8 +63,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		master(index, true);
 	}
 
-	@Override
-	public void master(int index, boolean rebuild) {
+	private void master(int index, boolean rebuild) {
 		check(index, chain.size());
 		
 		this.index = index;
@@ -97,8 +96,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		return l;
 	}
 
-	@Override
-	public void rebuild() {
+	private void rebuild() {
 		Redis master = chain.get(index);
 		master.slaveofnoone();
 		

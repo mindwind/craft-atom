@@ -76,28 +76,11 @@ public class DefaultRedis implements Redis {
 		init();
 	}
 	
-	public DefaultRedis(String host, int port, int timeout, Config poolConfig) {
-		this.host = host;
-		this.port = port;
-		this.timeout = timeout;
-		this.poolConfig = poolConfig;
-		init();
-	}
-	
 	public DefaultRedis(String host, int port, int timeout, int poolSize, String password) {
 		this.host = host;
 		this.port = port;
 		this.timeout = timeout;
 		this.poolConfig = poolConfig(poolSize);
-		this.password = password;
-		init();
-	}
-	
-	public DefaultRedis(String host, int port, int timeout, Config poolConfig, String password) {
-		this.host = host;
-		this.port = port;
-		this.timeout = timeout;
-		this.poolConfig = poolConfig;
 		this.password = password;
 		init();
 	}
@@ -109,6 +92,23 @@ public class DefaultRedis implements Redis {
 		this.poolConfig = poolConfig(poolSize);
 		this.password = password;
 		this.database = database;
+		init();
+	}
+	
+	public DefaultRedis(String host, int port, int timeout, Config poolConfig) {
+		this.host = host;
+		this.port = port;
+		this.timeout = timeout;
+		this.poolConfig = poolConfig;
+		init();
+	}
+	
+	public DefaultRedis(String host, int port, int timeout, Config poolConfig, String password) {
+		this.host = host;
+		this.port = port;
+		this.timeout = timeout;
+		this.poolConfig = poolConfig;
+		this.password = password;
 		init();
 	}
 
@@ -2169,6 +2169,7 @@ public class DefaultRedis implements Redis {
 			String value = null;
 			if (i + 1 < l.size()) {
 				value = l.get(i + 1);
+				value = ("".equals(value) ? null : value);
 			}
 			map.put(name, value);
 		}

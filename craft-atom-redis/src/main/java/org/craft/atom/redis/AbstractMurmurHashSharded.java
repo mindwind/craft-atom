@@ -19,6 +19,7 @@ public abstract class AbstractMurmurHashSharded<R extends RedisCommand> {
 	
 	public AbstractMurmurHashSharded(List<R> shards) {
 		this.shards = shards;
+		this.murmur = new MurmurHash();
 		init(shards);
 	}
 	
@@ -27,7 +28,8 @@ public abstract class AbstractMurmurHashSharded<R extends RedisCommand> {
 		for (int i = 0; i < shards.size(); i++) {
 			R redis = shards.get(i);
             for (int n = 0; n < 160; n++) {
-            	nodes.put(murmur.hash("SHARD-" + i + "-NODE-" + n), redis);
+            	Long k = murmur.hash("SHARD-" + i + "-NODE-" + n);
+            	nodes.put(k, redis);
             }
         }
 	}

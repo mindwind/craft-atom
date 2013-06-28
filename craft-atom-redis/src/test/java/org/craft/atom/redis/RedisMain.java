@@ -8,32 +8,29 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import junit.framework.Assert;
 
+import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.RedisDataException;
+import org.craft.atom.redis.api.RedisFactory;
 import org.craft.atom.redis.api.RedisTransaction;
 
 /**
  * @author mindwind
  * @version 1.0, Jun 19, 2013
  */
-public class RedisMain {
+public class RedisMain extends TestMain {
 	
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT = 6379;
 	private static final String K = "test-key";
 	private static final String V = "test-value";
-	private static DefaultRedis redis;
+	private static Redis r;
 	
 	private static void init() {
-		redis = new DefaultRedis(HOST, PORT);
+		r = RedisFactory.newRedis(HOST, PORT);
 	}
 	
-	private static void before(String desc) {
-		System.out.println("case --> " + desc);
-		redis.del(K);
-	}
-	
-	private static void after() {
-		
+	protected static void after() {
+		r.flushall();
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -73,7 +70,7 @@ public class RedisMain {
 		Thread t1 = new Thread(new Runnable() {	
 			@Override
 			public void run() {
-				String v = redis.blpop(K);
+				String v = r.blpop(K);
 				Assert.assertEquals("3", v);
 				lock.lock();
 				try {
@@ -89,7 +86,7 @@ public class RedisMain {
 		Thread t2 = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				redis.lpush(K, "1", "2", "3");
+				r.lpush(K, "1", "2", "3");
 			}
 		});
 		
@@ -112,11 +109,11 @@ public class RedisMain {
 	private static void testLpushLrangeLlen() {
 		before("testLpush");
 		
-		long len = redis.lpush(K, "1", "2", "3");
+		long len = r.lpush(K, "1", "2", "3");
 		Assert.assertEquals(3, len);
-		len = redis.llen(K);
+		len = r.llen(K);
 		Assert.assertEquals(3, len);
-		List<String> l = redis.lrange(K, 0, -1);
+		List<String> l = r.lrange(K, 0, -1);
 		Assert.assertEquals("1", l.get(2));
 		
 		after();
@@ -125,16 +122,16 @@ public class RedisMain {
 	private static void testSortByGet() {
 		before("testSortByGet");
 		
-		redis.lpush(K, "1", "2", "3");
-		redis.set("w_1", "3");
-		redis.set("w_2", "2");
-		redis.set("w_3", "1");
-		redis.set("o_1", "1-aaa");
-		redis.set("o_2", "2-bbb");
-		redis.set("o_3", "3-ccc");
-		List<String> l = redis.sort(K, "w_*");
+		r.lpush(K, "1", "2", "3");
+		r.set("w_1", "3");
+		r.set("w_2", "2");
+		r.set("w_3", "1");
+		r.set("o_1", "1-aaa");
+		r.set("o_2", "2-bbb");
+		r.set("o_3", "3-ccc");
+		List<String> l = r.sort(K, "w_*");
 		Assert.assertEquals("1", l.get(2));
-		l = redis.sort(K, "w_*", new String[] { "o_*" });
+		l = r.sort(K, "w_*", new String[] { "o_*" });
 		Assert.assertEquals("1-aaa", l.get(2));
 		
 		after();
@@ -143,8 +140,8 @@ public class RedisMain {
 	private static void testKeys() {
 		before("testKeys");
 		
-		redis.set(K, V);
-		Set<String> keys = redis.keys("test*");
+		r.set(K, V);
+		Set<String> keys = r.keys("test*");
 		Assert.assertTrue(keys.size() > 0);
 		
 		after();
@@ -153,10 +150,10 @@ public class RedisMain {
 	private static void testExpireat() throws InterruptedException {
 		before("testExpireat");
 		
-		redis.set(K, V);
-		redis.expireat(K, (System.currentTimeMillis() + 2000) / 1000);
+		r.set(K, V);
+		r.expireat(K, (System.currentTimeMillis() + 2000) / 1000);
 		Thread.sleep(3000);
-		boolean b = redis.exists(K);
+		boolean b = r.exists(K);
 		Assert.assertEquals(false, b);
 		
 		after();
@@ -165,10 +162,10 @@ public class RedisMain {
 	private static void testExpire() throws InterruptedException {
 		before("testExpire");
 		
-		redis.set(K, V);
-		redis.expire(K, 3);
+		r.set(K, V);
+		r.expire(K, 3);
 		Thread.sleep(4000);
-		boolean b = redis.exists(K);
+		boolean b = r.exists(K);
 		Assert.assertEquals(false, b);
 		
 		after();
@@ -177,8 +174,8 @@ public class RedisMain {
 	private static void testExists() {
 		before("testExists");
 		
-		redis.set(K, V);
-		boolean b = redis.exists(K);
+		r.set(K, V);
+		boolean b = r.exists(K);
 		Assert.assertEquals(true, b);
 		
 		after();
@@ -187,9 +184,9 @@ public class RedisMain {
 	private static void testDel() {
 		before("testDel");
 		
-		redis.set(K, V);
-		redis.del(K);
-		boolean b = redis.exists(K);
+		r.set(K, V);
+		r.del(K);
+		boolean b = r.exists(K);
 		Assert.assertEquals(false, b);
 		
 		after();
@@ -199,13 +196,13 @@ public class RedisMain {
 		before("testWatchUnwatchMultiExec");
 		
 		String wkey = "watch-key";
-		redis.watch(wkey);
-		redis.set(wkey, "1");
-		redis.unwatch();
-		RedisTransaction t = redis.multi();
+		r.watch(wkey);
+		r.set(wkey, "1");
+		r.unwatch();
+		RedisTransaction t = r.multi();
 		t.set(K, V);
-		redis.exec(t);
-		String v = redis.get(K);
+		r.exec(t);
+		String v = r.get(K);
 		Assert.assertEquals(V, v);
 		
 		after();
@@ -214,12 +211,12 @@ public class RedisMain {
 	private static void testMultiDiscard() {
 		before("testMultiDiscard");
 		
-		RedisTransaction t = redis.multi();
+		RedisTransaction t = r.multi();
 		t.set(K, V);
 		t.get(K);
-		redis.discard(t);
+		r.discard(t);
 		try {
-			redis.exec(t);
+			r.exec(t);
 			Assert.fail();
 		} catch (RedisDataException e) {
 		}
@@ -239,11 +236,11 @@ public class RedisMain {
 			public void run() {
 				lock.lock();
 				try {
-					redis.watch(wkey);
+					r.watch(wkey);
 					c1.await();
-					RedisTransaction t = redis.multi();
+					RedisTransaction t = r.multi();
 					t.set(K, V);
-					redis.exec(t);
+					r.exec(t);
 					c2.signal();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -259,7 +256,7 @@ public class RedisMain {
 			public void run() {
 				lock.lock();
 				try {
-					redis.set(wkey, "1");
+					r.set(wkey, "1");
 					c1.signal();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -277,9 +274,9 @@ public class RedisMain {
 			lock.unlock();
 		}
 		
-		String v = redis.get(K);
+		String v = r.get(K);
 		Assert.assertNull(v);
-		redis.del(wkey);
+		r.del(wkey);
 		
 		after();
 	}
@@ -287,12 +284,12 @@ public class RedisMain {
 	private static void testMultiExec() {
 		before("testMultiExec");
 		
-		RedisTransaction t = redis.multi();
+		RedisTransaction t = r.multi();
 		t.set(K, V);
 		t.get(K);
-		List<Object> r = redis.exec(t);
-		Assert.assertEquals(2, r.size());
-		Assert.assertEquals(V, r.get(1));
+		List<Object> l = r.exec(t);
+		Assert.assertEquals(2, l.size());
+		Assert.assertEquals(V, l.get(1));
 		
 		after();
 	}
