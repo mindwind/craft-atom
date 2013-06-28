@@ -2914,9 +2914,13 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public String toString() {
-		return String
-				.format("Redis [host=%s, password=%s, port=%s, timeout=%s, database=%s, poolConfig=%s]",
-						        host,    password,    port,    timeout,    database,    poolConfig);
+		StringBuilder buf = new StringBuilder();
+		buf.append("{")
+		   .append("class: ").append(getClass().getName()).append(", ")
+		   .append("host: ").append(host).append(", ")
+		   .append("port: ").append(port)
+		   .append("}");
+		return buf.toString();
 	}
 
 }

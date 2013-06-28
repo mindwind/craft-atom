@@ -36,7 +36,12 @@ public class DefaultShardedRedis extends AbstractShardedRedis<Redis> implements 
 
 	@Override
 	public String toString() {
-		return String.format("ShardedRedis [sharded=%s]", sharded.shards());
+		StringBuilder buf = new StringBuilder();
+		buf.append("{")
+		   .append("class: ").append(getClass().getName()).append(", ")
+		   .append("shards: ").append(shards())
+		   .append("}");
+		return buf.toString();
 	}
 	
 

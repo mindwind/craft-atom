@@ -29,5 +29,19 @@ public class DefaultMasterSlaveShardedRedis extends AbstractShardedRedis<MasterS
 	public List<MasterSlaveRedis> shards() {
 		return sharded.shards();
 	}
+	
+	
+	// ~ -----------------------------------------------------------------------------------------------------------
+	
+	
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		buf.append("{")
+		   .append("class: ").append(getClass().getName()).append(", ")
+		   .append("shards: ").append(shards())
+		   .append("}");
+		return buf.toString();
+	}
 
 }

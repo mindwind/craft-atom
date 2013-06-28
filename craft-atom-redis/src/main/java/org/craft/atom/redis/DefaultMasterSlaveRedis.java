@@ -1249,5 +1249,19 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		return master().microtime();
 	}
 	
-
+	
+	// ~ -----------------------------------------------------------------------------------------------------------
+	
+	
+	@Override
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		buf.append("{")
+		   .append("class: ").append(getClass().getName()).append(", ")
+		   .append("master: ").append(index()).append(", ")
+		   .append("chain: ").append(chain())
+		   .append("}");
+		return buf.toString();
+	}
+	
 }
