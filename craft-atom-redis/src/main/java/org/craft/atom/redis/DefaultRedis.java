@@ -176,13 +176,12 @@ public class DefaultRedis implements Redis {
 	}
 
 	@Override
-	public String dump(String key) {
-		return (String) executeCommand(CommandEnum.DUMP, new Object[] { key });
+	public byte[] dump(String key) {
+		return (byte[]) executeCommand(CommandEnum.DUMP, new Object[] { key });
 	}
 	
-	private String dump0(Jedis j, String key) {
-//		return j.dump(key); TODO
-		return null;
+	private byte[] dump0(Jedis j, String key) {
+		return j.dump(key);
 	}
 
 	@Override
@@ -281,8 +280,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private Long pexpire0(Jedis j, String key, int milliseconds) {
-		// TODO
-		return null;
+		return j.pexpire(key, milliseconds);
 	}
 
 	@Override
@@ -291,8 +289,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private Long pexpireat0(Jedis j, String key, long millisecondstimestamp) {
-		// TODO
-		return null;
+		return j.pexpireAt(key, millisecondstimestamp);
 	}
 
 	@Override
@@ -301,8 +298,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private Long pttl0(Jedis j, String key) {
-		// TODO
-		return null;
+		return j.pttl(key);
 	}
 	
 	@Override
@@ -333,13 +329,12 @@ public class DefaultRedis implements Redis {
 	}
 
 	@Override
-	public String restore(String key, long ttl, String serializedvalue) {
+	public String restore(String key, int ttl, byte[] serializedvalue) {
 		return (String) executeCommand(CommandEnum.RESTORE, new Object[] { key, ttl, serializedvalue });
 	}
 	
-	private String restore0(Jedis j, String key, long ttl, String serializedvalue) {
-		// TODO
-		return null;
+	private String restore0(Jedis j, String key, int ttl, byte[] serializedvalue) {
+		return j.restore(key, ttl, serializedvalue);
 	}
 
 	@Override
@@ -2453,7 +2448,7 @@ public class DefaultRedis implements Redis {
 			case RENAMENX:
 				return renamenx0(j, (String) args[0], (String) args[1]);
 			case RESTORE:
-				return restore0(j, (String) args[0], (Long) args[1], (String) args[2]);
+				return restore0(j, (String) args[0], (Integer) args[1], (byte[]) args[2]);
 			case SORT:
 				return sort0(j, (String) args[0]);
 			case SORT_DESC:

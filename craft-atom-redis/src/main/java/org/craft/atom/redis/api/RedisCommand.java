@@ -49,8 +49,8 @@ public interface RedisCommand {
 	 * Serialize the value stored at key in a Redis-specific format and return it to the user. 
 	 * The returned value can be synthesized back into a Redis key using the RESTORE command.<br>
 	 * <p>
-	 * The serialization format is opaque and non-standard, however it has a few semantical characteristics:
-	 * - It contains a 64-bit checksum that is used to make sure errors will be detected.<br>
+	 * The serialization format is opaque and non-standard, however it has a few semantical characteristics:<br>
+	 * - It contains a 64-bit checksum that is used to make sure errors will be detected.
 	 *   The RESTORE command makes sure to check the checksum before synthesizing a key using the serialized value.<br>
 	 * - Values are encoded in the same format used by RDB.<br>
      * - An RDB version is encoded inside the serialized value, 
@@ -64,7 +64,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @return the serialized value
 	 */
-	String dump(String key);
+	byte[] dump(String key);
 	
 	/**
 	 * Available since 1.0.0<br>
@@ -367,7 +367,7 @@ public interface RedisCommand {
 	 * @param serializedvalue
 	 * @return The command returns OK on success.
 	 */
-	String restore(String key, long ttl, String serializedvalue);
+	String restore(String key, int ttl, byte[] serializedvalue);
 	
 	/**
 	 * Available since 1.0.0<br>
@@ -530,6 +530,9 @@ public interface RedisCommand {
 	 * <p>
 	 * Returns the remaining time to live of a key that has a timeout. <br>
 	 * This introspection capability allows a Redis client to check how many seconds a given key will continue to be part of the dataset.<br>
+	 * 
+	 * <p>
+	 * >=2.6, return -1 when key does not have a timeout or not exist
 	 * 
 	 * @param key
 	 * @return TTL in seconds, -2 when key does not exist or -1 when key does not have a timeout.

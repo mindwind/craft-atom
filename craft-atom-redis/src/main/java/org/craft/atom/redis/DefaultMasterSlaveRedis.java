@@ -135,7 +135,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 
 	@Override
-	public String dump(String key) {
+	public byte[] dump(String key) {
 		return master().dump(key);
 	}
 
