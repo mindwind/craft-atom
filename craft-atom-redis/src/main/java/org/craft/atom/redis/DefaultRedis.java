@@ -1,6 +1,7 @@
 package org.craft.atom.redis;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -720,8 +721,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private Double incrbyfloat0(Jedis j, String key, double increment) {
-		// TODO
-		return null;
+		return j.incrByFloat(key, increment);
 	}
 	
 	@Override
@@ -758,8 +758,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String psetex0(Jedis j, String key, int milliseconds, String value) {
-		// TODO
-		return null;
+		return j.psetex(key, milliseconds, value);
 	}
 
 	@Override
@@ -777,8 +776,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String setxx0(Jedis j, String key, String value) {
-		// TODO
-		return null;
+		return j.set(key, value, "XX");
 	}
 
 	@Override
@@ -787,8 +785,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String setnxex0(Jedis j, String key, String value, int seconds) {
-		// TODO
-		return null;
+		return j.set(key, value, "NX", "EX", seconds);
 	}
 
 	@Override
@@ -797,8 +794,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String setnxpx0(Jedis j, String key, String value, int milliseconds) {
-		// TODO
-		return null;
+		return j.set(key, value, "NX", "PX", milliseconds);
 	}
 
 	@Override
@@ -807,8 +803,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String setxxex0(Jedis j, String key, String value, int seconds) {
-		// TODO
-		return null;
+		return j.set(key, value, "XX", "EX", seconds);
 	}
 
 	@Override
@@ -817,8 +812,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String setxxpx0(Jedis j, String key, String value, int milliseconds) {
-		// TODO
-		return null;
+		return j.set(key, value, "XX", "PX", milliseconds);
 	}
 	
 	@Override
@@ -1296,22 +1290,21 @@ public class DefaultRedis implements Redis {
 	
 	@Override
 	public String srandmember(String key) {
-		Set<String> set = srandmember(key, 1);
-		if (set.isEmpty()) {
+		List<String> list = srandmember(key, 1);
+		if (list.isEmpty()) {
 			return null;
 		} else {
-			return set.iterator().next();
+			return list.iterator().next();
 		}
 	}
 
 	@Override
-	public Set<String> srandmember(String key, int count) {
-		return (Set<String>) executeCommand(CommandEnum.SRANDMEMBER, key, count);
+	public List<String> srandmember(String key, int count) {
+		return (List<String>) executeCommand(CommandEnum.SRANDMEMBER, key, count);
 	}
 	
-	private Set<String> srandmember0(Jedis j, String key, int count) {
-		// TODO
-		return null;
+	private List<String> srandmember0(Jedis j, String key, int count) {
+		return j.srandmember(key, count);
 	}
 
 	@Override
@@ -1833,7 +1826,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private List<String> punsubscribe0(Jedis j, String... patterns) {
-		return null;
+		return null; // TODO
 	}
 	
 	@Override
@@ -2126,8 +2119,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String clientgetname0(Jedis j) {
-		// TODO
-		return null;
+		return j.clientGetname();
 	}
 
 	@Override
@@ -2136,7 +2128,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String clientkill0(Jedis j, String ip, int port) {
-		return null;
+		return j.clientKill(ip + ":" + port);
 	}
 
 	@Override
@@ -2145,7 +2137,9 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private List<String> clientlist0(Jedis j) {
-		return null;
+		String lines = j.clientList();
+		String[] sarr = lines.split("\n");
+		return Arrays.asList(sarr);
 	}
 
 	@Override
@@ -2154,7 +2148,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String clientsetname0(Jedis j, String connectionname) {
-		return null;
+		return j.clientSetname(connectionname);
 	}
 
 	@Override
@@ -2388,8 +2382,8 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private Long time0(Jedis j) {
-		// TODO
-		return null;
+		List<String> l = j.time();
+		return Long.parseLong(l.get(0)) * 1000 + Long.parseLong(l.get(1)) / 1000;
 	}
 
 	@Override
@@ -2398,7 +2392,8 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private Long microtime0(Jedis j) {
-		return null;
+		List<String> l = j.time();
+		return Long.parseLong(l.get(0)) * 1000 * 1000 + Long.parseLong(l.get(1));
 	}
 	
 	

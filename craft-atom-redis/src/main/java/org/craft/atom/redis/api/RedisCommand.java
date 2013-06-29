@@ -831,7 +831,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @param milliseconds
 	 * @param value
-	 * @return
+	 * @return OK
 	 */
 	String psetex(String key, int milliseconds, String value);
 
@@ -1784,7 +1784,7 @@ public interface RedisCommand {
 	 * @param count
 	 * @return returns an set of elements, or an empty set when key does not exist.
 	 */
-	Set<String> srandmember(String key, int count);
+	List<String> srandmember(String key, int count);
 	
 	/**
 	 * Available since 1.0.0<br>
