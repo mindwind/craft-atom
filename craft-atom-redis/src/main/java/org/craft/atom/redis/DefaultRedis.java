@@ -51,7 +51,7 @@ public class DefaultRedis implements Redis {
 	private int timeout = 2000;
 	private int database = 0;
 	private Config poolConfig = poolConfig(100);
-	private JedisPool pool;
+	private volatile JedisPool pool;
 	
 	// ~ ---------------------------------------------------------------------------------------------------------
 	
@@ -2093,8 +2093,14 @@ public class DefaultRedis implements Redis {
 		return (String) executeCommand(CommandEnum.SELECT, index);
 	}
 	
-	private String select0(Jedis j, int index) {
-		return j.select(index);
+	private String select0(int index) {
+		if (database == index) {
+			return OK;
+		}
+		
+		this.database = index;
+		pool = new JedisPool(poolConfig, host, port, timeout, password, database);
+		return OK;
 	}
 	
 	
@@ -2777,7 +2783,7 @@ public class DefaultRedis implements Redis {
 			case QUIT:
 				return quit0();
 			case SELECT:
-				return select0(j, (Integer) args[0]);
+				return select0((Integer) args[0]);
 				
 			// Server
 			case BGREWRITEAOF:
