@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
 
 import org.apache.commons.pool.impl.GenericObjectPool.Config;
 import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.RedisConnectionException;
 import org.craft.atom.redis.api.RedisDataException;
 import org.craft.atom.redis.api.RedisException;
+import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
 import org.craft.atom.redis.api.Slowlog;
 import org.craft.atom.redis.api.handler.RedisMonitorHandler;
@@ -27,6 +29,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisMonitor;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.SortingParams;
 import redis.clients.jedis.Transaction;
 import redis.clients.jedis.Tuple;
@@ -1790,13 +1793,52 @@ public class DefaultRedis implements Redis {
 	
 	
 	@Override
-	public void psubscribe(RedisPsubscribeHandler handler, String... patterns) {
-		executeCommand(CommandEnum.PSUBSCRIBE, handler, patterns);
+	public RedisPubSub psubscribe(RedisPsubscribeHandler handler, String... patterns) {
+		return psubscribe0(handler, patterns);
 	}
 	
-	private String psubscribe0(Jedis j, final RedisPsubscribeHandler handler, String... patterns) {
-		// TODO
-		return OK;
+	private RedisPubSub psubscribe0(final RedisPsubscribeHandler handler, final String... patterns) {
+		final int permits = patterns.length;
+		final Semaphore s = new Semaphore(permits);
+		s.drainPermits();
+		
+		final JedisPubSub jps = new JedisPubSubAdapter() {
+
+			@Override
+			public void onPMessage(String pattern, String channel, String message) {
+				handler.onMessage(pattern, channel, message);
+			}
+
+			@Override
+			public void onPSubscribe(String pattern, int subscribedChannels) {
+				s.release();
+				handler.onPsubscribe(pattern, subscribedChannels);
+			}
+		};
+		
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Jedis j = null;
+				try {
+					j = jedis();
+					j.psubscribe(jps, patterns);
+				} catch (Exception e) {
+					RedisException re = handleException(e, j);
+					handler.onException(re);
+				} finally {
+					s.release(permits);
+				}
+			}
+		}, "redis-psubscribe-" + Thread.currentThread().getId());
+		t.start();
+		
+		// wait all channels be subscribed
+		try { s.acquire(permits); } catch (InterruptedException e) {}
+		
+		RedisPubSub rps = new DefaultRedisPubSub(jps);
+		return rps;
 	}
 
 	@Override
@@ -1809,32 +1851,70 @@ public class DefaultRedis implements Redis {
 	}
 	
 	@Override
-	public void punsubscribe(String... patterns) {
-		executeCommand(CommandEnum.PUNSUBSCRIBE, new Object[] { patterns });
+	public void punsubscribe(RedisPubSub pubsub, String... patterns) {
+		executeCommand(CommandEnum.PUNSUBSCRIBE, new Object[] { pubsub, patterns });
 	}
 	
-	private String punsubscribe0(Jedis j, String... patterns) {
-		// TODO
+	private String punsubscribe0(DefaultRedisPubSub pubsub, String... patterns) {
+		pubsub.punsubscribe(patterns);
 		return OK;
 	}
 	
 	@Override
-	public void subscribe(RedisSubscribeHandler handler, String... channels) {
-		executeCommand(CommandEnum.SUBSCRIBE, handler, channels);
+	public RedisPubSub subscribe(RedisSubscribeHandler handler, String... channels) {
+		return subscribe0(handler, channels);
 	}
 	
-	private String subscribe0(final Jedis j, final RedisSubscribeHandler handler, final String... channels) {
-		// TODO
-		return OK;
+	private RedisPubSub subscribe0(final RedisSubscribeHandler handler, final String... channels) {
+		final int permits = channels.length;
+		final Semaphore s = new Semaphore(permits);
+		s.drainPermits();
+		
+		final JedisPubSub jps = new JedisPubSubAdapter() {
+			@Override
+			public void onMessage(String channel, String message) {
+				handler.onMessage(channel, message);
+			}
+
+			@Override
+			public void onSubscribe(String channel, int subscribedChannels) {
+				s.release();
+				handler.onSubscribe(channel, subscribedChannels);
+			}
+		};
+		
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Jedis j = null;
+				try {
+					j = jedis();
+					j.subscribe(jps, channels);
+				} catch (Exception e) {
+					RedisException re = handleException(e, j);
+					handler.onException(re);
+				} finally {
+					s.release(permits);
+				}
+			}
+		}, "redis-subscribe-" + Thread.currentThread().getId());
+		t.start();
+		
+		// wait all channels be subscribed
+		try { s.acquire(permits); } catch (InterruptedException e) {}
+		
+		RedisPubSub rps = new DefaultRedisPubSub(jps);
+		return rps;
 	}
 	
 	@Override
-	public void unsubscribe(String... channels) {
-		executeCommand(CommandEnum.UNSUBSCRIBE, new Object[] { channels });
+	public void unsubscribe(RedisPubSub pubsub, String... channels) {
+		executeCommand(CommandEnum.UNSUBSCRIBE, new Object[] { pubsub, channels });
 	}
 	
-	private String unsubscribe0(String... channels) {
-		// TODO
+	private String unsubscribe0(DefaultRedisPubSub pubsub, String... channels) {
+		pubsub.unsubscribe(channels);
 		return OK;
 	}
 	
@@ -2377,9 +2457,10 @@ public class DefaultRedis implements Redis {
 	
 	
 	private Object executeCommand(CommandEnum cmd, Object... args) {
-		Jedis j = jedis();
+		Jedis j = null;
 		
 		try {
+			j = jedis();
 			switch (cmd) {
 			// Keys
 			case DEL:
@@ -2702,16 +2783,12 @@ public class DefaultRedis implements Redis {
 				return zunionstore_weights_min(j, (String) args[0], (Map<String, Integer>) args[1]);
 			
 			// Pub/Sub
-			case PSUBSCRIBE:
-				return psubscribe0(j, (RedisPsubscribeHandler) args[0], (String[]) args[1]);
 			case PUBLISH:
 				return publish0(j, (String) args[0], (String) args[1]);
 			case PUNSUBSCRIBE:
-				return punsubscribe0(j, (String[]) args[0]);
-			case SUBSCRIBE:
-				return subscribe0(j, (RedisSubscribeHandler) args[0], (String[]) args[1]);
+				return punsubscribe0((DefaultRedisPubSub) args[0], (String[]) args[1]);
 			case UNSUBSCRIBE:
-				return unsubscribe0((String[]) args[0]);
+				return unsubscribe0((DefaultRedisPubSub) args[0], (String[]) args[1]);
 				
 			// Transactions
 			case DISCARD:
@@ -2823,8 +2900,8 @@ public class DefaultRedis implements Redis {
 		unbind();
 		
 		if (e instanceof JedisConnectionException) {
-			pool.returnBrokenResource(j);
-			return new RedisConnectionException(e);
+			if (j != null) { pool.returnBrokenResource(j); }
+			return new RedisConnectionException(String.format("Connect to redis server[host=%s, port=%s] failed.", host, port), e);
 		}
 		
 		if (e instanceof JedisDataException) {
@@ -2846,10 +2923,10 @@ public class DefaultRedis implements Redis {
 	
 	private void release(Jedis j) {
 		if (isBound()) {
-			// in transaction or pub/sub context don't return jedis connection to pool.
+			// in transaction context don't return jedis connection to pool.
 			return;
 		} else {
-			pool.returnResource(j);
+			if (j != null) { pool.returnResource(j); };
 		}
 	}
 	

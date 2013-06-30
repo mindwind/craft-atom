@@ -10,8 +10,12 @@ import junit.framework.Assert;
 
 import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.RedisDataException;
+import org.craft.atom.redis.api.RedisException;
 import org.craft.atom.redis.api.RedisFactory;
+import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
+import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
+import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
 /**
  * @author mindwind
@@ -21,8 +25,8 @@ public class RedisMain extends TestMain {
 	
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT = 6379;
-	private static final String K = "test-key";
-	private static final String V = "test-value";
+	private static final String K = "foo";
+	private static final String V = "bar";
 	private static Redis r;
 	
 	private static void init() {
@@ -55,6 +59,8 @@ public class RedisMain extends TestMain {
 		// Sorted Sets
 		
 		// Pub/Sub
+		subscribe_publish_unsubscribe();
+	    psubscribe_publish_punsubscribe();
 		
 		// Transactions
 		multi_exec();
@@ -63,9 +69,89 @@ public class RedisMain extends TestMain {
 		watch_unwatch_multi_exec();
 	}
 	
+//	public static void main(String[] args) throws Exception {
+//		init();
+//		
+//		psubscribe_publish_punsubscribe();
+//	}
+		
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
 	
+	
+	private static void psubscribe_publish_punsubscribe() {
+		before("psubscribe_publish_punsubscribe");
+		
+		final Redis redis = RedisFactory.newRedis(HOST, PORT, 2000, 5);
+		final String[] patterns = new String[] { "fo*", "ba*" };
+		RedisPubSub pubsub = redis.psubscribe(new RedisPsubscribeHandler() {
+			@Override
+			public void onPsubscribe(String pattern, int no) {
+				System.out.println("on-psubscribe, pattern=" + pattern + ", no=" + no);
+			}
+			
+			@Override
+			public void onMessage(String pattern, String channel, String message) {
+				System.out.println("on-message, pattern=" + pattern + ", channel=" + channel + ", message=" + message);
+				Assert.assertEquals("bar", message);
+			}
+			
+			@Override
+			public void onException(RedisException e) {
+				try {
+					System.out.println("on-exception, retry, e=" + e.getMessage());
+					Thread.sleep(3000);
+					redis.psubscribe(this, patterns);
+				} catch (Exception e2) {
+				}
+			}
+		}, patterns);	
+		redis.publish("foo", "bar");
+		redis.publish("bar", "bar");
+		redis.punsubscribe(pubsub, "ba*");
+		redis.publish("foo", "bar");
+		redis.publish("bar", "bar");
+		
+		after();
+	}
+	
+	private static void subscribe_publish_unsubscribe() {
+		before("subscribe_publish_unsubscribe");
+		
+		final Redis redis = RedisFactory.newRedis(HOST, PORT, 2000, 5);
+		final String[] channels = new String[] { "foo", "foo1" };
+		RedisPubSub pubsub = redis.subscribe(new RedisSubscribeHandler() {
+			
+			@Override
+			public void onSubscribe(String channel, int no) {
+				System.out.println("on-subscribe, channel=" + channel + ", no=" + no);
+			}
+			
+			@Override
+			public void onMessage(String channel, String message) {
+				System.out.println("on-message, channel=" + channel + ", message=" + message);
+				Assert.assertEquals("bar", message);
+			}
+			
+			@Override
+			public void onException(RedisException e) {
+				try {
+					System.out.println("on-exception, retry, e=" + e.getMessage());
+					Thread.sleep(3000);
+					redis.subscribe(this, channels);
+				} catch (Exception e2) {
+				}
+			}
+		}, channels);
+		
+		redis.publish("foo", "bar");
+		redis.publish("foo1", "bar");
+		redis.unsubscribe(pubsub, "foo1");
+		redis.publish("foo", "bar");
+		redis.publish("foo1", "bar");
+		
+		after();
+	}
 	
 	private static void blpop() throws InterruptedException {
 		before("blpop");
@@ -126,7 +212,7 @@ public class RedisMain extends TestMain {
 	}
 	
 	private static void sort_by_get() {
-		before("testSortByGet");
+		before("sort_by_get");
 		
 		r.lpush(K, "1", "2", "3");
 		r.set("w_1", "3");
@@ -147,7 +233,7 @@ public class RedisMain extends TestMain {
 		before("keys");
 		
 		r.set(K, V);
-		Set<String> keys = r.keys("test*");
+		Set<String> keys = r.keys("foo*");
 		Assert.assertTrue(keys.size() > 0);
 		
 		after();

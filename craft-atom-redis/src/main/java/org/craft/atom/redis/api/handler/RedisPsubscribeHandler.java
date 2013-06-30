@@ -7,7 +7,7 @@ package org.craft.atom.redis.api.handler;
  * @author mindwind
  * @version 1.0, Jun 6, 2013
  */
-public interface RedisPsubscribeHandler {
+public interface RedisPsubscribeHandler extends RedisPubSubHandler {
 	
 	/**
 	 * Invoked on psubscribe occur.

@@ -2208,8 +2208,9 @@ public interface RedisCommand {
 	 * 
 	 * @param handler
 	 * @param pattern
+	 * @return a redis pub/sub object
 	 */
-	void psubscribe(RedisPsubscribeHandler handler, String... patterns);
+	RedisPubSub psubscribe(RedisPsubscribeHandler handler, String... patterns);
 	
 	/**
 	 * Available since 2.0.0<br>
@@ -2235,9 +2236,10 @@ public interface RedisCommand {
 	 * When no patters are specified, the client is unsubscribed from all the previously subscribed patterns. <br>
 	 * In this case, a message for every unsubscribed pattern will be sent to the client.<br>
 	 * 
+	 * @param pubsub
 	 * @param patterns
 	 */
-	void punsubscribe(String... patterns);
+	void punsubscribe(RedisPubSub pubsub, String... patterns);
 	
 	/**
 	 * Available since 2.0.0<br>
@@ -2250,8 +2252,9 @@ public interface RedisCommand {
 	 * 
 	 * @param handler
 	 * @param channels
+	 * @return redis pub/sub object.
 	 */
-	void subscribe(RedisSubscribeHandler handler, String... channels);
+	RedisPubSub subscribe(RedisSubscribeHandler handler, String... channels);
 	
 	/**
 	 * Available since 2.0.0
@@ -2262,9 +2265,10 @@ public interface RedisCommand {
 	 * When no channels are specified, the client is unsubscribed from all the previously subscribed channels.<br>
 	 * In this case, a message for every unsubscribed channel will be sent to the client.<br>
 	 * 
+	 * @param pubsub
 	 * @param channels
 	 */
-	 void unsubscribe(String... channels);
+	 void unsubscribe(RedisPubSub pubsub, String... channels);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------ Transactions
