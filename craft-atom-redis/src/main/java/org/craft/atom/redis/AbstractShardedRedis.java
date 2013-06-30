@@ -30,7 +30,7 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	}
 	
 	@Override
-	public String dump(String shardkey, String key) {
+	public byte[] dump(String shardkey, String key) {
 		return sharded.shard(shardkey).dump(key);
 	}
 
@@ -115,7 +115,7 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	}
 
 	@Override
-	public String restore(String shardkey, String key, long ttl, String serializedvalue) {
+	public String restore(String shardkey, String key, int ttl, byte[] serializedvalue) {
 		return sharded.shard(shardkey).restore(key, ttl, serializedvalue);
 	}
 
@@ -606,7 +606,7 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	}
 
 	@Override
-	public Set<String> srandmember(String shardkey, String key, int count) {
+	public List<String> srandmember(String shardkey, String key, int count) {
 		return sharded.shard(shardkey).srandmember(key, count);
 	}
 
@@ -864,8 +864,8 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	}
 
 	@Override
-	public List<String> punsubscribe(String shardkey, String... patterns) {
-		return sharded.shard(shardkey).punsubscribe(patterns);
+	public void punsubscribe(String shardkey, String... patterns) {
+		sharded.shard(shardkey).punsubscribe(patterns);
 	}
 
 	@Override
@@ -874,8 +874,8 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	}
 
 	@Override
-	public List<String> unsubscribe(String shardkey, String... channels) {
-		return sharded.shard(shardkey).unsubscribe(channels);
+	public void unsubscribe(String shardkey, String... channels) {
+		sharded.shard(shardkey).unsubscribe(channels);
 	}
 	
 	

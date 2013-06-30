@@ -220,7 +220,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 
 	@Override
-	public String restore(String key, long ttl, String serializedvalue) {
+	public String restore(String key, int ttl, byte[] serializedvalue) {
 		return master().restore(key, ttl, serializedvalue);
 	}
 
@@ -711,7 +711,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 
 	@Override
-	public Set<String> srandmember(String key, int count) {
+	public List<String> srandmember(String key, int count) {
 		return master().srandmember(key, count);
 	}
 
@@ -969,8 +969,8 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 
 	@Override
-	public List<String> punsubscribe(String... patterns) {
-		return master().punsubscribe(patterns);
+	public void punsubscribe(String... patterns) {
+		master().punsubscribe(patterns);
 	}
 
 	@Override
@@ -979,8 +979,8 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 
 	@Override
-	public List<String> unsubscribe(String... channels) {
-		return master().unsubscribe(channels);
+	public void unsubscribe(String... channels) {
+		master().unsubscribe(channels);
 	}
 	
 	

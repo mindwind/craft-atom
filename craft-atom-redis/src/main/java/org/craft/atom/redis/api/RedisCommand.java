@@ -2236,9 +2236,8 @@ public interface RedisCommand {
 	 * In this case, a message for every unsubscribed pattern will be sent to the client.<br>
 	 * 
 	 * @param patterns
-	 * @return unsubscribed patterns
 	 */
-	List<String> punsubscribe(String... patterns);
+	void punsubscribe(String... patterns);
 	
 	/**
 	 * Available since 2.0.0<br>
@@ -2264,9 +2263,8 @@ public interface RedisCommand {
 	 * In this case, a message for every unsubscribed channel will be sent to the client.<br>
 	 * 
 	 * @param channels
-	 * @return unsubscribed channels
 	 */
-	List<String> unsubscribe(String... channels);
+	 void unsubscribe(String... channels);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------ Transactions

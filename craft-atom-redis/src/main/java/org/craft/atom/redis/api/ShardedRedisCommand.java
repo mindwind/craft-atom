@@ -20,7 +20,7 @@ public interface ShardedRedisCommand {
 	
 	
 	Long del(String shardkey, String... keys);
-	String dump(String shardkey, String key);
+	byte[] dump(String shardkey, String key);
 	Boolean exists(String shardkey, String key);
 	Long expire(String shardkey, String key, int seconds);
 	Long expireat(String shardkey, String key, long timestamp);
@@ -37,7 +37,7 @@ public interface ShardedRedisCommand {
 	String randomkey(String shardkey);
 	String rename(String shardkey, String key, String newkey);
 	Long renamenx(String shardkey, String key, String newkey);
-	String restore(String shardkey, String key, long ttl, String serializedvalue);
+	String restore(String shardkey, String key, int ttl, byte[] serializedvalue);
 	List<String> sort(String shardkey, String key);
 	List<String> sort(String shardkey, String key, boolean desc);
 	List<String> sort(String shardkey, String key, boolean alpha, boolean desc);
@@ -152,7 +152,7 @@ public interface ShardedRedisCommand {
 	Set<String> smembers(String shardkey, String key);
 	Long smove(String shardkey, String source, String destination, String member);
 	String spop(String shardkey, String key);
-	Set<String> srandmember(String shardkey, String key, int count);
+	List<String> srandmember(String shardkey, String key, int count);
 	String srandmember(String shardkey, String key);
 	Long srem(String shardkey, String key, String... members);
 	Set<String> sunion(String shardkey, String... keys);
@@ -212,9 +212,9 @@ public interface ShardedRedisCommand {
 	
 	void psubscribe(String shardkey, RedisPsubscribeHandler handler, String... patterns);
 	Long publish(String shardkey, String channel, String message);
-	List<String> punsubscribe(String shardkey, String... patterns);
+	void punsubscribe(String shardkey, String... patterns);
 	void subscribe(String shardkey, RedisSubscribeHandler handler, String... channels);
-	List<String> unsubscribe(String shardkey, String... channels);
+	void unsubscribe(String shardkey, String... channels);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------- Transactions

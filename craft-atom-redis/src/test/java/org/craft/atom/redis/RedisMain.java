@@ -37,32 +37,38 @@ public class RedisMain extends TestMain {
 		init();
 		
 		// Keys
-		testDel();
-		testExists();
-		testExpire();
-		testExpireat();
-		testKeys();
-		testSortByGet();
+		del();
+		exists();
+		expire();
+		expireat();
+		keys();
+		sort_by_get();
 		
 		// Hashes
 		
 		// Lists
-		testLpushLrangeLlen();
-		testBlpop();
+		blpop();
+		lpush_lrange_llen();
+		
+		// Sets
+		
+		// Sorted Sets
+		
+		// Pub/Sub
 		
 		// Transactions
-		testMultiExec();
-		testWatchMultiExec();
-		testMultiDiscard();
-		testWatchUnwatchMultiExec();
+		multi_exec();
+		watch_multi_exec();
+		multi_discard();
+		watch_unwatch_multi_exec();
 	}
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
 	
 	
-	private static void testBlpop() throws InterruptedException {
-		before("testBlpop");
+	private static void blpop() throws InterruptedException {
+		before("blpop");
 		
 		final Lock lock = new ReentrantLock();
 		final Condition c = lock.newCondition();
@@ -106,8 +112,8 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void testLpushLrangeLlen() {
-		before("testLpush");
+	private static void lpush_lrange_llen() {
+		before("lpush_lrange_llen");
 		
 		long len = r.lpush(K, "1", "2", "3");
 		Assert.assertEquals(3, len);
@@ -119,7 +125,7 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void testSortByGet() {
+	private static void sort_by_get() {
 		before("testSortByGet");
 		
 		r.lpush(K, "1", "2", "3");
@@ -137,8 +143,8 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void testKeys() {
-		before("testKeys");
+	private static void keys() {
+		before("keys");
 		
 		r.set(K, V);
 		Set<String> keys = r.keys("test*");
@@ -147,8 +153,8 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void testExpireat() throws InterruptedException {
-		before("testExpireat");
+	private static void expireat() throws InterruptedException {
+		before("expireat");
 		
 		r.set(K, V);
 		r.expireat(K, (System.currentTimeMillis() + 2000) / 1000);
@@ -159,8 +165,8 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void testExpire() throws InterruptedException {
-		before("testExpire");
+	private static void expire() throws InterruptedException {
+		before("expire");
 		
 		r.set(K, V);
 		r.expire(K, 3);
@@ -171,8 +177,8 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void testExists() {
-		before("testExists");
+	private static void exists() {
+		before("exists");
 		
 		r.set(K, V);
 		boolean b = r.exists(K);
@@ -181,8 +187,8 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void testDel() {
-		before("testDel");
+	private static void del() {
+		before("del");
 		
 		r.set(K, V);
 		r.del(K);
@@ -192,8 +198,8 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void testWatchUnwatchMultiExec() {
-		before("testWatchUnwatchMultiExec");
+	private static void watch_unwatch_multi_exec() {
+		before("watch_unwatch_multi_exec");
 		
 		String wkey = "watch-key";
 		r.watch(wkey);
@@ -208,8 +214,8 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void testMultiDiscard() {
-		before("testMultiDiscard");
+	private static void multi_discard() {
+		before("multi_discard");
 		
 		RedisTransaction t = r.multi();
 		t.set(K, V);
@@ -224,8 +230,8 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void testWatchMultiExec() throws InterruptedException {
-		before("testWatchMultiExec");
+	private static void watch_multi_exec() throws InterruptedException {
+		before("watch_multi_exec");
 		
 		final String wkey = "watch-key";
 		final Lock lock = new ReentrantLock();
@@ -281,8 +287,8 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void testMultiExec() {
-		before("testMultiExec");
+	private static void multi_exec() {
+		before("multi_exec");
 		
 		RedisTransaction t = r.multi();
 		t.set(K, V);

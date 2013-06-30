@@ -1,6 +1,7 @@
 package org.craft.atom.redis.api.handler;
 
 
+
 /**
  * Handles redis subscribe events
  * 
@@ -24,4 +25,5 @@ public interface RedisSubscribeHandler {
 	 * @param message
 	 */
 	void onMessage(String channel, String message);
+	
 }

@@ -27,7 +27,6 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisMonitor;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.SortingParams;
 import redis.clients.jedis.Transaction;
 import redis.clients.jedis.Tuple;
@@ -1796,18 +1795,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String psubscribe0(Jedis j, final RedisPsubscribeHandler handler, String... patterns) {
-		JedisPubSub jps = new JedisPubSubAdapter() {
-			@Override
-			public void onPSubscribe(String pattern, int subscribedChannels) {
-				handler.onPsubscribe(pattern, subscribedChannels);
-			}
-			
-			@Override
-			public void onPMessage(String pattern, String channel, String message) {
-				handler.onMessage(pattern, channel, message);
-			}
-		};
-		j.psubscribe(jps, patterns);
+		// TODO
 		return OK;
 	}
 
@@ -1821,12 +1809,13 @@ public class DefaultRedis implements Redis {
 	}
 	
 	@Override
-	public List<String> punsubscribe(String... patterns) {
-		return (List<String>) executeCommand(CommandEnum.PUNSUBSCRIBE, new Object[] { patterns });
+	public void punsubscribe(String... patterns) {
+		executeCommand(CommandEnum.PUNSUBSCRIBE, new Object[] { patterns });
 	}
 	
-	private List<String> punsubscribe0(Jedis j, String... patterns) {
-		return null; // TODO
+	private String punsubscribe0(Jedis j, String... patterns) {
+		// TODO
+		return OK;
 	}
 	
 	@Override
@@ -1834,32 +1823,19 @@ public class DefaultRedis implements Redis {
 		executeCommand(CommandEnum.SUBSCRIBE, handler, channels);
 	}
 	
-	private String subscribe0(Jedis j, final RedisSubscribeHandler handler, String... channels) {
-		JedisPubSub jps = new JedisPubSubAdapter() {
-
-			@Override
-			public void onMessage(String channel, String message) {
-				handler.onMessage(channel, message);
-			}
-
-			@Override
-			public void onSubscribe(String channel, int subscribedChannels) {
-				handler.onSubscribe(channel, subscribedChannels);
-			}
-			
-		};
-		j.subscribe(jps, channels);
+	private String subscribe0(final Jedis j, final RedisSubscribeHandler handler, final String... channels) {
+		// TODO
 		return OK;
 	}
 	
 	@Override
-	public List<String> unsubscribe(String... channels) {
-		return (List<String>) executeCommand(CommandEnum.UNSUBSCRIBE, new Object[] { channels });
+	public void unsubscribe(String... channels) {
+		executeCommand(CommandEnum.UNSUBSCRIBE, new Object[] { channels });
 	}
 	
-	private List<String> unsubscribe0(Jedis j, String... channels) {
+	private String unsubscribe0(String... channels) {
 		// TODO
-		return null;
+		return OK;
 	}
 	
 	
@@ -2735,7 +2711,7 @@ public class DefaultRedis implements Redis {
 			case SUBSCRIBE:
 				return subscribe0(j, (RedisSubscribeHandler) args[0], (String[]) args[1]);
 			case UNSUBSCRIBE:
-				return unsubscribe0(j, (String[]) args[0]);
+				return unsubscribe0((String[]) args[0]);
 				
 			// Transactions
 			case DISCARD:
@@ -2839,7 +2815,7 @@ public class DefaultRedis implements Redis {
 			RedisException re = handleException(e, j);
 			throw re;
 		} finally {
-			release(cmd, j);
+			release(j);
 		}
 	}
 	
@@ -2868,9 +2844,9 @@ public class DefaultRedis implements Redis {
 		return j;
 	}
 	
-	private void release(CommandEnum cn, Jedis j) {
-		if (CommandEnum.MULTI == cn || CommandEnum.WATCH == cn || isBound()) {
-			// in transaction context don't return jedis connection to pool.
+	private void release(Jedis j) {
+		if (isBound()) {
+			// in transaction or pub/sub context don't return jedis connection to pool.
 			return;
 		} else {
 			pool.returnResource(j);
