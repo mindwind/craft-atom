@@ -45,7 +45,7 @@ public class RedisMain extends TestMain {
 		init();
 		
 		// Keys
-		del_set();
+		del();
 		dump_restore();
 		exists();
 		expire();
@@ -67,6 +67,11 @@ public class RedisMain extends TestMain {
 		sort_dest();
 		ttl();
 		type();
+		
+		// Strings
+		append();
+		bitcount();
+		setbit_getbit_bitop();
 		
 		// Hashes
 		
@@ -92,6 +97,56 @@ public class RedisMain extends TestMain {
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
 	
+	
+	private static void setbit_getbit_bitop() {
+		before("setbit_getbit_bitop");
+		
+		boolean b = redis.setbit(key, 1, true);
+		Assert.assertFalse(b);
+		b = redis.getbit(key, 1);
+		Assert.assertTrue(b);
+		
+		redis.bitnot("foo1", key);
+		b = redis.getbit("foo1", 1);
+		Assert.assertFalse(b);
+		
+		redis.bitand("foo2", key, "foo1");
+		b = redis.getbit("foo2", 1);
+		Assert.assertFalse(b);
+		
+		redis.bitor("foo3", key, "foo2");
+		b = redis.getbit("foo3", 1);
+		Assert.assertTrue(b);
+		
+		redis.bitxor("foo4", key, "foo2");
+		b = redis.getbit("foo4", 1);
+		Assert.assertTrue(b);
+		
+		after();
+	}
+	
+	private static void bitcount() {
+		before("bitcount");
+		
+		redis.set(key, "foobar");
+		long c = redis.bitcount(key);
+		Assert.assertEquals(26, c);
+		c = redis.bitcount(key, 1, 1);
+		Assert.assertEquals(6, c);
+		
+		after();
+	}
+	
+	private static void append() {
+		before("append");
+		
+		redis.append(key, value);
+		Assert.assertEquals("bar", value);
+		redis.append(key, "bar");
+		Assert.assertEquals("barbar", redis.get(key));
+		
+		after();
+	}
 	
 	private static void type() {
 		before("type");
@@ -584,7 +639,7 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void del_set() {
+	private static void del() {
 		before("del_set");
 		
 		redis.set(key, value);
