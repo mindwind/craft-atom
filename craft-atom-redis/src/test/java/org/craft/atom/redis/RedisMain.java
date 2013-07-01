@@ -25,28 +25,48 @@ public class RedisMain extends TestMain {
 	
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT = 6379;
-	private static final String K = "foo";
-	private static final String V = "bar";
-	private static Redis r;
+	private static final int PORT2 = 6380;
+	private static final String key = "foo";
+	private static final String value = "bar";
+	private static Redis redis;
+	private static Redis redis2;
 	
 	private static void init() {
-		r = RedisFactory.newRedis(HOST, PORT);
+		redis = RedisFactory.newRedis(HOST, PORT);
+		redis2 = RedisFactory.newRedis(HOST, PORT2);
 	}
 	
 	protected static void after() {
-		r.flushall();
+		redis.flushall();
+		redis2.flushall();
 	}
 	
 	public static void main(String[] args) throws Exception {
 		init();
 		
 		// Keys
-		del();
+		del_set();
+		dump_restore();
 		exists();
 		expire();
 		expireat();
 		keys();
-		sort_by_get();
+		migrate();
+		move_select();
+		objectrefcount();
+		objectencoding();
+		objectidletime();
+		persist();
+		pexpire();
+		pexpireat();
+		pttl();
+		randomkey();
+		rename();
+		renamenx();
+		sort();
+		sort_dest();
+		ttl();
+		type();
 		
 		// Hashes
 		
@@ -68,16 +88,322 @@ public class RedisMain extends TestMain {
 		multi_discard();
 		watch_unwatch_multi_exec();
 	}
-	
-//	public static void main(String[] args) throws Exception {
-//		init();
-//		
-//		psubscribe_publish_punsubscribe();
-//	}
 		
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
 	
+	
+	private static void type() {
+		before("type");
+		
+		String r = redis.type(key);
+		Assert.assertEquals("none", r);
+		
+		redis.set(key, value);
+		r = redis.type(key);
+		Assert.assertEquals("string", r);
+		
+		after();
+	}
+	
+	private static void ttl() {
+		before("ttl");
+		
+		long r = redis.ttl(key);
+		Assert.assertTrue(r < 0);
+		redis.setex(key, 100, value);
+		r = redis.ttl(key);
+		Assert.assertTrue(r > 0);
+		
+		after();
+	}
+	
+	private static void sort() {
+		before("sort");
+		
+		redis.lpush(key, "1", "2", "3");
+		List<String> l = redis.sort(key);
+		Assert.assertEquals("3", l.get(2));
+		
+		l = redis.sort(key, true);
+		Assert.assertEquals("1", l.get(2));
+		
+		redis.lpush(key, "a");
+		l = redis.sort(key, true, true);
+		Assert.assertEquals("a", l.get(0));
+		
+		redis.del(key);
+		redis.lpush(key, "1", "2", "3");
+		l = redis.sort(key, 1, 2);
+		Assert.assertEquals("3", l.get(1));
+		Assert.assertEquals(2, l.size());
+		
+		redis.lpush(key, "a");
+		l = redis.sort(key, 0, 3, true, true);
+		Assert.assertEquals("a", l.get(0));
+		Assert.assertEquals(3, l.size());
+		
+		redis.flushall();
+		redis.lpush(key, "1", "2", "3");
+		redis.set("w_1", "3");
+		redis.set("w_2", "2");
+		redis.set("w_3", "1");
+		redis.set("o_1", "1-aaa");
+		redis.set("o_2", "2-bbb");
+		redis.set("o_3", "3-ccc");
+		String bypattern = "w_*";
+		String[] getpatterns = new String[] { "o_*" };
+		
+		l = redis.sort(key, bypattern, new String[] {});
+		Assert.assertEquals("1", l.get(2));
+		
+		l = redis.sort(key, bypattern, getpatterns);
+		Assert.assertEquals("1-aaa", l.get(2));
+		
+		l = redis.sort(key, bypattern, true, getpatterns);
+		Assert.assertEquals("3-ccc", l.get(2));
+		
+		l = redis.sort(key, bypattern, true, true, getpatterns);
+		Assert.assertEquals("3-ccc", l.get(2));
+		
+		l = redis.sort(key, bypattern, 0, 1, getpatterns);
+		Assert.assertEquals("3-ccc", l.get(0));
+		Assert.assertEquals(1, l.size());
+		
+		l = redis.sort(key, bypattern, 0, 1, true, true, getpatterns);
+		Assert.assertEquals("1-aaa", l.get(0));
+		Assert.assertEquals(1, l.size());
+		
+		after();
+	}
+	
+	private static void sort_dest() {
+		before("sort_dest");
+		
+		redis.lpush(key, "1", "2", "3");
+		String dest = "foo1";
+		redis.sort(key, dest);
+		List<String> l = redis.lrange(dest, 0, -1);
+		Assert.assertEquals("3", l.get(2));
+		
+		redis.sort(key, true, dest);
+		l = redis.lrange(dest, 0, -1);
+		Assert.assertEquals("1", l.get(2));
+		
+		redis.lpush(key, "a");
+		redis.sort(key, true, true, dest);
+		l = redis.lrange(dest, 0, -1);
+		Assert.assertEquals("a", l.get(0));
+		
+		redis.del(key);
+		redis.lpush(key, "1", "2", "3");
+		redis.sort(key, 1, 2, dest);
+		l = redis.lrange(dest, 0, -1);
+		Assert.assertEquals("3", l.get(1));
+		Assert.assertEquals(2, l.size());
+		
+		redis.lpush(key, "a");
+		redis.sort(key, 0, 3, true, true, dest);
+		l = redis.lrange(dest, 0, -1);
+		Assert.assertEquals("a", l.get(0));
+		Assert.assertEquals(3, l.size());
+		
+		redis.flushall();
+		redis.lpush(key, "1", "2", "3");
+		redis.set("w_1", "3");
+		redis.set("w_2", "2");
+		redis.set("w_3", "1");
+		redis.set("o_1", "1-aaa");
+		redis.set("o_2", "2-bbb");
+		redis.set("o_3", "3-ccc");
+		String bypattern = "w_*";
+		String[] getpatterns = new String[] { "o_*" };
+		
+		redis.sort(key, bypattern, dest, new String[] {});
+		l = redis.lrange(dest, 0, -1);
+		Assert.assertEquals("1", l.get(2));
+		
+		redis.sort(key, bypattern, dest, getpatterns);
+		l = redis.lrange(dest, 0, -1);
+		Assert.assertEquals("1-aaa", l.get(2));
+		
+		redis.sort(key, bypattern, true, dest, getpatterns);
+		l = redis.lrange(dest, 0, -1);
+		Assert.assertEquals("3-ccc", l.get(2));
+		
+		redis.sort(key, bypattern, true, true, dest, getpatterns);
+		l = redis.lrange(dest, 0, -1);
+		Assert.assertEquals("3-ccc", l.get(2));
+		
+		redis.sort(key, bypattern, 0, 1, dest, getpatterns);
+		l = redis.lrange(dest, 0, -1);
+		Assert.assertEquals("3-ccc", l.get(0));
+		Assert.assertEquals(1, l.size());
+		
+		redis.sort(key, bypattern, 0, 1, true, true, dest, getpatterns);
+		l = redis.lrange(dest, 0, -1);
+		Assert.assertEquals("1-aaa", l.get(0));
+		Assert.assertEquals(1, l.size());
+		
+		after();
+	}
+	
+	
+	private static void renamenx() {
+		before("renamenx");
+		
+		redis.set(key, value);
+		long r = redis.renamenx(key, "foo1");
+		Assert.assertTrue(r == 1);
+		redis.set("foo2", "bar2");
+		r = redis.renamenx("foo1", "foo2");
+		Assert.assertTrue(r == 0);
+		
+		after();
+	}
+	
+	private static void rename() {
+		before("rename");
+		
+		redis.set(key, value);
+		redis.rename(key, "foo1");
+		Assert.assertTrue(redis.exists("foo1").booleanValue());
+		
+		after();
+	}
+	
+	private static void randomkey() {
+		before("randomkey");
+		
+		String r = redis.randomkey();
+		Assert.assertNull(r);
+		redis.set(key, value);
+		r = redis.randomkey();
+		Assert.assertNotNull(r);
+		
+		after();
+	}
+	
+	private static void pttl() {
+		before("pttl");
+		
+		long r = redis.pttl(key);
+		Assert.assertTrue(r < 0);
+		redis.setex(key, 100, value);
+		r = redis.pttl(key);
+		Assert.assertTrue(r > 0);
+		
+		after();
+	}
+	
+	private static void pexpireat() {
+		before("pexpireat");
+		
+		redis.set(key, value);
+		long r = redis.pexpireat(key, (System.currentTimeMillis() + 2000));
+		Assert.assertEquals(1, r);
+		redis.del(key);
+		r = redis.pexpireat(key, (System.currentTimeMillis() + 2000));
+		Assert.assertEquals(0, r);
+		
+		
+		after();
+	}
+	
+	private static void pexpire() {
+		before("pexpire");
+		
+		redis.set(key, value);
+		long r = redis.pexpire(key, 3000);
+		Assert.assertEquals(1, r);
+		redis.del(key);
+		r = redis.pexpire(key, 3000);
+		Assert.assertEquals(0, r);
+		
+		after();
+	}
+	
+	private static void persist() {
+		before("persist");
+		
+		long r = redis.persist(key);
+		Assert.assertTrue(r == 0);
+		redis.setex(key, 10, value);
+		r = redis.persist(key);
+		Assert.assertTrue(r == 1);
+		
+		after();
+	}
+	
+	private static void objectidletime() {
+		before("objectidletime");
+		
+		redis.set(key, value);
+		long r = redis.objectidletime(key);
+		Assert.assertTrue(r >= 0);
+		
+		after();
+	}
+	
+	private static void objectencoding() {
+		before("objectencoding");
+		
+		redis.set(key, value);
+		String r = redis.objectencoding(key);
+		Assert.assertEquals("raw", r);
+		
+		after();
+	}
+	
+	private static void objectrefcount() {
+		before("objectrefcount");
+		
+		Long r = redis.objectrefcount(key);
+		Assert.assertNull(r);
+		redis.set(key, value);
+		r = redis.objectrefcount(key);
+		Assert.assertEquals(1, r.longValue());
+		
+		after();
+	}
+	
+	private static void move_select() {
+		before("move_select");
+		
+		long r = redis.move(key, 1);
+		Assert.assertEquals(0, r);
+		redis.set(key, value);
+		r = redis.move(key, 1);
+		Assert.assertEquals(1, r);
+		Assert.assertEquals(false, redis.exists(key).booleanValue());
+		redis.select(1);
+		Assert.assertEquals(true, redis.exists(key).booleanValue());
+		redis.select(0);
+		
+		after();
+	}
+	
+	private static void migrate() {
+		before("migrate");
+		
+		redis.set(key, value);
+		redis.migrate(HOST, 6380, key, 0, 2000);
+		Assert.assertEquals(true, redis2.exists(key).booleanValue());
+		Assert.assertEquals(false, redis.exists(key).booleanValue());
+		
+		after();
+	}
+	
+	private static void dump_restore() {
+		before("dump_restore");
+		
+		redis.set(key, value);
+		byte[] serializedvalue = redis.dump(key);
+		redis.restore("foo1", 0, serializedvalue);
+		Assert.assertEquals(true, redis.exists("foo1").booleanValue());
+		
+		after();
+	}
 	
 	private static void psubscribe_publish_punsubscribe() {
 		before("psubscribe_publish_punsubscribe");
@@ -87,19 +413,19 @@ public class RedisMain extends TestMain {
 		RedisPubSub pubsub = redis.psubscribe(new RedisPsubscribeHandler() {
 			@Override
 			public void onPsubscribe(String pattern, int no) {
-				System.out.println("on-psubscribe, pattern=" + pattern + ", no=" + no);
+				System.out.println("	on-psubscribe, pattern=" + pattern + ", no=" + no);
 			}
 			
 			@Override
 			public void onMessage(String pattern, String channel, String message) {
-				System.out.println("on-message, pattern=" + pattern + ", channel=" + channel + ", message=" + message);
+				System.out.println("	on-message, pattern=" + pattern + ", channel=" + channel + ", message=" + message);
 				Assert.assertEquals("bar", message);
 			}
 			
 			@Override
 			public void onException(RedisException e) {
 				try {
-					System.out.println("on-exception, retry, e=" + e.getMessage());
+					System.out.println("	on-exception, retry, e=" + e.getMessage());
 					Thread.sleep(3000);
 					redis.psubscribe(this, patterns);
 				} catch (Exception e2) {
@@ -111,7 +437,7 @@ public class RedisMain extends TestMain {
 		redis.punsubscribe(pubsub, "ba*");
 		redis.publish("foo", "bar");
 		redis.publish("bar", "bar");
-		
+		redis.punsubscribe(pubsub, "ba*", "fo*");
 		after();
 	}
 	
@@ -124,19 +450,20 @@ public class RedisMain extends TestMain {
 			
 			@Override
 			public void onSubscribe(String channel, int no) {
-				System.out.println("on-subscribe, channel=" + channel + ", no=" + no);
+				System.out.println("	on-subscribe, channel=" + channel + ", no=" + no);
 			}
 			
 			@Override
 			public void onMessage(String channel, String message) {
-				System.out.println("on-message, channel=" + channel + ", message=" + message);
+				System.out.println("	on-message, channel=" + channel + ", message=" + message);
 				Assert.assertEquals("bar", message);
 			}
 			
 			@Override
 			public void onException(RedisException e) {
 				try {
-					System.out.println("on-exception, retry, e=" + e.getMessage());
+					e.printStackTrace();
+					System.out.println("	on-exception, retry, e=" + e.getMessage());
 					Thread.sleep(3000);
 					redis.subscribe(this, channels);
 				} catch (Exception e2) {
@@ -149,6 +476,7 @@ public class RedisMain extends TestMain {
 		redis.unsubscribe(pubsub, "foo1");
 		redis.publish("foo", "bar");
 		redis.publish("foo1", "bar");
+		redis.unsubscribe(pubsub, "foo", "foo1");
 		
 		after();
 	}
@@ -162,7 +490,7 @@ public class RedisMain extends TestMain {
 		Thread t1 = new Thread(new Runnable() {	
 			@Override
 			public void run() {
-				String v = r.blpop(K);
+				String v = redis.blpop(key);
 				Assert.assertEquals("3", v);
 				lock.lock();
 				try {
@@ -178,12 +506,11 @@ public class RedisMain extends TestMain {
 		Thread t2 = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				r.lpush(K, "1", "2", "3");
+				redis.lpush(key, "3");
 			}
 		});
 		
 		t1.start();
-		Thread.sleep(1000);
 		t2.start();
 		
 		lock.lock();
@@ -201,30 +528,12 @@ public class RedisMain extends TestMain {
 	private static void lpush_lrange_llen() {
 		before("lpush_lrange_llen");
 		
-		long len = r.lpush(K, "1", "2", "3");
+		long len = redis.lpush(key, "1", "2", "3");
 		Assert.assertEquals(3, len);
-		len = r.llen(K);
+		len = redis.llen(key);
 		Assert.assertEquals(3, len);
-		List<String> l = r.lrange(K, 0, -1);
+		List<String> l = redis.lrange(key, 0, -1);
 		Assert.assertEquals("1", l.get(2));
-		
-		after();
-	}
-	
-	private static void sort_by_get() {
-		before("sort_by_get");
-		
-		r.lpush(K, "1", "2", "3");
-		r.set("w_1", "3");
-		r.set("w_2", "2");
-		r.set("w_3", "1");
-		r.set("o_1", "1-aaa");
-		r.set("o_2", "2-bbb");
-		r.set("o_3", "3-ccc");
-		List<String> l = r.sort(K, "w_*");
-		Assert.assertEquals("1", l.get(2));
-		l = r.sort(K, "w_*", new String[] { "o_*" });
-		Assert.assertEquals("1-aaa", l.get(2));
 		
 		after();
 	}
@@ -232,8 +541,8 @@ public class RedisMain extends TestMain {
 	private static void keys() {
 		before("keys");
 		
-		r.set(K, V);
-		Set<String> keys = r.keys("foo*");
+		redis.set(key, value);
+		Set<String> keys = redis.keys("foo*");
 		Assert.assertTrue(keys.size() > 0);
 		
 		after();
@@ -242,11 +551,12 @@ public class RedisMain extends TestMain {
 	private static void expireat() throws InterruptedException {
 		before("expireat");
 		
-		r.set(K, V);
-		r.expireat(K, (System.currentTimeMillis() + 2000) / 1000);
-		Thread.sleep(3000);
-		boolean b = r.exists(K);
-		Assert.assertEquals(false, b);
+		redis.set(key, value);
+		long r = redis.expireat(key, (System.currentTimeMillis() + 2000) / 1000);
+		Assert.assertEquals(1, r);
+		redis.del(key);
+		r = redis.expireat(key, (System.currentTimeMillis() + 2000) / 1000);
+		Assert.assertEquals(0, r);
 		
 		after();
 	}
@@ -254,11 +564,12 @@ public class RedisMain extends TestMain {
 	private static void expire() throws InterruptedException {
 		before("expire");
 		
-		r.set(K, V);
-		r.expire(K, 3);
-		Thread.sleep(4000);
-		boolean b = r.exists(K);
-		Assert.assertEquals(false, b);
+		redis.set(key, value);
+		long r = redis.expire(key, 3);
+		Assert.assertEquals(1, r);
+		redis.del(key);
+		r = redis.expire(key, 3);
+		Assert.assertEquals(0, r);
 		
 		after();
 	}
@@ -266,19 +577,19 @@ public class RedisMain extends TestMain {
 	private static void exists() {
 		before("exists");
 		
-		r.set(K, V);
-		boolean b = r.exists(K);
+		redis.set(key, value);
+		boolean b = redis.exists(key);
 		Assert.assertEquals(true, b);
 		
 		after();
 	}
 	
-	private static void del() {
-		before("del");
+	private static void del_set() {
+		before("del_set");
 		
-		r.set(K, V);
-		r.del(K);
-		boolean b = r.exists(K);
+		redis.set(key, value);
+		redis.del(key);
+		boolean b = redis.exists(key);
 		Assert.assertEquals(false, b);
 		
 		after();
@@ -288,14 +599,14 @@ public class RedisMain extends TestMain {
 		before("watch_unwatch_multi_exec");
 		
 		String wkey = "watch-key";
-		r.watch(wkey);
-		r.set(wkey, "1");
-		r.unwatch();
-		RedisTransaction t = r.multi();
-		t.set(K, V);
-		r.exec(t);
-		String v = r.get(K);
-		Assert.assertEquals(V, v);
+		redis.watch(wkey);
+		redis.set(wkey, "1");
+		redis.unwatch();
+		RedisTransaction t = redis.multi();
+		t.set(key, value);
+		redis.exec(t);
+		String v = redis.get(key);
+		Assert.assertEquals(value, v);
 		
 		after();
 	}
@@ -303,12 +614,12 @@ public class RedisMain extends TestMain {
 	private static void multi_discard() {
 		before("multi_discard");
 		
-		RedisTransaction t = r.multi();
-		t.set(K, V);
-		t.get(K);
-		r.discard(t);
+		RedisTransaction t = redis.multi();
+		t.set(key, value);
+		t.get(key);
+		redis.discard(t);
 		try {
-			r.exec(t);
+			redis.exec(t);
 			Assert.fail();
 		} catch (RedisDataException e) {
 		}
@@ -328,11 +639,11 @@ public class RedisMain extends TestMain {
 			public void run() {
 				lock.lock();
 				try {
-					r.watch(wkey);
+					redis.watch(wkey);
 					c1.await();
-					RedisTransaction t = r.multi();
-					t.set(K, V);
-					r.exec(t);
+					RedisTransaction t = redis.multi();
+					t.set(key, value);
+					redis.exec(t);
 					c2.signal();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -348,7 +659,7 @@ public class RedisMain extends TestMain {
 			public void run() {
 				lock.lock();
 				try {
-					r.set(wkey, "1");
+					redis.set(wkey, "1");
 					c1.signal();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -366,9 +677,9 @@ public class RedisMain extends TestMain {
 			lock.unlock();
 		}
 		
-		String v = r.get(K);
+		String v = redis.get(key);
 		Assert.assertNull(v);
-		r.del(wkey);
+		redis.del(wkey);
 		
 		after();
 	}
@@ -376,12 +687,12 @@ public class RedisMain extends TestMain {
 	private static void multi_exec() {
 		before("multi_exec");
 		
-		RedisTransaction t = r.multi();
-		t.set(K, V);
-		t.get(K);
-		List<Object> l = r.exec(t);
+		RedisTransaction t = redis.multi();
+		t.set(key, value);
+		t.get(key);
+		List<Object> l = redis.exec(t);
 		Assert.assertEquals(2, l.size());
-		Assert.assertEquals(V, l.get(1));
+		Assert.assertEquals(value, l.get(1));
 		
 		after();
 	}

@@ -276,8 +276,33 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 
 	@Override
-	public Long sort(String key, String bypattern, String destination) {
-		return master().sort(key, bypattern, destination);
+	public Long sort(String key, String destination) {
+		return master().sort(key, destination);
+	}
+
+	@Override
+	public Long sort(String key, boolean desc, String destination) {
+		return master().sort(key, desc, destination);
+	}
+
+	@Override
+	public Long sort(String key, boolean alpha, boolean desc, String destination) {
+		return master().sort(key, alpha, desc, destination);
+	}
+
+	@Override
+	public Long sort(String key, int offset, int count, String destination) {
+		return master().sort(key, offset, count, destination);
+	}
+
+	@Override
+	public Long sort(String key, int offset, int count, boolean alpha, boolean desc, String destination) {
+		return master().sort(key, offset, count, alpha, desc, destination);
+	}
+
+	@Override
+	public Long sort(String key, String bypattern, String destination, String... getpatterns) {
+		return master().sort(key, bypattern, destination, getpatterns);
 	}
 
 	@Override

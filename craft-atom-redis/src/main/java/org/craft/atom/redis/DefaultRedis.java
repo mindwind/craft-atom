@@ -280,7 +280,7 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public Long pexpire(String key, int milliseconds) {
-		return (Long) executeCommand(CommandEnum.PEXPIRE, new Object[] { key });
+		return (Long) executeCommand(CommandEnum.PEXPIRE, new Object[] { key, milliseconds });
 	}
 	
 	private Long pexpire0(Jedis j, String key, int milliseconds) {
@@ -490,13 +490,81 @@ public class DefaultRedis implements Redis {
 	}
 
 	@Override
-	public Long sort(String key, String bypattern, String destination) {
-		return (Long) executeCommand(CommandEnum.SORT_BY_DESTINATION, new Object[] { key, bypattern, destination });
+	public Long sort(String key, String destination) {
+		return (Long) executeCommand(CommandEnum.SORT_DESTINATION, key, destination);
 	}
 	
-	private Long sort_by_destination(Jedis j, String key, String bypattern, String destination) {
+	private Long sort_destination(Jedis j, String key, String destination) {
+		return j.sort(key, destination);
+	}
+
+	@Override
+	public Long sort(String key, boolean desc, String destination) {
+		return (Long) executeCommand(CommandEnum.SORT_DESC_DESTINATION, key, desc, destination);
+	}
+	
+	private Long sort_desc_destination(Jedis j, String key, boolean desc, String destination) {
+		SortingParams sp = new SortingParams();
+		if (desc) {
+			sp.desc();
+		}
+		return j.sort(key, sp, destination);
+	}
+
+	@Override
+	public Long sort(String key, boolean alpha, boolean desc, String destination) {
+		return (Long) executeCommand(CommandEnum.SORT_ALPHA_DESC_DESTINATION, key, alpha, desc, destination);
+	}
+	
+	private Long sort_alpha_desc_destination(Jedis j, String key, boolean alpha, boolean desc, String destination) {
+		SortingParams sp = new SortingParams();
+		if (desc) {
+			sp.desc();
+		}
+		if (alpha) {
+			sp.alpha();
+		}
+		
+		return j.sort(key, sp, destination);
+	}
+
+	@Override
+	public Long sort(String key, int offset, int count, String destination) {
+		return (Long) executeCommand(CommandEnum.SORT_OFFSET_COUNT_DESTINATION, key, offset, count, destination);
+	}
+	
+	private Long sort_offset_count_destination(Jedis j, String key, int offset, int count, String destination) {
+		SortingParams sp = new SortingParams();
+		sp.limit(offset, count);
+		return j.sort(key, sp, destination);
+	}
+
+	@Override
+	public Long sort(String key, int offset, int count, boolean alpha, boolean desc, String destination) {
+		return (Long) executeCommand(CommandEnum.SORT_OFFSET_COUNT_ALPHA_DESC_DESTINATION, key, offset, count, alpha, desc, destination);
+	}
+	
+	private Long sort_offset_count_alpha_desc_destination(Jedis j, String key, int offset, int count, boolean alpha, boolean desc, String destination) {
+		SortingParams sp = new SortingParams();
+		sp.limit(offset, count);
+		if (desc) {
+			sp.desc();
+		}
+		if (alpha) {
+			sp.alpha();
+		}
+		return j.sort(key, sp, destination);
+	}
+
+	@Override
+	public Long sort(String key, String bypattern, String destination, String... getpatterns) {
+		return (Long) executeCommand(CommandEnum.SORT_BY_DESTINATION_GET, new Object[] { key, bypattern, destination, getpatterns });
+	}
+	
+	private Long sort_by_destination_get(Jedis j, String key, String bypattern, String destination, String... getpatterns) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
+		sp.get(getpatterns);
 		
 		return j.sort(key, sp, destination);
 	}
@@ -2529,8 +2597,18 @@ public class DefaultRedis implements Redis {
 				return sort_by_offset_count_get(j, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (String[]) args[4]);
 			case SORT_BY_OFFSET_COUNT_ALPHA_DESC_GET:
 				return sort_by_offset_count_alpha_desc_get(j, (String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (Boolean) args[4], (Boolean) args[5], (String[]) args[6]);
-			case SORT_BY_DESTINATION:
-				return sort_by_destination(j, (String) args[0], (String) args[1], (String) args[2]);
+			case SORT_DESTINATION:
+				return sort_destination(j, (String) args[0], (String) args[1]);
+			case SORT_DESC_DESTINATION:
+				return sort_desc_destination(j, (String) args[0], (Boolean) args[1], (String) args[2]);
+			case SORT_ALPHA_DESC_DESTINATION:
+				return sort_alpha_desc_destination(j, (String) args[0], (Boolean) args[1], (Boolean) args[2], (String) args[3]);
+			case SORT_OFFSET_COUNT_DESTINATION:
+				return sort_offset_count_destination(j, (String) args[0], (Integer) args[1], (Integer) args[2], (String) args[3]);
+			case SORT_OFFSET_COUNT_ALPHA_DESC_DESTINATION:
+				return sort_offset_count_alpha_desc_destination(j, (String) args[0], (Integer) args[1], (Integer) args[2], (Boolean) args[3], (Boolean) args[4], (String) args[5]);
+			case SORT_BY_DESTINATION_GET:
+				return sort_by_destination_get(j, (String) args[0], (String) args[1], (String) args[2], (String[]) args[3]);
 			case SORT_BY_DESC_DESTINATION_GET:
 				return sort_by_desc_destination_get(j, (String) args[0], (String) args[1], (Boolean) args[2], (String) args[3], (String[]) args[4]);
 			case SORT_BY_ALPHA_DESC_DESTINATION_GET:

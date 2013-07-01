@@ -221,7 +221,6 @@ public interface RedisCommand {
 	 * key eviction policies when using Redis as a Cache.<br>
 	 * <p>
 	 * The OBJECT command supports multiple sub commands:
-	 * <pre>
 	 * OBJECT REFCOUNT key 
 	 *   returns the number of references of the value associated with the specified key. <br>
 	 *   This command is mainly useful for debugging.<br>
@@ -232,10 +231,9 @@ public interface RedisCommand {
 	 * OBJECT IDLETIME key 
 	 *   returns the number of seconds since the object stored at the specified key is idle (not requested by read or write operations). <br>
 	 *   While the value is returned in seconds the actual resolution of this timer is 10 seconds, but may vary in future implementations.<br>
-	 * </pre>
 	 * 
+	 * <p>
 	 * Objects can be encoded in different ways:
-	 * <pre>
 	 * - Strings can be encoded as raw (normal string encoding) or int (strings representing integers in a 64 bit signed 
 	 *   interval are encoded in this way in order to save space).<br>
      * - Lists can be encoded as ziplist or linkedlist. The ziplist is the special representation that is used to save space for small lists.<br>
@@ -243,12 +241,16 @@ public interface RedisCommand {
      * - Hashes can be encoded as zipmap or hashtable. The zipmap is a special encoding used for small hashes.<br>
      * - Sorted Sets can be encoded as ziplist or skiplist format. As for the List type small sorted sets can be specially 
      * - encoded using ziplist, while the skiplist encoding is the one that works with sorted sets of any size.<br>
-	 * <pre>
+     * 
+     * <p>
 	 * All the specially encoded types are automatically converted to the general type once you perform an operation 
 	 * that makes it no possible for Redis to retain the space saving encoding.<br>
 	 * 
 	 * @param key
-	 * @return
+	 * @return Different return values are used for different subcommands.<br>
+	 *         Subcommands refcount and idletime returns integers.<br>
+	 *         Subcommand encoding returns a bulk reply.<br>
+	 *         If the object you try to inspect is missing, a null bulk reply is returned.
 	 */
 	Long objectrefcount(String key);
 	String objectencoding(String key);
@@ -317,7 +319,7 @@ public interface RedisCommand {
 	 * <p>
 	 * Return a random key from the currently selected database.<br>
 	 * 
-	 * @return
+	 * @return the random key, or nil when the database is empty.
 	 */
 	String randomkey();
 	
@@ -483,6 +485,13 @@ public interface RedisCommand {
 	 * SORT mylist BY weight_* GET object_* GET # LIMIT 0 10
 	 * SORT mylist BY weight_* GET object_* GET # LIMIT 0 10 ALPHA DESC
 	 * 
+	 * SORT mylist STORE resultkey
+	 * SORT mylist DESC STORE resultkey
+	 * SORT mylist ALPHA STORE resultkey
+	 * SORT mylist ALPHA DESC STORE resultkey
+	 * SORT mylist LIMIT 0 10 STORE resultkey
+	 * SORT mylist LIMIT 0 10 ALPHA DESC STORE resultkey
+	 * 
 	 * SORT mylist BY weight_* STORE resultkey
 	 * SORT mylist BY weight_* DESC STORE resultkey
 	 * SORT mylist BY weight_* ALPHA DESC STORE resultkey
@@ -512,12 +521,14 @@ public interface RedisCommand {
 	
 	/**
 	 * @see #sort(String)
-	 * @param key
-	 * @param bypattern
-	 * @param destination
 	 * @return The number of elements of the list at destination.
 	 */
-	Long sort(String key, String bypattern, String destination);
+	Long sort(String key, String destination);
+	Long sort(String key, boolean desc, String destination);
+	Long sort(String key, boolean alpha, boolean desc, String destination);
+	Long sort(String key, int offset, int count, String destination);
+	Long sort(String key, int offset, int count, boolean alpha, boolean desc, String destination);
+	Long sort(String key, String bypattern, String destination, String... getpatterns);
 	Long sort(String key, String bypattern, boolean desc, String destination, String... getpatterns);
 	Long sort(String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns);
 	Long sort(String key, String bypattern, int offset, int count, String destination, String... getpatterns);

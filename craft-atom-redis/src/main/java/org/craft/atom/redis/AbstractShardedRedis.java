@@ -171,8 +171,33 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	}
 
 	@Override
-	public Long sort(String shardkey, String key, String bypattern, String destination) {
-		return sharded.shard(shardkey).sort(key, bypattern, destination);
+	public Long sort(String shardkey, String key, String destination) {
+		return sharded.shard(shardkey).sort(key, destination);
+	}
+
+	@Override
+	public Long sort(String shardkey, String key, boolean desc, String destination) {
+		return sharded.shard(shardkey).sort(key, desc, destination);
+	}
+
+	@Override
+	public Long sort(String shardkey, String key, boolean alpha, boolean desc, String destination) {
+		return sharded.shard(shardkey).sort(key, alpha, desc, destination);
+	}
+
+	@Override
+	public Long sort(String shardkey, String key, int offset, int count, String destination) {
+		return sharded.shard(shardkey).sort(key, offset, count, destination);
+	}
+
+	@Override
+	public Long sort(String shardkey, String key, int offset, int count, boolean alpha, boolean desc, String destination) {
+		return sharded.shard(shardkey).sort(key, offset, count, alpha, desc, destination);
+	}
+
+	@Override
+	public Long sort(String shardkey, String key, String bypattern, String destination, String... getpatterns) {
+		return sharded.shard(shardkey).sort(key, bypattern, destination, getpatterns);
 	}
 
 	@Override

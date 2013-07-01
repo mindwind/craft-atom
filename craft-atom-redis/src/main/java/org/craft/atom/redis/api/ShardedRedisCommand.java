@@ -48,7 +48,12 @@ public interface ShardedRedisCommand {
 	List<String> sort(String shardkey, String key, String bypattern, boolean alpha, boolean desc, String... getpatterns);
 	List<String> sort(String shardkey, String key, String bypattern, int offset, int count, String... getpatterns);
 	List<String> sort(String shardkey, String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String... getpatterns);
-	Long sort(String shardkey, String key, String bypattern, String destination);
+	Long sort(String shardkey, String key, String destination);
+	Long sort(String shardkey, String key, boolean desc, String destination);
+	Long sort(String shardkey, String key, boolean alpha, boolean desc, String destination);
+	Long sort(String shardkey, String key, int offset, int count, String destination);
+	Long sort(String shardkey, String key, int offset, int count, boolean alpha, boolean desc, String destination);
+	Long sort(String shardkey, String key, String bypattern, String destination, String... getpatterns);
 	Long sort(String shardkey, String key, String bypattern, boolean desc, String destination, String... getpatterns);
 	Long sort(String shardkey, String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns);
 	Long sort(String shardkey, String key, String bypattern, int offset, int count, String destination, String... getpatterns);

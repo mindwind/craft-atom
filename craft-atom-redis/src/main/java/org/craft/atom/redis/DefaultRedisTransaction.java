@@ -1,6 +1,7 @@
 package org.craft.atom.redis;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,10 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		
 	List<Object> exec() {
 		List<Object> l = t.exec();
+		if (l == null) {
+			return Collections.emptyList();
+		}
+		
 		List<Object> r = new ArrayList<Object>(l.size());
 		for (Object o : l) {
 			if (o instanceof Set<?>) {
@@ -396,7 +401,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 
 	@Override
 	public void sort(String key, String bypattern, String destination) {
-		executeCommand(CommandEnum.SORT_BY_DESTINATION, new Object[] { key, bypattern, destination });
+		executeCommand(CommandEnum.SORT_BY_DESTINATION_GET, new Object[] { key, bypattern, destination });
 	}
 	
 	private void sort_by_destination(String key, String bypattern, String destination) {
@@ -1725,7 +1730,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 				sort_by_offset_count_get((String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (String[]) args[4]); break;
 			case SORT_BY_OFFSET_COUNT_ALPHA_DESC_GET:
 				sort_by_offset_count_alpha_desc_get((String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (Boolean) args[4], (Boolean) args[5], (String[]) args[6]); break;
-			case SORT_BY_DESTINATION:
+			case SORT_BY_DESTINATION_GET:
 				sort_by_destination((String) args[0], (String) args[1], (String) args[2]); break;
 			case SORT_BY_DESC_DESTINATION_GET:
 				sort_by_desc_destination_get((String) args[0], (String) args[1], (Boolean) args[2], (String) args[3], (String[]) args[4]); break;

@@ -7,7 +7,7 @@ package org.craft.atom.redis;
 public class TestMain {
 	
 	protected static void before(String desc) {
-		System.out.println("case --> " + desc);
+		System.out.println("case -- " + desc);
 	}
 	
 	protected static void after() {
