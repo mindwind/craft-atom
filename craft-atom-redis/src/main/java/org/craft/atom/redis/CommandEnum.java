@@ -60,6 +60,7 @@ public enum CommandEnum {
 	
 	APPEND,
 	BITCOUNT,
+	BITCOUNT_START_END,
 	BITNOT,
 	BITAND,
 	BITOR,

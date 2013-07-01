@@ -400,6 +400,73 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 
 	@Override
+	public void sort(String key, String destination) {
+		executeCommand(CommandEnum.SORT_DESTINATION, key, destination);
+	}
+	
+	private void sort_destination(String key, String destination) {
+		t.sort(key, destination);
+	}
+
+	@Override
+	public void sort(String key, boolean desc, String destination) {
+		executeCommand(CommandEnum.SORT_DESC_DESTINATION, key, desc, destination);
+	}
+	
+	private void sort_desc_destination(String key, boolean desc, String destination) {
+		SortingParams sp = new SortingParams();
+		if (desc) {
+			sp.desc();
+		}
+		t.sort(key, sp, destination);
+	}
+
+	@Override
+	public void sort(String key, boolean alpha, boolean desc, String destination) {
+		executeCommand(CommandEnum.SORT_ALPHA_DESC_DESTINATION, key, alpha, desc, destination);
+	}
+	
+	private void sort_alpha_desc_destination(String key, boolean alpha, boolean desc, String destination) {
+		SortingParams sp = new SortingParams();
+		if (desc) {
+			sp.desc();
+		}
+		if (alpha) {
+			sp.alpha();
+		}
+		
+		t.sort(key, sp, destination);
+	}
+
+	@Override
+	public void sort(String key, int offset, int count, String destination) {
+		executeCommand(CommandEnum.SORT_OFFSET_COUNT_DESTINATION, key, offset, count, destination);
+	}
+	
+	private void sort_offset_count_destination(String key, int offset, int count, String destination) {
+		SortingParams sp = new SortingParams();
+		sp.limit(offset, count);
+		t.sort(key, sp, destination);
+	}
+
+	@Override
+	public void sort(String key, int offset, int count, boolean alpha, boolean desc, String destination) {
+		executeCommand(CommandEnum.SORT_OFFSET_COUNT_ALPHA_DESC_DESTINATION, key, offset, count, alpha, desc, destination);
+	}
+	
+	private void sort_offset_count_alpha_desc_destination(String key, int offset, int count, boolean alpha, boolean desc, String destination) {
+		SortingParams sp = new SortingParams();
+		sp.limit(offset, count);
+		if (desc) {
+			sp.desc();
+		}
+		if (alpha) {
+			sp.alpha();
+		}
+		t.sort(key, sp, destination);
+	}
+
+	@Override
 	public void sort(String key, String bypattern, String destination) {
 		executeCommand(CommandEnum.SORT_BY_DESTINATION_GET, new Object[] { key, bypattern, destination });
 	}
@@ -1730,6 +1797,16 @@ public class DefaultRedisTransaction implements RedisTransaction {
 				sort_by_offset_count_get((String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (String[]) args[4]); break;
 			case SORT_BY_OFFSET_COUNT_ALPHA_DESC_GET:
 				sort_by_offset_count_alpha_desc_get((String) args[0], (String) args[1], (Integer) args[2], (Integer) args[3], (Boolean) args[4], (Boolean) args[5], (String[]) args[6]); break;
+			case SORT_DESTINATION:
+				sort_destination((String) args[0], (String) args[1]); break;
+			case SORT_DESC_DESTINATION:
+				sort_desc_destination((String) args[0], (Boolean) args[1], (String) args[2]); break;
+			case SORT_ALPHA_DESC_DESTINATION:
+				sort_alpha_desc_destination((String) args[0], (Boolean) args[1], (Boolean) args[2], (String) args[3]); break;
+			case SORT_OFFSET_COUNT_DESTINATION:
+				sort_offset_count_destination((String) args[0], (Integer) args[1], (Integer) args[2], (String) args[3]); break;
+			case SORT_OFFSET_COUNT_ALPHA_DESC_DESTINATION:
+				sort_offset_count_alpha_desc_destination((String) args[0], (Integer) args[1], (Integer) args[2], (Boolean) args[3], (Boolean) args[4], (String) args[5]); break;
 			case SORT_BY_DESTINATION_GET:
 				sort_by_destination((String) args[0], (String) args[1], (String) args[2]); break;
 			case SORT_BY_DESC_DESTINATION_GET:
@@ -1753,11 +1830,11 @@ public class DefaultRedisTransaction implements RedisTransaction {
 			case BITNOT:
 				bitnot0((String) args[0], (String) args[1]); break;
 			case BITAND:
-				bitand0((String) args[0], (String) args[1]); break;
+				bitand0((String) args[0], (String[]) args[1]); break;
 			case BITOR:
-				bitor0((String) args[0], (String) args[1]); break;
+				bitor0((String) args[0], (String[]) args[1]); break;
 			case BITXOR:
-				bitxor0((String) args[0], (String) args[1]); break;
+				bitxor0((String) args[0], (String[]) args[1]); break;
 			case DECR:
 				decr0((String) args[0]); break;
 			case DECRBY:

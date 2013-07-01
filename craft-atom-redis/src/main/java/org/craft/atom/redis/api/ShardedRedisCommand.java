@@ -67,6 +67,7 @@ public interface ShardedRedisCommand {
 	
 	Long append(String shardkey, String key, String value);
 	Long bitcount(String shardkey, String key);
+	Long bitcount(String shardkey, String key, long start, long end);
 	Long bitnot(String shardkey, String destkey, String key);
 	Long bitand(String shardkey, String destkey, String... keys);
 	Long bitor(String shardkey, String destkey, String... keys);

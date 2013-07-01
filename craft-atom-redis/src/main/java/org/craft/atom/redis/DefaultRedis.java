@@ -677,6 +677,15 @@ public class DefaultRedis implements Redis {
 	private Long bitcount0(Jedis j, String key) {
 		return j.bitcount(key);
 	}
+	
+	@Override
+	public Long bitcount(String key, long start, long end) {
+		return (Long) executeCommand(CommandEnum.BITCOUNT_START_END, key, start, end);
+	}
+
+	private Long bitcount0(Jedis j, String key, long start, long end) {
+		return j.bitcount(key, start, end);
+	}
 
 	@Override
 	public Long bitnot(String destkey, String key) {
@@ -2627,14 +2636,16 @@ public class DefaultRedis implements Redis {
 				return append0(j, (String) args[0], (String) args[1]);
 			case BITCOUNT:
 				return bitcount0(j, (String) args[0]);
+			case BITCOUNT_START_END:
+				return bitcount0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case BITNOT:
 				return bitnot0(j, (String) args[0], (String) args[1]);
 			case BITAND:
-				return bitand0(j, (String) args[0], (String) args[1]);
+				return bitand0(j, (String) args[0], (String[]) args[1]);
 			case BITOR:
-				return bitor0(j, (String) args[0], (String) args[1]);
+				return bitor0(j, (String) args[0], (String[]) args[1]);
 			case BITXOR:
-				return bitxor0(j, (String) args[0], (String) args[1]);
+				return bitxor0(j, (String) args[0], (String[]) args[1]);
 			case DECR:
 				return decr0(j, (String) args[0]);
 			case DECRBY:

@@ -243,6 +243,11 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Long bitcount(String shardkey, String key) {
 		return sharded.shard(shardkey).bitcount(key);
 	}
+	
+	@Override
+	public Long bitcount(String shardkey, String key, long start, long end) {
+		return sharded.shard(shardkey).bitcount(key, start, end);
+	}
 
 	@Override
 	public Long bitnot(String shardkey, String destkey, String key) {

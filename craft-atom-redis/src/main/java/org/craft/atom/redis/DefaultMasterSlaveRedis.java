@@ -350,6 +350,11 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 
 	@Override
+	public Long bitcount(String key, long start, long end) {
+		return master().bitcount(key, start, end);
+	}
+
+	@Override
 	public Long bitnot(String destkey, String key) {
 		return master().bitnot(destkey, key);
 	}

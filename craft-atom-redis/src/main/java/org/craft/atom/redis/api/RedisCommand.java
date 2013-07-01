@@ -599,6 +599,7 @@ public interface RedisCommand {
 	 * @return The number of bits set to 1.
 	 */
 	Long bitcount(String key);
+	Long bitcount(String key, long start, long end);
 	
 	/**
 	 * Available since 2.6.0<br>
