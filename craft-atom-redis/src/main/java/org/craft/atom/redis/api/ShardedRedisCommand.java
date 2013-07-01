@@ -210,11 +210,11 @@ public interface ShardedRedisCommand {
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
 	
 	
-	void psubscribe(String shardkey, RedisPsubscribeHandler handler, String... patterns);
+	RedisPubSub psubscribe(String shardkey, RedisPsubscribeHandler handler, String... patterns);
 	Long publish(String shardkey, String channel, String message);
-	void punsubscribe(String shardkey, String... patterns);
-	void subscribe(String shardkey, RedisSubscribeHandler handler, String... channels);
-	void unsubscribe(String shardkey, String... channels);
+	void punsubscribe(String shardkey, RedisPubSub pubsub, String... patterns);
+	RedisPubSub subscribe(String shardkey, RedisSubscribeHandler handler, String... channels);
+	void unsubscribe(String shardkey, RedisPubSub pubsub, String... channels);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------- Transactions

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.craft.atom.redis.api.RedisCommand;
+import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
 import org.craft.atom.redis.api.ShardedRedisCommand;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
@@ -854,8 +855,8 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 
 	
 	@Override
-	public void psubscribe(String shardkey, RedisPsubscribeHandler handler, String... patterns) {
-		sharded.shard(shardkey).psubscribe(handler, patterns);
+	public RedisPubSub psubscribe(String shardkey, RedisPsubscribeHandler handler, String... patterns) {
+		return sharded.shard(shardkey).psubscribe(handler, patterns);
 	}
 
 	@Override
@@ -864,18 +865,18 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	}
 
 	@Override
-	public void punsubscribe(String shardkey, String... patterns) {
-		sharded.shard(shardkey).punsubscribe(patterns);
+	public void punsubscribe(String shardkey, RedisPubSub pubsub, String... patterns) {
+		sharded.shard(shardkey).punsubscribe(pubsub, patterns);
 	}
 
 	@Override
-	public void subscribe(String shardkey, RedisSubscribeHandler handler, String... channels) {
-		sharded.shard(shardkey).subscribe(handler, channels);
+	public RedisPubSub subscribe(String shardkey, RedisSubscribeHandler handler, String... channels) {
+		return sharded.shard(shardkey).subscribe(handler, channels);
 	}
 
 	@Override
-	public void unsubscribe(String shardkey, String... channels) {
-		sharded.shard(shardkey).unsubscribe(channels);
+	public void unsubscribe(String shardkey, RedisPubSub pubsub, String... channels) {
+		sharded.shard(shardkey).unsubscribe(pubsub, channels);
 	}
 	
 	

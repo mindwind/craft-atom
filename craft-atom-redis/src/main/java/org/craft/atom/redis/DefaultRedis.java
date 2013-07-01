@@ -230,7 +230,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String migrate0(Jedis j, String host, int port, String key, int destinationdb, int timeout) {
-		return null;
+		return j.migrate(host, port, key, destinationdb, timeout);
 	}
 
 	@Override
@@ -919,7 +919,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private Double hincrbyfloat0(Jedis j, String key, String field, double increment) {
-		return null;
+		return j.hincrByFloat(key, field, increment);
 	}
 
 	@Override
@@ -2908,7 +2908,9 @@ public class DefaultRedis implements Redis {
 		unbind();
 		
 		if (e instanceof JedisConnectionException) {
-			if (j != null) { pool.returnBrokenResource(j); }
+			if (j != null) {
+				pool.returnBrokenResource(j);
+			}
 			return new RedisConnectionException(String.format("Connect to redis server[host=%s, port=%s] failed.", host, port), e);
 		}
 		
@@ -2934,7 +2936,9 @@ public class DefaultRedis implements Redis {
 			// in transaction context don't return jedis connection to pool.
 			return;
 		} else {
-			if (j != null) { pool.returnResource(j); };
+			if (j != null) {
+				pool.returnResource(j);
+			}
 		}
 	}
 	

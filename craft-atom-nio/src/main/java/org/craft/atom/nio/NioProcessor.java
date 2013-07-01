@@ -391,7 +391,7 @@ public class NioProcessor extends NioReactor {
                 break;
             }
             
-            // Reset the Schedule for flush flag for this channel, as we are flushing it now
+            // Reset the schedule for flush flag to this channel, as we are flushing it now
             channel.unsetScheduleFlush();
             
             try {

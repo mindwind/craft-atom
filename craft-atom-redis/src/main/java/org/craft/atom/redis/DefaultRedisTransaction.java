@@ -1,9 +1,11 @@
 package org.craft.atom.redis;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.craft.atom.redis.api.RedisException;
 import org.craft.atom.redis.api.RedisTransaction;
@@ -13,6 +15,7 @@ import redis.clients.jedis.BitOP;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.SortingParams;
 import redis.clients.jedis.Transaction;
+import redis.clients.jedis.Tuple;
 import redis.clients.jedis.ZParams;
 import redis.clients.jedis.ZParams.Aggregate;
 
@@ -42,7 +45,30 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 		
 	List<Object> exec() {
-		return t.exec();
+		List<Object> l = t.exec();
+		List<Object> r = new ArrayList<Object>(l.size());
+		for (Object o : l) {
+			if (o instanceof Set<?>) {
+				Set<?> set = (Set<?>) o;
+				Map<String, Double> map = null;
+				for (Object e : r) {
+					if (e instanceof Tuple) {
+						Tuple tuple = (Tuple) e;
+						if (map == null) {
+							map = new LinkedHashMap<String, Double>(set.size());
+						}
+						map.put(tuple.getElement(), tuple.getScore());
+					}
+				}
+				if (map != null) {
+					r.add(map);
+				}
+			} else {
+				r.add(o);
+			}
+		}
+		
+		return r;
 	}
 	
 	
@@ -64,7 +90,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void dump0(String key) {
-//		t.dump(key); TODO
+		t.dump(key);
 	}
 
 	@Override
@@ -109,7 +135,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void migrate0(String host, int port, String key, int destinationdb, int timeout) {
-		// TODO
+		t.migrate(host, port, key, destinationdb, timeout);
 	}
 
 	@Override
@@ -127,7 +153,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void objectrefcount0(String key) {
-		// TODO
+		t.objectRefcount(key);
 	}
 
 	@Override
@@ -136,7 +162,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void objectencoding0(String key) {
-		// TODO
+		t.objectEncoding(key);
 	}
 
 	@Override
@@ -145,7 +171,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void objectidletime0(String key) {
-		// TODO
+		t.objectIdletime(key);
 	}
 
 	@Override
@@ -163,7 +189,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void pexpire0(String key, int milliseconds) {
-		// TODO
+		t.pexpire(key, milliseconds);
 	}
 
 	@Override
@@ -172,7 +198,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void pexpireat0(String key, long millisecondstimestamp) {
-		// TODO
+		t.pexpireAt(key, millisecondstimestamp);
 	}
 
 	@Override
@@ -181,7 +207,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void pttl0(String key) {
-		// TODO
+		t.pttl(key);
 	}
 	
 	@Override
@@ -212,12 +238,12 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 
 	@Override
-	public void restore(String key, long ttl, String serializedvalue) {
+	public void restore(String key, int ttl, byte[] serializedvalue) {
 		executeCommand(CommandEnum.RESTORE, new Object[] { key, ttl, serializedvalue });
 	}
 	
-	private void restore0(String key, long ttl, String serializedvalue) {
-		// TODO
+	private void restore0(String key, int ttl, byte[] serializedvalue) {
+		t.restore(key, ttl, serializedvalue);
 	}
 
 	@Override
@@ -603,7 +629,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void incrbyfloat0(String key, double increment) {
-		// TODO
+		t.incrByFloat(key, increment);
 	}
 	
 	@Override
@@ -640,7 +666,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void psetex0(String key, int milliseconds, String value) {
-		// TODO
+		t.psetex(key, milliseconds, value);
 	}
 
 	@Override
@@ -658,7 +684,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void setxx0(String key, String value) {
-		// TODO
+		t.set(key, value, "XX");
 	}
 
 	@Override
@@ -667,7 +693,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void setnxex0(String key, String value, int seconds) {
-		// TODO
+		t.set(key, value, "NX", "EX", seconds);
 	}
 
 	@Override
@@ -676,7 +702,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void setnxpx0(String key, String value, int milliseconds) {
-		// TODO
+		t.set(key, value, "NX", "PX", milliseconds);
 	}
 
 	@Override
@@ -685,7 +711,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void setxxex0(String key, String value, int seconds) {
-		// TODO
+		t.set(key, value, "XX", "EX", seconds);
 	}
 
 	@Override
@@ -694,7 +720,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void setxxpx0(String key, String value, int milliseconds) {
-		// TODO
+		t.set(key, value, "XX", "PX", milliseconds);
 	}
 	
 	@Override
@@ -753,7 +779,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void hdel0(String key, String... fields) {
-		// TODO
+		t.hdel(key, fields);
 	}
 
 	@Override
@@ -798,7 +824,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void hincrbyfloat0(String key, String field, double increment) {
-		// TODO
+		t.hincrByFloat(key, field, increment);
 	}
 
 	@Override
@@ -890,7 +916,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void blpop0(int timeout, String... keys) {
-		// TODO
+		t.blpopMap(timeout, keys);
 	}
 
 	@Override
@@ -914,9 +940,8 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void brpop0(int timeout, String... keys) {
-//		t.brpop(timeout, keys); TODO
+		t.brpopMap(timeout, keys);
 	}
-	
 
 	@Override
 	public void brpoplpush(String source, String destination, int timeout) {
@@ -933,7 +958,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void lindex0(String key, long index) {
-//		t.lindex(key, index); TODO
+		t.lindex(key, index);
 	}
 
 	@Override
@@ -1167,7 +1192,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void srandmember0(String key, int count) {
-		// TODO
+		t.srandmember(key, count);
 	}
 
 	@Override
@@ -1176,7 +1201,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void srem0(String key, String... members) {
-//		t.srem(key, members); TODO
+		t.srem(key, members);
 	}
 	
 	@Override
@@ -1321,7 +1346,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zrange0(String key, long start, long stop) {
-//		t.zrange(key, start, stop); TODO
+		t.zrange(key, start, stop); 
 	}
 
 	@Override
@@ -1330,7 +1355,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zrangewithscores0(String key, long start, long stop) {
-//		t.zrangeWithScores(key, start, stop); TODO
+		t.zrangeWithScores(key, start, stop);
 	}
 
 	@Override
@@ -1366,7 +1391,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zrangebyscore_offset_count_string(String key, String min, String max, int offset, int count) {
-//		t.zrangeByScore(key, min, max, offset, count); TODO
+		t.zrangeByScore(key, min, max, offset, count);
 	}
 
 	@Override
@@ -1384,7 +1409,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zrangebyscorewithscores_string(String key, String min, String max) {
-//		t.zrangeByScoreWithScores(key, min, max); TODO
+		t.zrangeByScoreWithScores(key, min, max);
 	}
 
 	@Override
@@ -1402,7 +1427,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zrangebyscorewithscores_offset_count_string(String key, String min, String max, int offset, int count) {
-//		t.zrangeByScoreWithScores(key, min, max, offset, count); TODO
+		t.zrangeByScoreWithScores(key, min, max, offset, count);
 	}
 
 	@Override
@@ -1420,7 +1445,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zrem0(String key, String... members) {
-//		t.zrem(key, members); TODO
+		t.zrem(key, members);
 	}
 
 	@Override
@@ -1429,7 +1454,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zremrangebyrank0(String key, long start, long stop) {
-//		t.zremrangeByRank(key, start, stop); TODO
+		t.zremrangeByRank(key, start, stop);
 	}
 
 	@Override
@@ -1447,7 +1472,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zremrangebyscore_string(String key, String min, String max) {
-//		t.zremrangeByScore(key, min, max); TODO
+		t.zremrangeByScore(key, min, max);
 	}
 
 	@Override
@@ -1456,7 +1481,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zrevrange0(String key, long start, long stop) {
-//		t.zrevrange(key, start, stop); TODO
+		t.zrevrange(key, start, stop); 
 	}
 
 	@Override
@@ -1465,7 +1490,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zrevrangewithscores0(String key, long start, long stop) {
-//		t.zrevrangeWithScores(key, start, stop); TODO
+		t.zrevrangeWithScores(key, start, stop);
 	}
 
 	@Override
@@ -1501,7 +1526,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zrevrangebyscore_offset_count_string(String key, String max, String min, int offset, int count) {
-//		t.zrevrangeByScore(key, max, min, offset, count); TODO
+		t.zrevrangeByScore(key, max, min, offset, count);
 	}
 	
 	@Override
@@ -1519,7 +1544,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zrevrangebyscorewithscores_string(String key, String max, String min) {
-//		t.zrangeByScoreWithScores(key, max, min); TODO
+		t.zrevrangeByScoreWithScores(key, max, min);
 	}
 
 	@Override
@@ -1537,7 +1562,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zrevrangebyscorewithscores_offset_count_string(String key, String max, String min, int offset, int count) {
-//		t.zrevrangeByScoreWithScores(key, max, min, offset, count); TODO
+		t.zrevrangeByScoreWithScores(key, max, min, offset, count);
 	}
 
 	@Override
@@ -1679,7 +1704,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 			case RENAMENX:
 				renamenx0((String) args[0], (String) args[1]); break;
 			case RESTORE:
-				restore0((String) args[0], (Long) args[1], (String) args[2]); break;
+				restore0((String) args[0], (Integer) args[1], (byte[]) args[2]); break;
 			case SORT:
 				sort0((String) args[0]); break;
 			case SORT_DESC:

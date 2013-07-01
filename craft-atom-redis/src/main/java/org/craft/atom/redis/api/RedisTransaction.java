@@ -44,7 +44,7 @@ public interface RedisTransaction {
 	void randomkey();
 	void rename(String key, String newkey);
 	void renamenx(String key, String newkey);
-	void restore(String key, long ttl, String serializedvalue);
+	void restore(String key, int ttl, byte[] serializedvalue);
 	void sort(String key);
 	void sort(String key, boolean desc);
 	void sort(String key, boolean alpha, boolean desc);

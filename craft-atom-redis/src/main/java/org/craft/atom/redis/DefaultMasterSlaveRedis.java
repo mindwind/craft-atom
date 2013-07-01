@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.craft.atom.redis.api.MasterSlaveRedis;
 import org.craft.atom.redis.api.Redis;
+import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
 import org.craft.atom.redis.api.Slowlog;
 import org.craft.atom.redis.api.handler.RedisMonitorHandler;
@@ -743,6 +744,11 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public Long zadd(String key, double score, String member) {
 		return master().zadd(key, score, member);
 	}
+	
+	@Override
+	public Long zadd(String key, Map<Double, String> scoremembers) {
+		return master().zadd(key, scoremembers);
+	}
 
 	@Override
 	public Long zcard(String key) {
@@ -959,8 +965,8 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	
 
 	@Override
-	public void psubscribe(RedisPsubscribeHandler handler, String... patterns) {
-		master().psubscribe(handler, patterns);
+	public RedisPubSub psubscribe(RedisPsubscribeHandler handler, String... patterns) {
+		return master().psubscribe(handler, patterns);
 	}
 
 	@Override
@@ -969,18 +975,18 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 
 	@Override
-	public void punsubscribe(String... patterns) {
-		master().punsubscribe(patterns);
+	public void punsubscribe(RedisPubSub pubsub, String... patterns) {
+		master().punsubscribe(pubsub, patterns);
 	}
 
 	@Override
-	public void subscribe(RedisSubscribeHandler handler, String... channels) {
-		master().subscribe(handler, channels);
+	public RedisPubSub subscribe(RedisSubscribeHandler handler, String... channels) {
+		return master().subscribe(handler, channels);
 	}
 
 	@Override
-	public void unsubscribe(String... channels) {
-		master().unsubscribe(channels);
+	public void unsubscribe(RedisPubSub pubsub, String... channels) {
+		master().unsubscribe(pubsub, channels);
 	}
 	
 	
