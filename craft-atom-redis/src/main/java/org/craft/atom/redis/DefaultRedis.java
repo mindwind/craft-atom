@@ -3,6 +3,7 @@ package org.craft.atom.redis;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -1343,11 +1344,18 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public Long zadd(String key, double score, String member) {
-		return (Long) executeCommand(CommandEnum.ZADD, key, score, member);
+		Map<Double, String> scoremembers = new HashMap<Double, String>();
+		scoremembers.put(score, member);
+		return zadd(key, scoremembers);
+	}
+
+	@Override
+	public Long zadd(String key, Map<Double, String> scoremembers) {
+		return (Long) executeCommand(CommandEnum.ZADD, key, scoremembers);
 	}
 	
-	private Long zadd0(Jedis j, String key, double score, String member) {
-		return j.zadd(key, score, member);
+	private Long zadd0(Jedis j, String key, Map<Double, String> scoremembers) {
+		return j.zadd(key, scoremembers);
 	}
 
 	@Override
@@ -2696,7 +2704,7 @@ public class DefaultRedis implements Redis {
 				
 			// Sorted Set
 			case ZADD:
-				return zadd0(j, (String) args[0], (Double) args[1], (String) args[2]);
+				return zadd0(j, (String) args[0], (Map<Double, String>) args[1]);
 			case ZCARD:
 				return zcard0(j, (String) args[0]);
 			case ZCOUNT:
