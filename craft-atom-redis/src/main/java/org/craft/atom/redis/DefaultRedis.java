@@ -834,7 +834,7 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public String psetex(String key, int milliseconds, String value) {
-		return (String) executeCommand(CommandEnum.PSETEX, milliseconds, value);
+		return (String) executeCommand(CommandEnum.PSETEX, key, milliseconds, value);
 	}
 	
 	private String psetex0(Jedis j, String key, int milliseconds, String value) {
@@ -1013,7 +1013,7 @@ public class DefaultRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.HLEN, key);
 	}
 	
-	private Long hlen0(Jedis j, String key, String field) {
+	private Long hlen0(Jedis j, String key) {
 		return j.hlen(key);
 	}
 
@@ -1028,7 +1028,7 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public String hmset(String key, Map<String, String> fieldvalues) {
-		return (String) executeCommand(CommandEnum.HMSET, fieldvalues);
+		return (String) executeCommand(CommandEnum.HMSET, key, fieldvalues);
 	}
 	
 	private String hmset0(Jedis j, String key, Map<String, String> fieldvalues) {
@@ -1095,6 +1095,10 @@ public class DefaultRedis implements Redis {
 	
 	private Map<String, String> convert4bpop(List<String> l) {
 		Map<String, String> map = new LinkedHashMap<String, String>();
+		if (l == null) {
+			return map;
+		}
+		
 		for (int i = 0; i < l.size(); i += 2) {
 			String key = l.get(i);
 			String value = l.get(i + 1);
@@ -2663,7 +2667,7 @@ public class DefaultRedis implements Redis {
 			case INCRBY:
 				return incrby0(j, (String) args[0], (Long) args[1]);
 			case INCRBYFLOAT:
-				return incrbyfloat0(j, (String) args[0], (Long) args[1]);
+				return incrbyfloat0(j, (String) args[0], (Double) args[1]);
 			case MGET:
 				return mget0(j, (String[]) args[0]);
 			case MSET:
@@ -2711,7 +2715,7 @@ public class DefaultRedis implements Redis {
 			case HKEYS:
 				return hkeys0(j, (String) args[0]);
 			case HLEN:
-				return hlen0(j, (String) args[0], (String) args[1]);
+				return hlen0(j, (String) args[0]);
 			case HMGET:
 				return hmget0(j, (String) args[0], (String[]) args[1]);
 			case HMSET:

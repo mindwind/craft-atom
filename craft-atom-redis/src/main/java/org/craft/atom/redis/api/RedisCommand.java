@@ -705,8 +705,8 @@ public interface RedisCommand {
 	 * The function handles out of range requests by limiting the resulting range to the actual length of the string.<br>
 	 * 
 	 * @param key
-	 * @param start
-	 * @param end
+	 * @param start inclusive
+	 * @param end   inclusive
 	 * @return
 	 */
 	String getrange(String key, long start, long end);
@@ -946,7 +946,7 @@ public interface RedisCommand {
 	 * 
 	 * @param key
 	 * @param value
-	 * @return 1 if the key was set
+	 * @return 1 if the key was set<br>
 	 *         0 if the key was not set
 	 */
 	Long setnx(String key, String value);
@@ -1290,7 +1290,7 @@ public interface RedisCommand {
 	
 	/**
 	 * @see {@link #blpop(String)}
-	 * @param timeout
+	 * @param timeout max seconds to block
 	 * @param keys
 	 * @return A empty map(nil multi-bulk) when no element could be popped and the timeout expired.
 	 *         A map (two-element multi-bulk) with the key (first element) being the name of the key where an element was popped 
@@ -1361,7 +1361,7 @@ public interface RedisCommand {
 	 * When the value at key is not a list, an error is returned.<br>
 	 * 
 	 * @param key
-	 * @param index
+	 * @param index zero-based
 	 * @return
 	 */
 	String lindex(String key, long index);
@@ -1539,8 +1539,8 @@ public interface RedisCommand {
 	 * is removed from the tail of the list.
 	 * 
 	 * @param key
-	 * @param start
-	 * @param end
+	 * @param start inclusive
+	 * @param stop  inclusive
 	 * @return Status code reply, e.g. OK
 	 */
 	String ltrim(String key, long start, long stop);

@@ -1,6 +1,9 @@
 package org.craft.atom.redis;
 
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -27,6 +30,7 @@ public class RedisMain extends TestMain {
 	private static final int PORT = 6379;
 	private static final int PORT2 = 6380;
 	private static final String key = "foo";
+	private static final String field = "1";
 	private static final String value = "bar";
 	private static Redis redis;
 	private static Redis redis2;
@@ -34,6 +38,7 @@ public class RedisMain extends TestMain {
 	private static void init() {
 		redis = RedisFactory.newRedis(HOST, PORT);
 		redis2 = RedisFactory.newRedis(HOST, PORT2);
+		after();
 	}
 	
 	protected static void after() {
@@ -44,7 +49,7 @@ public class RedisMain extends TestMain {
 	public static void main(String[] args) throws Exception {
 		init();
 		
-		// Keys
+		System.out.println("-------------------------------------------------------------- Keys\n");
 		del();
 		dump_restore();
 		exists();
@@ -68,26 +73,60 @@ public class RedisMain extends TestMain {
 		ttl();
 		type();
 		
-		// Strings
+		
+		System.out.println("\n------------------------------------------------------------ Strings\n");
 		append();
 		bitcount();
 		setbit_getbit_bitop();
+		decr_incr_by_float();
+		get();
+		getrange_setrange();
+		getset();
+		mget_mset();
+		msetnx();
+		psetex();
+		set();
+		strlen();
 		
-		// Hashes
 		
-		// Lists
-		blpop();
-		lpush_lrange_llen();
+		System.out.println("\n------------------------------------------------------------ Hashes\n");
+		hdel_hget_hset_hexists();
+		hgetall();
+		hincrby_float();
+		hkeys();
+		hlen();
+		hmget_hmset();
+		hsetnx();
+		hvals();
 		
-		// Sets
 		
-		// Sorted Sets
+		System.out.println("\n------------------------------------------------------------ Lists\n");
+		blpop_lpush();
+		blpop_timeout_rpush();
+		brpop();
+		brpop_timeout();
+		brpoplpush_lpop();
+		lindex_rpop();
+		linsert();
+		lrange_llen();
+		lpushx_rpushx();
+		lrem();
+		lset();
+		ltrim();
 		
-		// Pub/Sub
+		
+		System.out.println("\n------------------------------------------------------------ Sets\n");
+		
+		
+		System.out.println("\n------------------------------------------------------------ Sorted Sets\n");
+		
+		
+		System.out.println("\n------------------------------------------------------------ Pub/Sub\n");
 		subscribe_publish_unsubscribe();
 	    psubscribe_publish_punsubscribe();
 		
-		// Transactions
+	    
+	    System.out.println("\n------------------------------------------------------------ Transactions\n");
 		multi_exec();
 		watch_multi_exec();
 		multi_discard();
@@ -97,6 +136,538 @@ public class RedisMain extends TestMain {
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
 	
+	
+	private static void ltrim() {
+		before("ltrim");
+		
+		redis.rpush(key, "1", "2", "3", "4", "5");
+		redis.ltrim(key, 0, 10);
+		Assert.assertEquals(5, redis.llen(key).longValue());
+		redis.ltrim(key, 0, 3);
+		Assert.assertEquals(4, redis.llen(key).longValue());
+		redis.ltrim(key, 4, 3);
+		
+		after();
+	}
+	
+	private static void lset() {
+		before("lset");
+		
+		redis.rpush(key, "1", "2", "3");
+		redis.lset(key, 0, "4");
+		Assert.assertTrue(Arrays.equals(new String[]{ "4", "2", "3" }, redis.lrange(key, 0, -1).toArray(new String[] {})));
+		
+		after();
+	}
+	
+	private static void lrem() {
+		before("lrem");
+		
+		redis.rpush(key, "1", "2", "1", "2", "3");
+		long r = redis.lrem(key, 1, "1");
+		Assert.assertEquals(1, r);
+		Assert.assertTrue(Arrays.equals(new String[]{ "2", "1", "2", "3" }, redis.lrange(key, 0, -1).toArray(new String[] {})));
+		redis.lrem(key, -1, "3");
+		Assert.assertTrue(Arrays.equals(new String[]{ "2", "1", "2" }, redis.lrange(key, 0, -1).toArray(new String[] {})));
+		redis.lrem(key, 0, "2");
+		Assert.assertTrue(Arrays.equals(new String[]{ "1" }, redis.lrange(key, 0, -1).toArray(new String[] {})));
+		
+		after();
+	}
+	
+	private static void lpushx_rpushx() {
+		before("lpushx_rpushx");
+		
+		long len = redis.lpushx(key, value);
+		len = redis.rpushx(key, value);
+		Assert.assertEquals(0, len);
+		redis.lpush(key, value);;
+		len = redis.lpushx(key, value);
+		len = redis.rpushx(key, value);
+		Assert.assertEquals(3, len);
+		List<String> l = redis.lrange(key, 0, -1);
+		for (String v : l) {
+			Assert.assertEquals(value, v);
+		}
+		
+		after();
+	}
+	
+	private static void linsert() {
+		before("linsert");
+		
+		long len = redis.lpush(key, value);
+		len = redis.linsertbefore(key, value, "before-bar");
+		len = redis.linsertafter(key, value, "after-bar");
+		Assert.assertEquals(3, len);
+		List<String> l = redis.lrange(key, 0, -1);
+		Assert.assertEquals("before-bar", l.get(0));
+		Assert.assertEquals("after-bar", l.get(2));
+		
+		len = redis.linsertbefore(key, "aaa", "aaa");
+		Assert.assertEquals(-1, len);
+		
+		after();
+	}
+	
+	private static void lindex_rpop() {
+		before("lindex_rpop");
+		
+		redis.rpush(key, value, "a", "b", "c");
+		String v = redis.lindex(key, 2);
+		Assert.assertEquals("b", v);
+		v = redis.rpop(key);
+		Assert.assertEquals("c", v);
+		
+		after();
+	}
+	
+	private static void brpoplpush_lpop() {
+		before("brpoplpush_lpop");
+		
+		String v = redis.brpoplpush(key, "foo1", 1);
+		Assert.assertNull(v);
+		
+		redis.rpush(key, value);
+		v = redis.brpoplpush(key, "foo1", 1);
+		Assert.assertEquals(value, v);
+		v = redis.lpop("foo1");
+		Assert.assertEquals(value, v);
+		
+		after();
+	}
+	
+	private static void brpop_timeout() {
+		before("blpop_timeout");
+		
+		Map<String, String> map = redis.brpop(1, key);
+		Assert.assertEquals(0, map.size());
+		
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Map<String, String> hash = redis.blpop(5, "foo", "foo1");
+				Assert.assertEquals("bar1", hash.get("foo1"));
+			}
+		});
+		t.start();
+		redis.rpush("foo1", "bar1");
+		
+		after();
+	}
+	
+	private static void brpop() throws InterruptedException {
+		before("brpop");
+		
+		final Lock lock = new ReentrantLock();
+		final Condition c = lock.newCondition();
+		
+		Thread t1 = new Thread(new Runnable() {	
+			@Override
+			public void run() {
+				String v = redis.brpop(key);
+				Assert.assertEquals("3", v);
+				lock.lock();
+				try {
+					c.signal();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					lock.unlock();
+				}
+			}
+		});
+		
+		Thread t2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				redis.lpush(key, "3");
+			}
+		});
+		
+		t1.start();
+		t2.start();
+		
+		lock.lock();
+		try {
+			c.await();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			lock.unlock();
+		}
+		
+		after();
+	}
+	
+	private static void blpop_timeout_rpush() {
+		before("blpop_timeout_rpush");
+		
+		Map<String, String> map = redis.blpop(1, key);
+		Assert.assertEquals(0, map.size());
+		
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Map<String, String> hash = redis.blpop(5, "foo", "foo1");
+				Assert.assertEquals("bar1", hash.get("foo1"));
+			}
+		});
+		t.start();
+		long len = redis.rpush("foo1", "bar1");
+		Assert.assertEquals(1, len);
+		
+		after();
+	}
+	
+	private static void blpop_lpush() throws InterruptedException {
+		before("blpop_lpush");
+		
+		final Lock lock = new ReentrantLock();
+		final Condition c = lock.newCondition();
+		
+		Thread t1 = new Thread(new Runnable() {	
+			@Override
+			public void run() {
+				String v = redis.blpop(key);
+				Assert.assertEquals("3", v);
+				lock.lock();
+				try {
+					c.signal();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					lock.unlock();
+				}
+			}
+		});
+		
+		Thread t2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				long len = redis.lpush(key, "3");
+				Assert.assertEquals(1, len);
+			}
+		});
+		
+		t1.start();
+		t2.start();
+		
+		lock.lock();
+		try {
+			c.await();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			lock.unlock();
+		}
+		
+		after();
+	}
+	
+	private static void lrange_llen() {
+		before("lrange_llen");
+		
+		long len = redis.lpush(key, "1", "2", "3");
+		Assert.assertEquals(3, len);
+		len = redis.llen(key);
+		Assert.assertEquals(3, len);
+		List<String> l = redis.lrange(key, 0, -1);
+		Assert.assertEquals("1", l.get(2));
+		
+		after();
+	}
+	
+	private static void hvals() {
+		before("hvals");
+		
+		List<String> l = redis.hvals(key);
+		Assert.assertEquals(0, l.size());
+		redis.hset(key, field, value);
+		l = redis.hvals(key);
+		Assert.assertEquals(1, l.size());
+		
+		after();
+	}
+	
+	private static void hsetnx() {
+		before("hsetnx");
+		
+		long c = redis.hsetnx(key, field, value);
+		Assert.assertEquals(1, c);
+		c = redis.hsetnx(key, field, value);
+		Assert.assertEquals(0, c);
+		String v = redis.hget(key, field);
+		Assert.assertEquals(value, v);
+		
+		after();
+	}
+	
+	private static void hmget_hmset() {
+		before("hmget_hmset");
+		
+		Map<String, String> hash = new HashMap<String, String>();
+		hash.put("1", "1");
+		hash.put("2", "2");
+		redis.hmset(key, hash);
+		List<String> l = redis.hmget(key, "1", "2");
+		Assert.assertEquals(2, l.size());
+		Assert.assertEquals("1", l.get(0));
+		Assert.assertEquals("2", l.get(1));
+		
+		after();
+	}
+	
+	private static void hlen() {
+		before("hlen");
+		
+		redis.hset(key, field, value);
+		long len = redis.hlen(key);
+		Assert.assertEquals(1, len);
+		
+		after();
+	}
+	
+	private static void hkeys() {
+		before("hkeys");
+		
+		redis.hset(key, field, value);
+		Set<String> set = redis.hkeys(key);
+		Assert.assertEquals(1, set.size());
+		for (String f : set) {
+			Assert.assertEquals(field, f);
+		}
+		
+		after();
+	}
+	
+	private static void hincrby_float() {
+		before("hincrby_float");
+		
+		long c = redis.hincrby(key, field, 10);
+		Assert.assertEquals(10, c);
+		double d = redis.hincrbyfloat(key, field, 6.66);
+		Assert.assertEquals(16.66, d, 0.00);
+		
+		after();
+	}
+	
+	private static void hgetall() {
+		before("hgetall");
+		
+		redis.hset(key, field, value);
+		redis.hset(key, "2", "bar1");
+		Map<String, String> map = redis.hgetall(key);
+		Assert.assertEquals(2, map.size());
+		Assert.assertEquals("bar1", map.get("2"));
+		
+		after();
+	}
+	
+	private static void hdel_hget_hset_hexists() {
+		before("hdel_hget_hset_hexists");
+		
+		long c = redis.hset(key, field, value);
+		Assert.assertEquals(1, c);
+		c = redis.hset(key, field, value);
+		Assert.assertEquals(0, c);
+		boolean b = redis.hexists(key, field);
+		Assert.assertTrue(b);
+		String v = redis.hget(key, field);
+		Assert.assertEquals(value, v);
+		
+		after();
+	}
+	
+	private static void strlen() {
+		before("strlen");
+		
+		long len = redis.strlen(key);
+		Assert.assertTrue(len == 0);
+		redis.set(key, value);
+		len = redis.strlen(key);
+		Assert.assertTrue(len == 3);
+		
+		after();
+	}
+	
+	private static void set() {
+		before("set");
+		
+		// setxx
+		String r = redis.setxx(key, value);
+		Assert.assertNull(r);
+		redis.set(key, value);
+		r = redis.setxx(key, value);
+		Assert.assertNotNull(r);
+		
+		// setex
+		redis.del(key);
+		redis.setex(key, 100, value);
+		Assert.assertEquals(value, redis.get(key));
+		long c = redis.ttl(key);
+		Assert.assertTrue(c > 0 && c <= 100);
+		
+		// setxxex
+		redis.del(key);
+		r = redis.setxxex(key, value, 100);
+		Assert.assertNull(r);
+		redis.set(key, value);
+		r = redis.setxxex(key, value, 100);
+		Assert.assertNotNull(r);
+		Assert.assertEquals(value, redis.get(key));
+		c = redis.ttl(key);
+		Assert.assertTrue(c > 0 && c <= 100);
+		
+		// setxxpx
+		
+		redis.del(key);
+		r = redis.setxxpx(key, value, 100000);
+		Assert.assertNull(r);
+		redis.set(key, value);
+		r = redis.setxxpx(key, value, 100000);
+		Assert.assertNotNull(r);
+		Assert.assertEquals(value, redis.get(key));
+		c = redis.ttl(key);
+		Assert.assertTrue(c > 0 && c <= 100000);
+		
+		// setnx
+		redis.set(key, value);
+		long b = redis.setnx(key, value);
+		Assert.assertEquals(0, b);
+		redis.del(key);
+		b = redis.setnx(key, value);
+		Assert.assertEquals(1, b);
+		Assert.assertEquals(value, redis.get(key));
+		
+		// setnxex
+		redis.set(key, value);
+		r = redis.setnxex(key, value, 100);
+		Assert.assertNull(r);
+		redis.del(key);
+		r = redis.setnxex(key, value, 100);
+		Assert.assertNotNull(r);
+		Assert.assertEquals(value, redis.get(key));
+		c = redis.ttl(key);
+		Assert.assertTrue(c > 0 && c <= 100);
+		
+		// setnxpx
+		redis.set(key, value);
+		r = redis.setnxpx(key, value, 100000);
+		Assert.assertNull(r);
+		redis.del(key);
+		r = redis.setnxpx(key, value, 100000);
+		Assert.assertNotNull(r);
+		Assert.assertEquals(value, redis.get(key));
+		c = redis.ttl(key);
+		Assert.assertTrue(c > 0 && c <= 100000);
+		
+		after();
+	}
+	
+	private static void psetex() {
+		before("psetex");
+		
+		redis.psetex(key, 2000, value);
+		String r = redis.get(key);
+		long t = redis.pttl(key);
+		Assert.assertEquals(value, r);
+		Assert.assertTrue(t > 0 && t <= 2000);
+		
+		after();
+	}
+	
+	private static void msetnx() {
+		before("msetnx");
+		
+		redis.set(key, value);
+		long r = redis.msetnx(key, value, "foo1", "bar1");
+		Assert.assertEquals(0, r);
+		
+		redis.del(key);
+		r = redis.msetnx(key, value, "foo1", "bar1");
+		Assert.assertEquals(1, r);
+		List<String> l = redis.mget(key, "foo1");
+		Assert.assertEquals(2, l.size());
+		
+		after();
+	}
+	
+	private static void mget_mset() {
+		before("mget_mset");
+		
+		redis.mset(key, value, "foo1", "bar1");
+		List<String> l = redis.mget(key, "foo1");
+		Assert.assertEquals(2, l.size());
+		Assert.assertEquals("bar", l.get(0));
+		
+		after();
+	}
+	
+	private static void getset() {
+		before("getset");
+		
+		String r = redis.getset(key, value);
+		Assert.assertNull(r);
+		r = redis.get(key);
+		Assert.assertEquals(value, r);
+		
+		after();
+	}
+	
+	private static void getrange_setrange() {
+		before("getrange_setrange");
+		
+		redis.set(key, value);
+		String r = redis.getrange(key, 0, 10);
+		Assert.assertEquals(value, r);
+		
+		r = redis.getrange(key, -1, -3);
+		Assert.assertEquals("", r);
+		
+		redis.set(key, value);
+		redis.setrange(key, 1, "bbccc");
+		r = redis.get(key);
+		Assert.assertEquals("bbbccc", r);
+		
+		after();
+	}
+	
+	private static void get() {
+		before("get");
+		
+		String r = redis.get(key);
+		Assert.assertNull(r);
+		
+		redis.set(key, value);
+		r = redis.get(key);
+		Assert.assertEquals(value, r);
+		
+		after();
+	}
+	
+	private static void decr_incr_by_float() {
+		before("decr_incr_by_float");
+		
+		long r = redis.incr(key);
+		Assert.assertEquals(1, r);
+		
+		r = redis.decr(key);
+		Assert.assertEquals(0, r);
+		
+		r = redis.incrby(key, 10);
+		Assert.assertEquals(10, r);
+		
+		r = redis.decrby(key, 5);
+		Assert.assertEquals(5, r);
+		
+		double d = redis.incrbyfloat(key, 1.55);
+		Assert.assertEquals(6.55, d, 0.0);
+		
+		after();
+	}
 	
 	private static void setbit_getbit_bitop() {
 		before("setbit_getbit_bitop");
@@ -536,62 +1107,7 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void blpop() throws InterruptedException {
-		before("blpop");
-		
-		final Lock lock = new ReentrantLock();
-		final Condition c = lock.newCondition();
-		
-		Thread t1 = new Thread(new Runnable() {	
-			@Override
-			public void run() {
-				String v = redis.blpop(key);
-				Assert.assertEquals("3", v);
-				lock.lock();
-				try {
-					c.signal();
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					lock.unlock();
-				}
-			}
-		});
-		
-		Thread t2 = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				redis.lpush(key, "3");
-			}
-		});
-		
-		t1.start();
-		t2.start();
-		
-		lock.lock();
-		try {
-			c.await();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			lock.unlock();
-		}
-		
-		after();
-	}
-	
-	private static void lpush_lrange_llen() {
-		before("lpush_lrange_llen");
-		
-		long len = redis.lpush(key, "1", "2", "3");
-		Assert.assertEquals(3, len);
-		len = redis.llen(key);
-		Assert.assertEquals(3, len);
-		List<String> l = redis.lrange(key, 0, -1);
-		Assert.assertEquals("1", l.get(2));
-		
-		after();
-	}
+
 	
 	private static void keys() {
 		before("keys");

@@ -1852,7 +1852,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 			case INCRBY:
 				incrby0((String) args[0], (Long) args[1]); break;
 			case INCRBYFLOAT:
-				incrbyfloat0((String) args[0], (Long) args[1]); break;
+				incrbyfloat0((String) args[0], (Double) args[1]); break;
 			case MGET:
 				mget0((String[]) args[0]); break;
 			case MSET:
