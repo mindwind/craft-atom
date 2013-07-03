@@ -1728,7 +1728,7 @@ public interface RedisCommand {
 	 * 
 	 * @param key
 	 * @param member
-	 * @return true if the element is a member of the set.
+	 * @return true if the element is a member of the set.<br>
 	 *         false if the element is not a member of the set, or if key does not exist.
 	 */
 	Boolean sismember(String key, String member);
@@ -1913,11 +1913,12 @@ public interface RedisCommand {
 	 * The min and max arguments have the same semantic as described for ZRANGEBYSCORE.<br>
 	 * 
 	 * @param key
-	 * @param min
-	 * @param max
+	 * @param min inclusive
+	 * @param max inclusive
 	 * @return
 	 */
 	Long zcount(String key, double min, double max);
+	Long zcount(String key, String min, String max);
 	
 	/**
 	 * Available since 1.2.0<br>
@@ -1982,8 +1983,8 @@ public interface RedisCommand {
 	 * Client libraries are free to return a more appropriate data type (suggestion: an array with (value, score) arrays/tuples).<br>
 	 * 
 	 * @param key
-	 * @param start
-	 * @param stop
+	 * @param start inclusive
+	 * @param stop  invlusive
 	 * @return list of elements in the specified range (optionally with their scores).
 	 */
 	Set<String> zrange(String key, long start, long stop);
@@ -2021,8 +2022,8 @@ public interface RedisCommand {
 	 * Will return all the elements with 5 < score < 10 (5 and 10 excluded).
 	 * 
 	 * @param key
-	 * @param min
-	 * @param max
+	 * @param min inclusive
+	 * @param max inclusive
 	 * @return list of elements in the specified score range (optionally with their scores). 
 	 */
 	Set<String> zrangebyscore(String key, double min, double max);
@@ -2080,8 +2081,8 @@ public interface RedisCommand {
 	 * For example: -1 is the element with the highest score, -2 the element with the second highest score and so forth.<br>
 	 * 
 	 * @param key
-	 * @param start
-	 * @param stop
+	 * @param start inclusive
+	 * @param stop  inclusive
 	 * @return the number of elements removed.
 	 */
 	Long zremrangebyrank(String key, long start, long stop);

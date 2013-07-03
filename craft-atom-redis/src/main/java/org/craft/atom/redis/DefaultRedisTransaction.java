@@ -984,7 +984,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	
 	@Override
 	public void blpop(int timeout, String... keys) {
-		executeCommand(CommandEnum.BLPOP, new Object[] { keys });
+		executeCommand(CommandEnum.BLPOP, timeout, new Object[] { keys });
 	}
 	
 	private void blpop0(int timeout, String... keys) {
@@ -1165,7 +1165,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 
 	@Override
 	public void sadd(String key, String... members) {
-		executeCommand(CommandEnum.SADD, new Object[] { members });
+		executeCommand(CommandEnum.SADD, new Object[] { key, members });
 	}
 	
 	private void sadd0(String key, String... members) {
@@ -1323,6 +1323,15 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void zcount0(String key, double min, double max) {
+		t.zcount(key, min, max);
+	}
+
+	@Override
+	public void zcount(String key, String min, String max) {
+		executeCommand(CommandEnum.ZCOUNT_STRING, key, min, max);
+	}
+	
+	private void zcount0(String key, String min, String max) {
 		t.zcount(key, min, max);
 	}
 
@@ -1486,7 +1495,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 
 	@Override
 	public void zrangebyscorewithscores(String key, double min, double max, int offset, int count) {
-		executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, min, max);
+		executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, min, max, offset, count);
 	}
 	
 	private void zrangebyscorewithscores_offset_count(String key, double min, double max, int offset, int count) {
@@ -1495,7 +1504,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 
 	@Override
 	public void zrangebyscorewithscores(String key, String min, String max, int offset, int count) {
-		executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, min, max);
+		executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, min, max, offset, count);
 	}
 	
 	private void zrangebyscorewithscores_offset_count_string(String key, String min, String max, int offset, int count) {
@@ -1621,7 +1630,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 
 	@Override
 	public void zrevrangebyscorewithscores(String key, double max, double min, int offset, int count) {
-		executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, max, min);
+		executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, max, min, offset, count);
 	}
 	
 	private void zrevrangebyscorewithscores_offset_count(String key, double max, double min, int offset, int count) {
@@ -1630,7 +1639,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 
 	@Override
 	public void zrevrangebyscorewithscores(String key, String max, String min, int offset, int count) {
-		executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, max, min);
+		executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, max, min, offset, count);
 	}
 	
 	private void zrevrangebyscorewithscores_offset_count_string(String key, String max, String min, int offset, int count) {
@@ -1958,9 +1967,9 @@ public class DefaultRedisTransaction implements RedisTransaction {
 			case SDIFF:
 				sdiff0((String[]) args[0]); break;
 			case SDIFFSTORE:
-				sdiffstore0((String) args[0], (String[]) args[0]); break;
+				sdiffstore0((String) args[0], (String[]) args[1]); break;
 			case SINTER:
-				sinter0((String) args[0]); break;
+				sinter0((String[]) args[0]); break;
 			case SINTERSTORE:
 				sinterstore0((String) args[0], (String[]) args[1]); break;
 			case SISMEMBER:
@@ -1987,6 +1996,8 @@ public class DefaultRedisTransaction implements RedisTransaction {
 				zcard0((String) args[0]); break;
 			case ZCOUNT:
 				zcount0((String) args[0], (Double) args[1], (Double) args[2]); break;
+			case ZCOUNT_STRING:
+				zcount0((String) args[0], (String) args[1], (String) args[2]); break;
 			case ZINCRBY:
 				zincrby0((String) args[0], (Double) args[1], (String) args[2]); break;
 			case ZINTERSTORE:
@@ -2014,7 +2025,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 			case ZRANGEBYSCORE_OFFSET_COUNT_STRING:
 				zrangebyscore_offset_count_string((String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]); break;
 			case ZRANGEBYSCORE_WITHSCORES:
-				zrangebyscorewithscores0((String) args[0], (Long) args[1], (Long) args[2]); break;
+				zrangebyscorewithscores0((String) args[0], (Double) args[1], (Double) args[2]); break;
 			case ZRANGEBYSCORE_WITHSCORES_STRING:
 				zrangebyscorewithscores_string((String) args[0], (String) args[1], (String) args[2]); break;
 			case ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT:

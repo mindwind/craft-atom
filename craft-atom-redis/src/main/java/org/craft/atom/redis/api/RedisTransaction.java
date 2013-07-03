@@ -177,6 +177,7 @@ public interface RedisTransaction {
 	void zadd(String key, double score, String member);
 	void zcard(String key);
 	void zcount(String key, double min, double max);
+	void zcount(String key, String min, String max);
 	void zincrby(String key, double score, String member);
 	void zinterstore(String destination, String... keys);
 	void zinterstoremax(String destination, String... keys);

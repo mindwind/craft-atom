@@ -1284,7 +1284,7 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public Long sadd(String key, String... members) {
-		return (Long) executeCommand(CommandEnum.SADD, new Object[] { members });
+		return (Long) executeCommand(CommandEnum.SADD, new Object[] { key, members });
 	}
 	
 	private Long sadd0(Jedis j, String key, String... members) {
@@ -1454,6 +1454,15 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private Long zcount0(Jedis j, String key, double min, double max) {
+		return j.zcount(key, min, max);
+	}
+
+	@Override
+	public Long zcount(String key, String min, String max) {
+		return (Long) executeCommand(CommandEnum.ZCOUNT_STRING, key, min, max);
+	}
+	
+	private Long zcount0(Jedis j, String key, String min, String max) {
 		return j.zcount(key, min, max);
 	}
 
@@ -1631,7 +1640,7 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public Map<String, Double> zrangebyscorewithscores(String key, double min, double max, int offset, int count) {
-		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, min, max);
+		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, min, max, offset, count);
 	}
 	
 	private Map<String, Double> zrangebyscorewithscores_offset_count(Jedis j, String key, double min, double max, int offset, int count) {
@@ -1642,7 +1651,7 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public Map<String, Double> zrangebyscorewithscores(String key, String min, String max, int offset, int count) {
-		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, min, max);
+		return (Map<String, Double>) executeCommand(CommandEnum.ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, min, max, offset, count);
 	}
 	
 	private Map<String, Double> zrangebyscorewithscores_offset_count_string(Jedis j, String key, String min, String max, int offset, int count) {
@@ -1769,14 +1778,14 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private Map<String, Double> zrevrangebyscorewithscores_string(Jedis j, String key, String max, String min) {
-		Set<Tuple> set = j.zrangeByScoreWithScores(key, max, min);
+		Set<Tuple> set = j.zrevrangeByScoreWithScores(key, max, min);
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
 	}
 
 	@Override
 	public Map<String, Double> zrevrangebyscorewithscores(String key, double max, double min, int offset, int count) {
-		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, max, min);
+		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT, key, max, min, offset, count);
 	}
 	
 	private Map<String, Double> zrevrangebyscorewithscores_offset_count(Jedis j, String key, double max, double min, int offset, int count) {
@@ -1787,7 +1796,7 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public Map<String, Double> zrevrangebyscorewithscores(String key, String max, String min, int offset, int count) {
-		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, max, min);
+		return (Map<String, Double>) executeCommand(CommandEnum.ZREVRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING, key, max, min, offset, count);
 	}
 	
 	private Map<String, Double> zrevrangebyscorewithscores_offset_count_string(Jedis j, String key, String max, String min, int offset, int count) {
@@ -2773,9 +2782,9 @@ public class DefaultRedis implements Redis {
 			case SDIFF:
 				return sdiff0(j, (String[]) args[0]);
 			case SDIFFSTORE:
-				return sdiffstore0(j, (String) args[0], (String[]) args[0]);
+				return sdiffstore0(j, (String) args[0], (String[]) args[1]);
 			case SINTER:
-				return sinter0(j, (String) args[0]);
+				return sinter0(j, (String[]) args[0]);
 			case SINTERSTORE:
 				return sinterstore0(j, (String) args[0], (String[]) args[1]);
 			case SISMEMBER:
@@ -2802,6 +2811,8 @@ public class DefaultRedis implements Redis {
 				return zcard0(j, (String) args[0]);
 			case ZCOUNT:
 				return zcount0(j, (String) args[0], (Double) args[1], (Double) args[2]);
+			case ZCOUNT_STRING:
+				return zcount0(j, (String) args[0], (String) args[1], (String) args[2]);
 			case ZINCRBY:
 				return zincrby0(j, (String) args[0], (Double) args[1], (String) args[2]);
 			case ZINTERSTORE:
@@ -2829,7 +2840,7 @@ public class DefaultRedis implements Redis {
 			case ZRANGEBYSCORE_OFFSET_COUNT_STRING:
 				return zrangebyscore_offset_count_string(j, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
 			case ZRANGEBYSCORE_WITHSCORES:
-				return zrangebyscorewithscores0(j, (String) args[0], (Long) args[1], (Long) args[2]);
+				return zrangebyscorewithscores0(j, (String) args[0], (Double) args[1], (Double) args[2]);
 			case ZRANGEBYSCORE_WITHSCORES_STRING:
 				return zrangebyscorewithscores_string(j, (String) args[0], (String) args[1], (String) args[2]);
 			case ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT:

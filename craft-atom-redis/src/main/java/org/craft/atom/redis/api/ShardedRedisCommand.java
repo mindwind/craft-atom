@@ -171,6 +171,7 @@ public interface ShardedRedisCommand {
 	Long zadd(String shardkey, String key, double score, String member);
 	Long zcard(String shardkey, String key);
 	Long zcount(String shardkey, String key, double min, double max);
+	Long zcount(String shardkey, String key, String min, String max);
 	Double zincrby(String shardkey, String key, double score, String member);
 	Long zinterstore(String shardkey, String destination, String... keys);
 	Long zinterstoremax(String shardkey, String destination, String... keys);

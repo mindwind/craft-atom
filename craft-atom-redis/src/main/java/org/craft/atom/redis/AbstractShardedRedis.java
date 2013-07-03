@@ -681,6 +681,11 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	}
 
 	@Override
+	public Long zcount(String shardkey, String key, String min, String max) {
+		return sharded.shard(shardkey).zcount(key, min, max);
+	}
+
+	@Override
 	public Double zincrby(String shardkey, String key, double score, String member) {
 		return sharded.shard(shardkey).zincrby(key, score, member);
 	}

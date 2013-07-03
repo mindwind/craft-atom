@@ -2,8 +2,10 @@ package org.craft.atom.redis;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -116,9 +118,31 @@ public class RedisMain extends TestMain {
 		
 		
 		System.out.println("\n------------------------------------------------------------ Sets\n");
-		
+		sadd_scard();
+		sdiff_store();
+		sinter_store_spop();
+		sismember();
+		smembers();
+		smove();
+		srandmember();
+		srem();
+		sunion_store();
 		
 		System.out.println("\n------------------------------------------------------------ Sorted Sets\n");
+		zadd_zcard();
+		zcount();
+		zincrby_zscore();
+		zrange();
+		zrevrange();
+		zinterstore();
+		zunionstore();
+		zrangebyscore();
+		zrevrangebyscore();
+		zrank();
+		zrevrank();
+		zrem();
+		zremrangebyrank();
+		zremrangebyscore();
 		
 		
 		System.out.println("\n------------------------------------------------------------ Pub/Sub\n");
@@ -131,11 +155,435 @@ public class RedisMain extends TestMain {
 		watch_multi_exec();
 		multi_discard();
 		watch_unwatch_multi_exec();
+		
+		
+		System.out.println("\n------------------------------------------------------------ Scripting\n");
+		
+		
+		System.out.println("\n------------------------------------------------------------ Connection\n");
+		
+		
+		System.out.println("\n------------------------------------------------------------ Server\n");
 	}
 		
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
 	
+	
+	private static void zremrangebyscore() {
+		before("zremrangebyscore");
+		
+		redis.zadd(key, 1, "a");
+		redis.zadd(key, 2, "b");
+		redis.zadd(key, 3, "c");
+		redis.zremrangebyscore(key, 1, 2);
+		Set<String> set = redis.zrange(key, 0, -1);
+		Assert.assertEquals(set.iterator().next(), "c");
+		
+		redis.zadd(key, 1, "a");
+		redis.zadd(key, 2, "b");
+		redis.zremrangebyscore(key, "-inf", "2");
+		set = redis.zrange(key, 0, -1);
+		Assert.assertEquals(set.iterator().next(), "c");
+		
+		after();
+	}
+	
+	private static void zremrangebyrank() {
+		before("zremrangebyrank");
+		
+		redis.zadd(key, 1, "a");
+		redis.zadd(key, 2, "b");
+		redis.zadd(key, 3, "c");
+		redis.zremrangebyrank(key, 0, 1);
+		Set<String> set = redis.zrange(key, 0, -1);
+		Assert.assertEquals(set.iterator().next(), "c");
+		
+		after();
+	}
+	
+	private static void zrem() {
+		before("zrem");
+		
+		redis.zadd(key, 1, "a");
+		redis.zadd(key, 2, "b");
+		redis.zadd(key, 3, "c");
+		redis.zrem(key, "a", "b");
+		Set<String> set = redis.zrange(key, 0, -1);
+		Assert.assertEquals(set.iterator().next(), "c");
+		
+		after();
+	}
+	
+	private static void zrevrank() {
+		before("zrevrank");
+		
+		redis.zadd(key, 1, "a");
+		redis.zadd(key, 2, "b");
+		Long r = redis.zrevrank(key, "b");
+		Assert.assertEquals(0, r.longValue());
+		r = redis.zrank(key, "c");
+		Assert.assertNull(r);
+		
+		after();
+	}
+	
+	private static void zrevrange() {
+		before("zrevrange");
+		
+		redis.zadd(key, 1, "a");
+		redis.zadd(key, 2, "b");
+		Set<String> set = redis.zrevrange(key, 0, -1);
+		Iterator<String> it = set.iterator();
+		Assert.assertTrue(it.next().equals("b"));
+		Assert.assertTrue(it.next().equals("a"));
+		Map<String, Double> map = redis.zrevrangewithscores(key, 0, -1);
+		Iterator<Entry<String, Double>> it2 = map.entrySet().iterator();
+		Assert.assertEquals(it2.next().getValue(), 2.0, 0.0);
+		Assert.assertEquals(it2.next().getValue(), 1.0, 0.0);
+		
+		after();
+	}
+	
+	private static void zrank() {
+		before("zrank");
+		
+		redis.zadd(key, 1, "a");
+		redis.zadd(key, 2, "b");
+		Long r = redis.zrank(key, "b");
+		Assert.assertEquals(1, r.longValue());
+		r = redis.zrank(key, "c");
+		Assert.assertNull(r);
+		
+		after();
+	}
+	
+	private static void zrevrangebyscore() {
+		before("zrevrangebyscore");
+		
+		redis.zadd(key, 1, "a");
+		redis.zadd(key, 2, "b");
+		redis.zadd(key, 3, "c");
+		redis.zadd(key, 4, "d");
+		redis.zadd(key, 5, "e");
+		
+		Set<String> set = redis.zrevrangebyscore(key, 2, 1);
+		Assert.assertTrue(set.contains("a"));
+		Assert.assertTrue(set.contains("b"));
+		set = redis.zrevrangebyscore(key, "2", "-inf");
+		Assert.assertTrue(set.contains("a"));
+		Assert.assertTrue(set.contains("b"));
+		
+		set = redis.zrevrangebyscore(key, 5, 1, 0, 2);
+		Assert.assertTrue(set.contains("d"));
+		Assert.assertTrue(set.contains("e"));
+		set = redis.zrevrangebyscore(key, "5", "-inf", 0, 2);
+		Assert.assertTrue(set.contains("e"));
+		Assert.assertTrue(set.contains("e"));
+		
+		Map<String, Double> map = redis.zrevrangebyscorewithscores(key, 2, 1);
+		Assert.assertTrue(map.get("a") == 1.0);
+		Assert.assertTrue(map.get("b") == 2.0);
+		map = redis.zrevrangebyscorewithscores(key, "2", "-inf");
+		Assert.assertTrue(map.get("a") == 1.0);
+		Assert.assertTrue(map.get("b") == 2.0);
+		map = redis.zrevrangebyscorewithscores(key, 5, 1, 0, 2);
+		Assert.assertTrue(map.get("d") == 4.0);
+		Assert.assertTrue(map.get("e") == 5.0);
+		map = redis.zrevrangebyscorewithscores(key, "5", "-inf", 0, 2);
+		Assert.assertTrue(map.get("d") == 4.0);
+		Assert.assertTrue(map.get("e") == 5.0);
+		
+		after();
+	}
+	
+	private static void zrangebyscore() {
+		before("zrangebyscore");
+		
+		redis.zadd(key, 1, "a");
+		redis.zadd(key, 2, "b");
+		redis.zadd(key, 3, "c");
+		redis.zadd(key, 4, "d");
+		redis.zadd(key, 5, "e");
+		
+		Set<String> set = redis.zrangebyscore(key, 1, 2);
+		Assert.assertTrue(set.contains("a"));
+		Assert.assertTrue(set.contains("b"));
+		set = redis.zrangebyscore(key, "-inf", "2");
+		Assert.assertTrue(set.contains("a"));
+		Assert.assertTrue(set.contains("b"));
+		
+		set = redis.zrangebyscore(key, 1, 5, 0, 2);
+		Assert.assertTrue(set.contains("a"));
+		Assert.assertTrue(set.contains("b"));
+		set = redis.zrangebyscore(key, "-inf", "5", 0, 2);
+		Assert.assertTrue(set.contains("a"));
+		Assert.assertTrue(set.contains("b"));
+		
+		Map<String, Double> map = redis.zrangebyscorewithscores(key, 1, 2);
+		Assert.assertTrue(map.get("a") == 1.0);
+		Assert.assertTrue(map.get("b") == 2.0);
+		map = redis.zrangebyscorewithscores(key, "-inf", "2");
+		Assert.assertTrue(map.get("a") == 1.0);
+		Assert.assertTrue(map.get("b") == 2.0);
+		map = redis.zrangebyscorewithscores(key, 1, 5, 0, 2);
+		Assert.assertTrue(map.get("a") == 1.0);
+		Assert.assertTrue(map.get("b") == 2.0);
+		map = redis.zrangebyscorewithscores(key, "-inf", "5", 0, 2);
+		Assert.assertTrue(map.get("a") == 1.0);
+		Assert.assertTrue(map.get("b") == 2.0);
+		
+		after();
+	}
+	
+	private static void zunionstore() {
+		before("zunionstore");
+		
+		redis.zadd("foo1", 1, "a");
+		redis.zadd("foo1", 1, "b");
+		redis.zadd("foo2", 2, "b");
+		redis.zadd("foo2", 1, "c");
+		Map<String, Integer> wk = new HashMap<String, Integer>();
+		wk.put("foo1", 5);
+		wk.put("foo2", 2);
+		
+		// zunionstore
+		long l = redis.zunionstore(key, "foo1", "foo2");
+		Assert.assertEquals(3, l);
+		Map<String, Double> map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 3.0, 0.0);
+		redis.zunionstore(key, wk);
+		map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 9.0, 0.0);
+		
+		// zunionstoremax
+		l = redis.zunionstoremax(key, "foo1", "foo2");
+		Assert.assertEquals(3, l);
+		map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 2.0, 0.0);
+		redis.zunionstoremax(key, wk);
+		map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 5.0, 0.0);
+		
+		// zunionstoremin
+		l = redis.zunionstoremin(key, "foo1", "foo2");
+		Assert.assertEquals(3, l);
+		map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 1.0, 0.0);
+		redis.zunionstoremin(key, wk);
+		map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 4.0, 0.0);
+		
+		after();
+	}
+	
+	private static void zinterstore() {
+		before("zinterstore");
+		
+		redis.zadd("foo1", 1, "a");
+		redis.zadd("foo1", 1, "b");
+		redis.zadd("foo2", 2, "b");
+		redis.zadd("foo2", 1, "c");
+		Map<String, Integer> wk = new HashMap<String, Integer>();
+		wk.put("foo1", 5);
+		wk.put("foo2", 2);
+		
+		// zinterstore
+		long l = redis.zinterstore(key, "foo1", "foo2");
+		Assert.assertEquals(1, l);
+		Map<String, Double> map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 3.0, 0.0);
+		redis.zinterstore(key, wk);
+		map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 9.0, 0.0);
+		
+		// zinterstoremax
+		l = redis.zinterstoremax(key, "foo1", "foo2");
+		Assert.assertEquals(1, l);
+		map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 2.0, 0.0);
+		redis.zinterstoremax(key, wk);
+		map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 5.0, 0.0);
+		
+		// zinterstoremin
+		l = redis.zinterstoremin(key, "foo1", "foo2");
+		Assert.assertEquals(1, l);
+		map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 1.0, 0.0);
+		redis.zinterstoremin(key, wk);
+		map = redis.zrangewithscores(key, 0, -1);
+		Assert.assertEquals(map.get("b"), 4.0, 0.0);
+		
+		after();
+	}
+	
+	private static void zrange() {
+		before("zrange");
+		
+		redis.zadd(key, 1, "a");
+		redis.zadd(key, 2, "b");
+		Set<String> set = redis.zrange(key, 0, -1);
+		Iterator<String> it = set.iterator();
+		Assert.assertTrue(it.next().equals("a"));
+		Assert.assertTrue(it.next().equals("b"));
+		Map<String, Double> map = redis.zrangewithscores(key, 0, -1);
+		Iterator<Entry<String, Double>> it2 = map.entrySet().iterator();
+		Assert.assertEquals(it2.next().getValue(), 1.0, 0.0);
+		Assert.assertEquals(it2.next().getValue(), 2.0, 0.0);
+		
+		after();
+	}
+	
+	private static void zincrby_zscore() {
+		before("zincrby_zscore");
+		
+		redis.zadd(key, 1, value);
+		double score = redis.zincrby(key, 10.5, value);
+		Assert.assertEquals(11.5, score, 0.0);
+		score = redis.zscore(key, value);
+		Assert.assertEquals(11.5, score, 0.0);
+		
+		after();
+	}
+	
+	private static void zcount() {
+		before("zcount");
+		
+		redis.zadd(key, 10, "a");
+		redis.zadd(key, 20, "b");
+		redis.zadd(key, 30, "c");
+		long c = redis.zcount(key, 20, 30);
+		Assert.assertEquals(2, c);
+		c = redis.zcount(key, "20", "inf");
+		Assert.assertEquals(2, c);
+		
+		after();
+	}
+	
+	private static void zadd_zcard() {
+		before("zadd_zcard");
+		
+		redis.zadd(key, 50, value);
+		long r = redis.zcard(key);
+		Assert.assertEquals(1, r);
+		
+		after();
+	}
+	
+	private static void sunion_store() {
+		before("sunion_store");
+		
+		redis.sadd("foo1", "a", "c");
+		redis.sadd("foo2", "c", "d", "e");
+		Set<String> u = redis.sunion("foo1", "foo2");
+		Assert.assertEquals(4, u.size());
+		
+		long len = redis.sunionstore(key, "foo1", "foo2");
+		Assert.assertEquals(4, len);
+		
+		after();
+	}
+	
+	private static void srem() {
+		before("srem");
+		
+		redis.sadd(key, "a", "b");
+		long r = redis.srem(key, "a", "c");
+		Assert.assertEquals(1, r);
+		Assert.assertFalse(redis.sismember(key, "a"));
+		
+		after();
+	}
+	
+	private static void srandmember() {
+		before("srandmember");
+		
+		redis.sadd(key, value);
+		String v = redis.srandmember(key);
+		Assert.assertEquals(value, v);
+		List<String> l = redis.srandmember(key, 5);
+		Assert.assertEquals(1, l.size());
+		redis.sadd(key, "a");
+		l = redis.srandmember(key, 5);
+		Assert.assertEquals(2, l.size());
+		
+		after();
+	}
+	
+	private static void smove() {
+		before("smove");
+		
+		redis.sadd(key, "a");
+		redis.sadd(key, "b");
+		redis.smove(key, "foo1", "a");
+		Assert.assertFalse(redis.sismember(key, "a"));
+		Assert.assertTrue(redis.sismember("foo1", "a"));
+		
+		after();
+	}
+	
+	private static void smembers() {
+		before("smembers");
+		
+		redis.sadd(key, value);
+		Set<String> set = redis.smembers(key);
+		Assert.assertEquals(value, set.iterator().next());
+		
+		after();
+	}
+	
+	private static void sismember() {
+		before("sismember");
+		
+		redis.sadd(key, value);
+		boolean b = redis.sismember(key, value);
+		Assert.assertTrue(b);
+		
+		after();
+	}
+	
+	private static void sinter_store_spop() {
+		before("sinter_store_spop");
+		
+		redis.sadd("foo1", "a", "b", "c");
+		redis.sadd("foo2", "c", "d", "e");
+		Set<String> set = redis.sinter("foo1", "foo2");
+		Assert.assertEquals("c", set.iterator().next());
+		
+		long len = redis.sinterstore(key, "foo1", "foo2");
+		Assert.assertEquals(1, len);
+		String v = redis.spop(key);
+		Assert.assertEquals("c", v);
+		
+		after();
+	}
+	
+	private static void sdiff_store() {
+		before("sdiff_store");
+		
+		redis.sadd("foo1", "a", "c");
+		redis.sadd("foo2", "c", "d", "e");
+		Set<String> diff = redis.sdiff("foo1", "foo2");
+		Assert.assertEquals(1, diff.size());
+		Assert.assertEquals("a", diff.iterator().next());
+		
+		long len = redis.sdiffstore(key, "foo1", "foo2");
+		Assert.assertEquals(1, len);
+		
+		after();
+	}
+	
+	private static void sadd_scard() {
+		before("sadd_scard");
+		
+		long c = redis.sadd(key, "a", "b", "c");
+		Assert.assertEquals(3, c);
+		c = redis.sadd(key, "a", "b", "c");
+		Assert.assertEquals(0, c);
+		c = redis.scard(key);
+		Assert.assertEquals(3, c);
+	}
 	
 	private static void ltrim() {
 		before("ltrim");
@@ -237,7 +685,7 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void brpop_timeout() {
+	private static void brpop_timeout() throws InterruptedException {
 		before("blpop_timeout");
 		
 		Map<String, String> map = redis.brpop(1, key);
@@ -253,6 +701,7 @@ public class RedisMain extends TestMain {
 		});
 		t.start();
 		redis.rpush("foo1", "bar1");
+		t.join();
 		
 		after();
 	}

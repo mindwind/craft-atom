@@ -791,6 +791,11 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 
 	@Override
+	public Long zcount(String key, String min, String max) {
+		return master().zcount(key, min, max);
+	}
+
+	@Override
 	public Double zincrby(String key, double score, String member) {
 		return master().zincrby(key, score, member);
 	}
