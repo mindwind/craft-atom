@@ -42,7 +42,8 @@ public class RedisMain extends TestMain {
 	private static void init() {
 		redis = RedisFactory.newRedis(HOST, PORT);
 		redis2 = RedisFactory.newRedis(HOST, PORT2);
-		after();
+		redis.flushall();
+		redis2.flushall();
 	}
 	
 	protected static void after() {
@@ -167,6 +168,11 @@ public class RedisMain extends TestMain {
 		
 		
 		System.out.println("\n------------------------------------------------------------ Connection\n");
+		auth();
+		echo();
+		ping();
+		quit();
+		select();
 		
 		
 		System.out.println("\n------------------------------------------------------------ Server\n");
@@ -174,6 +180,64 @@ public class RedisMain extends TestMain {
 		
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
+	
+	
+	private static void select() {
+		before("select");
+		
+		redis.set(key, value);
+		redis.select(1);
+		Assert.assertNull(redis.get(key));
+		redis.select(0);
+		Assert.assertEquals(value, redis.get(key));
+		
+		after();
+	}
+	
+	private static void quit() {
+		before("quit");
+		
+		redis.quit();
+		try {
+			redis.set(key, value);
+		} catch (Exception e) {
+			System.out.println("	" + e.getMessage());
+			Assert.assertTrue(true);
+		}
+		
+		redis = RedisFactory.newRedis(HOST, PORT);
+	}
+	
+	private static void ping() {
+		before("ping");
+		
+		String pong = redis.ping();
+		Assert.assertEquals("PONG", pong);
+		
+		after();
+	}
+	
+	private static void echo() {
+		before("echo");
+		
+		String hi = redis.echo("hi");
+		Assert.assertEquals("hi", hi);
+		
+		after();
+	}
+	
+	private static void auth() {
+		before("auth");
+		
+		redis.configset("requirepass", "foobared");
+		redis.auth("foobared");
+		redis.set(key, value);
+		boolean b = redis.exists(key);
+		Assert.assertTrue(b);
+		redis.configset("requirepass", "");
+		
+		after();
+	}
 	
 	private static void scriptkill() {
 		before("scriptkill");
@@ -830,14 +894,13 @@ public class RedisMain extends TestMain {
 		after();
 	}
 	
-	private static void blpop_timeout_rpush() {
+	private static void blpop_timeout_rpush() throws InterruptedException {
 		before("blpop_timeout_rpush");
 		
 		Map<String, String> map = redis.blpop(1, key);
 		Assert.assertEquals(0, map.size());
 		
 		Thread t = new Thread(new Runnable() {
-			
 			@Override
 			public void run() {
 				Map<String, String> hash = redis.blpop(5, "foo", "foo1");
@@ -847,6 +910,7 @@ public class RedisMain extends TestMain {
 		t.start();
 		long len = redis.rpush("foo1", "bar1");
 		Assert.assertEquals(1, len);
+		t.join();
 		
 		after();
 	}

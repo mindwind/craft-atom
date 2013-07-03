@@ -2192,11 +2192,12 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public String auth(String password) {
-		return (String) executeCommand(CommandEnum.AUTH, password);
+		return auth0(password);
 	}
 	
 	private String auth0(String password) {
 		pool.destroy();
+		unbind();
 		this.password = password;
 		pool = new JedisPool(poolConfig, host, port, timeout, password, database);
 		return OK;
@@ -2222,7 +2223,7 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public String quit() {
-		return (String) executeCommand(CommandEnum.QUIT);
+		return quit0();
 	}
 	
 	private String quit0() {
@@ -2232,7 +2233,7 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public String select(int index) {
-		return (String) executeCommand(CommandEnum.SELECT, index);
+		return select0(index);
 	}
 	
 	private String select0(int index) {
@@ -2929,16 +2930,10 @@ public class DefaultRedis implements Redis {
 				return scriptload0(j, (String) args[0]);
 				
 			// Connection
-			case AUTH:
-				return auth0((String) args[0]);
 			case ECHO:
 				return echo0(j, (String) args[0]);
 			case PING:
 				return ping0(j);
-			case QUIT:
-				return quit0();
-			case SELECT:
-				return select0((Integer) args[0]);
 				
 			// Server
 			case BGREWRITEAOF:
@@ -3015,7 +3010,7 @@ public class DefaultRedis implements Redis {
 			if (j != null) {
 				pool.returnBrokenResource(j);
 			}
-			return new RedisConnectionException(String.format("Connect to redis server<host=%s, port=%s]> failed.", host, port), e);
+			return new RedisConnectionException(String.format("Connect to redis server<host=%s, port=%s> failed.", host, port), e);
 		}
 		
 		if (e instanceof JedisDataException) {
