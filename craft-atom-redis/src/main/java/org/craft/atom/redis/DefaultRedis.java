@@ -2179,7 +2179,7 @@ public class DefaultRedis implements Redis {
 	
 	@Override
 	public String scriptload(String script) {
-		return (String) executeCommand(CommandEnum.SCRIPT_LOAD);
+		return (String) executeCommand(CommandEnum.SCRIPT_LOAD, script);
 	}
 	
 	private String scriptload0(Jedis j, String script) {
@@ -2920,7 +2920,7 @@ public class DefaultRedis implements Redis {
 			case EVALSHA:
 				return evalsha0(j, (String) args[0], (List<String>) args[1], (List<String>) args[2]);
 			case SCRIPT_EXISTS:
-				return scriptexists0(j, (String) args[0]);
+				return scriptexists0(j, (String[]) args[0]);
 			case SCRIPT_FLUSH:
 				return scriptflush0(j);
 			case SCRIPT_KILL:
@@ -3008,18 +3008,18 @@ public class DefaultRedis implements Redis {
 		}
 	}
 	
-	RedisException handleException(Exception e, Jedis j) {
+	RedisException handleException(Exception e, Jedis j, Object... args) {
 		unbind();
 		
 		if (e instanceof JedisConnectionException) {
 			if (j != null) {
 				pool.returnBrokenResource(j);
 			}
-			return new RedisConnectionException(String.format("Connect to redis server[host=%s, port=%s] failed.", host, port), e);
+			return new RedisConnectionException(String.format("Connect to redis server<host=%s, port=%s]> failed.", host, port), e);
 		}
 		
 		if (e instanceof JedisDataException) {
-			return new RedisDataException(e);
+			return new RedisDataException(String.format("Redis data <args=%s> process failed.", Arrays.toString(args)), e);
 		}
 		
 		return new RedisException(e);

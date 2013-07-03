@@ -1,5 +1,6 @@
 package org.craft.atom.redis;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,6 +35,7 @@ public class RedisMain extends TestMain {
 	private static final String key = "foo";
 	private static final String field = "1";
 	private static final String value = "bar";
+	private static final String script = "return redis.call('set','foo','bar')";
 	private static Redis redis;
 	private static Redis redis2;
 	
@@ -158,6 +160,10 @@ public class RedisMain extends TestMain {
 		
 		
 		System.out.println("\n------------------------------------------------------------ Scripting\n");
+		eval();
+		evalsha_scriptload();
+		script_exists_flush();
+		scriptkill();
 		
 		
 		System.out.println("\n------------------------------------------------------------ Connection\n");
@@ -169,6 +175,80 @@ public class RedisMain extends TestMain {
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
 	
+	private static void scriptkill() {
+		before("scriptkill");
+		
+		try {
+			redis.scriptkill();
+		} catch (RedisDataException e) {
+			System.out.println("	" + e.getMessage());
+			Assert.assertTrue(true);
+		}
+		
+		after();
+	}
+	
+	private static void script_exists_flush() {
+		before("script_exists_flush");
+		
+		String sha1 = redis.scriptload(script);
+		boolean b = redis.scriptexists(sha1);
+		Assert.assertTrue(b);
+		redis.scriptflush();
+		b = redis.scriptexists(sha1);
+		Assert.assertFalse(b);
+		
+		after();
+	}
+	
+	private static void evalsha_scriptload() {
+		before("evalsha_scriptload");
+		
+		String sha1 = redis.scriptload(script);
+		redis.evalsha(sha1);
+		String v = redis.get(key);
+		Assert.assertEquals(value, v);
+		
+		redis.flushall();
+		List<String> keys = new ArrayList<String>();
+		keys.add("foo");
+		sha1 = redis.scriptload("return redis.call('set',KEYS[1],'bar')");
+		redis.evalsha(sha1, keys);
+		
+		redis.flushall();
+		sha1 = redis.scriptload("return redis.call('set',KEYS[1],ARGV[1])");
+		List<String> args = new ArrayList<String>();
+		args.add("bar");
+		redis.evalsha(sha1, keys, args);
+		v = redis.get(key);
+		Assert.assertEquals(value, v);
+		
+		after();
+	}
+	
+	private static void eval() {
+		before("eval");
+		
+		redis.eval(script);
+		String v = redis.get(key);
+		Assert.assertEquals(value, v);
+		
+		redis.flushall();
+		List<String> keys = new ArrayList<String>();
+		keys.add("foo");
+		redis.eval("return redis.call('set',KEYS[1],'bar')", keys);
+		v = redis.get(key);
+		Assert.assertEquals(value, v);
+		
+		redis.flushall();
+		List<String> args = new ArrayList<String>();
+		args.add("bar");
+		redis.eval("return redis.call('set',KEYS[1],ARGV[1])", keys, args);
+		v = redis.get(key);
+		Assert.assertEquals(value, v);
+		
+		after();
+	}
 	
 	private static void zremrangebyscore() {
 		before("zremrangebyscore");
