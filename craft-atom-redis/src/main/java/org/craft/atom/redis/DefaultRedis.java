@@ -2495,7 +2495,7 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public List<Slowlog> slowlogget(long len) {
-		return (List<Slowlog>) executeCommand(CommandEnum.SLOWLOG_GET_LEN);
+		return (List<Slowlog>) executeCommand(CommandEnum.SLOWLOG_GET_LEN, len);
 	}
 	
 	private List<Slowlog> slowlogget0(Jedis j, long len) {
@@ -2983,7 +2983,7 @@ public class DefaultRedis implements Redis {
 			case SLOWLOG_GET:
 				return slowlogget0(j);
 			case SLOWLOG_GET_LEN:
-				return slowlogget0(j, (Integer) args[0]);
+				return slowlogget0(j, (Long) args[0]);
 			case SLOWLOG_RESET:
 				return slowlogreset0(j);
 			case SYNC:
@@ -2996,7 +2996,7 @@ public class DefaultRedis implements Redis {
 				throw new IllegalArgumentException("Wrong command");
 			}
 		} catch (Exception e) {
-			RedisException re = handleException(e, j);
+			RedisException re = handleException(e, j, args);
 			throw re;
 		} finally {
 			release(j);

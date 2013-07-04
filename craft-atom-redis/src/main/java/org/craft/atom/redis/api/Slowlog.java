@@ -17,17 +17,17 @@ public class Slowlog {
 	private final long timestamp;
 
 	/** The amount of time needed for its execution, in microseconds. */
-	private final long executionTime;
+	private final long elapse;
 
-	/** The array composing the arguments of the command. */
-	private final List<String> commandWithArguments;
+	/** The command with arguments. */
+	private final List<String> command;
 
-	public Slowlog(long id, long timestamp, long executionTime, List<String> commandWithArguments) {
+	public Slowlog(long id, long timestamp, long elapse, List<String> command) {
 		super();
 		this.id = id;
 		this.timestamp = timestamp;
-		this.executionTime = executionTime;
-		this.commandWithArguments = commandWithArguments;
+		this.elapse = elapse;
+		this.command = command;
 	}
 
 	public long getId() {
@@ -38,19 +38,23 @@ public class Slowlog {
 		return timestamp;
 	}
 
-	public long getExecutionTime() {
-		return executionTime;
+	public long getElapse() {
+		return elapse;
 	}
 
-	public List<String> getCommandWithArguments() {
-		return commandWithArguments;
+	public List<String> getCommand() {
+		return command;
 	}
 
 	@Override
 	public String toString() {
-		return String
-				.format("Slowlog [id=%s, timestamp=%s, executionTime=%s, commandWithArguments=%s]",
-						id, timestamp, executionTime, commandWithArguments);
+		StringBuilder buf = new StringBuilder();
+		buf.append("{")
+		   .append("class: ").append(getClass().getName()).append(", ")
+		   .append("elapse: ").append(elapse).append(", ")
+		   .append("command: ").append(command)
+		   .append("}");
+		return buf.toString();
 	}
 
 }

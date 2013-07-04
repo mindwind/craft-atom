@@ -2533,7 +2533,7 @@ public interface RedisCommand {
 	 * Since Redis 2.4 the AOF rewrite is automatically triggered by Redis, however the BGREWRITEAOF command can be used to trigger a rewrite at any time.<br>
 	 * Please refer to the persistence documentation for detailed information.<br>
 	 * 
-	 * @return always OK.
+	 * @return Status code reply, e.g. Background append only file rewriting started
 	 */
 	String bgrewriteaof();
 	
@@ -2548,7 +2548,7 @@ public interface RedisCommand {
 	 * A client my be able to check if the operation succeeded using the LASTSAVE command.<br>
 	 * Please refer to the persistence documentation for detailed information.<br>
 	 * 
-	 * @return Status code reply, e.g. OK
+	 * @return Status code reply, e.g. Background saving started
 	 */
 	String bgsave();
 	

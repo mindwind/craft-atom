@@ -20,6 +20,7 @@ import org.craft.atom.redis.api.RedisException;
 import org.craft.atom.redis.api.RedisFactory;
 import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
+import org.craft.atom.redis.api.Slowlog;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
@@ -176,11 +177,223 @@ public class RedisMain extends TestMain {
 		
 		
 		System.out.println("\n------------------------------------------------------------ Server\n");
+		bgrewriteaof();
+		clientgetname_clientsetname();
+		clientkill();
+		clientlist();
+		configget_configset();
+		configresetstat();
+		dbsize();
+		debugobject();
+		flush_db_all();
+		info();
+		lastsave();
+		save();
+		slaveof();
+		slowlog();
+		time();
+		bgsave();
+		sync();
+		shutdown();
+		
 	}
 		
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
 	
+	private static void shutdown() {
+		before("shutdown");
+		redis.shutdown(true);
+		Assert.assertTrue(true);
+	}
+	
+	private static void time() {
+		before("time");
+		
+		long r = redis.time();
+		long c = System.currentTimeMillis();
+		Assert.assertTrue(r - c < 1000);
+		System.out.println("	" + (r - c));
+		
+		r = redis.microtime();
+		c = System.nanoTime();
+		Assert.assertTrue(r * 1000 - c < 1000000);
+		System.out.println("	" + (c - r * 1000));
+		
+		after();
+	}
+	
+	private static void sync() {
+		before("sync");
+		
+		redis.sync();
+		Assert.assertTrue(true);
+		
+		after();
+	}
+	
+	private static void slowlog() {
+		before("slowlog");
+		
+		List<Slowlog> logs = redis.slowlogget();
+		for (Slowlog log : logs) {
+			System.out.println("    " + log);
+		}
+		logs = redis.slowlogget(1);
+		redis.slowlogreset();
+		long len = redis.slowloglen();
+		Assert.assertEquals(0, len);
+		
+		after();
+	}
+	
+	private static void slaveof() {
+		before("slaveof");
+		
+		String r = redis.slaveof(HOST, PORT2);
+		Assert.assertEquals("OK", r);
+		r = redis.slaveofnoone();
+		Assert.assertEquals("OK", r);
+		
+		after();
+	}
+	
+	private static void save() {
+		before("save");
+		
+		String r = redis.save();
+		Assert.assertEquals("OK", r);
+		
+		after();
+	}
+	
+	private static void lastsave() {
+		before("lastsave");
+		
+		long r = redis.lastsave();
+		Assert.assertTrue(r > 0);
+		
+		after();
+	}
+	
+	private static void info() {
+		before("info");
+		
+		String r = redis.info();
+		Assert.assertNotNull(r);
+		r = redis.info("all");
+		Assert.assertNotNull(r);
+		
+		after();
+	}
+	
+	private static void flush_db_all() {
+		before("flush_db_all");
+		
+		redis.set(key, value);
+		redis.flushdb();
+		Assert.assertEquals(0L, redis.dbsize().longValue());
+		redis.set(key, value);
+		redis.flushall();
+		Assert.assertEquals(0L, redis.dbsize().longValue());
+		
+		after();
+	}
+	
+	private static void debugobject() {
+		before("debugobject");
+		
+		redis.set(key, value);
+		String r = redis.debugobject(key);
+		Assert.assertNotNull(r);
+		
+		after();
+	}
+	
+	private static void dbsize() {
+		before("dbsize");
+		
+		redis.flushall();
+		redis.set(key, value);
+		long size = redis.dbsize();
+		Assert.assertEquals(1, size);
+		
+		after();
+	}
+	
+	private static void configresetstat() {
+		before("configresetstat");
+		
+		String r = redis.configresetstat();
+		Assert.assertEquals("OK", r);
+		
+		after();
+	}
+	
+	private static void configget_configset() {
+		before("configget_configset");
+		
+		redis.configset("timeout", "3000");
+		String timeout = redis.configget("*").get("timeout");
+		Assert.assertEquals("3000", timeout);
+		
+		after();
+	}
+	
+	private static void clientlist() {
+		before("clientkill");
+		
+		List<String> l = redis.clientlist();
+		for (String c : l) {
+			System.out.println("	" + c);
+		}
+		Assert.assertTrue(l.size() > 0);
+	}
+	
+	private static void clientkill() {
+		before("clientkill");
+		
+		try {
+			redis.clientkill(HOST, PORT);
+		} catch (RedisException e) {
+			System.out.println("	" + e.getMessage());
+			Assert.assertTrue(true);
+		}
+		
+		after();
+	}
+	
+	private static void clientgetname_clientsetname() {
+		before("clientgetname_clientsetname");
+		
+		Redis redis = RedisFactory.newRedis(HOST, PORT, 2000, 1);
+		redis.clientsetname("foobar");
+		String name = redis.clientgetname();
+		Assert.assertEquals("foobar", name);
+		
+		after();
+	}
+	
+	private static void bgsave() {
+		before("bgsave");
+		
+		try {
+			redis.bgsave();
+		} catch(Exception e) {
+			
+		}
+		
+		after();
+	}
+	
+	private static void bgrewriteaof() {
+		before("bgrewriteaof");
+		
+		String r = redis.bgrewriteaof();
+		Assert.assertNotNull(r);
+		
+		after();
+	}
 	
 	private static void select() {
 		before("select");
