@@ -28,7 +28,7 @@ import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
  * @author mindwind
  * @version 1.0, Jun 19, 2013
  */
-public class RedisMain extends TestMain {
+public class RedisMain extends AbstractMain {
 	
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT = 6379;
@@ -1962,7 +1962,7 @@ public class RedisMain extends TestMain {
 	}
 	
 	private static void del() {
-		before("del_set");
+		before("del");
 		
 		redis.set(key, value);
 		redis.del(key);

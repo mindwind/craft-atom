@@ -18,7 +18,7 @@ import redis.clients.jedis.ShardedJedisPool;
  * @author mindwind
  * @version 1.0, Jun 28, 2013
  */
-public class ShardedRedisMain extends TestMain {
+public class ShardedRedisMain extends AbstractMain {
 	
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT0 = 6379;

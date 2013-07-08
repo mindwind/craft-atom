@@ -13,7 +13,7 @@ import org.craft.atom.redis.api.RedisFactory;
  * @author mindwind
  * @version 1.0, Jun 28, 2013
  */
-public class MasterSlaveRedisMain extends TestMain {
+public class MasterSlaveRedisMain extends AbstractMain {
 	
 	private static final String HOST = "127.0.0.1";
 	private static final int PORT0 = 6379;

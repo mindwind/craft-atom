@@ -60,7 +60,7 @@ public interface RedisTransaction {
 	void sort(String key, boolean alpha, boolean desc, String destination);
 	void sort(String key, int offset, int count, String destination);
 	void sort(String key, int offset, int count, boolean alpha, boolean desc, String destination);
-	void sort(String key, String bypattern, String destination);
+	void sort(String key, String bypattern, String destination, String... getpatterns);
 	void sort(String key, String bypattern, boolean desc, String destination, String... getpatterns);
 	void sort(String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns);
 	void sort(String key, String bypattern, int offset, int count, String destination, String... getpatterns);

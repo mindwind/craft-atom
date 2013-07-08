@@ -56,17 +56,19 @@ public class DefaultRedisTransaction implements RedisTransaction {
 			if (o instanceof Set<?>) {
 				Set<?> set = (Set<?>) o;
 				Map<String, Double> map = null;
-				for (Object e : r) {
+				for (Object e : set) {
 					if (e instanceof Tuple) {
 						Tuple tuple = (Tuple) e;
 						if (map == null) {
 							map = new LinkedHashMap<String, Double>(set.size());
 						}
 						map.put(tuple.getElement(), tuple.getScore());
-					}
+					} 
 				}
 				if (map != null) {
 					r.add(map);
+				} else {
+					r.add(o);
 				}
 			} else {
 				r.add(o);
@@ -190,7 +192,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 
 	@Override
 	public void pexpire(String key, int milliseconds) {
-		executeCommand(CommandEnum.PEXPIRE, new Object[] { key });
+		executeCommand(CommandEnum.PEXPIRE, new Object[] { key, milliseconds });
 	}
 	
 	private void pexpire0(String key, int milliseconds) {
@@ -220,7 +222,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		executeCommand(CommandEnum.RANDOMKEY, new Object[] {});
 	}
 	
-	private void randomkey0(Jedis j) {
+	private void randomkey0() {
 		t.randomKey();
 	}
 
@@ -467,13 +469,14 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 
 	@Override
-	public void sort(String key, String bypattern, String destination) {
-		executeCommand(CommandEnum.SORT_BY_DESTINATION_GET, new Object[] { key, bypattern, destination });
+	public void sort(String key, String bypattern, String destination, String... getpatterns) {
+		executeCommand(CommandEnum.SORT_BY_DESTINATION_GET, new Object[] { key, bypattern, destination, getpatterns });
 	}
 	
-	private void sort_by_destination(String key, String bypattern, String destination) {
+	private void sort_by_destination_get(String key, String bypattern, String destination, String... getpatterns) {
 		SortingParams sp = new SortingParams();
 		sp.by(bypattern);
+		sp.get(getpatterns);
 		
 		t.sort(key, sp, destination);
 	}
@@ -1779,7 +1782,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 			case PTTL: 
 				pttl0((String) args[0]); break;
 			case RANDOMKEY:
-				randomkey0(j); break;
+				randomkey0(); break;
 			case RENAME:
 				rename0((String) args[0], (String) args[1]); break;
 			case RENAMENX:
@@ -1817,7 +1820,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 			case SORT_OFFSET_COUNT_ALPHA_DESC_DESTINATION:
 				sort_offset_count_alpha_desc_destination((String) args[0], (Integer) args[1], (Integer) args[2], (Boolean) args[3], (Boolean) args[4], (String) args[5]); break;
 			case SORT_BY_DESTINATION_GET:
-				sort_by_destination((String) args[0], (String) args[1], (String) args[2]); break;
+				sort_by_destination_get((String) args[0], (String) args[1], (String) args[2], (String[]) args[3]); break;
 			case SORT_BY_DESC_DESTINATION_GET:
 				sort_by_desc_destination_get((String) args[0], (String) args[1], (Boolean) args[2], (String) args[3], (String[]) args[4]); break;
 			case SORT_BY_ALPHA_DESC_DESTINATION_GET:
