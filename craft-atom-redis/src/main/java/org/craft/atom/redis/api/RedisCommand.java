@@ -596,10 +596,12 @@ public interface RedisCommand {
 	 * Non-existent keys are treated as empty strings, so the command will return zero.
 	 * 
 	 * @param key
+	 * @param start inclusive
+	 * @param end   inclusive
 	 * @return The number of bits set to 1.
 	 */
-	Long bitcount(String key);
 	Long bitcount(String key, long start, long end);
+	Long bitcount(String key);
 	
 	/**
 	 * Available since 2.6.0<br>
@@ -795,7 +797,7 @@ public interface RedisCommand {
 	 * the special value null is returned. Because of this, the operation never fails.<br>
 	 * 
 	 * @param keys
-	 * @return
+	 * @return 
 	 */
 	List<String> mget(String... keys);
 	
@@ -811,7 +813,7 @@ public interface RedisCommand {
 	 * It is not possible for clients to see that some of the keys were updated while others are unchanged.
 	 * 
 	 * @param keysvalues
-	 * @return
+	 * @return always OK.
 	 */
 	String mset(String... keysvalues);
 	
@@ -974,7 +976,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @param offset
 	 * @param value
-	 * @return
+	 * @return Integer reply: the length of the string after it was modified by the command.
 	 */
 	Long setrange(String key, long offset, String value);
 	

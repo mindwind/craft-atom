@@ -74,6 +74,7 @@ public interface RedisTransaction {
 	
 	void append(String key, String value);
 	void bitcount(String key);
+	void bitcount(String key, long start, long end);
 	void bitnot(String destkey, String key);
 	void bitand(String destkey, String... keys);
 	void bitor(String destkey, String... keys);

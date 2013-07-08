@@ -591,6 +591,15 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 
 	@Override
+	public void bitcount(String key, long start, long end) {
+		executeCommand(CommandEnum.BITCOUNT_START_END, key, start, end);
+	}
+
+	public void bitcount0(String key, long start, long end) {
+		t.bitcount(key, start, end);
+	}
+
+	@Override
 	public void bitnot(String destkey, String key) {
 		executeCommand(CommandEnum.BITNOT, destkey, key);
 	}
@@ -737,7 +746,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 
 	@Override
 	public void psetex(String key, int milliseconds, String value) {
-		executeCommand(CommandEnum.PSETEX, milliseconds, value);
+		executeCommand(CommandEnum.PSETEX, key, milliseconds, value);
 	}
 	
 	private void psetex0(String key, int milliseconds, String value) {
@@ -1839,6 +1848,8 @@ public class DefaultRedisTransaction implements RedisTransaction {
 				append0((String) args[0], (String) args[1]); break;
 			case BITCOUNT:
 				bitcount0((String) args[0]); break;
+			case BITCOUNT_START_END:
+				bitcount0((String) args[0], (Long) args[1], (Long) args[2]); break;
 			case BITNOT:
 				bitnot0((String) args[0], (String) args[1]); break;
 			case BITAND:

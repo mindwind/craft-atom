@@ -40,6 +40,89 @@ public class TransactoinMain extends AbstractMain {
 		init();
 		
 		keys();
+		strings();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static void strings() {
+		before("strings");
+		
+		String key1 = "foo1";
+		String key2 = "foo2";
+		redis.set(key1, "foobar");
+		redis.set(key2, "abcdef");
+		redis.set("setrange", "hello world");
+		redis.set("setxx", "hello world");
+		
+		RedisTransaction t = redis.multi();
+		t.append("append", value);
+		t.bitcount(key1);           
+		t.bitcount(key1, 1, 1);    
+		t.bitnot("bitnot", key1);
+		t.bitand("bitand", key1, key2);
+		t.bitor("bitor", key1, key2);
+		t.bitxor("bitxor", key1, key2);
+		t.decr(key);
+		t.decrby(key, 5);
+		t.setbit("mykey", 7, true);
+		t.getbit("mykey", 7);
+		t.getrange(key1, 3, 10);
+		t.getset(key2, "foobar2");
+		t.incr(key);
+		t.incrby(key, 10);
+		t.incrbyfloat(key, 0.5);
+		t.msetnx("msetnx1", "abc", "msetnx2", "123");
+		t.mset("mset1", "abc", "mset2", "123");
+		t.mget("mset1", "mset2");
+		t.psetex("psetex", 10000, "123");
+		t.set("set", "123");
+		t.get("set");
+		t.setex("setex", 10, "123");
+		t.setnx("setnx", "123");
+		t.setnxex("setnxex", "123", 100);
+		t.setnxpx("setnxpx", "123", 10000);
+		t.setxx("setxx", "123");
+		t.setxxex("setxx", "123", 1000);
+		t.setxxpx("setxx", "123", 10000);
+		t.setrange("setrange", 6, "redis");
+		t.strlen(key1);
+		List<Object> l = redis.exec(t);
+		
+		System.out.println("	" + l);
+		Assert.assertEquals(31, l.size());
+		Assert.assertEquals(new Long(3), l.get(0));
+		Assert.assertEquals(new Long(26), l.get(1));
+		Assert.assertEquals(new Long(6), l.get(2));
+		Assert.assertEquals(new Long(6), l.get(3));
+		Assert.assertEquals(new Long(6), l.get(4));
+		Assert.assertEquals(new Long(6), l.get(5));
+		Assert.assertEquals(new Long(6), l.get(6));
+		Assert.assertEquals(new Long(-1), l.get(7));
+		Assert.assertEquals(new Long(-6), l.get(8));
+		Assert.assertFalse((Boolean) l.get(9));
+		Assert.assertTrue((Boolean) l.get(10));
+		Assert.assertEquals("bar", l.get(11));
+		Assert.assertEquals("abcdef", l.get(12));
+		Assert.assertEquals(new Long(-5), l.get(13));
+		Assert.assertEquals(new Long(5), l.get(14));
+		Assert.assertEquals(new Double(5.5), l.get(15));
+		Assert.assertEquals(new Long(1), l.get(16));
+		Assert.assertEquals("OK", l.get(17));
+		Assert.assertEquals("abc", ((List<String>) l.get(18)).iterator().next());
+		Assert.assertEquals("OK", l.get(19));
+		Assert.assertEquals("OK", l.get(20));
+		Assert.assertEquals("123", l.get(21));
+		Assert.assertEquals("OK", l.get(22));
+		Assert.assertEquals(new Long(1), l.get(23));
+		Assert.assertEquals("OK", l.get(24));
+		Assert.assertEquals("OK", l.get(25));
+		Assert.assertEquals("OK", l.get(26));
+		Assert.assertEquals("OK", l.get(27));
+		Assert.assertEquals("OK", l.get(28));
+		Assert.assertEquals(new Long(11), l.get(29));
+		Assert.assertEquals(new Long(6), l.get(30));
+		
+		after();
 	}
 	
 	@SuppressWarnings("unchecked")
