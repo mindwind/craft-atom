@@ -925,7 +925,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		executeCommand(CommandEnum.HLEN, key);
 	}
 	
-	private void hlen0(String key, String field) {
+	private void hlen0(String key) {
 		t.hlen(key);
 	}
 
@@ -940,7 +940,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 
 	@Override
 	public void hmset(String key, Map<String, String> fieldvalues) {
-		executeCommand(CommandEnum.HMSET, fieldvalues);
+		executeCommand(CommandEnum.HMSET, key, fieldvalues);
 	}
 	
 	private void hmset0(String key, Map<String, String> fieldvalues) {
@@ -978,17 +978,6 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
 	
 	
-
-	@Override
-	public void blpop(String key) {
-		blpop(key, 0);
-	}
-
-	@Override
-	public void blpop(String key, int timeout) {
-		blpop(0, key);
-	}
-	
 	@Override
 	public void blpop(String... keys) {
 		blpop(0, keys);
@@ -996,21 +985,11 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	
 	@Override
 	public void blpop(int timeout, String... keys) {
-		executeCommand(CommandEnum.BLPOP, timeout, new Object[] { keys });
+		executeCommand(CommandEnum.BLPOP, timeout, keys);
 	}
 	
 	private void blpop0(int timeout, String... keys) {
 		t.blpopMap(timeout, keys);
-	}
-
-	@Override
-	public void brpop(String key) {
-		brpop(key, 0);
-	}
-
-	@Override
-	public void brpop(String key, int timeout) {
-		brpop(0, key);
 	}
 	
 	@Override
@@ -1267,12 +1246,16 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	
 	@Override
 	public void srandmember(String key) {
-		srandmember(key, 1);
+		executeCommand(CommandEnum.SRANDMEMBER, key);
+	}
+	
+	private void srandmember0(String key) {
+		t.srandmember(key);
 	}
 
 	@Override
 	public void srandmember(String key, int count) {
-		executeCommand(CommandEnum.SRANDMEMBER, key, count);
+		executeCommand(CommandEnum.SRANDMEMBER_COUNT, key, count);
 	}
 	
 	private void srandmember0(String key, int count) {
@@ -1923,7 +1906,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 			case HKEYS:
 				hkeys0((String) args[0]); break;
 			case HLEN:
-				hlen0((String) args[0], (String) args[1]); break;
+				hlen0((String) args[0]); break;
 			case HMGET:
 				hmget0((String) args[0], (String[]) args[1]); break;
 			case HMSET:
@@ -1995,6 +1978,8 @@ public class DefaultRedisTransaction implements RedisTransaction {
 			case SPOP:
 				spop0((String) args[0]); break;
 			case SRANDMEMBER:
+				srandmember0((String) args[0]); break;
+			case SRANDMEMBER_COUNT:
 				srandmember0((String) args[0], (Integer) args[1]); break;
 			case SREM:
 				srem0((String) args[0], (String[]) args[1]); break;

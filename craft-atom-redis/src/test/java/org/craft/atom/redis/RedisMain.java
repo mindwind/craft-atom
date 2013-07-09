@@ -859,11 +859,16 @@ public class RedisMain extends AbstractMain {
 		redis.sadd(key, value);
 		String v = redis.srandmember(key);
 		Assert.assertEquals(value, v);
+		
 		List<String> l = redis.srandmember(key, 5);
 		Assert.assertEquals(1, l.size());
+		
 		redis.sadd(key, "a");
 		l = redis.srandmember(key, 5);
 		Assert.assertEquals(2, l.size());
+		
+		l = redis.srandmember("foo1", 5);
+		Assert.assertEquals(0, l.size());
 		
 		after();
 	}

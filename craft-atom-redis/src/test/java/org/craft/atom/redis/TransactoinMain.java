@@ -1,6 +1,8 @@
 package org.craft.atom.redis;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Assert;
@@ -19,7 +21,6 @@ public class TransactoinMain extends AbstractMain {
 	private static final int PORT = 6379;
 	private static final int PORT2 = 6380;
 	private static final String key = "foo";
-	private static final String field = "1";
 	private static final String value = "bar";
 	private static Redis redis;
 	private static Redis redis2;
@@ -41,6 +42,165 @@ public class TransactoinMain extends AbstractMain {
 		
 		keys();
 		strings();
+		hashes();
+		lists();
+		sets();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static void sets() {
+		before("sets");
+		
+		
+		redis.sadd("sdiff1", "a", "b", "c");
+		redis.sadd("sdiff2", "d", "b", "c");
+		redis.sadd("sinter1", "a", "b");
+		redis.sadd("sinter2", "b", "d");
+		redis.sadd("smove1", "a");
+		redis.sadd("spop", "a");
+		redis.sadd("srandmemeber1", "a");
+		redis.sadd("srandmemeber2", "b", "d", "e");
+		redis.sadd("sunion1", "a", "b");
+		redis.sadd("sunion2", "b", "c");
+		
+		RedisTransaction t = redis.multi();
+		t.sadd(key, "a", "b", "c", "c");
+		t.scard(key);
+		t.sdiff("sdiff1", "sdiff2");
+		t.sdiffstore("sdiff", "sdiff1", "sdiff2");
+		t.sinter("sinter1", "sinter2");
+		t.sinterstore("sinter", "sinter1", "sinter2");
+		t.sismember(key, "b");
+		t.smembers(key);
+		t.smove("smove1", "smove", "a");
+		t.spop("spop");
+		t.srandmember("srandmemeber1");
+		t.srandmember("srandmemeber2", 2);
+		t.srem(key, "a", "b");
+		t.sunion("sunion1", "sunion2");
+		t.sunionstore("sunion", "sunion1", "sunion2");
+		List<Object> l = redis.exec(t);
+
+		System.out.println("	" + l);
+		Assert.assertEquals(new Long(3), l.get(0));
+		Assert.assertEquals(new Long(3), l.get(1));
+		Assert.assertEquals("a", ((Set<String>) l.get(2)).iterator().next());
+		Assert.assertEquals(new Long(1), l.get(3));
+		Assert.assertEquals("b", ((Set<String>) l.get(4)).iterator().next());
+		Assert.assertEquals(new Long(1), l.get(5));
+		Assert.assertTrue((Boolean) l.get(6));
+		Assert.assertEquals(3, ((Set<String>) l.get(7)).size());
+		Assert.assertEquals(new Long(1), l.get(8));
+		Assert.assertEquals("a", l.get(9));
+		Assert.assertEquals("a", l.get(10));
+		Assert.assertEquals(2, ((List<String>) l.get(11)).size());
+		Assert.assertEquals(new Long(2), l.get(12));
+		Assert.assertEquals(3, ((Set<String>) l.get(13)).size());
+		Assert.assertEquals(new Long(3), l.get(14));
+		
+		
+		after();
+	}
+
+	@SuppressWarnings("unchecked")
+	private static void lists() {
+		before("lists");
+		
+		
+		redis.lpush("blpop", "123");
+		redis.lpush("brpop", "123");
+		redis.lpush("brpoplpush", "123");
+		redis.lpush("lindex", "a", "b", "c");
+		
+		RedisTransaction t = redis.multi();
+		t.blpop("blpop");
+		t.brpop("brpop");
+		t.brpoplpush("brpoplpush", "brpoplpush-dest", 1000);
+		t.lindex("lindex", 1);
+		t.linsertbefore("lindex", "b", "bb");
+		t.linsertafter("lindex", "b", "ab");
+		t.llen("lindex");
+		t.lpush("lpush", "a", "b", "c");
+		t.lpop("lpush");
+		t.lpushx("lpush", "c");
+		t.lrange("lpush", 0, -1);
+		t.lrem("lpush", 0, "a");
+		t.lset("lpush", 0, "d");
+		t.ltrim("lindex", 0, 3);
+		t.rpush("rpush", "a", "b", "c");
+		t.rpop("rpush");
+		t.rpushx("rpush", "c");
+		t.rpoplpush("rpush", "rpush");
+		List<Object> l = redis.exec(t);
+		
+		System.out.println("	" + l);
+		Assert.assertEquals(18, l.size());
+		Assert.assertEquals("123", ((Map<String, String>) l.get(0)).get("blpop"));
+		Assert.assertEquals("123", ((Map<String, String>) l.get(1)).get("brpop"));
+		Assert.assertEquals("123", l.get(2));
+		Assert.assertEquals("b", l.get(3));
+		Assert.assertEquals(new Long(4), l.get(4));
+		Assert.assertEquals(new Long(5), l.get(5));
+		Assert.assertEquals(new Long(5), l.get(6));
+		Assert.assertEquals(new Long(3), l.get(7));
+		Assert.assertEquals("c", l.get(8));
+		Assert.assertEquals(new Long(3), l.get(9));
+		Assert.assertEquals("c", ((List<String>) l.get(10)).iterator().next());
+		Assert.assertEquals(new Long(1), l.get(11));
+		Assert.assertEquals("OK", l.get(12));
+		Assert.assertEquals("OK", l.get(13));
+		Assert.assertEquals(new Long(3), l.get(14));
+		Assert.assertEquals("c", l.get(15));
+		Assert.assertEquals(new Long(3), l.get(16));
+		Assert.assertEquals("c", l.get(17));
+		
+		after();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static void hashes() {
+		before("hashes");
+		
+		
+		redis.hset("hdel", "1", value);
+		redis.hset("hdel", "2", value);
+		redis.hset("hgetall", "1", value);
+		Map<String, String> fieldvalues = new HashMap<String, String>();
+		fieldvalues.put("a", "a");
+		fieldvalues.put("b", "b");
+		
+		RedisTransaction t = redis.multi();
+		t.hdel("hdel", "1", "2");
+		t.hexists("hdel", "1");
+		t.hset("hset", "1", "123");
+		t.hget("hset", "1");
+		t.hgetall("hgetall");
+		t.hincrby("hincrby", "1", 3);
+		t.hincrbyfloat("hincrby", "1", 0.5);
+		t.hkeys("hgetall");
+		t.hlen("hgetall");
+		t.hmset("hmset", fieldvalues);
+		t.hmget("hmset", "a", "b");
+		t.hsetnx("hsetnx", "a", "a");
+		List<Object> l = redis.exec(t);
+		
+		System.out.println("	" + l);
+		Assert.assertEquals(12, l.size());
+		Assert.assertEquals(new Long(2), l.get(0));
+		Assert.assertFalse((Boolean)l.get(1));
+		Assert.assertEquals(new Long(1), l.get(2));
+		Assert.assertEquals("123", l.get(3));
+		Assert.assertEquals(value, ((Map<String, String>) l.get(4)).get("1"));
+		Assert.assertEquals(new Long(3), l.get(5));
+		Assert.assertEquals(new Double(3.5), l.get(6));
+		Assert.assertEquals("1", ((Set<String>) l.get(7)).iterator().next());
+		Assert.assertEquals(new Long(1), l.get(8));
+		Assert.assertEquals("OK", l.get(9));
+		Assert.assertEquals("a", ((List<String>) l.get(10)).iterator().next());
+		Assert.assertEquals(new Long(1), l.get(11));
+		
+		
+		after();
 	}
 	
 	@SuppressWarnings("unchecked")

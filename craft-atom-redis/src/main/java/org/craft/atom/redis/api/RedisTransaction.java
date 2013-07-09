@@ -126,12 +126,12 @@ public interface RedisTransaction {
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
 	
 	
-	void blpop(String key);
-	void blpop(String key, int timeout);
+//	void blpop(String key);
+//	void blpop(String key, int timeout);
 	void blpop(String... keys);
 	void blpop(int timeout, String... keys);
-	void brpop(String key);
-	void brpop(String key, int timeout);
+//	void brpop(String key);
+//	void brpop(String key, int timeout);
 	void brpop(String... keys);
 	void brpop(int timeout, String... keys);
 	void brpoplpush(String source, String destination, int timeout);
