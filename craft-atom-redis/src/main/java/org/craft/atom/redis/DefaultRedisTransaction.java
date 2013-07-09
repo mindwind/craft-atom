@@ -2,6 +2,7 @@ package org.craft.atom.redis;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -1296,11 +1297,18 @@ public class DefaultRedisTransaction implements RedisTransaction {
 
 	@Override
 	public void zadd(String key, double score, String member) {
-		executeCommand(CommandEnum.ZADD, key, score, member);
+		Map<Double, String> scoremembers = new HashMap<Double, String>();
+		scoremembers.put(score, member);
+		zadd(key, scoremembers);
 	}
 	
-	private void zadd0(String key, double score, String member) {
-		t.zadd(key, score, member);
+	@Override
+	public void zadd(String key, Map<Double, String> scoremembers) {
+		executeCommand(CommandEnum.ZADD, key, scoremembers);
+	}
+
+	private void zadd0(String key, Map<Double, String> scoremembers) {
+		t.zadd(key, scoremembers);
 	}
 
 	@Override
@@ -1990,7 +1998,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 				
 			// Sorted Set
 			case ZADD:
-				zadd0((String) args[0], (Double) args[1], (String) args[2]); break;
+				zadd0((String) args[0], (Map<Double, String>) args[1]); break;
 			case ZCARD:
 				zcard0((String) args[0]); break;
 			case ZCOUNT:

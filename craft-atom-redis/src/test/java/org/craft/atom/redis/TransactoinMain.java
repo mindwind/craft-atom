@@ -45,6 +45,182 @@ public class TransactoinMain extends AbstractMain {
 		hashes();
 		lists();
 		sets();
+		sortedsets();
+		publish();
+	}
+	
+	private static void publish() {
+		before("pubsub");
+		
+		RedisTransaction t = redis.multi();
+		t.publish("channel", "abc");
+		List<Object> l = redis.exec(t);
+		
+		System.out.println("	" + l);
+		Assert.assertEquals(1, l.size());
+		Assert.assertEquals(new Long(0), l.get(0));
+		
+		after();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static void sortedsets() {
+		before("sortedsets");
+		
+		redis.zadd("zrem", 1, "a");
+		redis.zadd("zrem", 2, "b");
+		redis.zadd("zrem", 3, "c");
+		redis.zadd("zrank", 1, "a");
+		redis.zadd("zrank", 2, "b");
+		redis.zadd("zrangebyscore", 1, "a");
+		redis.zadd("zrangebyscore", 2, "b");
+		redis.zadd("zrangebyscore", 3, "c");
+		redis.zadd("zrangebyscore", 4, "d");
+		redis.zadd("zrangebyscore", 5, "e");
+		redis.zadd("zcount", 1, "a");
+		redis.zadd("zcount", 2, "b");
+		redis.zadd("zcount", 3, "c");
+		redis.zadd("foo1", 1, "a");
+		redis.zadd("foo1", 1, "b");
+		redis.zadd("foo2", 2, "b");
+		redis.zadd("foo2", 1, "c");
+		Map<String, Integer> wk = new HashMap<String, Integer>();
+		wk.put("foo1", 5);
+		wk.put("foo2", 2);
+		redis.zadd("zremrangebyrank", 1, "a");
+		redis.zadd("zremrangebyrank", 2, "b");
+		redis.zadd("zremrangebyrank", 3, "c");
+		redis.zadd("zremrangebyscore", 1, "a");
+		redis.zadd("zremrangebyscore", 2, "b");
+		redis.zadd("zremrangebyscore", 3, "c");
+		redis.zadd("zrevrange", 1, "a");
+		redis.zadd("zrevrange", 2, "b");
+		redis.zadd("zrevrangebyscore", 1, "a");
+		redis.zadd("zrevrangebyscore", 2, "b");
+		redis.zadd("zrevrangebyscore", 3, "c");
+		redis.zadd("zrevrangebyscore", 4, "d");
+		redis.zadd("zrevrangebyscore", 5, "e");
+		redis.zadd("zrevrank", 1, "a");
+		redis.zadd("zrevrank", 2, "b");
+		redis.zadd("zunionstore1", 1, "a");
+		redis.zadd("zunionstore1", 1, "b");
+		redis.zadd("zunionstore2", 2, "b");
+		redis.zadd("zunionstore2", 1, "c");
+		Map<String, Integer> wk1 = new HashMap<String, Integer>();
+		wk1.put("zunionstore1", 5);
+		wk1.put("zunionstore2", 2);
+		
+		RedisTransaction t = redis.multi();
+		t.zadd(key, 1, value);
+		t.zcard(key);
+		t.zcount("zcount", 1, 3);
+		t.zcount("zcount", "(1", "3");
+		t.zincrby(key, 1, value);
+		t.zscore(key, value);
+		t.zinterstore("foo3", "foo1", "foo2");
+		t.zinterstore("foo3", wk);
+		t.zinterstoremax("foo3", "foo1", "foo2");
+		t.zinterstoremax("foo3", wk);
+		t.zinterstoremin("foo3", "foo1", "foo2");
+		t.zinterstoremin("foo3", wk);
+		t.zrange(key, 0, -1);
+		t.zrangewithscores(key, 0, -1);
+		t.zrangebyscore("zrangebyscore", 1, 2);
+		t.zrangebyscore("zrangebyscore", "-inf", "2");
+		t.zrangebyscore("zrangebyscore", 1, 5, 0, 2);
+		t.zrangebyscore("zrangebyscore", "-inf", "5", 0, 2);
+		t.zrangebyscorewithscores("zrangebyscore", 1, 2);
+		t.zrangebyscorewithscores("zrangebyscore", "-inf", "2");
+		t.zrangebyscorewithscores("zrangebyscore", 1, 5, 0, 2);
+		t.zrangebyscorewithscores("zrangebyscore", "-inf", "5", 0, 2);
+		t.zrank("zrank", "b");
+		t.zrem("zrem", "a", "b");
+		t.zremrangebyrank("zremrangebyrank", 0, 1);
+		t.zremrangebyscore("zremrangebyscore", 0, 1.5);
+		t.zremrangebyscore("zremrangebyscore", "-inf", "3");
+		t.zrevrange("zrevrange", 0, -1);
+		t.zrevrangewithscores("zrevrange", 0, -1);
+		t.zrevrangebyscore("zrevrangebyscore", 2, 1);
+		t.zrevrangebyscore("zrevrangebyscore", "2", "-inf");
+		t.zrevrangebyscore("zrevrangebyscore", 5, 1, 0, 2);
+		t.zrevrangebyscore("zrevrangebyscore", "5", "-inf", 0, 2);
+		t.zrevrangebyscorewithscores("zrevrangebyscore", 2, 1);
+		t.zrevrangebyscorewithscores("zrevrangebyscore", "2", "-inf");
+		t.zrevrangebyscorewithscores("zrevrangebyscore", 5, 1, 0, 2);
+		t.zrevrangebyscorewithscores("zrevrangebyscore", "5", "-inf", 0, 2);
+		t.zrevrank("zrevrank", "b");
+		t.zunionstore("zunionstore", "zunionstore1", "zunionstore2");
+		t.zunionstore("zunionstore", wk1);
+		t.zunionstoremax("zunionstore", "zunionstore1", "zunionstore2");
+		t.zunionstoremax("zunionstore", wk1);
+		t.zunionstoremin("zunionstore", "zunionstore1", "zunionstore2");
+		t.zunionstoremin("zunionstore", wk1);
+		List<Object> l = redis.exec(t);
+		
+		System.out.println("	" + l);
+		Assert.assertEquals(44, l.size());
+		Assert.assertEquals(new Long(1), l.get(0));
+		Assert.assertEquals(new Long(1), l.get(1));
+		Assert.assertEquals(new Long(3), l.get(2));
+		Assert.assertEquals(new Long(2), l.get(3));
+		Assert.assertEquals(new Double(2.0), l.get(4));
+		Assert.assertEquals(new Double(2.0), l.get(5));
+		Assert.assertEquals(new Long(1), l.get(6));
+		Assert.assertEquals(new Long(1), l.get(7));
+		Assert.assertEquals(new Long(1), l.get(8));
+		Assert.assertEquals(new Long(1), l.get(9));
+		Assert.assertEquals(new Long(1), l.get(10));
+		Assert.assertEquals(new Long(1), l.get(11));
+		Assert.assertEquals(value, ((Set<String>) l.get(12)).iterator().next());
+		Assert.assertEquals(new Double(2.0), ((Map<String, Double>) l.get(13)).get(value));
+		Assert.assertTrue(((Set<String>) l.get(14)).contains("a"));
+		Assert.assertTrue(((Set<String>) l.get(14)).contains("b"));
+		Assert.assertTrue(((Set<String>) l.get(15)).contains("a"));
+		Assert.assertTrue(((Set<String>) l.get(15)).contains("b"));
+		Assert.assertTrue(((Set<String>) l.get(16)).contains("a"));
+		Assert.assertTrue(((Set<String>) l.get(16)).contains("b"));
+		Assert.assertTrue(((Set<String>) l.get(17)).contains("a"));
+		Assert.assertTrue(((Set<String>) l.get(17)).contains("b"));
+		Assert.assertTrue(((Map<String, Double>) l.get(18)).get("a") == 1.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(18)).get("b") == 2.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(19)).get("a") == 1.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(19)).get("b") == 2.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(20)).get("a") == 1.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(20)).get("b") == 2.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(21)).get("a") == 1.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(21)).get("b") == 2.0);
+		Assert.assertEquals(new Long(1), l.get(22));
+		Assert.assertEquals(new Long(2), l.get(23));
+		Assert.assertEquals(new Long(2), l.get(24));
+		Assert.assertEquals(new Long(1), l.get(25));
+		Assert.assertEquals(new Long(2), l.get(26));
+		Assert.assertEquals("b", ((Set<String>) l.get(27)).iterator().next());
+		Assert.assertTrue(((Map<String, Double>) l.get(28)).get("a") == 1.0);
+		Assert.assertTrue(((Set<String>) l.get(29)).contains("a"));
+		Assert.assertTrue(((Set<String>) l.get(29)).contains("b"));
+		Assert.assertTrue(((Set<String>) l.get(30)).contains("a"));
+		Assert.assertTrue(((Set<String>) l.get(30)).contains("b"));
+		Assert.assertTrue(((Set<String>) l.get(31)).contains("d"));
+		Assert.assertTrue(((Set<String>) l.get(31)).contains("e"));
+		Assert.assertTrue(((Set<String>) l.get(32)).contains("d"));
+		Assert.assertTrue(((Set<String>) l.get(32)).contains("e"));
+		Assert.assertTrue(((Map<String, Double>) l.get(33)).get("a") == 1.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(33)).get("b") == 2.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(34)).get("a") == 1.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(34)).get("b") == 2.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(35)).get("d") == 4.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(35)).get("e") == 5.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(36)).get("d") == 4.0);
+		Assert.assertTrue(((Map<String, Double>) l.get(36)).get("e") == 5.0);
+		Assert.assertEquals(new Long(0), l.get(37));
+		Assert.assertEquals(new Long(3), l.get(38));
+		Assert.assertEquals(new Long(3), l.get(39));
+		Assert.assertEquals(new Long(3), l.get(40));
+		Assert.assertEquals(new Long(3), l.get(41));
+		Assert.assertEquals(new Long(3), l.get(42));
+		Assert.assertEquals(new Long(3), l.get(43));
+		
+		after();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -82,6 +258,7 @@ public class TransactoinMain extends AbstractMain {
 		List<Object> l = redis.exec(t);
 
 		System.out.println("	" + l);
+		Assert.assertEquals(15, l.size());
 		Assert.assertEquals(new Long(3), l.get(0));
 		Assert.assertEquals(new Long(3), l.get(1));
 		Assert.assertEquals("a", ((Set<String>) l.get(2)).iterator().next());

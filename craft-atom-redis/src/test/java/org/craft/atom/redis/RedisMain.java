@@ -635,7 +635,7 @@ public class RedisMain extends AbstractMain {
 		Assert.assertTrue(set.contains("d"));
 		Assert.assertTrue(set.contains("e"));
 		set = redis.zrevrangebyscore(key, "5", "-inf", 0, 2);
-		Assert.assertTrue(set.contains("e"));
+		Assert.assertTrue(set.contains("d"));
 		Assert.assertTrue(set.contains("e"));
 		
 		Map<String, Double> map = redis.zrevrangebyscorewithscores(key, 2, 1);
