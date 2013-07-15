@@ -38,7 +38,7 @@ public class HttpUtil {
 	 * 
 	 * @param params
 	 * @param charset
-	 * @return
+	 * @return http query string
 	 * @throws UnsupportedEncodingException
 	 */
 	public static String buildQuery(Map<String, String> params, String charset) throws UnsupportedEncodingException {
@@ -74,7 +74,7 @@ public class HttpUtil {
 	 *            an int that specifies the connect timeout value in milliseconds
 	 * @param readTimeout
 	 * 			  an int that specifies the read timeout value in milliseconds
-	 * @return
+	 * @return post response
 	 * @throws Exception
 	 */
 	public static String doPost(String url, Map<String, String> params, int connectTimeout, int readTimeout) throws Exception {
@@ -92,7 +92,7 @@ public class HttpUtil {
 	 * 			  an int that specifies the connect timeout value in milliseconds
 	 * @param readTimeout
 	 *            an int that specifies the read timeout value in milliseconds
-	 * @return
+	 * @return post response
 	 * @throws Exception
 	 */
 	public static String doPost(String url, Map<String, String> params, String charset, int connectTimeout, int readTimeout) throws Exception {
@@ -118,7 +118,7 @@ public class HttpUtil {
 	 * @param readTimeout
 	 *            an int that specifies the read timeout value in milliseconds
 	 * @param header
-	 * @return
+	 * @return post response
 	 * @throws IOException
 	 */
 	public static String doPost(String url, String contentType, byte[] content, Map<String, String> header, int connectTimeout, int readTimeout) throws IOException {

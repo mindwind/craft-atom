@@ -15,7 +15,7 @@ public class DateUtil {
      * Get the first day of the month specified by date argument.
      * 
      * @param date  
-     * @return 
+     * @return the first day of the month
      */  
     public static Date getMonthHead(Date date){  
         if(date == null) { return null; }
@@ -32,7 +32,7 @@ public class DateUtil {
     /** 
      * Get today morning
      * 
-     * @return 
+     * @return today morning date
      */  
     public static Date getTodayMorning() {  
         return getMorning(new Date());  
@@ -42,7 +42,7 @@ public class DateUtil {
      * Get morning of specified date.
      * 
      * @param date 
-     * @return 
+     * @return morning date
      */  
     public static Date getMorning(Date date) {  
         Calendar c = Calendar.getInstance();  

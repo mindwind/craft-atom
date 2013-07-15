@@ -15,10 +15,10 @@ import java.util.Enumeration;
 public class NetUtil {
 
 	/**
-	 * Get network interface ip(version 4) address. if has multiple addresses return the first randomly.
+	 * Get local host network interface ip(version 4) address. if has multiple addresses return the first randomly.
 	 * if has not bind any ip address return loopback address.
 	 * 
-	 * @return
+	 * @return local host ipv4 address
 	 * @throws IOException
 	 */
 	public static InetAddress getIpv4Address() throws IOException {
@@ -29,7 +29,7 @@ public class NetUtil {
 	 * Get network interface ip(version 4) address. if has multiple addresses return the first match prefix address.
 	 * 
 	 * @param prefix
-	 * @return
+	 * @return local host ipv4 address match the prefix
 	 * @throws IOException
 	 */
 	public static InetAddress getIpv4Address(String prefix) throws IOException {
@@ -65,6 +65,12 @@ public class NetUtil {
 		return addr;
 	}
 	
+	/**
+	 * Check local port is in using
+	 * 
+	 * @param port
+	 * @return true if in using, otherwise false.
+	 */
 	public static boolean isLocalPortUsing(int port) {
 		return isPortUsing("127.0.0.1", port);
 	}

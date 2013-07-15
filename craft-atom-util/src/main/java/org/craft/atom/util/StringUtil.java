@@ -16,7 +16,7 @@ public class StringUtil {
 	 * Convert from DBC case to SBC case.
 	 * 
 	 * @param src 
-	 * @return
+	 * @return SBC case string
 	 */
 	public static String dbc2sbcCase(String src) {
 		if (src == null) {
@@ -43,7 +43,7 @@ public class StringUtil {
 	 * Convert from SBC case to DBC case
 	 * 
 	 * @param src
-	 * @return
+	 * @return DBC case
 	 */
 	public static String sbc2dbcCase(String src) {
 		if (src == null) {
@@ -70,7 +70,7 @@ public class StringUtil {
 	 * 
 	 * @param array
 	 * @param delim if delim == null, convert to ""
-	 * @return
+	 * @return a new concatenated string
 	 */
 	public static String toString(String[] array, String delim) {
 		if (array == null) {
@@ -93,14 +93,14 @@ public class StringUtil {
 	}
 	
 	/**
-	 * Judge the string in a strings array or not.<br>
+	 * Judge the string within a string array or not.<br>
 	 * <li>strings == null("")    return false
 	 * <li>string == null("")     return false
 	 * 
 	 * @param strings
 	 * @param string
 	 * @param caseSensitive
-	 * @return
+	 * @return true if string within the string array, otherwise false
 	 */
 	public static boolean contains(String[] strings, String string, boolean caseSensitive) {
 		if (strings == null || strings.length == 0) {
@@ -126,14 +126,14 @@ public class StringUtil {
 	}
 	
 	/**
-	 * Judge the string in a strings array or not, if the string is a substring of any string in the array return true. <br>
+	 * Judge the string within a string array or not, if the string is a substring of any string in the array return true. <br>
 	 * <li>strings == null("")    return false
 	 * <li>string == null("")     return false
 	 * 
 	 * @param strings
 	 * @param string
 	 * @param caseSensitive
-	 * @return
+	 * @return true if string or its substring within the string array, otherwise false
 	 */
 	public static boolean containSubstring(String[] strings, String string, boolean caseSensitive) {
 		if (strings == null || strings.length == 0) {
@@ -163,7 +163,7 @@ public class StringUtil {
 	 * 
 	 * @param src
 	 * @param target
-	 * @return
+	 * @return the number of target string occur in the source
 	 */
 	public static int count(String src, String target) {
 		int count = 0;
@@ -179,7 +179,7 @@ public class StringUtil {
 	 * Convert first char to lower case
 	 * 
 	 * @param src
-	 * @return
+	 * @return string which first char converted to lower case
 	 */
 	public static String firstCharToLowerCase(String src) {
 		if (src.length() == 1) {
@@ -191,10 +191,10 @@ public class StringUtil {
 	}
 	
 	/**
-	 * Convert first char to upperCase
+	 * Convert first char to upper case
 	 * 
 	 * @param src
-	 * @return
+	 * @return string which first char converted to upper case
 	 */
 	public static String firstCharToUpperCase(String src) {
 		if (src.length() == 1) {
@@ -206,10 +206,11 @@ public class StringUtil {
 	}
 	
 	/**
+	 * Convert a string to currency string
 	 * 
 	 * @param src
 	 * @param locale
-	 * @return
+	 * @return The currency format string
 	 */
 	public static String toCurrencyString(String src, Locale locale) {
 		Double currency = Double.parseDouble(src);
@@ -252,7 +253,7 @@ public class StringUtil {
 	 * 
 	 * @param prefix variable prefix, if prefix is null using default prefix "%"
 	 * @param src
-	 * @param values 
+	 * @param value 
 	 * @return replaced string
 	 */
 	public static String replace(String prefix, String src, String value) {
@@ -325,7 +326,7 @@ public class StringUtil {
 	 * @param src
 	 * @param target
 	 * @param index
-	 * @return
+	 * @return string after inserted.
 	 */
 	public static String insert(String src, String target, int index) {
 		if (src == null) {
@@ -397,7 +398,7 @@ public class StringUtil {
 	 * If strings == null, return true
 	 * 
 	 * @param strings
-	 * @return
+	 * @return true is any string is empty, otherwise false.
 	 */
 	public static boolean isAnyEmpty(String... strings) {
 		if (strings == null) {
@@ -417,7 +418,7 @@ public class StringUtil {
 	 * If strings == null, return true
 	 * 
 	 * @param strings
-	 * @return
+	 * @return true if any string is blank, otherwise false.
 	 */
 	public static boolean isAnyBlank(String... strings) {
 		if (strings == null) {
@@ -436,7 +437,7 @@ public class StringUtil {
 	 * Checks if all string is empty. If strings == null, return true
 	 * 
 	 * @param strings
-	 * @return
+	 * @return true if all string is empty, otherwise false.
 	 */
 	public static boolean isAllEmpty(String... strings) {
 		if (strings == null) {
@@ -455,7 +456,7 @@ public class StringUtil {
 	 * Checks if all string is blank. If strings == null, return true
 	 * 
 	 * @param strings
-	 * @return
+	 * @return true if all string is blank, otherwise false.
 	 */
 	public static boolean isAllBlank(String... strings) {
 		if (strings == null) {
@@ -473,8 +474,8 @@ public class StringUtil {
 	/**
 	 * Checks if all the strings is not blank.
 	 * 
-	 * @param values
-	 * @return
+	 * @param strings
+	 * @return true if all string is not blank, otherwise false.
 	 */
 	public static boolean isAllNotBlank(String... strings) {
 		if (isAnyBlank(strings)) {
@@ -486,8 +487,8 @@ public class StringUtil {
 	/**
 	 * Checks if all the strings is not empty.
 	 * 
-	 * @param values
-	 * @return
+	 * @param strings
+	 * @return true if all string is not empty, otherwise false.
 	 */
 	public static boolean isAllNotEmpty(String... strings) {
 		if (isAnyEmpty(strings)) {
@@ -500,7 +501,7 @@ public class StringUtil {
 	 * Check if the string is a digital string, eg: 123 or 123.58 etc.
 	 * 
 	 * @param src
-	 * @return boolean
+	 * @return true if string is digital
 	 */
 	public static boolean isDigitalString(String src) {
 		if (src == null) {
@@ -540,11 +541,10 @@ public class StringUtil {
 	}
 	
 	/**
-	 * Trim <i>all</i> whitespace from the given String: leading, trailing, and
-	 * inbetween characters.
+	 * Trim <i>all</i> whitespace from the given string: leading, trailing, and inbetween characters.
 	 * 
 	 * @param src
-	 * @return
+	 * @return string trimmed.
 	 * @see java.lang.Character#isWhitespace
 	 */
 	public static String trimAll(String src) {
@@ -565,14 +565,14 @@ public class StringUtil {
 	}
 	
 	/**
-	 * Trim leading whitespace from the given String.
+	 * Trim leading whitespace from the given string.
 	 * 
 	 * @param str
 	 *            the String to check
 	 * @return the trimmed String
 	 * @see java.lang.Character#isWhitespace
 	 */
-	public static String trimLeadingWhitespace(String str) {
+	public static String trimLeading(String str) {
 		if (!hasLength(str)) {
 			return str;
 		}
@@ -584,10 +584,10 @@ public class StringUtil {
 	}
 
 	/**
-	 * Trim trailing whitespace from the given String.
+	 * Trim trailing whitespace from the given string.
 	 * 
 	 * @param str
-	 * @return
+	 * @return the trimmed String
 	 * @see java.lang.Character#isWhitespace
 	 */
 	public static String trimTrailing(String str) {
@@ -606,7 +606,7 @@ public class StringUtil {
 	 * Random split a string into number of segments.
 	 * 
 	 * @param num
-	 * @return
+	 * @return the array of strings split.
 	 */
 	public static String[] split(String str, int num) {
 		if (str == null) {

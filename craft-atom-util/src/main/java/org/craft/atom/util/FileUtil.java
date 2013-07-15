@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Io Util class
+ * File util class
  * 
  * @author Frank Hu
  * @version 1.0, 2009-9-1
@@ -28,7 +28,7 @@ public class FileUtil {
 	 * Read input stream as bytes
 	 * 
 	 * @param inputStream
-	 * @return
+	 * @return byte array from input stream.
 	 * @throws IOException
 	 */
 	public static byte[] readInputStream(InputStream inputStream) throws IOException {
@@ -48,7 +48,7 @@ public class FileUtil {
 	 * Read a file as string
 	 * 
 	 * @param filePath
-	 * @return
+	 * @return string from a file path.
 	 * @throws IOException
 	 */
 	public static String readFileAsString(String filePath) throws IOException {
@@ -90,7 +90,7 @@ public class FileUtil {
 	 * Get file from a file path.
 	 * 
 	 * @param filePath
-	 * @return
+	 * @return the file object of specified file path
 	 * @throws IOException
 	 */
 	public static File getFile(String filePath) throws IOException {
@@ -128,7 +128,7 @@ public class FileUtil {
 	 * Get a file suffix name
 	 * 
 	 * @param file
-	 * @return
+	 * @return file suffix name.
 	 */
 	public static String suffix(File file) {
 		String name = file.getName();
@@ -139,8 +139,8 @@ public class FileUtil {
 	/**
 	 * Get a file suffix name
 	 * 
-	 * @param file
-	 * @return
+	 * @param fileName
+	 * @return file suffix name
 	 */
 	public static String suffix(String fileName) {
 		int pos = fileName.lastIndexOf(".");
@@ -151,7 +151,7 @@ public class FileUtil {
 	 * Delete a file according to a file path
 	 * 
 	 * @param filePath
-	 * @return
+	 * @return true if and only if the file or directory is successfully deleted; false otherwise
 	 * @throws IOException
 	 */
 	public static boolean delete(String filePath) throws IOException {

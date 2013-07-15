@@ -223,8 +223,6 @@ public class ByteUtil {
 	 * 
 	 * @param b
 	 *            the byte array to read
-	 * @param offset
-	 *            the offset at which to start
 	 * @return the int value
 	 */
 	public static final int makeIntFromByte4(byte[] b) {
@@ -253,7 +251,7 @@ public class ByteUtil {
 	 *            the start index, inclusive.
 	 * @param end
 	 *            the ending index, exclusive.
-	 * @return
+	 * @return split byte array
 	 */
 	public static byte[] split(byte[] bytes, int start, int end) {
 		if (bytes == null) {
@@ -376,7 +374,7 @@ public class ByteUtil {
 	 * Returns the integer represented by up to 4 bytes in network byte order.
 	 * 
 	 * @param buf
-	 * @return
+	 * @return the integer represented by up to 4 bytes in network byte order.
 	 */
 	public static int networkByteOrderToInt(byte[] buf) {
 		return networkByteOrderToInt(buf, 0, buf.length);
@@ -389,7 +387,7 @@ public class ByteUtil {
 	 *            the buffer to read the bytes from
 	 * @param start
 	 * @param count
-	 * @return
+	 * @return the integer represented by up to 4 bytes in network byte order.
 	 */
 	public static int networkByteOrderToInt(byte[] buf, int start, int count) {
 		if (count > 4) {
@@ -415,7 +413,7 @@ public class ByteUtil {
 	 * </pre>
 	 * 
 	 * @param bytes
-	 * @return
+	 * @return true if byte array is empty.
 	 */
 	public static boolean isEmpty(byte[] bytes) {
 		return bytes == null || bytes.length == 0;

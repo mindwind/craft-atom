@@ -15,10 +15,10 @@ import java.util.zip.GZIPOutputStream;
 public class GzipUtil {
 	
 	/**
-	 * Compress data bytes with gzip algorithm
+	 * Compress data bytes by gzip algorithm
 	 * 
 	 * @param data
-	 * @return
+	 * @return compressed data
 	 * @throws IOException
 	 */
 	public static byte[] gzip(byte[] data) throws IOException {
@@ -41,10 +41,10 @@ public class GzipUtil {
 	}
 
 	/**
-	 * Decompress data bytes with gzip algorithm
+	 * Decompress data bytes with gzip algorithm.
 	 * 
 	 * @param data
-	 * @return
+	 * @return data decompressed.
 	 * @throws IOException
 	 */
 	public static byte[] ungzip(byte[] data) throws IOException {

@@ -330,7 +330,7 @@ public final class ByteArrayBuffer implements Serializable {
      * If <code>endIndex</code> is greater than {@link #length()}, it has the same effect as if it were {@link #length()}. 
      * If the <code>beginIndex</code> is greater than the <code>endIndex</code>, <code>-1</code> is returned.
      *
-     * @param   b            the byte to search for.
+     * @param   bytes        the bytes to search for.
      * @param   beginIndex   the index to start the search from, inclusive
      * @param   endIndex     the index to finish the search at, exclusive
      * @return  the index of the first occurrence of the byte in the buffer within the given bounds, or <code>-1</code> if the byte does not occur.

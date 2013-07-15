@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  * the argument for callback method {@link ExpirationListener#expired(Object)}
  * <p>
  * As timing-wheel use map structure internal, so any element added to timing-wheel should implement 
- * its own {@link #equals(o)} and {@link #hashCode()} method.
+ * its own <tt>equals(o)</tt> and <tt>hashCode()</tt> method.
  * <p>
  * {@link TimingWheel} is based on <a href="http://cseweb.ucsd.edu/users/varghese/">George Varghese</a> and Tony Lauck's paper,
  * <a href="http://cseweb.ucsd.edu/users/varghese/PAPERS/twheel.ps.Z">'Hashed and Hierarchical Timing Wheels: data structures 
