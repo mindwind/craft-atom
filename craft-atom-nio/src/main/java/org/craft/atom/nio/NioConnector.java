@@ -24,7 +24,6 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @author mindwind
  * @version 1.0, Feb 24, 2013
  * @see NioTcpConnector
- * @see NioUdpConnector
  */
 abstract public class NioConnector extends NioReactor implements IoConnector {
 	
@@ -77,7 +76,7 @@ abstract public class NioConnector extends NioReactor implements IoConnector {
 	 * @param handler
 	 * @param config
 	 * @param dispatcher
-	 * @param predictor
+	 * @param predictorFactory
 	 */
 	public NioConnector(IoHandler handler, NioConnectorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory) {
 		if (handler == null) {

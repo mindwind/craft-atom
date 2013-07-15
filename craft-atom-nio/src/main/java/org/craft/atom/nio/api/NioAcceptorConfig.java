@@ -3,7 +3,7 @@ package org.craft.atom.nio.api;
 import org.craft.atom.nio.NioConfig;
 
 /**
- * Configuration object for {@link NioAcceptor}
+ * Configuration object for {@link NioTcpAcceptor}
  * 
  * @author mindwind
  * @version 1.0, Feb 22, 2013

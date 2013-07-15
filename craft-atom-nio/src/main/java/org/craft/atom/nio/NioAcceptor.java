@@ -151,7 +151,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	 * @param handler
 	 * @param config
 	 * @param dispatcher
-	 * @param predictor
+	 * @param predictorFactory
 	 * @param firstLocalAddress
 	 * @param otherLocalAddresses
 	 */
@@ -209,7 +209,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	 * @param handler
 	 * @param config
 	 * @param dispatcher
-	 * @param predictor
+	 * @param predictorFactory
 	 */
 	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory) {
 		if (handler == null) {
@@ -391,7 +391,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	/**
 	 * Get bound addresses
 	 * 
-	 * @return
+	 * @return bound addresses
 	 */
 	public Set<SocketAddress> getBoundAddresses() {
 		return boundmap.keySet();
@@ -503,7 +503,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	 * Accept at once according to protocol type.
 	 * 
 	 * @param key
-	 * @return
+	 * @return nio byte channel
 	 */
 	protected abstract NioByteChannel acceptByProtocol(SelectionKey key);
 	
