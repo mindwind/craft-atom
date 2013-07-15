@@ -6,3 +6,5 @@
 */target
 */bin
 */checkout
+
+target/javadoc-bundle-options/javadoc-options-javadoc-resources.xml
