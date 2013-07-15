@@ -84,7 +84,7 @@ public class HttpHeader implements Serializable {
 	/**
 	 * Parses the header string value and return a list of {@code HttpHeaderValueElement}
 	 * 
-	 * @return
+	 * @return a list of {@code HttpHeaderValueElement}
 	 */
 	public List<HttpHeaderValueElement> getValueElements() {
 		List<HttpHeaderValueElement> elements = new ArrayList<HttpHeaderValueElement>();

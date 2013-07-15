@@ -156,7 +156,7 @@ public abstract class HttpMessage implements Serializable {
 	/**
 	 * Returns an list containing all of the <code>Cookie</code> objects.
 	 * 
-	 * @return
+	 * @return all cookies
 	 */
 	public List<Cookie> getCookies() {
 		if (this.cookies != null) {
@@ -175,7 +175,7 @@ public abstract class HttpMessage implements Serializable {
 	 * Returns an list containing the <code>Cookie</code> objects with specified name.
 	 * 
 	 * @param name
-	 * @return
+	 * @return cookies with the name
 	 */
 	public List<Cookie> getCookies(String name) {
 		List<Cookie> cookies = new ArrayList<Cookie>();
@@ -200,7 +200,7 @@ public abstract class HttpMessage implements Serializable {
      * If the cookie might have more than one, use {@link #getCookies}.
 	 * 
 	 * @param name
-	 * @return
+	 * @return a cookie with the name
 	 */
 	public Cookie getCookie(String name) {
 		List<Cookie> cookies = getCookies(name);
@@ -224,7 +224,7 @@ public abstract class HttpMessage implements Serializable {
 	/**
 	 * Returns the content type of the http message, or <code>null</code> if message has no entity.
 	 * 
-	 * @return
+	 * @return content type object.
 	 */
 	public HttpContentType getContentType() {
 		HttpEntity entity = getEntity();

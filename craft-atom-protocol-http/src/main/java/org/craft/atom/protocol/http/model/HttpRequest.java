@@ -83,7 +83,7 @@ public class HttpRequest extends HttpMessage {
      * If the parameter might have more than one value, use {@link #getParameters}.
      * 
 	 * @param name
-	 * @return
+	 * @return parameter value.
 	 */
 	public String getParameter(String name) {
 		if (name == null) {
@@ -103,7 +103,7 @@ public class HttpRequest extends HttpMessage {
      * values the given request parameter has, or empty list if the parameter does not exist.
      * 
 	 * @param name
-	 * @return
+	 * @return parameter value list
 	 */
 	public List<String> getParameters(String name) {
 		List<String> values = new ArrayList<String>();
@@ -121,9 +121,7 @@ public class HttpRequest extends HttpMessage {
 	}
 	
 	/**
-	 * Returns a immutable parameter map of this request
-	 * 
-	 * @return
+	 * @return a immutable parameter map of this request
 	 */
 	public Map<String, List<String>> getParameterMap() {
 		if (this.parameterMap != null) {
@@ -167,10 +165,10 @@ public class HttpRequest extends HttpMessage {
 	}
 	
 	/**
-     * Returns the query string that is contained in the request URL after
+     * Get the query string that is contained in the request URL after
      * the path. This method returns <code>null</code> if the URL does not have a query string.
      *
-     * @return
+     * @return query string
      */
     public String getQueryString() {
     	if (requestLine == null) {

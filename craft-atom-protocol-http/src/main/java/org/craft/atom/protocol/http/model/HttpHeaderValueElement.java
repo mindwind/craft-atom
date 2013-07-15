@@ -65,10 +65,10 @@ public class HttpHeaderValueElement implements Serializable {
 	}
 	
 	/**
-	 * Return param value by name.
+	 * Get param value by name.
 	 * 
 	 * @param name
-	 * @return
+	 * @return param value
 	 */
 	public String getParamValue(String name) {
 		return params.get(name);

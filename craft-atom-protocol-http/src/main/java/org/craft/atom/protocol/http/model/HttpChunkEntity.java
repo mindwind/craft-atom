@@ -78,7 +78,7 @@ public class HttpChunkEntity extends HttpEntity {
 	/**
 	 * Add a new trailer header to chunk entity, if the exists replace it.
 	 * 
-	 * @param header
+	 * @param trailer
 	 */
 	public void addTrailer(HttpHeader trailer) {
 		if (trailer == null || trailer.getName() == null) {

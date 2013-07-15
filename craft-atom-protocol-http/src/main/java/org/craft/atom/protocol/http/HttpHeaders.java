@@ -60,7 +60,7 @@ public class HttpHeaders {
 	 * Creates a HTTP "Content-Type" header.
 	 * 
 	 * @param contentType
-	 * @return
+	 * @return a HTTP "Content-Type" header.
 	 */
 	public static HttpHeader newContentTypeHeader(HttpContentType contentType) {
 		if (contentType == null) {
@@ -82,7 +82,7 @@ public class HttpHeaders {
 	/**
 	 * Creates a HTTP "Cookie" header.
 	 * 
-	 * @param options
+	 * @param cookie
 	 * @return the newly created header
 	 */
 	public static HttpHeader newCookieHeader(Cookie cookie) {
@@ -95,7 +95,7 @@ public class HttpHeaders {
 	/**
 	 * Creates a HTTP "Set-Cookie" header.
 	 * 
-	 * @param options
+	 * @param cookie
 	 * @return the newly created header
 	 */
 	public static HttpHeader newSetCookieHeader(Cookie cookie) {
