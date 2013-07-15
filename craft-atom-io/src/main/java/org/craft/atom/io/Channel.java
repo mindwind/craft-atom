@@ -25,7 +25,7 @@ public interface Channel<D> {
 	 * Return a unique identifier for this channel.
 	 * Every channel has its own id which is different from each other.
 	 * 
-	 * @return
+	 * @return channel id
 	 */
 	long getId();
 	
