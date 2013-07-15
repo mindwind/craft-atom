@@ -8,9 +8,9 @@ import java.util.concurrent.TimeUnit;
  * A distributed lock is a tool for controlling access to a shared resource by multiple threads or processes.
  * Commonly, a distributed lock provides exclusive access to a shared resource: only one thread at a time can acquire the lock and all access to the shared resource requires that the lock be acquired first.
  * 
- * @see RedisDLock24
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, Nov 19, 2012
+ * @see RedisDLock24
  */
 public interface DLock {
 	
@@ -29,7 +29,7 @@ public interface DLock {
 	/**
 	 * Releases the lock with specified lock key.
 	 * <p>
-	 * <b>Tip:</b> make sure you hold the lock, you release lock by invoking {@link #unlock()}
+	 * <b>Tip:</b> make sure you hold the lock, you release lock by invoking {@link #unlock(String)}
 	 *  
 	 * @param  lockKey
 	 * @return <code>true</code> if the lock was released and <code>false</code> if lock released failed.

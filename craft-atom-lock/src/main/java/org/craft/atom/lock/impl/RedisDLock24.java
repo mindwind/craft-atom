@@ -12,7 +12,7 @@ import org.craft.atom.lock.DLock;
 /**
  * A implementation of the {@code DLock} basis on redis version 2.4.x
  * 
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, Nov 19, 2012
  */
 public class RedisDLock24 implements DLock {
