@@ -26,7 +26,6 @@
 	<modules>
 		<module>craft-atom-nio</module>
 		<module>craft-atom-util</module>
-		<module>craft-atom-cache</module>
 		<module>craft-atom-protocol</module>
 		<module>craft-atom-lock</module>
 		<module>craft-atom-protocol-http</module>
