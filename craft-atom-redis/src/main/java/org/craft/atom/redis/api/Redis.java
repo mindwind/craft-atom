@@ -11,37 +11,27 @@ import org.apache.commons.pool.impl.GenericObjectPool.Config;
 public interface Redis extends RedisCommand {
 	
 	/**
-	 * Return redis server host.
-	 * 
-	 * @return
+	 * @return redis server host.
 	 */
 	String host();
 	
 	/**
-	 * Return redis server port.
-	 * 
-	 * @return
+	 * @return redis server port.
 	 */
 	int port();
 		
-	/**
-	 * Return redis server password.
-	 * 
-	 * @return
+	/** 
+	 * @return redis server password.
 	 */
 	String password();
 	
 	/**
-	 * Return redis server timeout int milliseconds.
-	 * 
-	 * @return
+	 * @return redis server timeout in milliseconds.
 	 */
 	int timeout();
 	
 	/**
-	 * Return redis client pool config.
-	 * 
-	 * @return
+	 * @return redis client connection pool config.
 	 */
 	Config config();
 	

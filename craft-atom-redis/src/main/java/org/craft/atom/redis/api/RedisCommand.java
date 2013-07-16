@@ -34,7 +34,7 @@ public interface RedisCommand {
 	 * Removes the specified keys. A key is ignored if it does not exist.
 	 * <p>
 	 * 
-	 * @param key
+	 * @param keys
 	 * @return The number of keys that were removed.
 	 */
 	Long del(String... keys);
@@ -625,7 +625,7 @@ public interface RedisCommand {
 	 * The same holds true for non-existent keys, that are considered as a stream of zero bytes up to the length of the longest string.<br>
 	 * 
 	 * @param destkey
-	 * @param keys
+	 * @param key
 	 * @return The size of the string stored in the destination key, that is equal to the size of the longest input string.
 	 */
 	Long bitnot(String destkey, String key);
@@ -709,7 +709,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @param start inclusive
 	 * @param end   inclusive
-	 * @return
+	 * @return a substring of the string stored at a key
 	 */
 	String getrange(String key, long start, long end);
 	
@@ -797,7 +797,7 @@ public interface RedisCommand {
 	 * the special value null is returned. Because of this, the operation never fails.<br>
 	 * 
 	 * @param keys
-	 * @return 
+	 * @return the values of all the given keys
 	 */
 	List<String> mget(String... keys);
 	
@@ -1291,15 +1291,16 @@ public interface RedisCommand {
 	String blpop(String key, int timeout);
 	
 	/**
-	 * @see {@link #blpop(String)}
+	 * @see #blpop(String)
 	 * @param timeout max seconds to block
 	 * @param keys
 	 * @return A empty map(nil multi-bulk) when no element could be popped and the timeout expired.
 	 *         A map (two-element multi-bulk) with the key (first element) being the name of the key where an element was popped 
 	 *         and the value (second element) being the value of the popped element.
 	 */
-	Map<String, String> blpop(String... keys);
 	Map<String, String> blpop(int timeout, String... keys);
+	Map<String, String> blpop(String... keys);
+	
 	
 	/**
 	 * Available since 2.0.0<br>
@@ -1322,15 +1323,15 @@ public interface RedisCommand {
 	String brpop(String key, int timeout);
 	
 	/**
-	 * @see {@link #brpop(String)}
+	 * @see #brpop(String)
 	 * @param timeout
 	 * @param keys
 	 * @return A empty map(nil multi-bulk) when no element could be popped and the timeout expired.<br>
 	 *         A map (two-element multi-bulk) with the key (first element) being the name of the key where an element was popped 
 	 *         and the value (second element) being the value of the popped element.<br>
 	 */
-	Map<String, String> brpop(String... keys);
 	Map<String, String> brpop(int timeout, String... keys);
+	Map<String, String> brpop(String... keys);
 	
 	/**
 	 * Available since 2.2.0<br>
@@ -1364,7 +1365,7 @@ public interface RedisCommand {
 	 * 
 	 * @param key
 	 * @param index zero-based
-	 * @return
+	 * @return an element from a list by its index
 	 */
 	String lindex(String key, long index);
 	
@@ -1381,7 +1382,6 @@ public interface RedisCommand {
 	 * An error is returned when key exists but does not hold a list value.<br>
 	 * 
 	 * @param key
-	 * @param where
 	 * @param pivot
 	 * @param value
 	 * @return the length of the list after the insert operation, or -1 when the value pivot was not found.
@@ -1744,7 +1744,7 @@ public interface RedisCommand {
 	 * This has the same effect as running SINTER with one argument key.<br>
 	 * 
 	 * @param key
-	 * @return 
+	 * @return all the members in a set
 	 */
 	Set<String> smembers(String key);
 	
@@ -1804,7 +1804,7 @@ public interface RedisCommand {
 	 * Available since 1.0.0<br>
 	 * Time complexity: O(1)<br>
 	 * 
-	 * @see {@link #srandmember(String, int)}
+	 * @see #srandmember(String, int)
 	 * @param key
 	 * @return returns the randomly selected element, or null when key does not exist
 	 */
@@ -1917,7 +1917,7 @@ public interface RedisCommand {
 	 * @param key
 	 * @param min inclusive
 	 * @param max inclusive
-	 * @return
+	 * @return the number of members in a sorted set with scores within the given values
 	 */
 	Long zcount(String key, double min, double max);
 	Long zcount(String key, String min, String max);
@@ -2121,7 +2121,7 @@ public interface RedisCommand {
 	 * 
 	 * @param key
 	 * @param start
-	 * @param end
+	 * @param stop
 	 * @return  list of elements in the specified range (optionally with their scores)
 	 */
 	Set<String> zrevrange(String key, long start, long stop);
@@ -2223,7 +2223,7 @@ public interface RedisCommand {
 	 * Subscribes the client to the given patterns.<br>
 	 * 
 	 * @param handler
-	 * @param pattern
+	 * @param patterns
 	 * @return a redis pub/sub object
 	 */
 	RedisPubSub psubscribe(RedisPsubscribeHandler handler, String... patterns);
@@ -2362,7 +2362,7 @@ public interface RedisCommand {
 	 * For details, please see <a href="http://redis.io/commands/eval">Redis Script Document</a>
 	 * 
 	 * @param script
-	 * @return
+	 * @return script execution result object.
 	 */
 	Object eval(String script);
 	Object eval(String script, List<String> keys);
@@ -2377,7 +2377,7 @@ public interface RedisCommand {
 	 * Scripts are cached on the server side using the SCRIPT LOAD command. The command is otherwise identical to EVAL.<br>
 	 * 
 	 * @param sha1
-	 * @return
+	 * @return script execution result object.
 	 */
 	Object evalsha(String sha1);
 	Object evalsha(String sha1, List<String> keys);
@@ -2473,11 +2473,8 @@ public interface RedisCommand {
 	/**
 	 * Available since 1.0.0<br>
 	 * 
-	 * <p>
-	 * Returns message.<br>
-	 * 
 	 * @param message
-	 * @return
+	 * @return the given message
 	 */
 	String echo(String message);
 	
@@ -2771,9 +2768,7 @@ public interface RedisCommand {
 	/**
 	 * Available since 1.0.0<br>
 	 * 
-	 * <p>
-	 * Return the number of keys in the currently-selected database.
-	 * @return
+	 * @return the number of keys in the currently-selected database.
 	 */
 	Long dbsize();
 	
@@ -2785,7 +2780,7 @@ public interface RedisCommand {
 	 * Check the OBJECT command instead.
 	 * 
 	 * @param key
-	 * @return
+	 * @return debugging information about a key
 	 */
 	String debugobject(String key);
 	
@@ -3287,7 +3282,7 @@ public interface RedisCommand {
 	 * Resetting the slow log.<br>
 	 * You can reset the slow log using the SLOWLOG RESET command. Once deleted the information is lost forever.<br>
 	 * 
-	 * @return
+	 * @return slow queries log
 	 */
 	List<Slowlog> slowlogget();
 	List<Slowlog> slowlogget(long len);

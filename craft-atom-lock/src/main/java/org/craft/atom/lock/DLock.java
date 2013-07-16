@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
  * 
  * @author mindwind
  * @version 1.0, Nov 19, 2012
- * @see RedisDLock24
  */
 public interface DLock {
 	

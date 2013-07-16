@@ -13,17 +13,13 @@ import org.craft.atom.redis.api.RedisCommand;
 public interface Sharded<R extends RedisCommand> {
 
 	/**
-	 * Return redis shard by shardkey
-	 * 
 	 * @param shardkey
-	 * @return
+	 * @return redis shard by shardkey
 	 */
 	R shard(String shardkey);
 	
 	/**
-	 * Get all redis shards.
-	 * 
-	 * @return
+	 * @return all redis shards.
 	 */
 	List<R> shards();
 	

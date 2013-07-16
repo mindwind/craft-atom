@@ -30,23 +30,17 @@ public interface MasterSlaveRedis extends RedisCommand {
 	void master(int index);
 	
 	/**
-	 * Return master redis node.
-	 * 
-	 * @return
+	 * @return master redis node.
 	 */
 	Redis master();
 	
 	/**
-	 * Return master node index.
-	 * 
-	 * @return
+	 * @return master node index.
 	 */
 	int index();
 	
 	/**
-	 * Return master-slave redis chain list.
-	 * 
-	 * @return
+	 * @return master-slave redis chain list.
 	 */
 	List<Redis> chain();
 	

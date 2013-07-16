@@ -14,9 +14,7 @@ import java.util.List;
 public interface ShardedRedis extends ShardedRedisCommand {
 	
 	/**
-	 * Return all shards
-	 * 
-	 * @return
+	 * @return all shards
 	 */
 	List<Redis> shards();
 	

@@ -10,10 +10,8 @@ import java.util.List;
  */
 public interface MasterSlaveShardedRedis extends ShardedRedisCommand {
 	
-	/**
-	 * Return all shards
-	 * 
-	 * @return
+	/** 
+	 * @return all shards
 	 */
 	List<MasterSlaveRedis> shards();
 	
