@@ -66,7 +66,7 @@ public class RedisFactory {
 	}
 	
 	/**
-	 * @param hostport, e.g. localhost:6379
+	 * @param hostport  e.g. localhost:6379
 	 * @return a singleton redis client
 	 */
 	public static Redis newRedis(String hostport) {
@@ -105,7 +105,7 @@ public class RedisFactory {
 	}
 	
 	/**
-	 * @param masterslavestring, e.g. localhost:6379-localhost:6380-localhost:6381 the first is master, others are slaves.
+	 * @param masterslavestring  e.g. localhost:6379-localhost:6380-localhost:6381 the first is master, others are slaves.
 	 * @return a master-slave redis client
 	 */
 	public static MasterSlaveRedis newMasterSlaveRedis(String masterslavestring) {
@@ -170,7 +170,7 @@ public class RedisFactory {
 	}
 	
 	/**
-	 * @param masterslaveshards, e.g. localhost:6379-localhost:6380, localhost:6389-localhost:6390
+	 * @param masterslaveshards  e.g. localhost:6379-localhost:6380, localhost:6389-localhost:6390
 	 * @return a master-salve sharded redis client.
 	 */
 	public static MasterSlaveShardedRedis newMasterSlaveShardedRedis(String masterslaveshards) {
