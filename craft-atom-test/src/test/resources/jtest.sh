@@ -1,1 +1,0 @@
-/export/test/jmeter-2.4/bin/jmeter -n -t ./test-nio-1k.jmx -l log-1k.jtl
