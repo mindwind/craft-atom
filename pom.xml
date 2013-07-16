@@ -11,7 +11,7 @@
 	<licenses>
 		<license>
 			<name>MIT</name>
-			<url>https://github.com/mindwind/craft-atom/blob/master/LICENSE.txt</url>
+			<url>http://raw.github.com/mindwind/craft-atom/master/LICENSE.txt</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
