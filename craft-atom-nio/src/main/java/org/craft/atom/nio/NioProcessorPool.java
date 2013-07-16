@@ -60,10 +60,10 @@ public class NioProcessorPool {
 	}
 	
 	/**
-	 * Pick a processor.
+	 * Pick a nio processor object.
 	 * 
 	 * @param channel
-	 * @return
+	 * @return a nio processor.
 	 */
 	public NioProcessor pick(NioByteChannel channel) {
 		return pool[Math.abs((int) (channel.getId() % pool.length))];
