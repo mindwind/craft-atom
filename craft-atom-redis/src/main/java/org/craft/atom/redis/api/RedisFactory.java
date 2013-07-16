@@ -65,6 +65,17 @@ public class RedisFactory {
 		return new DefaultRedis(host, port, timeout, poolConfig, password, database);
 	}
 	
+	/**
+	 * @param hostport, e.g. localhost:6379
+	 * @return a singleton redis client
+	 */
+	public static Redis newRedis(String hostport) {
+		String[] sarr = hostport.trim().split(":");
+		String host = sarr[0];
+		int port = Integer.parseInt(sarr[1]);
+		return new DefaultRedis(host, port);
+	}
+	
 	
 	// ~ ----------------------------------------------------------------------------------------- Master-Slave Redis
 	
@@ -75,11 +86,11 @@ public class RedisFactory {
 		for (int i = 0; i < slaves.length; i++) {
 			chain.add(slaves[i]);
 		}
-		return new DefaultMasterSlaveRedis(chain);
+		return newMasterSlaveRedis(chain);
 	}
 	
 	public static MasterSlaveRedis newMasterSlaveRedis(List<Redis> chain) {
-		return new DefaultMasterSlaveRedis(chain);
+		return newMasterSlaveRedis(chain, 0);
 	}
 	
 	/**
@@ -90,7 +101,26 @@ public class RedisFactory {
 	 * @return a master-slave redis client
 	 */
 	public static MasterSlaveRedis newMasterSlaveRedis(List<Redis> chain, int index) {
-		return new DefaultMasterSlaveRedis(chain);
+		return new DefaultMasterSlaveRedis(chain, index);
+	}
+	
+	/**
+	 * @param masterslavestring, e.g. localhost:6379-localhost:6380-localhost:6381 the first is master, others are slaves.
+	 * @return a master-slave redis client
+	 */
+	public static MasterSlaveRedis newMasterSlaveRedis(String masterslavestring) {
+		String[] hostports = masterslavestring.split("-");
+		List<Redis> chain = convert(hostports);
+		return newMasterSlaveRedis(chain);
+	}
+	
+	private static List<Redis> convert(String[] hostports) {
+		List<Redis> l = new ArrayList<Redis>(hostports.length);
+		for (String hostport : hostports) {
+			Redis redis = newRedis(hostport.trim());
+			l.add(redis);
+		}
+		return l;
 	}
 	
 	
@@ -111,6 +141,16 @@ public class RedisFactory {
 		return new DefaultShardedRedis(sharded);
 	}
 	
+	/**
+	 * @param shardstring e.g. localhost:6379,localhost:6380
+	 * @return sharded redis client
+	 */
+	public static ShardedRedis newShardedRedis(String shardstring) {
+		String[] hostports = shardstring.split(",");
+		List<Redis> shards = convert(hostports);
+		return new DefaultShardedRedis(shards);
+	}
+	
 	
 	// ~ ---------------------------------------------------------------------------------- Master-Slave Sharded Redis
 	
@@ -127,5 +167,19 @@ public class RedisFactory {
 	 */
 	public static MasterSlaveShardedRedis newMasterSlaveShardedRedis(Sharded<MasterSlaveRedis> sharded) {
 		return new DefaultMasterSlaveShardedRedis(sharded);
+	}
+	
+	/**
+	 * @param masterslaveshards, e.g. localhost:6379-localhost:6380, localhost:6389-localhost:6390
+	 * @return a master-salve sharded redis client.
+	 */
+	public static MasterSlaveShardedRedis newMasterSlaveShardedRedis(String masterslaveshards) {
+		String[] masterslaves = masterslaveshards.split(",");
+		List<MasterSlaveRedis> shards = new ArrayList<MasterSlaveRedis>();
+		for (String masterslavestring : masterslaves) {
+			MasterSlaveRedis msr = newMasterSlaveRedis(masterslavestring);
+			shards.add(msr);
+		}
+		return newMasterSlaveShardedRedis(shards);
 	}
 }
