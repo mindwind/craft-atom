@@ -11,7 +11,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.craft.atom</groupId>
-			<artifactId>craft-atom-cache</artifactId>
+			<artifactId>craft-atom-redis</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

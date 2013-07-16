@@ -1,4 +1,4 @@
-package org.craft.atom.lock;
+package org.craft.atom.lock.api;
 
 import java.util.concurrent.TimeUnit;
 

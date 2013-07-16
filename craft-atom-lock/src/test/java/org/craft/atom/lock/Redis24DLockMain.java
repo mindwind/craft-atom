@@ -4,34 +4,32 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
-import org.craft.atom.cache.impl.RedisCache;
-import org.craft.atom.lock.impl.RedisDLock24;
+import org.craft.atom.lock.api.DLock;
+import org.craft.atom.lock.api.DLockFactory;
+import org.craft.atom.redis.api.Redis;
+import org.craft.atom.redis.api.RedisFactory;
 
 /**
  * @author Hu Feng
  * @version 1.0, Nov 19, 2012
  */
-public class RedisDLock24Main {
+public class Redis24DLockMain {
 	
-	private static RedisCache rc;
+	private static Redis redis;
 	private static DLock dlock;
-	private static String lockKey = "lockTest";
+	private static String lockKey = "redis24-dlock";
 	
 	private static void init() {
-		boolean isShard = true;
-		int timeout = 3000;
-		rc = new RedisCache(isShard, timeout, "localhost:6379", 10);
-		dlock = new RedisDLock24(rc);
+		redis = RedisFactory.newRedis("localhost", 6379);
+		dlock = DLockFactory.newRedis24DLock(redis);
 	}
 	
-	public static void before() {
-		System.out.println("------------------------------- before");
+	public static void before(String desc) {
+		System.out.println("case -- " + desc);
 	}
 	
 	public static void after() {
 		dlock.unlock(lockKey);
-		
-		System.out.println("------------------------------- after");
 	}
 	
 	public static void main(String[] args) {
@@ -41,10 +39,10 @@ public class RedisDLock24Main {
 		testTryLock1();
 		
 		// case 2
-//		testTryLock2();
+		testTryLock2();
 		
 		// case 3
-//		testTryLock3();
+		testTryLock3();
 		
 		// case 4
 		testTryLock4();
@@ -52,11 +50,10 @@ public class RedisDLock24Main {
 	
 	// WATCH: lock=true  GET: lock=true   LOCK: false
 	public static void testTryLock1() {
-		System.out.println("testTryLock1");
+		before("testTryLock1");
 		
-		before();
 		try {
-			rc.set(lockKey, "1");
+			redis.set(lockKey, "1");
 			boolean b = dlock.tryLock(lockKey, 30, TimeUnit.SECONDS);
 			Assert.assertFalse(b);
 		} catch (Exception ex) {
@@ -68,13 +65,12 @@ public class RedisDLock24Main {
 	
 	// WATCH: lock=false  GET: lock=true    LOCK: false	    execute in debug mode to simulate
 	public static void testTryLock2() {
-		System.out.println("testTryLock2");
+		before("testTryLock2");
 		
-		before();
 		try {
-			rc.del(lockKey);
+			redis.del(lockKey);
 			boolean b = dlock.tryLock(lockKey, 30, TimeUnit.SECONDS);
-			Assert.assertFalse(b);
+			System.out.println("	lock result=" + b);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		} finally {
@@ -84,11 +80,10 @@ public class RedisDLock24Main {
 	
 	// WATCH: lock=true   GET: lock=false   LOCK: false	    execute in debug mode to simulate
 	public static void testTryLock3() {
-		System.out.println("testTryLock3");
+		before("testTryLock3");
 		
-		before();
 		try {
-			rc.set(lockKey, "1");
+			redis.set(lockKey, "1");
 			boolean b = dlock.tryLock(lockKey, 30, TimeUnit.SECONDS);
 			Assert.assertFalse(b);
 		} catch (Exception ex) {
@@ -100,11 +95,10 @@ public class RedisDLock24Main {
 	
 	// WATCH: lock=false  GET: lock=false   LOCK: true	
 	public static void testTryLock4() {
-		System.out.println("testTryLock4");
+		before("testTryLock4");
 		
-		before();
 		try {
-			rc.del(lockKey);
+			redis.del(lockKey);
 			boolean b = dlock.tryLock(lockKey, 30, TimeUnit.SECONDS);
 			Assert.assertTrue(b);
 		} catch (Exception ex) {
