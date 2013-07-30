@@ -1,6 +1,7 @@
 package org.craft.atom.redis;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,12 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		int size = chain.size();
 		if (size < 2) {
 			throw new IllegalArgumentException("Master-slave chain list must have 2 redis node at lease.");
+		}
+		
+		Set<Redis> set = new HashSet<Redis>();
+		set.addAll(chain);
+		if (set.size() != size) {
+			throw new IllegalArgumentException("Invalid master-slave chain, because repeated redis node, chain=" + chain);
 		}
 		
 		check(index, size);
