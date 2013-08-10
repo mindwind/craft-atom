@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.craft.atom.redis.api.MasterSlaveRedis;
 import org.craft.atom.redis.api.Redis;
+import org.craft.atom.redis.api.RedisConnectionException;
 import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
 import org.craft.atom.redis.api.Slowlog;
@@ -21,6 +24,7 @@ import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
  */
 public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	
+	private static final Log LOG = LogFactory.getLog(DefaultMasterSlaveRedis.class);
 	
 	private List<Redis> chain;
 	private volatile int index;
@@ -108,22 +112,25 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		Redis master = chain.get(index);
 		master.slaveofnoone();
 		
+		// after master
 		for (int i = index + 1; i < chain.size(); i++) {
 			Redis m = chain.get(i - 1);
 			Redis s = chain.get(i);
-			s.slaveof(m.host(), m.port());
+			link(m, s);
 		}
 		
+		// before master except index 0
 		for (int i = 1; i < index; i++) {
 			Redis m = chain.get(i - 1);
 			Redis s = chain.get(i);
-			s.slaveof(m.host(), m.port());
+			link(m, s);
 		}
 		
+		// index 0
 		if (index != 0) {
 			Redis m = chain.get(chain.size() - 1);
 			Redis s = chain.get(0);
-			s.slaveof(m.host(), m.port());
+			link(m, s);
 		}
 	}
 
@@ -131,6 +138,14 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public void reset() {
 		index = 0;
 		rebuild();
+	}
+	
+	private void link(Redis m, Redis s) {
+		try {
+			s.slaveof(m.host(), m.port());
+		} catch (RedisConnectionException e) {
+			LOG.warn(String.format("%s slaveof %s failed", s.toString(), m.toString()));
+		}
 	}
 	
 	

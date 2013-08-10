@@ -22,14 +22,7 @@ public class MasterSlaveRedisMain extends AbstractMain {
 	private static MasterSlaveRedis r;
 	
 	private static void init() {
-		Redis master = RedisFactory.newRedis(HOST, PORT0);
-		Redis slave1 = RedisFactory.newRedis(HOST, PORT1);
-		Redis slave2 = RedisFactory.newRedis(HOST, PORT2);
-		List<Redis> chain = new ArrayList<Redis>(3);
-		chain.add(master);
-		chain.add(slave1);
-		chain.add(slave2);
-		r = RedisFactory.newMasterSlaveRedis(master, slave1, slave2);
+		
 	}
 	
 	protected static void after() {
@@ -39,20 +32,61 @@ public class MasterSlaveRedisMain extends AbstractMain {
 	public static void main(String[] args) throws Exception {
 		init();
 		
-		testSwitchover();
+		testSwitchoverNormal();
+		testSwitchoverException();
 	}
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------ Test Cases
 	
-	private static void testSwitchover() {
-		before("testSwitchover");
+	private static void testSwitchoverException() {
+		before("testSwitchoverException");
+		
+		Redis master = RedisFactory.newRedis(HOST, PORT0);
+		Redis slave1 = RedisFactory.newRedis(HOST, PORT1);
+		Redis slave2 = RedisFactory.newRedis(HOST, PORT2);
+		List<Redis> chain = new ArrayList<Redis>(3);
+		chain.add(master);
+		chain.add(slave1);
+		chain.add(slave2);
+		r = RedisFactory.newMasterSlaveRedis(master, slave1, slave2);
+		
+		// shutdown index-2 redis
+		slave2.shutdown(false);
+		
+		// switch to index-2
+		try {
+			r.master(2);
+			Assert.fail();
+		} catch (Exception e) {
+			
+		}
 		
 		r.master(1);
 		Redis m = r.master();
 		Assert.assertEquals(PORT1, m.port());
+		String slaveof = slave1.configget("slaveof").get("slaveof");
+		Assert.assertNull(slaveof);
+	}
+	
+	private static void testSwitchoverNormal() {
+		before("testSwitchoverNormal");
 		
-		List<Redis> chain = r.chain();
+		Redis master = RedisFactory.newRedis(HOST, PORT0);
+		Redis slave1 = RedisFactory.newRedis(HOST, PORT1);
+		Redis slave2 = RedisFactory.newRedis(HOST, PORT2);
+		List<Redis> chain = new ArrayList<Redis>(3);
+		chain.add(master);
+		chain.add(slave1);
+		chain.add(slave2);
+		r = RedisFactory.newMasterSlaveRedis(master, slave1, slave2);
+		
+		// switch to index-1 redis
+		r.master(1);
+		Redis m = r.master();
+		Assert.assertEquals(PORT1, m.port());
+		
+		chain = r.chain();
 		Assert.assertEquals(3, chain.size());
 		Redis s1 = chain.get(1);
 		Redis s2 = chain.get(2);
