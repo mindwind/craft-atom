@@ -1,6 +1,6 @@
 package org.craft.atom.redis;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -43,8 +43,7 @@ public abstract class AbstractMurmurHashSharded<R extends RedisCommand> {
 	}
 
 	public List<R> shards() {
-		return Collections.unmodifiableList(shards);
+		return new ArrayList<R>(shards);
 	}
-	
 
 }
