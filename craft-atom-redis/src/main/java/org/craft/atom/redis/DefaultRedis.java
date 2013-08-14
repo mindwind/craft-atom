@@ -127,6 +127,10 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private Config poolConfig(int poolSize) {
+		if (poolSize <= 0) {
+			throw new IllegalArgumentException(String.format("Redis init <poolSize=%s> must > 0", poolSize));
+		}
+		
 		JedisPoolConfig jpc = new JedisPoolConfig();
 		jpc.setMaxActive(poolSize);
 		jpc.setMaxIdle(poolSize);
@@ -135,6 +139,10 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private void init() {
+		if (timeout < 0) {
+			throw new IllegalArgumentException(String.format("Redis init <timeout=%s> must >= 0", timeout));
+		}
+		
 		pool = new JedisPool(poolConfig, host, port, timeout, password, database);
 	}
 	
