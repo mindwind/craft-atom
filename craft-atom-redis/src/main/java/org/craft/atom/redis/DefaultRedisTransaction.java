@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import lombok.ToString;
+
 import org.craft.atom.redis.api.RedisException;
 import org.craft.atom.redis.api.RedisTransaction;
 
@@ -25,6 +27,7 @@ import redis.clients.jedis.ZParams.Aggregate;
  * @author mindwind
  * @version 1.0, Jun 27, 2013
  */
+@ToString(of = "r")
 @SuppressWarnings("unchecked")
 public class DefaultRedisTransaction implements RedisTransaction {
 	
@@ -2098,6 +2101,4 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		}
 	}
 
-	
-	
 }

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.ToString;
+
 import org.craft.atom.redis.api.RedisCommand;
 import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
@@ -16,6 +18,7 @@ import org.craft.atom.redis.spi.Sharded;
  * @author mindwind
  * @version 1.0, Jun 18, 2013
  */
+@ToString
 public abstract class AbstractShardedRedis<R extends RedisCommand> implements ShardedRedisCommand {
 	
 	

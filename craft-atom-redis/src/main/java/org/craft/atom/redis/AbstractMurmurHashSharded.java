@@ -5,12 +5,15 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import lombok.ToString;
+
 import org.craft.atom.redis.api.RedisCommand;
 
 /**
  * @author mindwind
  * @version 1.0, Jun 25, 2013
  */
+@ToString(of = {"shards"})
 public abstract class AbstractMurmurHashSharded<R extends RedisCommand> {
 	
 	private TreeMap<Long, R> nodes;

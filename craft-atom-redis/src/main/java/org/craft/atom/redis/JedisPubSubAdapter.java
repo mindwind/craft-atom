@@ -1,11 +1,13 @@
 package org.craft.atom.redis;
 
+import lombok.ToString;
 import redis.clients.jedis.JedisPubSub;
 
 /**
  * @author mindwind
  * @version 1.0, Jun 23, 2013
  */
+@ToString
 public class JedisPubSubAdapter extends JedisPubSub {
 
 	@Override

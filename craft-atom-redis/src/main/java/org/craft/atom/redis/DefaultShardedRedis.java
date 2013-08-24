@@ -2,6 +2,8 @@ package org.craft.atom.redis;
 
 import java.util.List;
 
+import lombok.ToString;
+
 import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.ShardedRedis;
 import org.craft.atom.redis.spi.Sharded;
@@ -10,6 +12,7 @@ import org.craft.atom.redis.spi.Sharded;
  * @author mindwind
  * @version 1.0, Jun 25, 2013
  */
+@ToString(callSuper = true)
 public class DefaultShardedRedis extends AbstractShardedRedis<Redis> implements ShardedRedis {
 	
 	
@@ -29,20 +32,5 @@ public class DefaultShardedRedis extends AbstractShardedRedis<Redis> implements 
 	public List<Redis> shards() {
 		return sharded.shards();
 	}
-
-	
-	// ~ ---------------------------------------------------------------------------------------------------------
-	
-
-	@Override
-	public String toString() {
-		StringBuilder buf = new StringBuilder();
-		buf.append("{")
-		   .append("class: ").append(getClass().getName()).append(", ")
-		   .append("shards: ").append(shards())
-		   .append("}");
-		return buf.toString();
-	}
-	
 
 }

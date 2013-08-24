@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.redis.api.MasterSlaveRedis;
@@ -22,6 +24,7 @@ import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
  * @author mindwind
  * @version 1.0, Jun 26, 2013
  */
+@ToString
 public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	
 	private static final Log LOG = LogFactory.getLog(DefaultMasterSlaveRedis.class);
@@ -1311,20 +1314,4 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public Long microtime() {
 		return master().microtime();
 	}
-	
-	
-	// ~ -----------------------------------------------------------------------------------------------------------
-	
-	
-	@Override
-	public String toString() {
-		StringBuilder buf = new StringBuilder();
-		buf.append("{")
-		   .append("class: ").append(getClass().getName()).append(", ")
-		   .append("master: ").append(index()).append(", ")
-		   .append("chain: ").append(chain())
-		   .append("}");
-		return buf.toString();
-	}
-	
 }

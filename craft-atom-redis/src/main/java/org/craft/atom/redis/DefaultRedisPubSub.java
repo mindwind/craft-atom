@@ -1,5 +1,7 @@
 package org.craft.atom.redis;
 
+import lombok.ToString;
+
 import org.craft.atom.redis.api.RedisPubSub;
 
 import redis.clients.jedis.JedisPubSub;
@@ -8,6 +10,7 @@ import redis.clients.jedis.JedisPubSub;
  * @author mindwind
  * @version 1.0, Jul 1, 2013
  */
+@ToString
 public class DefaultRedisPubSub implements RedisPubSub {
 	
 	private JedisPubSub jps;

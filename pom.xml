@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.craft.atom</groupId>
@@ -7,7 +8,7 @@
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	<url>https://github.com/mindwind/craft-atom</url>
-	
+
 	<licenses>
 		<license>
 			<name>MIT</name>
@@ -15,13 +16,13 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	
+
 	<scm>
 		<connection>scm:git:git@github.com:mindwind/craft-atom.git</connection>
-        <url>scm:git:git@github.com:mindwind/craft-atom.git</url>
+		<url>scm:git:git@github.com:mindwind/craft-atom.git</url>
 		<developerConnection>scm:git:https://github.com/mindwind/craft-atom.git</developerConnection>
-	 	<tag>HEAD</tag>
-  	</scm>
+		<tag>HEAD</tag>
+	</scm>
 
 	<modules>
 		<module>craft-atom-nio</module>
@@ -47,7 +48,8 @@
 		<v.commons.logging>1.1.1</v.commons.logging>
 		<v.log4j>1.2.17</v.log4j>
 		<v.junit>4.8.2</v.junit>
-		<v.jedis>2.2.0-SNAPSHOT</v.jedis>
+		<v.jedis>2.2.0.craft-SNAPSHOT</v.jedis>
+		<v.lombok>0.12.1.craft</v.lombok>
 	</properties>
 
 	<dependencies>
@@ -61,6 +63,12 @@
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
 			<version>${v.commons.logging}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${v.lombok}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 
@@ -136,7 +144,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<developers>
 		<developer>
 			<id>mindwind</id>

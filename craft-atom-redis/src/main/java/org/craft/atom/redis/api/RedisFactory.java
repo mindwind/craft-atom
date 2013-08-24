@@ -170,7 +170,7 @@ public class RedisFactory {
 	}
 	
 	/**
-	 * @param masterslaveshards  e.g. localhost:6379-localhost:6380, localhost:6389-localhost:6390
+	 * @param masterslaveshards  e.g. localhost:6379-localhost:6380,localhost:6389-localhost:6390
 	 * @return a master-salve sharded redis client.
 	 */
 	public static MasterSlaveShardedRedis newMasterSlaveShardedRedis(String masterslaveshards) {
