@@ -1,7 +1,8 @@
 package org.craft.atom.util;
 
 import java.io.Serializable;
-import java.util.Arrays;
+
+import lombok.ToString;
 
 /**
  * A byte array buffer.
@@ -11,6 +12,7 @@ import java.util.Arrays;
  * @author Hu Feng
  * @version 1.0, 2011-10-26
  */
+@ToString
 public final class ByteArrayBuffer implements Serializable {
 
 	private static final long serialVersionUID = -5219299551050201309L;
@@ -354,11 +356,6 @@ public final class ByteArrayBuffer implements Serializable {
 		byte newbuffer[] = new byte[Math.max(this.buffer.length << 1, newlen)];
 		System.arraycopy(this.buffer, 0, newbuffer, 0, this.len);
 		this.buffer = newbuffer;
-	}
-
-	@Override
-	public String toString() {
-		return "ByteArrayBuffer [len=" + len + ", buffer=" + Arrays.toString(buffer) + "]";
 	}
 
 }

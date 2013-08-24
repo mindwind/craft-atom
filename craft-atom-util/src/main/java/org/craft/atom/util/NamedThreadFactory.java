@@ -3,6 +3,8 @@ package org.craft.atom.util;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import lombok.ToString;
+
 /**
  * Named thread factory.<br>
  * When using thread pool with your own named thread is a better practice.
@@ -10,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Hu Feng
  * @version 1.0, Nov 19, 2012
  */
+@ToString
 public class NamedThreadFactory implements ThreadFactory {
 	
 	private static final AtomicInteger threadNumber = new AtomicInteger(1);

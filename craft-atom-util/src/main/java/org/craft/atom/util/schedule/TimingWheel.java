@@ -10,6 +10,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,6 +52,7 @@ import org.apache.commons.logging.LogFactory;
  * @author mindwind
  * @version 1.0, Sep 20, 2012
  */
+@ToString(of = { "tickDuration", "ticksPerWheel", "currentTickIndex", "wheel", "indicator"})
 public class TimingWheel<E> {
 	
 	private static final Log LOG = LogFactory.getLog(TimingWheel.class);
@@ -263,6 +267,8 @@ public class TimingWheel<E> {
 		}
 	}
 	
+	@ToString
+	@EqualsAndHashCode(of = "id")
 	private static class Slot<E> {
 		
 		private int id;
@@ -283,44 +289,5 @@ public class TimingWheel<E> {
 		public Set<E> elements() {
 			return elements.keySet();
 		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + id;
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			@SuppressWarnings("rawtypes")
-			Slot other = (Slot) obj;
-			if (id != other.id)
-				return false;
-			return true;
-		}
-
-		@Override
-		public String toString() {
-			return "Slot [id=" + id + ", elements=" + elements + "]";
-		}
-		
 	}
-
-	@Override
-	public String toString() {
-		return String
-				.format("TimingWheel [tickDuration=%s, ticksPerWheel=%s, currentTickIndex=%s, expirationListeners=%s, wheel=%s, indicator=%s, shutdown=%s, lock=%s, workerThread=%s]",
-						tickDuration, ticksPerWheel, currentTickIndex,
-						expirationListeners, wheel, indicator, shutdown, lock,
-						workerThread);
-	}
-	
 }
