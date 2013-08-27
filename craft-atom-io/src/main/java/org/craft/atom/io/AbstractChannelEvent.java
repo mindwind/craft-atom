@@ -1,5 +1,6 @@
 package org.craft.atom.io;
 
+import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -11,17 +12,13 @@ import lombok.ToString;
 @ToString(of = "type")
 abstract public class AbstractChannelEvent {
 	
-	protected final ChannelEventType type;
+	@Getter protected final ChannelEventType type;
 	
 	public AbstractChannelEvent(ChannelEventType type) {
 		if (type == null) {
             throw new IllegalArgumentException("type == null");
         }
 		this.type = type;
-	}
-
-	public ChannelEventType getType() {
-		return type;
 	}
 
 }

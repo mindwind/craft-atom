@@ -1,5 +1,7 @@
 package org.craft.atom.io;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -11,11 +13,11 @@ import lombok.ToString;
 @ToString(callSuper = true, of = { "lastIoTime", "minReadBufferSize", "defaultReadBufferSize", "maxReadBufferSize", "maxWriteBufferSize" })
 public abstract class AbstractIoChannel extends AbstractChannel {
 
-	protected long lastIoTime = System.currentTimeMillis();
-	protected int minReadBufferSize = IoConfig.MIN_READ_BUFFER_SIZE;
-	protected int defaultReadBufferSize = IoConfig.DEFAULT_READ_BUFFER_SIZE;
-	protected int maxReadBufferSize = IoConfig.MAX_READ_BUFFER_SIZE;
-	protected int maxWriteBufferSize = maxReadBufferSize + (maxReadBufferSize >>> 1);
+	@Getter @Setter protected long lastIoTime = System.currentTimeMillis();
+	@Getter protected int minReadBufferSize = IoConfig.MIN_READ_BUFFER_SIZE;
+	@Getter protected int defaultReadBufferSize = IoConfig.DEFAULT_READ_BUFFER_SIZE;
+	@Getter protected int maxReadBufferSize = IoConfig.MAX_READ_BUFFER_SIZE;
+	@Getter protected int maxWriteBufferSize = maxReadBufferSize + (maxReadBufferSize >>> 1);
 	
 	// ~ -----------------------------------------------------------------------------------------------------------
 	
@@ -55,18 +57,7 @@ public abstract class AbstractIoChannel extends AbstractChannel {
 	}
 
 	// ~ -----------------------------------------------------------------------------------------------------------
-
-	public long getLastIoTime() {
-		return lastIoTime;
-	}
-
-	public void setLastIoTime(long lastIoTime) {
-		this.lastIoTime = lastIoTime;
-	}
-
-	public int getMinReadBufferSize() {
-		return minReadBufferSize;
-	}
+	
 
 	public void setMinReadBufferSize(int minReadBufferSize) {
 		if (minReadBufferSize <= 0) {
@@ -78,10 +69,6 @@ public abstract class AbstractIoChannel extends AbstractChannel {
         }
         
 		this.minReadBufferSize = minReadBufferSize;
-	}
-
-	public int getDefaultReadBufferSize() {
-		return defaultReadBufferSize;
 	}
 
 	public void setDefaultReadBufferSize(int defaultReadBufferSize) {
@@ -96,10 +83,6 @@ public abstract class AbstractIoChannel extends AbstractChannel {
 		this.defaultReadBufferSize = defaultReadBufferSize;
 	}
 
-	public int getMaxReadBufferSize() {
-		return maxReadBufferSize;
-	}
-
 	public void setMaxReadBufferSize(int maxReadBufferSize) {
 		if (maxReadBufferSize <= 0) {
 			throw new IllegalArgumentException("maxReadBufferSize: " + maxReadBufferSize + " (expected: > 1)");
@@ -110,10 +93,6 @@ public abstract class AbstractIoChannel extends AbstractChannel {
         }
 		
 		this.maxReadBufferSize = maxReadBufferSize;
-	}
-	
-	public int getMaxWriteBufferSize() {
-		return this.maxWriteBufferSize;
 	}
 
 	public void setMaxWriteBufferSize(int maxWriteBufferSize) {

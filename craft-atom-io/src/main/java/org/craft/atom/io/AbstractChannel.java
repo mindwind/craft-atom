@@ -5,6 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 
 /**
@@ -19,7 +20,7 @@ abstract public class AbstractChannel {
 	
 	private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
 	
-	protected long id;
+	@Getter protected long id;
 	protected Map<Object, Object> attributes = new ConcurrentHashMap<Object, Object>();
 	protected volatile ChannelState state = ChannelState.OPEN;
 	
@@ -34,10 +35,6 @@ abstract public class AbstractChannel {
 	}
 
 	// ~ -----------------------------------------------------------------------------------------------------------
-	
-	public long getId() {
-		return id;
-	}
 	
 	public boolean isOpen() {
 		return state == ChannelState.OPEN;
