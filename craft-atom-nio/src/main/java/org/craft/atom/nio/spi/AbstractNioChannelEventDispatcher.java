@@ -2,6 +2,8 @@ package org.craft.atom.nio.spi;
 
 import java.util.concurrent.Semaphore;
 
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.nio.NioByteChannel;
@@ -13,6 +15,7 @@ import org.craft.atom.nio.NioByteChannel;
  * @author mindwind
  * @version 1.0, Feb 27, 2013
  */
+@ToString(of = { "semaphore" })
 abstract public class AbstractNioChannelEventDispatcher implements NioChannelEventDispatcher {
 	
 	private static final Log LOG = LogFactory.getLog(AbstractNioChannelEventDispatcher.class);

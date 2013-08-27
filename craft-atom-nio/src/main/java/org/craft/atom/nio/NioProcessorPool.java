@@ -1,6 +1,6 @@
 package org.craft.atom.nio;
 
-import java.util.Arrays;
+import lombok.ToString;
 
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
@@ -11,6 +11,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
+@ToString(of = { "pool", "config" })
 public class NioProcessorPool {
 	
 	private final NioProcessor[] pool;
@@ -67,12 +68,6 @@ public class NioProcessorPool {
 	 */
 	public NioProcessor pick(NioByteChannel channel) {
 		return pool[Math.abs((int) (channel.getId() % pool.length))];
-	}
-
-	@Override
-	public String toString() {
-		return String
-				.format("NioProcessorPool [pool=%s, config=%s, dispatcher=%s, handler=%s]", Arrays.toString(pool), config, dispatcher, handler);
 	}
 	
 }

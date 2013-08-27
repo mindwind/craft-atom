@@ -2,6 +2,8 @@ package org.craft.atom.nio;
 
 import java.nio.ByteBuffer;
 
+import lombok.ToString;
+
 /**
  * Allocate byte buffer and reuse original buffer as far as possible. A trade
  * off for memory waste and efficiency.
@@ -11,6 +13,7 @@ import java.nio.ByteBuffer;
  * @author mindwind
  * @version 1.0, Jan 25, 2013
  */
+@ToString(of = { "buf", "exceedCount", "maxExceedCount", "percentual" })
 public class NioByteBufferAllocator {
 	
 	private ByteBuffer buf;

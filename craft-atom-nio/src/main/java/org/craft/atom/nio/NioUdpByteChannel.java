@@ -6,6 +6,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectableChannel;
 
+import lombok.ToString;
+
 import org.craft.atom.nio.spi.NioBufferSizePredictor;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
@@ -15,6 +17,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
+@ToString(of = "datagramChannel")
 public class NioUdpByteChannel extends NioByteChannel {
 	
 	private DatagramChannel datagramChannel; 
@@ -43,17 +46,6 @@ public class NioUdpByteChannel extends NioByteChannel {
 	@Override
 	protected SelectableChannel innerChannel() {
 		return datagramChannel;
-	}
-	
-	// ~ ------------------------------------------------------------------------------------------------------------
-
-	public String toFullString() {
-		return String
-				.format("NioUdpByteChannel [datagramChannel=%s, localAddress=%s, remoteAddress=%s, selectionKey=%s, predictor=%s, lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s, semaphore=%s]",
-						datagramChannel, localAddress, remoteAddress,
-						selectionKey, predictor, lastIoTime, minReadBufferSize,
-						defaultReadBufferSize, maxReadBufferSize,
-						maxWriteBufferSize, id, attributes, state, semaphore);
 	}
 
 }

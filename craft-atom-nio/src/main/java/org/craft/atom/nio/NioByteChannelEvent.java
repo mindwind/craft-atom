@@ -1,5 +1,7 @@
 package org.craft.atom.nio;
 
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.ChannelEventType;
@@ -11,6 +13,7 @@ import org.craft.atom.io.IoHandler;
  * @author mindwind
  * @version 1.0, Feb 21, 2013
  */
+@ToString(of = { "parameter" })
 public class NioByteChannelEvent extends AbstractNioByteChannelEvent {
 	
 	private static final Log LOG = LogFactory.getLog(NioByteChannelEvent.class);
@@ -77,11 +80,5 @@ public class NioByteChannelEvent extends AbstractNioByteChannelEvent {
 			throw new IllegalArgumentException("Unknown event type: " + type);
 		}
 	}
-
-	@Override
-	public String toString() {
-		return String
-				.format("NioByteChannelEvent [type=%s, channel=%s, parameter=%s, handler=%s]", type, channel, parameter, handler);
-	}
-
+	
 }

@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.Channel;
@@ -25,12 +27,13 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @version 1.0, Feb 24, 2013
  * @see NioTcpConnector
  */
+@ToString(callSuper = true, of = { "config" })
 abstract public class NioConnector extends NioReactor implements IoConnector {
 	
 	private static final Log LOG = LogFactory.getLog(NioConnector.class);
 	
-	protected final IoHandler handler;
 	protected final NioConnectorConfig config;
+	protected final IoHandler handler;
 	protected final NioProcessorPool pool;
 	protected final ExecutorService executorService = Executors.newCachedThreadPool();
 	

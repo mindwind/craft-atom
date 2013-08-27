@@ -1,5 +1,7 @@
 package org.craft.atom.nio;
 
+import lombok.ToString;
+
 import org.craft.atom.io.ChannelEvent;
 import org.craft.atom.nio.spi.AbstractNioChannelEventDispatcher;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
@@ -11,6 +13,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
+@ToString(callSuper = true)
 public class NioOrderedDirectChannelEventDispatcher extends AbstractNioChannelEventDispatcher {
 	
 	public NioOrderedDirectChannelEventDispatcher() {
@@ -27,8 +30,11 @@ public class NioOrderedDirectChannelEventDispatcher extends AbstractNioChannelEv
 	public void dispatch(ChannelEvent<byte[]> event) {
 		NioByteChannel channel = (NioByteChannel) event.getChannel();
 		beforeDispatch(channel);
-		event.fire();
-		afterDispatch(channel);
+		try {
+			event.fire();
+		} finally {
+			afterDispatch(channel);
+		}
 	}
 
 }

@@ -19,6 +19,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.ChannelEventType;
@@ -34,6 +36,7 @@ import org.craft.atom.util.NamedThreadFactory;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
+@ToString(callSuper = true, of = { "config", "newChannels", "flushingChannels", "closingChannels", "udpChannels" })
 public class NioProcessor extends NioReactor {
 	
 	private static final Log LOG = LogFactory.getLog(NioProcessor.class);
@@ -52,15 +55,13 @@ public class NioProcessor extends NioReactor {
     
     /** UDP channel holders */
     private final Map<String, NioByteChannel> udpChannels = new ConcurrentHashMap<String, NioByteChannel>();
-    private final Executor executor;
     private final NioConfig config;
+    private final Executor executor;
     private final AtomicReference<ProcessThread> processThreadRef = new AtomicReference<ProcessThread>();
     private final NioByteBufferAllocator allocator = new NioByteBufferAllocator();
     private final AtomicBoolean wakeupCalled = new AtomicBoolean(false);
     private final NioChannelIdleTimer idleTimer = NioChannelIdleTimer.getInstance();
-    
     private IoProtocol protocol;
-    
     private volatile Selector selector;
     private volatile boolean shutdown = false;
     

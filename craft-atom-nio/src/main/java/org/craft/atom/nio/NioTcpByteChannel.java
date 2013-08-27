@@ -6,6 +6,8 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
 
+import lombok.ToString;
+
 import org.craft.atom.nio.spi.NioBufferSizePredictor;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
@@ -15,6 +17,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
+@ToString(of = "socketChannel")
 public class NioTcpByteChannel extends NioByteChannel {
 	
 	private SocketChannel socketChannel;
@@ -55,17 +58,6 @@ public class NioTcpByteChannel extends NioByteChannel {
 		}
 		
 		socketChannel.close();
-	}
-	
-	// ~ ------------------------------------------------------------------------------------------------------------
-	
-	public String toFullString() {
-		return String
-				.format("NioTcpByteChannel [socketChannel=%s, localAddress=%s, remoteAddress=%s, selectionKey=%s, predictor=%s, lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s, semaphore=%s]",
-						socketChannel, localAddress, remoteAddress,
-						selectionKey, predictor, lastIoTime, minReadBufferSize,
-						defaultReadBufferSize, maxReadBufferSize,
-						maxWriteBufferSize, id, attributes, state, semaphore);
 	}
 
 }

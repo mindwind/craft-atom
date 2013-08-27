@@ -12,6 +12,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicReference;
 
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.Channel;
@@ -30,6 +32,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @author mindwind
  * @version 1.0, Feb 24, 2013
  */
+@ToString(callSuper = true, of = { "connectQueue",  "cancelQueue" })
 public class NioTcpConnector extends NioConnector {
 	
 	private static final Log LOG = LogFactory.getLog(NioTcpConnector.class);

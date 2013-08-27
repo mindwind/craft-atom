@@ -2,6 +2,8 @@ package org.craft.atom.nio;
 
 import java.util.concurrent.TimeUnit;
 
+import lombok.ToString;
+
 import org.craft.atom.io.ChannelEventType;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
@@ -14,6 +16,7 @@ import org.craft.atom.util.schedule.TimingWheel;
  * @author mindwind
  * @version 1.0, Feb 27, 2013
  */
+@ToString(of = { "timingWheel", "timeoutInMillis" })
 public class NioChannelIdleTimer {
 	
 	private static final NioChannelIdleTimer INSTANCE = new NioChannelIdleTimer();

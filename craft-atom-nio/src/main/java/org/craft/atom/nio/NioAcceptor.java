@@ -15,6 +15,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.IoAcceptor;
@@ -34,13 +36,24 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @see NioTcpAcceptor
  * @see NioUdpAcceptor
  */
+@ToString(callSuper = true, of = { "config", "bindAddresses", "unbindAddresses", "boundmap" })
 abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	
 	private static final Log LOG = LogFactory.getLog(NioAcceptor.class);
 	
+	protected NioAcceptorConfig config;
+	
+	/** Wait for bindding addresses */
+	protected final Set<SocketAddress> bindAddresses = new HashSet<SocketAddress>();
+	
+	/** Wait for unbinding addresses */
+	protected final Set<SocketAddress> unbindAddresses = new HashSet<SocketAddress>();
+	
+	/** Already bound addresses and the server socket channel */
+	protected final Map<SocketAddress, SelectableChannel> boundmap = new ConcurrentHashMap<SocketAddress, SelectableChannel>();
+	
 	protected Selector selector;
 	protected volatile boolean selectable = false;
-	protected NioAcceptorConfig config;
 	protected final NioProcessorPool pool;
 	
 	/** Lock object for bind/unbind */
@@ -52,14 +65,6 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	/** Bind/unbind exception reference */
 	protected IOException exception;
 	
-	/** Wait for bindding addresses */
-	protected final Set<SocketAddress> bindAddresses = new HashSet<SocketAddress>();
-	
-	/** Wait for unbinding addresses */
-	protected final Set<SocketAddress> unbindAddresses = new HashSet<SocketAddress>();
-	
-	/** Already bound addresses and the server socket channel */
-	protected final Map<SocketAddress, SelectableChannel> boundmap = new ConcurrentHashMap<SocketAddress, SelectableChannel>();
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
 	
@@ -394,7 +399,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	 * @return bound addresses
 	 */
 	public Set<SocketAddress> getBoundAddresses() {
-		return boundmap.keySet();
+		return new HashSet<SocketAddress>(boundmap.keySet());
 	}
 	
 	/**
@@ -536,17 +541,6 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 				LOG.error("Unexpected exception caught while shutdown", e);
 			}
 		}
-	}
-	
-	// ~ ------------------------------------------------------------------------------------------------------------
-	
-	@Override
-	public String toString() {
-		return String
-				.format("NioAcceptor [selector=%s, selectable=%s, config=%s, pool=%s, lock=%s, endFlag=%s, exception=%s, bindAddresses=%s, unbindAddresses=%s, boundmap=%s, handler=%s, dispatcher=%s, predictorFactory=%s]",
-						selector, selectable, config, pool, lock, endFlag,
-						exception, bindAddresses, unbindAddresses, boundmap,
-						handler, dispatcher, predictorFactory);
 	}
 
 }

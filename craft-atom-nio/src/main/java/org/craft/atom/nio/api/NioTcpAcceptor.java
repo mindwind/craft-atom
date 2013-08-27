@@ -7,6 +7,8 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.IoHandler;
@@ -22,6 +24,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
+@ToString(callSuper = true)
 public class NioTcpAcceptor extends NioAcceptor {
 	
 	private static final Log LOG = LogFactory.getLog(NioTcpAcceptor.class);

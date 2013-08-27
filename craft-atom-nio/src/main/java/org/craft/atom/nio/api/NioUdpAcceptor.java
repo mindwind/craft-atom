@@ -5,6 +5,8 @@ import java.net.SocketAddress;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 
+import lombok.ToString;
+
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.NioAcceptor;
@@ -20,6 +22,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
+@ToString(callSuper = true)
 public class NioUdpAcceptor extends NioAcceptor {
 	
 	public NioUdpAcceptor(IoHandler handler, int port) {

@@ -3,6 +3,8 @@ package org.craft.atom.nio;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.ToString;
+
 import org.craft.atom.nio.spi.NioBufferSizePredictor;
 
 /**
@@ -17,6 +19,7 @@ import org.craft.atom.nio.spi.NioBufferSizePredictor;
  * 
  * @author netty, this implementation from netty framework
  */
+@ToString(of = { "minIndex", "maxIndex", "index", "nextSize", "decreaseNow" })
 public class NioAdaptiveBufferSizePredictor implements NioBufferSizePredictor {
 	
 	private static final int DEFAULT_MINIMUM = 64;
@@ -159,12 +162,6 @@ public class NioAdaptiveBufferSizePredictor implements NioBufferSizePredictor {
 
 	static int[] getSizeTable() {
 		return SIZE_TABLE;
-	}
-
-	@Override
-	public String toString() {
-		return String
-				.format("AdaptiveSizePredictor [minIndex=%s, maxIndex=%s, index=%s, nextSize=%s, decreaseNow=%s]", minIndex, maxIndex, index, nextSize, decreaseNow);
 	}
 
 }

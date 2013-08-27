@@ -6,6 +6,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.ChannelEvent;
@@ -19,6 +21,7 @@ import org.craft.atom.util.NamedThreadFactory;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
+@ToString(callSuper = true, of = { "channelQueue", "executor" })
 public class NioOrderedThreadPoolChannelEventDispatcher extends AbstractNioChannelEventDispatcher {
 	
 	private static final Log LOG = LogFactory.getLog(NioOrderedThreadPoolChannelEventDispatcher.class);
@@ -72,8 +75,11 @@ public class NioOrderedThreadPoolChannelEventDispatcher extends AbstractNioChann
 			int count = 0;
 			Queue<ChannelEvent<byte[]>> q = channel.getEventQueue();
 			for (ChannelEvent<byte[]> event = q.poll(); event != null; event = q.poll()) {
-				event.fire();
-				afterDispatch(channel);
+				try {
+					event.fire();
+				} finally {
+					afterDispatch(channel);
+				}
 				count++;
 				if (count > SPIN_COUNT) {
 					// quit loop to avoid stick same worker thread by same session
