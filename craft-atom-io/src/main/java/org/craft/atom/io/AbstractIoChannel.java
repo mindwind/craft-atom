@@ -1,11 +1,14 @@
 package org.craft.atom.io;
 
+import lombok.ToString;
+
 /**
  * Base implementation class for common io concept of channel
  * 
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
+@ToString(callSuper = true, of = { "lastIoTime", "minReadBufferSize", "defaultReadBufferSize", "maxReadBufferSize", "maxWriteBufferSize" })
 public abstract class AbstractIoChannel extends AbstractChannel {
 
 	protected long lastIoTime = System.currentTimeMillis();
@@ -120,14 +123,5 @@ public abstract class AbstractIoChannel extends AbstractChannel {
 		
 		this.maxWriteBufferSize = maxWriteBufferSize;
 	}
-
-	@Override
-	public String toString() {
-		return String
-				.format("AbstractIoChannel [lastIoTime=%s, minReadBufferSize=%s, defaultReadBufferSize=%s, maxReadBufferSize=%s, maxWriteBufferSize=%s, id=%s, attributes=%s, state=%s]",
-						lastIoTime, minReadBufferSize, defaultReadBufferSize,
-						maxReadBufferSize, maxWriteBufferSize, id, attributes,
-						state);
-	}
-
+	
 }

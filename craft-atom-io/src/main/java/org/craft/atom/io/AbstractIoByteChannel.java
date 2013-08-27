@@ -1,11 +1,14 @@
 package org.craft.atom.io;
 
+import lombok.ToString;
+
 /**
  * Abstract channel transmit bytes.
  * 
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
+@ToString(callSuper = true)
 abstract public class AbstractIoByteChannel extends AbstractIoChannel implements Channel<byte[]> {
 
 	public AbstractIoByteChannel() {

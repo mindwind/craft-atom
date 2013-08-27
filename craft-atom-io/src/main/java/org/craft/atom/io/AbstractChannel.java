@@ -4,12 +4,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 /**
  * Base implementation class for common concept of channel.
  * 
  * @author mindwind
  * @version 1.0, Feb 21, 2013
  */
+@ToString(of = { "id", "state", "attributes" })
+@EqualsAndHashCode(of = "id")
 abstract public class AbstractChannel {
 	
 	private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
@@ -92,33 +97,6 @@ abstract public class AbstractChannel {
         }
 		
 		return attributes.remove(key);
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AbstractChannel other = (AbstractChannel) obj;
-		if (id != other.id)
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("AbstractChannel [id=%s, attributes=%s, state=%s]", id, attributes, state);
 	}
 	
 }

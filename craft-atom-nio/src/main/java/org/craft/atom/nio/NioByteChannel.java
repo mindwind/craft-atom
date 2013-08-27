@@ -10,6 +10,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import lombok.ToString;
+
 import org.craft.atom.io.AbstractIoByteChannel;
 import org.craft.atom.io.ChannelEvent;
 import org.craft.atom.io.ChannelState;
@@ -24,13 +26,14 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @see NioTcpByteChannel
  * @see NioUdpByteChannel
  */
+@ToString(callSuper = true, of = { "localAddress", "remoteAddress" })
 abstract public class NioByteChannel extends AbstractIoByteChannel {
 	
 	protected SocketAddress localAddress;
 	protected SocketAddress remoteAddress;
+	
 	protected SelectionKey selectionKey;
 	protected NioProcessor processor;
-	
 	protected final Semaphore semaphore;
 	protected final NioChannelEventDispatcher dispatcher;
 	protected final NioBufferSizePredictor predictor;
@@ -38,7 +41,6 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	protected final Queue<ChannelEvent<byte[]>> eventQueue = new ConcurrentLinkedQueue<ChannelEvent<byte[]>>();
 	protected final Object lock = new Object();
 	protected final AtomicBoolean scheduleFlush = new AtomicBoolean(false);
-	
 	protected volatile boolean eventProcessing = false;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -186,13 +188,6 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 		return predictor;
 	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("[id=").append(id).append("  ").append(localAddress).append(" <-> ").append(remoteAddress).append("  state=").append(state).append("]");
-		return builder.toString();
-	}
-	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
 	protected void close0() throws IOException { /* override this */ }
