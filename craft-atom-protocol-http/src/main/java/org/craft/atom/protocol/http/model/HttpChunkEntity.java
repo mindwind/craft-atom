@@ -5,6 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import org.craft.atom.util.ByteArrayBuffer;
 
 /**
@@ -42,12 +46,15 @@ import org.craft.atom.util.ByteArrayBuffer;
  * @author mindwind
  * @version 1.0, Feb 8, 2013
  */
+@ToString(callSuper = true, of = { "chunks", "trailers" })
 public class HttpChunkEntity extends HttpEntity {
 
 	private static final long serialVersionUID = -8469016024998851045L;
 	
-	private List<HttpChunk> chunks = new ArrayList<HttpChunk>();
-	private Map<String, HttpHeader> trailers = new LinkedHashMap<String, HttpHeader>();
+	@Getter @Setter private List<HttpChunk> chunks = new ArrayList<HttpChunk>();
+	@Getter @Setter private Map<String, HttpHeader> trailers = new LinkedHashMap<String, HttpHeader>();
+	
+	// ~ --------------------------------------------------------------------------------------------------------
 	
 	public HttpChunkEntity() {
 		super();
@@ -65,6 +72,8 @@ public class HttpChunkEntity extends HttpEntity {
 		this(chunks);
 		this.trailers = trailers;
 	}
+	
+	// ~ --------------------------------------------------------------------------------------------------------
 	
 	/**
 	 * Add a chunk 
@@ -97,27 +106,6 @@ public class HttpChunkEntity extends HttpEntity {
 			this.content = buf.array();
 		}
 		return this.content;
-	}
-
-	public List<HttpChunk> getChunks() {
-		return chunks;
-	}
-
-	public void setChunks(List<HttpChunk> chunks) {
-		this.chunks = chunks;
-	}
-
-	public Map<String, HttpHeader> getTrailers() {
-		return trailers;
-	}
-
-	public void setTrailers(Map<String, HttpHeader> trailers) {
-		this.trailers = trailers;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("HttpChunkEntity [chunks=%s, trailers=%s, content=%s]", chunks, trailers, getContentAsString());
 	}
 	
 	public String toHttpString() {

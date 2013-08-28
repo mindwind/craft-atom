@@ -1,5 +1,7 @@
 package org.craft.atom.protocol.http;
 
+import lombok.ToString;
+
 import org.craft.atom.protocol.AbstractProtocolEncoder;
 
 /**
@@ -8,6 +10,7 @@ import org.craft.atom.protocol.AbstractProtocolEncoder;
  * @see HttpRequestEncoder
  * @see HttpResponseEncoder
  */
+@ToString(callSuper = true)
 abstract public class HttpEncoder extends AbstractProtocolEncoder {
 
 }

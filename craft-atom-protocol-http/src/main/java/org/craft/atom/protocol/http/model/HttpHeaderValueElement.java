@@ -4,6 +4,10 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * One element of an HTTP {@link HttpHeader header} value consisting of a name /
  * value pair and a number of optional name / value parameters.
@@ -36,13 +40,16 @@ import java.util.Map;
  * @version 1.0, Feb 1, 2013
  * @see HttpHeader
  */
+@ToString(of = { "name", "value", "params" })
 public class HttpHeaderValueElement implements Serializable {
 
 	private static final long serialVersionUID = -5552007949156024715L;
 
-	private String name;
-	private String value;
-	private Map<String, String> params = new LinkedHashMap<String, String>();
+	@Getter @Setter private String name;
+	@Getter @Setter private String value;
+	@Getter @Setter private Map<String, String> params = new LinkedHashMap<String, String>();
+	
+	// ~ -----------------------------------------------------------------------------------------------------------
 
 	public HttpHeaderValueElement() {
 		super();
@@ -53,6 +60,8 @@ public class HttpHeaderValueElement implements Serializable {
 		this.value = value;
 		this.params = params;
 	}
+	
+	// ~ -----------------------------------------------------------------------------------------------------------
 	
 	/**
 	 * Add a name value pair parameter, if exists replace it.
@@ -72,35 +81,6 @@ public class HttpHeaderValueElement implements Serializable {
 	 */
 	public String getParamValue(String name) {
 		return params.get(name);
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public Map<String, String> getParams() {
-		return params;
-	}
-
-	public void setParams(Map<String, String> params) {
-		this.params = params;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("HttpHeaderValueElement [name=%s, value=%s, params=%s]", name, value, params);
 	}
 
 }

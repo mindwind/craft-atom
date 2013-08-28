@@ -9,6 +9,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.protocol.ProtocolException;
@@ -33,6 +37,7 @@ import org.craft.atom.protocol.http.HttpParameterDecoder;
  * @author mindwind
  * @version 1.0, Feb 1, 2013
  */
+@ToString(callSuper = true, of = { "requestLine", "parameterMap" })
 public class HttpRequest extends HttpMessage {
 
 	private static final Log LOG = LogFactory.getLog(HttpRequest.class);
@@ -40,8 +45,8 @@ public class HttpRequest extends HttpMessage {
 	private static final HttpCookieDecoder COOKIE_DECODER = new HttpCookieDecoder();
 	private static final HttpParameterDecoder PARAMETER_DECODER = new HttpParameterDecoder();
 	
-	private HttpRequestLine requestLine = new HttpRequestLine();
-	private Map<String, List<String>> parameterMap;
+	@Getter @Setter private HttpRequestLine requestLine = new HttpRequestLine();
+	@Setter private Map<String, List<String>> parameterMap;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
@@ -63,14 +68,6 @@ public class HttpRequest extends HttpMessage {
 		this.requestLine = requestLine;
 	}
 
-	public HttpRequestLine getRequestLine() {
-		return requestLine;
-	}
-
-	public void setRequestLine(HttpRequestLine requestLine) {
-		this.requestLine = requestLine;
-	}
-	
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
 	/**
@@ -214,11 +211,6 @@ public class HttpRequest extends HttpMessage {
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
-
-	@Override
-	public String toString() {
-		return String.format("HttpRequest [requestLine=%s, headers=%s, entity=%s]", requestLine, headers, entity);
-	}
 	
 	public String toHttpString(Charset charset) {
 		StringBuilder sb = new StringBuilder();

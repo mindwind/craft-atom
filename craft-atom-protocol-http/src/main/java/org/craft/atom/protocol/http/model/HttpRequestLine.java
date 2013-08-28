@@ -3,6 +3,9 @@ package org.craft.atom.protocol.http.model;
 import static org.craft.atom.protocol.http.HttpConstants.S_CR;
 import static org.craft.atom.protocol.http.HttpConstants.S_LF;
 import static org.craft.atom.protocol.http.HttpConstants.S_SP;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 
 /**
@@ -18,12 +21,15 @@ import static org.craft.atom.protocol.http.HttpConstants.S_SP;
  * @version 1.0, Feb 1, 2013
  * @see HttpRequest
  */
+@ToString(callSuper = true, of = { "method", "uri" })
 public class HttpRequestLine extends HttpStartLine {
 
 	private static final long serialVersionUID = 1393510808581169505L;
 
-	private HttpMethod method;
-	private String uri;
+	@Getter @Setter private HttpMethod method;
+	@Getter @Setter private String uri;
+
+	// ~ ------------------------------------------------------------------------------------------------------------
 
 	public HttpRequestLine() {
 		super();
@@ -34,27 +40,8 @@ public class HttpRequestLine extends HttpStartLine {
 		this.method = method;
 		this.uri = uri;
 	}
-
-	public HttpMethod getMethod() {
-		return method;
-	}
-
-	public void setMethod(HttpMethod method) {
-		this.method = method;
-	}
-
-	public String getUri() {
-		return uri;
-	}
-
-	public void setUri(String uri) {
-		this.uri = uri;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("HttpRequestLine [method=%s, uri=%s, version=%s]", method, uri, version);
-	}
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 	
 	public String toHttpString() {
 		StringBuilder sb = new StringBuilder();

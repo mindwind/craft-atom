@@ -2,6 +2,11 @@ package org.craft.atom.protocol.textline;
 
 import java.nio.charset.Charset;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import org.craft.atom.protocol.AbstractProtocolEncoder;
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
 
@@ -13,10 +18,10 @@ import org.craft.atom.protocol.ProtocolException;
  * @author Hu Feng
  * @version 1.0, Oct 16, 2012
  */
-public class TextLineEncoder implements ProtocolEncoder<String> {
+@ToString(callSuper = true, of = { "delimiter" })
+public class TextLineEncoder extends AbstractProtocolEncoder implements ProtocolEncoder<String> {
 	
-	private Charset charset = Charset.forName("utf-8");
-	private String delimiter = "\n";
+	@Getter @Setter private String delimiter = "\n";
 	private int maxLineLength = Integer.MAX_VALUE;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -50,11 +55,6 @@ public class TextLineEncoder implements ProtocolEncoder<String> {
 		}
 		
 		return lineBytes;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("TextLineEncoder [charset=%s, delimiter=%s, maxLineLength=%s]", charset, delimiter, maxLineLength);
 	}
 
 }

@@ -31,7 +31,6 @@ public enum MimeType {
 	// wildcard
 	WILDCARD("*", "*");
 	
-	
 	// ~ ---------------------------------------------------------------------------------------------------------
 	
 	public static MimeType from(String type) {

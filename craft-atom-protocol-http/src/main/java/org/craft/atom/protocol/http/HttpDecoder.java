@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import org.craft.atom.protocol.AbstractProtocolDecoder;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.ProtocolExceptionType;
@@ -41,7 +45,8 @@ import org.craft.atom.util.GzipUtil;
  * @see HttpRequestDecoder
  * @see HttpResponseDecoder
  */
-abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtocolDecoder {
+@ToString(callSuper = true, of = { "state", "maxLineLength" })
+abstract public class HttpDecoder<T extends HttpMessage> extends AbstractProtocolDecoder {
 	
 	protected static final int START = 0;
 	protected static final int METHOD = 11;
@@ -64,15 +69,15 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 	protected static final int ENTITY_ENCODING = 58;
 	protected static final int END = -1;
 	
-	protected int state = START;
-	protected int maxLineLength = defaultBufferSize;
-	protected int trailerSize;
-	protected HttpHeader header;
-	protected HttpEntity entity;
-	protected HttpChunk chunk;
-	protected HttpContentType contentType;
-	protected String chunkExtName;
-	protected T httpMessage;
+	@Getter @Setter protected int maxLineLength = defaultBufferSize;
+	@Getter protected int state = START;
+	@Getter protected int trailerSize;
+	@Getter protected HttpHeader header;
+	@Getter protected HttpEntity entity;
+	@Getter protected HttpChunk chunk;
+	@Getter protected HttpContentType contentType;
+	@Getter protected String chunkExtName;
+	@Getter protected T httpMessage;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
@@ -581,64 +586,4 @@ abstract public class HttpDecoder<T extends HttpMessage>  extends AbstractProtoc
 	
 	abstract boolean hasEntity(T httpMessage);
 	
-	// ~ ------------------------------------------------------------------------------------------------------------
-	
-	public int getMaxLineLength() {
-		return maxLineLength;
-	}
-
-	public void setMaxLineLength(int maxLineLength) {
-		this.maxLineLength = maxLineLength;
-	}
-
-	public int getState() {
-		return state;
-	}
-
-	public void setState(int state) {
-		this.state = state;
-	}
-	
-	public HttpHeader getHeader() {
-		return header;
-	}
-
-	public void setHeader(HttpHeader header) {
-		this.header = header;
-	}
-
-	public HttpEntity getEntity() {
-		return entity;
-	}
-
-	public void setEntity(HttpEntity entity) {
-		this.entity = entity;
-	}
-
-	public HttpChunk getChunk() {
-		return chunk;
-	}
-
-	public void setChunk(HttpChunk chunk) {
-		this.chunk = chunk;
-	}
-
-	public String getChunkExtName() {
-		return chunkExtName;
-	}
-
-	public void setChunkExtName(String chunkExtName) {
-		this.chunkExtName = chunkExtName;
-	}
-
-	@Override
-	public String toString() {
-		return String
-				.format("HttpDecoder [stateIndex=%s, state=%s, maxLineLength=%s, trailerSize=%s, header=%s, entity=%s, chunk=%s, contentType=%s, chunkExtName=%s, httpMessage=%s, defaultBufferSize=%s, buf=%s, splitIndex=%s, searchIndex=%s, maxSize=%s, charset=%s]",
-						stateIndex, state, maxLineLength, trailerSize, header,
-						entity, chunk, contentType, chunkExtName, httpMessage,
-						defaultBufferSize, buf, splitIndex, searchIndex,
-						maxSize, charset);
-	}
-
 }

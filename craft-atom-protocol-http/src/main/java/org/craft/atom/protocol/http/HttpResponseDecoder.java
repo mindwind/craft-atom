@@ -2,6 +2,8 @@ package org.craft.atom.protocol.http;
 
 import java.util.List;
 
+import lombok.ToString;
+
 import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.http.model.HttpResponse;
@@ -14,6 +16,7 @@ import org.craft.atom.protocol.http.model.HttpResponse;
  * @author mindwind
  * @version 1.0, Feb 3, 2013
  */
+@ToString(callSuper = true)
 public class HttpResponseDecoder extends HttpDecoder<HttpResponse> implements ProtocolDecoder<HttpResponse> {
 
 	@Override

@@ -1,16 +1,20 @@
 package org.craft.atom.protocol.http.model;
 
 import static org.craft.atom.protocol.http.HttpConstants.S_COLON;
+import static org.craft.atom.protocol.http.HttpConstants.S_COMMA;
 import static org.craft.atom.protocol.http.HttpConstants.S_CR;
 import static org.craft.atom.protocol.http.HttpConstants.S_EQUAL_SIGN;
 import static org.craft.atom.protocol.http.HttpConstants.S_LF;
 import static org.craft.atom.protocol.http.HttpConstants.S_SEMICOLON;
 import static org.craft.atom.protocol.http.HttpConstants.S_SP;
-import static org.craft.atom.protocol.http.HttpConstants.S_COMMA;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Represents an HTTP header field.
@@ -41,12 +45,15 @@ import java.util.List;
  * @version 1.0, Feb 1, 2013
  * @see HttpMessage
  */
+@ToString(of = { "name", "value" })
 public class HttpHeader implements Serializable {
 
 	private static final long serialVersionUID = -689954816191532018L;
 
-	private String name;
-	private String value;
+	@Getter @Setter private String name;
+	@Getter @Setter private String value;
+	
+	// ~ -----------------------------------------------------------------------------------------------------------
 
 	public HttpHeader() {
 		super();
@@ -56,22 +63,8 @@ public class HttpHeader implements Serializable {
 		this.name = name;
 		this.value = value;
 	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
+	
+	// ~ -----------------------------------------------------------------------------------------------------------
 	
 	public void appendValue(String valuePart) {
 		if (value == null) {
@@ -121,11 +114,6 @@ public class HttpHeader implements Serializable {
 		if (nvpair.length > 1) {
 			hve.setValue(nvpair[1]);
 		}
-	}
-
-	@Override
-	public String toString() {
-		return String.format("HttpHeader [name=%s, value=%s]", name, value);
 	}
 	
 	public String toHttpString() {

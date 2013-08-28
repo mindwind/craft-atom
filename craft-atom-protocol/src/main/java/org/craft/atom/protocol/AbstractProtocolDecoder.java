@@ -1,25 +1,30 @@
 package org.craft.atom.protocol;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import org.craft.atom.util.ByteArrayBuffer;
 
 /**
  * @author mindwind
  * @version 1.0, Feb 3, 2013
  */
+@ToString(callSuper = true, of = { "defaultBufferSize", "maxSize", "splitIndex", "searchIndex", "stateIndex", "buf" })
 abstract public class AbstractProtocolDecoder extends AbstractProtocolCodec {
 	
-	protected int defaultBufferSize = 2048;
-	protected int maxSize = defaultBufferSize * 1024;
-	protected ByteArrayBuffer buf = new ByteArrayBuffer(defaultBufferSize);
-	
 	/** The separator index position according to specific protocol, indicates next byte nearby last complete protocol object. */
-	protected int splitIndex = 0;
+	@Getter @Setter protected int splitIndex = 0;
 	
 	/** The cursor index position for protocol process, indicates next byte would be process by protocol codec. */
-	protected int searchIndex = 0;
+	@Getter @Setter protected int searchIndex = 0;
 	
 	/** The index position for protocol state machine process */
-	protected int stateIndex = 0;
+	@Getter @Setter protected int stateIndex = 0;
+	
+	@Getter @Setter protected int defaultBufferSize = 2048;
+	@Getter @Setter protected int maxSize = defaultBufferSize * 1024;
+	@Getter @Setter protected ByteArrayBuffer buf = new ByteArrayBuffer(defaultBufferSize);
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
 
@@ -40,56 +45,6 @@ abstract public class AbstractProtocolDecoder extends AbstractProtocolCodec {
 		if (buf.length() == 0 && buf.capacity() > maxSize * 2) {
 			buf.reset(defaultBufferSize);
 		}
-	}
-	
-	// ~ ----------------------------------------------------------------------------------------------------------
-	
-	public int getMaxSize() {
-		return maxSize;
-	}
-
-	public void setMaxSize(int maxSize) {
-		this.maxSize = maxSize;
-	}
-	
-	public int getDefaultBufferSize() {
-		return defaultBufferSize;
-	}
-
-	public void setDefaultBufferSize(int defaultBufferSize) {
-		this.defaultBufferSize = defaultBufferSize;
-	}
-
-	public ByteArrayBuffer getBuf() {
-		return buf;
-	}
-
-	public void setBuf(ByteArrayBuffer buf) {
-		this.buf = buf;
-	}
-
-	public int getSplitIndex() {
-		return splitIndex;
-	}
-
-	public void setSplitIndex(int splitIndex) {
-		this.splitIndex = splitIndex;
-	}
-
-	public int getSearchIndex() {
-		return searchIndex;
-	}
-
-	public void setSearchIndex(int searchIndex) {
-		this.searchIndex = searchIndex;
-	}
-
-	@Override
-	public String toString() {
-		return String
-				.format("AbstractProtocolDecoder [charset=%s, defaultBufferSize=%s, buf=%s, splitIndex=%s, searchIndex=%s, maxSize=%s]",
-						charset, defaultBufferSize, buf, splitIndex,
-						searchIndex, maxSize);
 	}
 	
 }

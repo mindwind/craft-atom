@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.ToString;
+
 import org.craft.atom.protocol.AbstractProtocolCodec;
 import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.ProtocolException;
@@ -24,6 +26,7 @@ import org.craft.atom.protocol.ProtocolException;
  * @author mindwind
  * @version 1.0, Mar 26, 2013
  */
+@ToString(callSuper = true)
 public class HttpParameterDecoder extends AbstractProtocolCodec implements ProtocolDecoder<Map<String, List<String>>> {
 	
 	private static final int START = 0;

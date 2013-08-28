@@ -7,11 +7,14 @@ import static org.craft.atom.protocol.http.HttpConstants.S_SEMICOLON;
 
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Represent a http chunk data structure.
@@ -19,13 +22,16 @@ import java.util.Set;
  * @author mindwind
  * @version 1.0, Feb 8, 2013
  */
+@ToString(of = { "size", "extension", "data" })
 public class HttpChunk implements Serializable {
 
 	private static final long serialVersionUID = 8782130672644634878L;
 	
-	private int size;
-	private Map<String, String> extension = new LinkedHashMap<String, String>();
-	private byte[] data;
+	@Getter @Setter private int size;
+	@Getter @Setter private Map<String, String> extension = new LinkedHashMap<String, String>();
+	@Getter @Setter private byte[] data;
+	
+	// ~ --------------------------------------------------------------------------------------------------------
 	
 	public HttpChunk() {
 		super();
@@ -54,44 +60,17 @@ public class HttpChunk implements Serializable {
 		this(size, data, charset);
 		this.extension = extension;
 	}
-
-	public int getSize() {
-		return size;
-	}
-
-	public void setSize(int size) {
-		this.size = size;
-	}
-
-	public byte[] getData() {
-		return data;
-	}
+	
+	// ~ --------------------------------------------------------------------------------------------------------
 	
 	public String getDataString(Charset charset) {
 		return new String(data, charset);
-	}
-
-	public void setData(byte[] data) {
-		this.data = data;
-	}
-
-	public Map<String, String> getExtension() {
-		return extension;
-	}
-
-	public void setExtension(Map<String, String> extension) {
-		this.extension = extension;
 	}
 	
 	public void addExtension(String name, String value) {
 		this.extension.put(name, value);
 	}
 
-	@Override
-	public String toString() {
-		return String.format("HttpChunk [size=%s, data=%s, extension=%s]", size, Arrays.toString(data), extension);
-	}
-	
 	public String toHttpString(Charset charset) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(Integer.toHexString(size));

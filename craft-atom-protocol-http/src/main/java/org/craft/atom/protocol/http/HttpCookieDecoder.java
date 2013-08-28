@@ -1,11 +1,13 @@
 package org.craft.atom.protocol.http;
 
 import static org.craft.atom.protocol.http.HttpConstants.EQUAL_SIGN;
-import static org.craft.atom.protocol.http.HttpConstants.SP;
 import static org.craft.atom.protocol.http.HttpConstants.SEMICOLON;
+import static org.craft.atom.protocol.http.HttpConstants.SP;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.ToString;
 
 import org.craft.atom.protocol.AbstractProtocolCodec;
 import org.craft.atom.protocol.ProtocolDecoder;
@@ -21,6 +23,7 @@ import org.craft.atom.protocol.http.model.Cookie;
  * @author mindwind
  * @version 1.0, Mar 25, 2013
  */
+@ToString(callSuper = true)
 public class HttpCookieDecoder extends AbstractProtocolCodec implements ProtocolDecoder<Cookie> {
 	
 	private static final int START = 0;

@@ -1,6 +1,5 @@
 package org.craft.atom.protocol.http;
 
-import java.util.Arrays;
 
 /**
  * @author mindwind
@@ -48,10 +47,5 @@ public class HttpConstants {
 	public static final String S_AMPERSAND = "&";
 	public static final String S_PLUS_SIGN = "+";
 	public static final String S_PERCENT_SIGN = "+";
-	
-	public static void main(String[] args) {
-		System.out.println(Arrays.toString("\0\r\n \t:;=,?&+%".getBytes()));
-		System.out.println(Integer.toHexString(EQUAL_SIGN));
-	}
-	
+
 }

@@ -10,6 +10,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * HTTP messages consist of requests from client to server and responses
  * from server to client.
@@ -35,13 +39,14 @@ import java.util.List;
  * @author mindwind
  * @version 1.0, Feb 1, 2013
  */
+@ToString(of = { "headers", "entity", "cookies" })
 public abstract class HttpMessage implements Serializable {
 
 	private static final long serialVersionUID = -8373186983205172162L;
 	
-	protected List<HttpHeader> headers = new ArrayList<HttpHeader>();
-	protected HttpEntity entity;
-	protected List<Cookie> cookies;
+	@Getter @Setter protected List<HttpHeader> headers = new ArrayList<HttpHeader>();
+	@Getter @Setter protected HttpEntity entity;
+	@Setter protected List<Cookie> cookies;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
@@ -235,24 +240,6 @@ public abstract class HttpMessage implements Serializable {
 		return entity.getContentType();
 	}
 	
-	// ~ ------------------------------------------------------------------------------------------------------------
-
-	public List<HttpHeader> getHeaders() {
-		return headers;
-	}
-
-	public void setHeaders(List<HttpHeader> headers) {
-		this.headers = headers;
-	}
-
-	public HttpEntity getEntity() {
-		return entity;
-	}
-
-	public void setEntity(HttpEntity entity) {
-		this.entity = entity;
-	}
-	
 	public Iterator<HttpHeader> headerIterator() {
 		return headers.iterator();
 	}
@@ -260,11 +247,6 @@ public abstract class HttpMessage implements Serializable {
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
-
-	@Override
-	public String toString() {
-		return String.format("HttpMessage [headers=%s, entity=%s]", headers, entity);
-	}
 	
 	public String toHttpString(Charset charset) {
 		StringBuilder sb = new StringBuilder();

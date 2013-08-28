@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import lombok.ToString;
+
 import org.craft.atom.protocol.AbstractProtocolCodec;
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
@@ -23,6 +25,7 @@ import org.craft.atom.protocol.ProtocolException;
  * @author mindwind
  * @version 1.0, Mar 25, 2013
  */
+@ToString(callSuper = true)
 public class HttpParameterEncoder extends AbstractProtocolCodec implements ProtocolEncoder<Map<String, List<String>>> {
 
 	@Override

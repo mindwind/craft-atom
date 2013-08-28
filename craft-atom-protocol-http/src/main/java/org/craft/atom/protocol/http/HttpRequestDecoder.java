@@ -10,6 +10,8 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.ToString;
+
 import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.http.model.HttpMethod;
@@ -25,6 +27,7 @@ import org.craft.atom.protocol.http.model.HttpVersion;
  * @author mindwind
  * @version 1.0, Feb 2, 2013
  */
+@ToString(callSuper = true)
 public class HttpRequestDecoder extends HttpDecoder<HttpRequest> implements ProtocolDecoder<HttpRequest> {
 
 	public HttpRequestDecoder() {
@@ -206,26 +209,6 @@ public class HttpRequestDecoder extends HttpDecoder<HttpRequest> implements Prot
 		
 		// to next state
 		state = METHOD;
-	}
-	
-	// ~ ------------------------------------------------------------------------------------------------------------
-	
-	public HttpRequest getRequest() {
-		return httpMessage;
-	}
-
-	public void setRequest(HttpRequest request) {
-		this.httpMessage = request;
-	}
-
-	@Override
-	public String toString() {
-		return String
-				.format("HttpRequestDecoder [stateIndex=%s, state=%s, maxLineLength=%s, trailerSize=%s, header=%s, entity=%s, chunk=%s, contentType=%s, chunkExtName=%s, httpMessage=%s, defaultBufferSize=%s, buf=%s, splitIndex=%s, searchIndex=%s, maxSize=%s, charset=%s]",
-						stateIndex, state, maxLineLength, trailerSize, header,
-						entity, chunk, contentType, chunkExtName, httpMessage,
-						defaultBufferSize, buf, splitIndex, searchIndex,
-						maxSize, charset);
 	}
 	
 }

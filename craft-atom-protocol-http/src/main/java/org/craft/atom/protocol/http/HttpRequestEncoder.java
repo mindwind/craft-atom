@@ -1,5 +1,7 @@
 package org.craft.atom.protocol.http;
 
+import lombok.ToString;
+
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.http.model.HttpRequest;
@@ -12,6 +14,7 @@ import org.craft.atom.protocol.http.model.HttpRequest;
  * @author mindwind
  * @version 1.0, Feb 3, 2013
  */
+@ToString(callSuper = true)
 public class HttpRequestEncoder extends HttpEncoder implements ProtocolEncoder<HttpRequest> {
 
 	@Override

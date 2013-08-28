@@ -3,6 +3,9 @@ package org.craft.atom.protocol.http.model;
 import static org.craft.atom.protocol.http.HttpConstants.S_CR;
 import static org.craft.atom.protocol.http.HttpConstants.S_LF;
 import static org.craft.atom.protocol.http.HttpConstants.S_SP;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * The first line of a Response message is the Status-Line, consisting
@@ -17,11 +20,12 @@ import static org.craft.atom.protocol.http.HttpConstants.S_SP;
  * @version 1.0, Feb 1, 2013
  * @see HttpResponse
  */
+@ToString(callSuper = true, of = "status")
 public class HttpStatusLine extends HttpStartLine {
 
 	private static final long serialVersionUID = -3219302257563696666L;
 	
-	private HttpStatus status;
+	@Getter @Setter private HttpStatus status;
 
 	public HttpStatusLine() {
 		super();
@@ -30,19 +34,6 @@ public class HttpStatusLine extends HttpStartLine {
 	public HttpStatusLine(HttpVersion version, HttpStatus status) {
 		super(version);
 		this.status = status;
-	}
-
-	public HttpStatus getStatus() {
-		return status;
-	}
-
-	public void setStatus(HttpStatus status) {
-		this.status = status;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("HttpStatusLine [status=%s, version=%s]", status, version);
 	}
 	
 	public String toHttpString() {

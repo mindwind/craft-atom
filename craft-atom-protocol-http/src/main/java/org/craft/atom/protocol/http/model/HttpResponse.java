@@ -4,6 +4,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.protocol.ProtocolException;
@@ -24,13 +28,14 @@ import org.craft.atom.protocol.http.HttpHeaders;
  * @author mindwind
  * @version 1.0, Feb 2, 2013
  */
+@ToString(callSuper = true, of = { "statusLine" })
 public class HttpResponse extends HttpMessage {
 
 	private static final long serialVersionUID = 1532809882773093282L;
 	private static final Log LOG = LogFactory.getLog(HttpResponse.class);
 	private static final HttpCookieDecoder SET_COOKIE_DECODER = new HttpCookieDecoder(true);
 	
-	private HttpStatusLine statusLine;
+	@Getter @Setter private HttpStatusLine statusLine;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
@@ -45,14 +50,6 @@ public class HttpResponse extends HttpMessage {
 	
 	public HttpResponse(HttpStatusLine statusLine, List<HttpHeader> headers, HttpEntity entity) {
 		super(headers, entity);
-		this.statusLine = statusLine;
-	}
-
-	public HttpStatusLine getStatusLine() {
-		return statusLine;
-	}
-
-	public void setStatusLine(HttpStatusLine statusLine) {
 		this.statusLine = statusLine;
 	}
 	
@@ -84,11 +81,6 @@ public class HttpResponse extends HttpMessage {
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
-
-	@Override
-	public String toString() {
-		return String.format("HttpResponse [statusLine=%s, headers=%s, entity=%s]", statusLine, headers, entity);
-	}
 	
 	public String toHttpString(Charset charset) {
 		StringBuilder sb = new StringBuilder();

@@ -3,6 +3,10 @@ package org.craft.atom.protocol.http.model;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * Represents an http entity.<br>
  * An entity that can be sent or received with an HTTP message, 
@@ -12,12 +16,15 @@ import java.nio.charset.Charset;
  * @author mindwind
  * @version 1.0, Feb 1, 2013
  */
+@ToString(of = { "contentType", "content" })
 public class HttpEntity implements Serializable {
 
 	private static final long serialVersionUID = -3461343279665456788L;
 	
-	protected HttpContentType contentType = HttpContentType.DEFAULT;
-	protected byte[] content;
+	@Getter @Setter protected HttpContentType contentType = HttpContentType.DEFAULT;
+	@Getter @Setter protected byte[] content;
+	
+	// ~ -----------------------------------------------------------------------------------------------------------
 
 	public HttpEntity() {
 		super();
@@ -33,25 +40,11 @@ public class HttpEntity implements Serializable {
 		this.content = content.getBytes(charset == null ? Charset.defaultCharset() : charset);
 	}
 	
+	// ~ -----------------------------------------------------------------------------------------------------------
+	
 	public String getContentAsString() {
 		Charset charset = contentType.getCharset();
 		return new String(content, charset == null ? Charset.defaultCharset() : charset);
-	}
-
-	public byte[] getContent() {
-		return content;
-	}
-
-	public void setContent(byte[] content) {
-		this.content = content;
-	}
-
-	public HttpContentType getContentType() {
-		return contentType;
-	}
-
-	public void setContentType(HttpContentType contentType) {
-		this.contentType = contentType;
 	}
 
 	public String toHttpString() {

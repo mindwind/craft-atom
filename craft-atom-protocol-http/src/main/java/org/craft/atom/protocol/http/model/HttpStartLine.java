@@ -2,6 +2,10 @@ package org.craft.atom.protocol.http.model;
 
 import java.io.Serializable;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * The start line of http protocol string.
  * 
@@ -10,11 +14,12 @@ import java.io.Serializable;
  * @see HttpRequestLine
  * @see HttpStatusLine
  */
+@ToString(of = "version")
 public abstract class HttpStartLine implements Serializable {
 
 	private static final long serialVersionUID = -2856300388955363870L;
 	
-	protected HttpVersion version;
+	@Getter @Setter protected HttpVersion version;
 	
 	public HttpStartLine() {
 		super();
@@ -23,18 +28,4 @@ public abstract class HttpStartLine implements Serializable {
 	public HttpStartLine(HttpVersion version) {
 		this.version = version;
 	}
-
-	public HttpVersion getVersion() {
-		return version;
-	}
-
-	public void setVersion(HttpVersion version) {
-		this.version = version;
-	}
-
-	@Override
-	public String toString() {
-		return String.format("HttpStartLine [version=%s]", version);
-	}
-
 }

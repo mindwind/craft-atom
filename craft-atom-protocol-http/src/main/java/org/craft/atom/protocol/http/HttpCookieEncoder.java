@@ -1,5 +1,7 @@
 package org.craft.atom.protocol.http;
 
+import lombok.ToString;
+
 import org.craft.atom.protocol.AbstractProtocolCodec;
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
@@ -13,6 +15,7 @@ import org.craft.atom.protocol.http.model.Cookie;
  * @author mindwind
  * @version 1.0, Mar 25, 2013
  */
+@ToString(callSuper = true)
 public class HttpCookieEncoder extends AbstractProtocolCodec implements ProtocolEncoder<Cookie> {
 
 	@Override

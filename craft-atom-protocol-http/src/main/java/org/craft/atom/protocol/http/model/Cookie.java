@@ -12,6 +12,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import org.craft.atom.protocol.http.HttpDates;
 
 /**
@@ -69,6 +73,7 @@ import org.craft.atom.protocol.http.HttpDates;
  * @author mindwind
  * @version 1.0, Mar 22, 2013
  */
+@ToString(of = { "name", "value", "domain", "path", "httpOnly", "secure", "expires", "maxAge", "extension" })
 public class Cookie implements Serializable {
 
 	private static final long serialVersionUID = 5584804359930330729L;
@@ -82,15 +87,14 @@ public class Cookie implements Serializable {
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
 	
-	private String name; 
-	private String value;
-	
-	private String domain;
-	private String path;
-	private Boolean httpOnly;
-	private Boolean secure;
-	private Date expires;
-	private Integer maxAge; 
+	@Getter @Setter private String name; 
+	@Getter @Setter private String value;
+	@Getter @Setter private String domain;
+	@Getter @Setter private String path;
+	@Setter private Boolean httpOnly;
+	@Setter private Boolean secure;
+	@Getter @Setter private Date expires;
+	@Getter @Setter private Integer maxAge; 
 	private Map<String, String> extension = new LinkedHashMap<String, String>();
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
@@ -128,68 +132,13 @@ public class Cookie implements Serializable {
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String value) {
-		this.value = value;
-	}
-
-	public Date getExpires() {
-		return expires;
-	}
-
-	public void setExpires(Date expires) {
-		this.expires = expires;
-	}
-
-	public Integer getMaxAge() {
-		return maxAge;
-	}
-
-	public void setMaxAge(Integer maxAge) {
-		this.maxAge = maxAge;
-	}
-
-	public String getDomain() {
-		return domain;
-	}
-
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
 
 	public Boolean isSecure() {
 		return secure;
 	}
 
-	public void setSecure(Boolean secure) {
-		this.secure = secure;
-	}
-
 	public Boolean isHttpOnly() {
 		return httpOnly;
-	}
-
-	public void setHttpOnly(Boolean httpOnly) {
-		this.httpOnly = httpOnly;
 	}
 
 	public Map<String, String> getExtensionAttributes() {
@@ -206,13 +155,6 @@ public class Cookie implements Serializable {
 	
 	public String getExtensionAttribute(String name) {
 		return this.extension.get(name);
-	}
-
-	@Override
-	public String toString() {
-		return String
-				.format("Cookie [name=%s, value=%s, expires=%s, maxAge=%s, domain=%s, path=%s, secure=%s, httpOnly=%s, extension=%s]",
-						name, value, expires, maxAge, domain, path, secure, httpOnly, extension);
 	}
 	
 	public String toHttpString() {

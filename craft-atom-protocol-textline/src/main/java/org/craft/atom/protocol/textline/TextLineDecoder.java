@@ -2,8 +2,11 @@ package org.craft.atom.protocol.textline;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import org.craft.atom.protocol.AbstractProtocolDecoder;
 import org.craft.atom.protocol.ProtocolDecoder;
@@ -18,9 +21,10 @@ import org.craft.atom.protocol.ProtocolExceptionType;
  * @author Hu Feng
  * @version 1.0, Oct 16, 2012
  */
+@ToString(callSuper = true, of = { "delimiter" })
 public class TextLineDecoder extends AbstractProtocolDecoder implements ProtocolDecoder<String> {
 	
-	private String delimiter = "\n";
+	@Getter @Setter private String delimiter = "\n";
 	private byte[] delimiterBytes = delimiter.getBytes(charset);
 	private int delimiterLen = delimiterBytes.length;
 	
@@ -80,25 +84,6 @@ public class TextLineDecoder extends AbstractProtocolDecoder implements Protocol
 		}
 		
 		return strs;
-	}
-	
-	// ~ ----------------------------------------------------------------------------------------------------------
-
-	public String getDelimiter() {
-		return delimiter;
-	}
-
-	public void setDelimiter(String delimiter) {
-		this.delimiter = delimiter;
-	}
-
-	@Override
-	public String toString() {
-		return String
-				.format("TextLineDecoder [charset=%s, delimiter=%s, delimiterBytes=%s, delimiterLen=%s, defaultBufferSize=%s, maxSize=%s, buf=%s, splitIndex=%s, searchIndex=%s]",
-						charset, delimiter, Arrays.toString(delimiterBytes),
-						delimiterLen, defaultBufferSize, maxSize, buf,
-						splitIndex, searchIndex);
 	}
 
 }
