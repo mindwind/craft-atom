@@ -3,6 +3,10 @@ package org.craft.atom.lock;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.lock.api.DLock;
@@ -15,10 +19,11 @@ import org.craft.atom.redis.api.ShardedRedisCommand;
  * @author mindwind
  * @version 1.0, Jul 16, 2013
  */
+@ToString(of = "shardedRedis")
 public class ShardedRedis24DLock implements DLock {
 	
 	private static final Log LOG = LogFactory.getLog(ShardedRedis24DLock.class);
-	private ShardedRedisCommand shardedRedis;
+	@Getter @Setter private ShardedRedisCommand shardedRedis;
 	
 	public ShardedRedis24DLock() {
 		super();
@@ -81,16 +86,4 @@ public class ShardedRedis24DLock implements DLock {
 		return success;
 	}
 	
-	
-	// ~ ----------------------------------------------------------------------------------------------------------
-	
-
-	public ShardedRedisCommand getShardedRedis() {
-		return shardedRedis;
-	}
-
-	public void setShardedRedis(ShardedRedisCommand redis) {
-		this.shardedRedis = redis;
-	}
-
 }

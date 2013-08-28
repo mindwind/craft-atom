@@ -2,6 +2,10 @@ package org.craft.atom.lock;
 
 import java.util.concurrent.TimeUnit;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.lock.api.DLock;
@@ -13,10 +17,11 @@ import org.craft.atom.redis.api.RedisCommand;
  * @author mindwind
  * @version 1.0, Jul 16, 2013
  */
+@ToString(of = "redis")
 public class Redis26DLock implements DLock {
 	
 	private static final Log LOG = LogFactory.getLog(Redis26DLock.class);
-	private RedisCommand redis;
+	@Getter @Setter private RedisCommand redis;
 	
 	public Redis26DLock() {
 		super();
@@ -68,16 +73,4 @@ public class Redis26DLock implements DLock {
 		return success;
 	}
 	
-	
-	// ~ ----------------------------------------------------------------------------------------------------------
-	
-
-	public RedisCommand getRedis() {
-		return redis;
-	}
-
-	public void setRedis(RedisCommand redis) {
-		this.redis = redis;
-	}
-
 }
