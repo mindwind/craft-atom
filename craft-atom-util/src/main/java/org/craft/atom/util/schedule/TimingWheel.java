@@ -219,6 +219,15 @@ public class TimingWheel<E> {
 		}
 	}
 	
+	/**
+	 * Returns the number of elements within timing wheel.
+	 * 
+	 * @return
+	 */
+	public int size() {
+		return indicator.size();
+	}
+	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	 
 	private class TickWorker implements Runnable {
