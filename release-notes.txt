@@ -11,6 +11,8 @@ CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
 
 
 
+
+
 craft-atom 2.0.0 
 -----------------------------------------------------------------------------------------------------------------------
 
@@ -18,9 +20,6 @@ UPGRADE URGENCY: HIGH
 
 * craft-atom-nio
   [IMPROVE]  - refactor nio design and implementation, provide more clean and consistent api and better performance.
-
-* craft-atom-cache
-  [FIX]      - cache transaction api "watch" bugs, it doesn't hold the connection in one transaction.
   
 * craft-atom-protocol-http
   [FIX]      - http protocol header model, use list instead of map, because header name can be repeatable.

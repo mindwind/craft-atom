@@ -1,5 +1,7 @@
 package org.craft.atom.io;
 
+import java.net.SocketAddress;
+
 /**
  * A nexus for I/O operations.
  *
@@ -148,4 +150,14 @@ public interface Channel<D> {
 	 * @return <tt>true</tt> if contains a mapping for the specified key
 	 */
 	boolean containsAttribute(Object key);
+	
+	/**
+     * @return the socket address of remote peer which is associated with this channel.
+     */
+    SocketAddress getRemoteAddress();
+
+    /**
+     * @return the socket address of local machine which is associated with this channel.
+     */
+    SocketAddress getLocalAddress();
 }

@@ -85,6 +85,16 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 		return true;
 	}
 	
+	@Override
+	public SocketAddress getLocalAddress() {
+		return localAddress;
+	}
+	
+	@Override
+	public SocketAddress getRemoteAddress() {
+		return remoteAddress;
+	}
+	
 	public void setProcessor(NioProcessor processor) {
 		this.processor = processor;
 	}
@@ -140,16 +150,8 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 		this.state = ChannelState.CLOSED;
 	}
 	
-	SocketAddress getRemoteAddress() {
-		return remoteAddress;
-	}
-	
 	void setRemoteAddress(SocketAddress remoteAddress) {
 		this.remoteAddress = remoteAddress;
-	}
-	
-	SocketAddress getLocalAddress() {
-		return localAddress;
 	}
 	
 	SelectionKey getSelectionKey() {
