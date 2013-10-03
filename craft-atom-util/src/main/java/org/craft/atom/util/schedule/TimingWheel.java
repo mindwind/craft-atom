@@ -220,9 +220,7 @@ public class TimingWheel<E> {
 	}
 	
 	/**
-	 * Returns the number of elements within timing wheel.
-	 * 
-	 * @return
+	 * @return the number of elements within timing wheel.
 	 */
 	public int size() {
 		return indicator.size();
