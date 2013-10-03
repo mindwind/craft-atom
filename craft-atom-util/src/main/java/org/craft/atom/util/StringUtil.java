@@ -509,7 +509,7 @@ public class StringUtil {
 		}
 
 		for (int i = 0; i < src.length(); i++) {
-			if (Character.isDigit(src.charAt(0)) || src.charAt(0) == '.') {
+			if (Character.isDigit(src.charAt(i)) || src.charAt(i) == '.') {
 				continue;
 			} else {
 				return false;
