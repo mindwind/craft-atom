@@ -6,7 +6,7 @@ import org.junit.Test;
 /**
  * Tests for {@link ByteArrayBuffer}
  * 
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, 2011-12-21
  */
 public class ByteArrayBufferTest {

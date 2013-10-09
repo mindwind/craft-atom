@@ -33,6 +33,7 @@
 		<module>craft-atom-protocol-textline</module>
 		<module>craft-atom-io</module>
 		<module>craft-atom-redis</module>
+		<module>craft-atom-test</module>
 	</modules>
 
 	<properties>
@@ -43,6 +44,7 @@
 		<v.plugin.source>2.2</v.plugin.source>
 		<v.plugin.release>2.4</v.plugin.release>
 		<v.plugin.javadoc>2.9</v.plugin.javadoc>
+		<v.plugin.surefire>2.16</v.plugin.surefire>
 		<v.jdk>1.6</v.jdk>
 
 		<v.commons.logging>1.1.1</v.commons.logging>
@@ -75,6 +77,12 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>org.craft.atom</groupId>
+				<artifactId>craft-atom-test</artifactId>
+				<version>${project.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>
 				<version>${v.log4j}</version>
@@ -104,6 +112,11 @@
 				<configuration>
 					<encoding>${project.encoding}</encoding>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${v.plugin.surefire}</version>
 			</plugin>
 			<plugin>
 				<artifactId>maven-source-plugin</artifactId>

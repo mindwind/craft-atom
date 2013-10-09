@@ -9,7 +9,7 @@ import lombok.ToString;
  * <br>
  * <b>NOTE: </b> it's not thread safe.
  * 
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, 2011-10-26
  */
 @ToString
@@ -20,7 +20,9 @@ public final class ByteArrayBuffer implements Serializable {
 	private byte[] buffer;
 	private int len;
 	
+	
 	// ~ -------------------------------------------------------------------------------------------------------------
+	
 	
 	/**
 	 * Creates an instance of {@link ByteArrayBuffer} with default(2048) initial capacity.
