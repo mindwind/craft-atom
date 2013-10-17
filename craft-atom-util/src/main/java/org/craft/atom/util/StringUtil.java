@@ -536,8 +536,42 @@ public class StringUtil {
 	 * @return <code>true</code> if the CharSequence is not null and has length
 	 * @see #hasText(String)
 	 */
-	private static boolean hasLength(CharSequence src) {
+	public static boolean hasLength(CharSequence src) {
 		return (src != null && src.length() > 0);
+	}
+	
+	/**
+	 * Check whether the given CharSequence has actual text. More specifically,
+	 * returns <code>true</code> if the string not <code>null</code>, its length
+	 * is greater than 0, and it contains at least one non-whitespace character.
+	 * <p>
+	 * 
+	 * <pre>
+	 * StringUtils.hasText(null) = false
+	 * StringUtils.hasText("") = false
+	 * StringUtils.hasText(" ") = false
+	 * StringUtils.hasText("12345") = true
+	 * StringUtils.hasText(" 12345 ") = true
+	 * </pre>
+	 * 
+	 * @param str
+	 *            the CharSequence to check (may be <code>null</code>)
+	 * @return <code>true</code> if the CharSequence is not <code>null</code>,
+	 *         its length is greater than 0, and it does not contain whitespace
+	 *         only
+	 * @see java.lang.Character#isWhitespace
+	 */
+	public static boolean hasText(CharSequence str) {
+		if (!hasLength(str)) {
+			return false;
+		}
+		int strLen = str.length();
+		for (int i = 0; i < strLen; i++) {
+			if (!Character.isWhitespace(str.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	/**
