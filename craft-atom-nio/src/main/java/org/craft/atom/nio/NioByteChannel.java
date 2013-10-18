@@ -71,7 +71,7 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 			throw new IllegalStateException("Channel state is invalid, channel=" + this.toString());
 		}
 		if (data == null) {
-			throw new IllegalArgumentException("Write data is null.");
+			return false;
 		}
 		
 		if (isPaused()) {

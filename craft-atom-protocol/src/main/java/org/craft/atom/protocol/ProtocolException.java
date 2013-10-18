@@ -11,7 +11,7 @@ import java.util.Arrays;
  * @author mindwind
  * @version 1.0, Oct 16, 2012
  */
-public class ProtocolException extends Exception {
+public class ProtocolException extends RuntimeException {
 
 	private static final long serialVersionUID = 2606442495710868565L;
 
