@@ -14,8 +14,8 @@ import lombok.ToString;
  * @author mindwind
  * @version 1.0, Feb 21, 2013
  */
-@ToString(of = { "id", "state", "attributes" })
 @EqualsAndHashCode(of = "id")
+@ToString(of = { "id", "state" })
 abstract public class AbstractChannel {
 	
 	private static final AtomicLong ID_GENERATOR = new AtomicLong(0);

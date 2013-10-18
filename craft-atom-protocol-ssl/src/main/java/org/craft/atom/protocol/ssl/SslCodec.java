@@ -14,7 +14,6 @@ import javax.xml.ws.ProtocolException;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import org.craft.atom.util.buffer.AdaptiveByteBuffer;
 
@@ -25,7 +24,6 @@ import org.craft.atom.util.buffer.AdaptiveByteBuffer;
  * @author mindwind
  * @version 1.0, Oct 17, 2013
  */
-@ToString
 public class SslCodec {
 	
 	/** Set true if the engine will <em>request</em> client authentication.This option is only useful to engines in the server mode.*/

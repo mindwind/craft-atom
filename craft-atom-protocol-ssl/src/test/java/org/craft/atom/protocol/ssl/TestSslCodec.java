@@ -154,12 +154,12 @@ public class TestSslCodec {
 
 		@Override
 		public void channelRead(Channel<byte[]> channel, byte[] bytes) {
-			SslCodec  codec  = (SslCodec) channel.getAttribute(SSL_CODEC);
-			byte[]    ddata   = codec.decode(bytes);
+			SslCodec codec = (SslCodec) channel.getAttribute(SSL_CODEC);
+			byte[] ddata = codec.decode(bytes);
 			if (ddata != null) { LOG.debug("Receive data: " + new String(ddata)); }
 			
 			if (ddata != null) {
-				byte[]    edata = codec.encode("hi, how are you?\n".getBytes());
+				byte[] edata = codec.encode("hi, how are you?\n".getBytes());
 				channel.write(edata);
 				if (edata != null) { LOG.debug("Sent data: " + new String(edata)); }
 			}

@@ -8,7 +8,7 @@ import lombok.ToString;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
-@ToString(callSuper = true)
+@ToString(callSuper = true, of = {})
 abstract public class AbstractIoByteChannel extends AbstractIoChannel implements Channel<byte[]> {
 
 	public AbstractIoByteChannel() {

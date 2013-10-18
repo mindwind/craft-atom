@@ -5,8 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-
-import lombok.ToString;
+import java.text.DecimalFormat;
 
 import org.craft.atom.nio.spi.NioBufferSizePredictor;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
@@ -17,7 +16,6 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
-@ToString(callSuper= true, of = "socketChannel")
 public class NioTcpByteChannel extends NioByteChannel {
 	
 	private SocketChannel socketChannel;
@@ -58,6 +56,17 @@ public class NioTcpByteChannel extends NioByteChannel {
 		}
 		
 		socketChannel.close();
+	}
+	
+	private String getIdAsString() {
+		String format = "0000000000";
+		DecimalFormat df = new DecimalFormat(format);
+		return df.format(id);
+	}
+
+	@Override
+	public String toString() {
+		return String.format("{id=%s: <%s - %s>}", getIdAsString(), localAddress, remoteAddress, state);
 	}
 
 }

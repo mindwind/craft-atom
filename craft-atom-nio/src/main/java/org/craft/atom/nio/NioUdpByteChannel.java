@@ -17,7 +17,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
-@ToString(of = "datagramChannel")
+@ToString(callSuper = true)
 public class NioUdpByteChannel extends NioByteChannel {
 	
 	private DatagramChannel datagramChannel; 

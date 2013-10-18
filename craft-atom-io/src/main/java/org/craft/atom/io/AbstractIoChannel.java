@@ -10,7 +10,7 @@ import lombok.ToString;
  * @author mindwind
  * @version 1.0, Feb 22, 2013
  */
-@ToString(callSuper = true, of = { "lastIoTime", "minReadBufferSize", "defaultReadBufferSize", "maxReadBufferSize", "maxWriteBufferSize" })
+@ToString(callSuper = true, of = {})
 public abstract class AbstractIoChannel extends AbstractChannel {
 
 	@Getter @Setter protected long lastIoTime = System.currentTimeMillis();
