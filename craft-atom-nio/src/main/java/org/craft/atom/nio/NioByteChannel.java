@@ -68,7 +68,7 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	@Override
 	public boolean write(byte[] data) {
 		if (!isValid()) {
-			throw new IllegalStateException("Channel state is invalid, channel=" + this.toString());
+			throw new IllegalStateException(String.format("Channel state<%s> is invalid, channel=" + this.toString(), state));
 		}
 		if (data == null) {
 			return false;
