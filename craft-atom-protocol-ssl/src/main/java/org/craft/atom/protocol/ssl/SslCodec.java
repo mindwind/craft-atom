@@ -112,7 +112,7 @@ public class SslCodec {
 	 * Decode for ssl encrypt data
 	 * 
 	 * @param data
-	 * @return
+	 * @return Only decrypt app data, the handshake data will write back to remote by {@link SslHandshakeHandler}
 	 */
 	public byte[] decode(byte[] data) {
 		if (data == null) {
@@ -413,10 +413,10 @@ public class SslCodec {
 	
 
 	/**
-	 * Encode data to ssl encrypt data
+	 * Encode data to ssl encrypt data, must invoke this after handshake complete.
 	 * 
 	 * @param data
-	 * @return
+	 * @return Encrypt app data
 	 */
 	public byte[] encode(byte[] data) {
 		if (data == null) {
