@@ -4,9 +4,9 @@ import java.text.DecimalFormat;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * 测试案例计数器
+ * Test case counter.
  * 
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, Sep 26, 2013
  */
 public class CaseCounter {
