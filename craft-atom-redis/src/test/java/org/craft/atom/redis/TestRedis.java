@@ -1,18 +1,25 @@
 package org.craft.atom.redis;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.craft.atom.redis.api.Redis;
+import org.craft.atom.redis.api.RedisDataException;
+import org.craft.atom.redis.api.RedisException;
 import org.craft.atom.redis.api.RedisFactory;
+import org.craft.atom.redis.api.RedisPubSub;
+import org.craft.atom.redis.api.RedisTransaction;
+import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
+import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 import org.craft.atom.test.CaseCounter;
 import org.junit.After;
 import org.junit.Assert;
@@ -1337,6 +1344,240 @@ public class TestRedis {
 	
 	@Test
 	public void testSubscribePublishUnsubscribe() {
+		final Redis redis = RedisFactory.newRedis(HOST, PORT1, 2000, 5);
+		final String[] channels = new String[] { "foo", "foo1" };
+		RedisPubSub pubsub = redis.subscribe(new RedisSubscribeHandler() {
+			
+			@Override
+			public void onSubscribe(String channel, int no) {
+
+			}
+			
+			@Override
+			public void onMessage(String channel, String message) {
+				Assert.assertEquals("bar", message);
+			}
+			
+			@Override
+			public void onException(RedisException e) {
+				try {
+					e.printStackTrace();
+					Thread.sleep(3000);
+					redis.subscribe(this, channels);
+				} catch (Exception e2) {
+				}
+			}
+		}, channels);
 		
+		redis.publish("foo", "bar");
+		redis.publish("foo1", "bar");
+		redis.unsubscribe(pubsub, "foo1");
+		redis.publish("foo", "bar");
+		redis.publish("foo1", "bar");
+		redis.unsubscribe(pubsub, "foo", "foo1");
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test publish & subscribe & unsubscribe. ", CaseCounter.incr(1)));
 	}
+	
+	@Test
+	public void testPsubscribePublishPunsubscribe() {
+		final Redis redis = RedisFactory.newRedis(HOST, PORT1, 2000, 5);
+		final String[] patterns = new String[] { "fo*", "ba*" };
+		RedisPubSub pubsub = redis.psubscribe(new RedisPsubscribeHandler() {
+			@Override
+			public void onPsubscribe(String pattern, int no) {
+				
+			}
+			
+			@Override
+			public void onMessage(String pattern, String channel, String message) {
+				Assert.assertEquals("bar", message);
+			}
+			
+			@Override
+			public void onException(RedisException e) {
+				try {
+					Thread.sleep(3000);
+					redis.psubscribe(this, patterns);
+				} catch (Exception e2) {
+				}
+			}
+		}, patterns);	
+		redis.publish("foo", "bar");
+		redis.publish("bar", "bar");
+		redis.punsubscribe(pubsub, "ba*");
+		redis.publish("foo", "bar");
+		redis.publish("bar", "bar");
+		redis.punsubscribe(pubsub, "ba*", "fo*");
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test psubscribe & publish & punsubscribe. ", CaseCounter.incr(1)));
+	}
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------- Transactions
+	
+	
+	@Test
+	public void testMultiExec() {
+		RedisTransaction t = redis1.multi();
+		t.set(key, value);
+		t.get(key);
+		List<Object> l = redis1.exec(t);
+		Assert.assertEquals(2, l.size());
+		Assert.assertEquals(value, l.get(1));
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test multi & exec. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testWatchMultiExec() throws InterruptedException {
+		final String wkey = "watch-key";
+		final Lock lock = new ReentrantLock();
+		final Condition c1 = lock.newCondition();
+		final Condition c2 = lock.newCondition();
+		Thread t1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				lock.lock();
+				try {
+					redis1.watch(wkey);
+					c1.await();
+					RedisTransaction t = redis1.multi();
+					t.set(key, value);
+					redis1.exec(t);
+					c2.signal();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					lock.unlock();
+				}
+			}
+		});
+		t1.start();
+		
+		Thread t2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				lock.lock();
+				try {
+					redis1.set(wkey, "1");
+					c1.signal();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					lock.unlock();
+				}
+			}
+		});
+		t2.start();
+		
+		lock.lock();
+		try {
+			c2.await();
+		} finally {
+			lock.unlock();
+		}
+		
+		String v = redis1.get(key);
+		Assert.assertNull(v);
+		redis1.del(wkey);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test watch & multi & exec. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testMultiDiscard() {
+		RedisTransaction t = redis1.multi();
+		t.set(key, value);
+		t.get(key);
+		redis1.discard(t);
+		try {
+			redis1.exec(t);
+			Assert.fail();
+		} catch (RedisDataException e) {
+		}
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test multi & discard. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testWatchUnwatchMultiExec() {
+		String wkey = "watch-key";
+		redis1.watch(wkey);
+		redis1.set(wkey, "1");
+		redis1.unwatch();
+		RedisTransaction t = redis1.multi();
+		t.set(key, value);
+		redis1.exec(t);
+		String v = redis1.get(key);
+		Assert.assertEquals(value, v);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test watch & unwatch & multi & exec. ", CaseCounter.incr(1)));
+	}
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------- Scripting
+	
+	
+	@Test
+	public void testEval() {
+		redis1.eval(script);
+		String v = redis1.get(key);
+		Assert.assertEquals(value, v);
+		
+		redis1.flushall();
+		List<String> keys = new ArrayList<String>();
+		keys.add("foo");
+		redis1.eval("return redis.call('set',KEYS[1],'bar')", keys);
+		v = redis1.get(key);
+		Assert.assertEquals(value, v);
+		
+		redis1.flushall();
+		List<String> args = new ArrayList<String>();
+		args.add("bar");
+		redis1.eval("return redis.call('set',KEYS[1],ARGV[1])", keys, args);
+		v = redis1.get(key);
+		Assert.assertEquals(value, v);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test eval. ", CaseCounter.incr(3)));
+	}
+	
+	@Test
+	public void testEvalshaScriptload() {
+		String sha1 = redis1.scriptload(script);
+		redis1.evalsha(sha1);
+		String v = redis1.get(key);
+		Assert.assertEquals(value, v);
+		
+		redis1.flushall();
+		List<String> keys = new ArrayList<String>();
+		keys.add("foo");
+		sha1 = redis1.scriptload("return redis.call('set',KEYS[1],'bar')");
+		redis1.evalsha(sha1, keys);
+		
+		redis1.flushall();
+		sha1 = redis1.scriptload("return redis.call('set',KEYS[1],ARGV[1])");
+		List<String> args = new ArrayList<String>();
+		args.add("bar");
+		redis1.evalsha(sha1, keys, args);
+		v = redis1.get(key);
+		Assert.assertEquals(value, v);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test evalsha & scriptload. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testScriptExistsFlush() {
+		String sha1 = redis1.scriptload(script);
+		boolean b = redis1.scriptexists(sha1);
+		Assert.assertTrue(b);
+		redis1.scriptflush();
+		b = redis1.scriptexists(sha1);
+		Assert.assertFalse(b);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test scriptexists & scriptflush. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testScriptkill() {
+		String sha1 = redis1.scriptload(script);
+		boolean b = redis1.scriptexists(sha1);
+		Assert.assertTrue(b);
+		redis1.scriptflush();
+		b = redis1.scriptexists(sha1);
+		Assert.assertFalse(b);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test scriptkill. ", CaseCounter.incr(2)));
+	}
+	
 }
