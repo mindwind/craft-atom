@@ -11,6 +11,12 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.craft.atom</groupId>
+			<artifactId>craft-atom-test</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>redis.clients</groupId>
 			<artifactId>jedis</artifactId>
 		</dependency>

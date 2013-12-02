@@ -20,6 +20,7 @@ UPGRADE URGENCY: HIGH
 
 * craft-atom-nio
   [IMPROVE]  - refactor nio design and implementation, provide more clean and consistent api and better performance.
+  [FIX]      - idle timer oom issue.
   
 * craft-atom-protocol-http
   [FIX]      - http protocol header model, use list instead of map, because header name can be repeatable.
