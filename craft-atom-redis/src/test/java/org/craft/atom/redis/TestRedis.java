@@ -13,11 +13,13 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.craft.atom.redis.api.Redis;
+import org.craft.atom.redis.api.RedisConnectionException;
 import org.craft.atom.redis.api.RedisDataException;
 import org.craft.atom.redis.api.RedisException;
 import org.craft.atom.redis.api.RedisFactory;
 import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
+import org.craft.atom.redis.api.Slowlog;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 import org.craft.atom.test.CaseCounter;
@@ -90,12 +92,14 @@ public class TestRedis {
 	}
 	
 	private void clean() {
-		redis1.flushall();
-		redis2.flushall();
+		try {
+			redis1.flushall();
+			redis2.flushall();
+		} catch (Exception e) {}
 	}
 	
 	
-	// ~ --------------------------------------------------------------------------------------------------------- Keys
+	// ~ ---------------------------------------------------------------------------------------------------------- Keys
 	
 	
 	@Test
@@ -423,7 +427,7 @@ public class TestRedis {
 	}
 	
 	
-	// ~ ------------------------------------------------------------------------------------------------------ Strings
+	// ~ ------------------------------------------------------------------------------------------------------- Strings
 	
 	
 	@Test
@@ -641,7 +645,7 @@ public class TestRedis {
 	}
 	
 	
-	// ~ ------------------------------------------------------------------------------------------------------ Hashes
+	// ~ -------------------------------------------------------------------------------------------------------- Hashes
 	
 	
 	@Test
@@ -730,7 +734,7 @@ public class TestRedis {
 	}
 	
 	
-	// ~ ------------------------------------------------------------------------------------------------------ Lists
+	// ~ --------------------------------------------------------------------------------------------------------- Lists
 	
 	
 	@Test
@@ -954,7 +958,7 @@ public class TestRedis {
 	}
 	
 	
-	// ~ ------------------------------------------------------------------------------------------------------ Sets
+	// ~ ---------------------------------------------------------------------------------------------------------- Sets
 	
 	
 	@Test
@@ -1058,7 +1062,7 @@ public class TestRedis {
 	}
 	
 	
-	// ~ -------------------------------------------------------------------------------------------------- Sorted Sets
+	// ~ --------------------------------------------------------------------------------------------------- Sorted Sets
 	
 	
 	@Test
@@ -1412,7 +1416,7 @@ public class TestRedis {
 	}
 	
 	
-	// ~ ------------------------------------------------------------------------------------------------- Transactions
+	// ~ -------------------------------------------------------------------------------------------------- Transactions
 	
 	
 	@Test
@@ -1510,7 +1514,7 @@ public class TestRedis {
 	}
 	
 	
-	// ~ ------------------------------------------------------------------------------------------------- Scripting
+	// ~ ----------------------------------------------------------------------------------------------------- Scripting
 	
 	
 	@Test
@@ -1578,6 +1582,221 @@ public class TestRedis {
 		b = redis1.scriptexists(sha1);
 		Assert.assertFalse(b);
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test scriptkill. ", CaseCounter.incr(2)));
+	}
+	
+	
+	// ~ ---------------------------------------------------------------------------------------------------- Connection
+	
+	
+	@Test
+	public void testAuth() {
+		redis1.configset("requirepass", "foobared");
+		redis1.auth("foobared");
+		redis1.set(key, value);
+		boolean b = redis1.exists(key);
+		Assert.assertTrue(b);
+		redis1.configset("requirepass", "");
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test auth. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testEcho() {
+		String hi = redis1.echo("hi");
+		Assert.assertEquals("hi", hi);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test echo. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testPing() {
+		String hi = redis1.echo("hi");
+		Assert.assertEquals("hi", hi);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test ping. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testQuit() {
+		redis1.quit();
+		try {
+			redis1.set(key, value);
+		} catch (Exception e) {
+			System.out.println("	" + e.getMessage());
+			Assert.assertTrue(true);
+		} finally {
+			redis1 = RedisFactory.newRedis(HOST, PORT1);
+		}
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test quit. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testSelect() {
+		redis1.set(key, value);
+		redis1.select(1);
+		Assert.assertNull(redis1.get(key));
+		redis1.select(0);
+		Assert.assertEquals(value, redis1.get(key));
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test select. ", CaseCounter.incr(1)));
+	}
+	
+	
+	// ~ -------------------------------------------------------------------------------------------------------- Server
+	
+	
+	@Test
+	public void testBgrewriteaof() {
+		String r = redis1.bgrewriteaof();
+		Assert.assertNotNull(r);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test bgrewriteaof. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testClientgetnameClientsetname() {
+		Redis redis = RedisFactory.newRedis(HOST, PORT1, 2000, 1);
+		redis.clientsetname("foobar");
+		String name = redis.clientgetname();
+		Assert.assertEquals("foobar", name);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test clientgetname & clientsetname. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testClientkill() {
+		try {
+			redis1.clientkill(HOST, PORT1);
+		} catch (RedisException e) {
+			Assert.assertTrue(true);
+		}
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test clientkill. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testClientlist() {
+		List<String> l = redis1.clientlist();
+		Assert.assertTrue(l.size() > 0);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test clientlist. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testConfiggetConfigset() {
+		redis1.configset("timeout", "3000");
+		String timeout = redis1.configget("*").get("timeout");
+		Assert.assertEquals("3000", timeout);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test configget & configset. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testConfigresetstat() {
+		String r = redis1.configresetstat();
+		Assert.assertEquals("OK", r);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test configresetstat. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testDbsize() {
+		redis1.flushall();
+		redis1.set(key, value);
+		long size = redis1.dbsize();
+		Assert.assertEquals(1, size);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test dbsize. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testDebugobject() {
+		redis1.set(key, value);
+		String r = redis1.debugobject(key);
+		Assert.assertNotNull(r);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test debugobject. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testFlushallFlushdb() {
+		redis1.set(key, value);
+		redis1.flushdb();
+		Assert.assertEquals(0L, redis1.dbsize().longValue());
+		redis1.set(key, value);
+		redis1.flushall();
+		Assert.assertEquals(0L, redis1.dbsize().longValue());
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test flushall & flushdb. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testInfo() {
+		String r = redis1.info();
+		Assert.assertNotNull(r);
+		r = redis1.info("all");
+		Assert.assertNotNull(r);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test info. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testLastsave() {
+		long r = redis1.lastsave();
+		Assert.assertTrue(r > 0);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test lastsave. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testSave() {
+		String r = redis1.save();
+		Assert.assertEquals("OK", r);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test save. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testSlaveof() {
+		String r = redis1.slaveof(HOST, PORT2);
+		Assert.assertEquals("OK", r);
+		r = redis1.slaveofnoone();
+		Assert.assertEquals("OK", r);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test slaveof. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testSlowlog() {
+		List<Slowlog> logs = redis1.slowlogget();
+		logs = redis1.slowlogget(1);
+		redis1.slowlogreset();
+		long len = redis1.slowloglen();
+		Assert.assertEquals(0, len);
+		Assert.assertEquals(0, logs.size());
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test slowlog. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testTime() {
+		long r = redis1.time();
+		long c = System.currentTimeMillis();
+		Assert.assertTrue(r - c < 1000);
+		
+		r = redis1.microtime();
+		c = System.nanoTime();
+		Assert.assertTrue(r * 1000 - c < 1000000);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test time. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testBgsave() {
+		try {
+			redis1.bgsave();
+		} catch(Exception e) {
+			
+		}
+	}
+	
+	@Test
+	public void testSync() {
+		redis1.sync();
+		Assert.assertTrue(true);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test sync. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testShutdown() { 
+		redis1.shutdown(true);
+		try {
+			redis1.ping();
+		} catch (RedisConnectionException e) {
+			Assert.assertTrue(true);
+		}
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test shutdown. ", CaseCounter.incr(1)));
 	}
 	
 }
