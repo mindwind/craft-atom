@@ -4,6 +4,8 @@ import java.util.concurrent.TimeUnit;
 
 import lombok.ToString;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.ChannelEventType;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
@@ -19,21 +21,30 @@ import org.craft.atom.util.schedule.TimingWheel;
 @ToString(of = { "timingWheel", "timeoutInMillis" })
 public class NioChannelIdleTimer {
 	
-	private static final NioChannelIdleTimer INSTANCE = new NioChannelIdleTimer();
-	private TimingWheel<NioByteChannel> timingWheel;
-	private NioChannelEventDispatcher dispatcher;
-	private IoHandler handler;
-	private int timeoutInMillis;
+	
+	private static final Log                 LOG             = LogFactory.getLog(NioChannelIdleTimer.class);
+	private static final NioChannelIdleTimer INSTANCE        = new NioChannelIdleTimer()                   ;
+
+
+	private TimingWheel<NioByteChannel> timingWheel    ;
+	private NioChannelEventDispatcher   dispatcher     ;
+	private IoHandler                   handler        ;
+	private int                         timeoutInMillis;
+	
+	
+	// ~ -------------------------------------------------------------------------------------------------------------
+	
 	
 	public static NioChannelIdleTimer getInstance() {
 		return INSTANCE;
 	}
 	
 	void init(NioChannelEventDispatcher dispatcher, IoHandler handler, int timeoutInMillis) {
-		this.dispatcher = dispatcher;
-		this.handler = handler;
+		this.dispatcher      = dispatcher;
+		this.handler         = handler;
 		this.timeoutInMillis = timeoutInMillis;
-		this.timingWheel = new TimingWheel<NioByteChannel>(1000, timeoutInMillis / 1000, TimeUnit.MILLISECONDS);
+		this.timingWheel     = new TimingWheel<NioByteChannel>(1000, timeoutInMillis / 1000, TimeUnit.MILLISECONDS);
+		
 		this.timingWheel.addExpirationListener(new NioChannelIdleListener());
 		this.timingWheel.start();
 	}
@@ -50,7 +61,9 @@ public class NioChannelIdleTimer {
     	dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_IDLE, channel, handler));
     }
 	
-	// ~ --------------------------------------------------------------------------------------------------------
+	
+	// ~ -------------------------------------------------------------------------------------------------------------
+	
 	
 	private class NioChannelIdleListener implements ExpirationListener<NioByteChannel> {
 
@@ -61,7 +74,11 @@ public class NioChannelIdleTimer {
 			if (elapse > timeoutInMillis) {
 				fireChannelIdle(channel);
 			}
-			timingWheel.add(channel);
+			if (channel.isValid()) {
+				timingWheel.add(channel);
+			}
+			
+			LOG.info(String.format("[CRAFT-ATOM-NIO] Nio active channel count is <%s>", timingWheel.size()));
 		}
 		
 	}

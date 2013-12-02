@@ -143,7 +143,7 @@ public class NioProcessor extends NioReactor {
 	
 	private void close() throws IOException {
 		for (NioByteChannel channel = closingChannels.poll(); channel != null; channel = closingChannels.poll()) {
-			
+			idleTimer.remove(channel);
 			if (channel.isClosed()) {
 				if (LOG.isDebugEnabled()) { LOG.debug("Skip closes channel=" + channel); }
 				continue;
@@ -154,7 +154,6 @@ public class NioProcessor extends NioReactor {
 			
 			close(channel);
 			channel.setClosed();
-			idleTimer.remove(channel);
 			
 			// fire channel closed event
 			fireChannelClosed(channel);
