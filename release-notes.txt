@@ -16,7 +16,10 @@ CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
 craft-atom 2.0.0 
 -----------------------------------------------------------------------------------------------------------------------
 
-UPGRADE URGENCY: HIGH
+UPGRADE URGENCY: CRITICAL
+
+* craft-atom-redis
+  [FIX]      - finally return the broken resource to the jedis pool, when JedisConnectionException occurs.
 
 * craft-atom-nio
   [IMPROVE]  - refactor nio design and implementation, provide more clean and consistent api and better performance.
