@@ -114,7 +114,7 @@ public class SslCodec {
 	 * @param data
 	 * @return Only decrypt app data, the handshake data will write back to remote by {@link SslHandshakeHandler}
 	 */
-	public byte[] decode(byte[] data) {
+	synchronized public byte[] decode(byte[] data) {
 		if (data == null) {
 			return null;
 		}
@@ -418,7 +418,7 @@ public class SslCodec {
 	 * @param data
 	 * @return Encrypt app data
 	 */
-	public byte[] encode(byte[] data) {
+	synchronized public byte[] encode(byte[] data) {
 		if (data == null) {
 			return null;
 		}

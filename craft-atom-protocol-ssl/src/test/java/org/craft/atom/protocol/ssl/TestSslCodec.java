@@ -32,13 +32,12 @@ import org.junit.Test;
 public class TestSslCodec {
 	
 	
-	private static final Log    LOG        = LogFactory.getLog(TestSslCodec.class);
-	private static final String SSL_CODEC  = "ssl.codec";
-	private static final int    PORT;      
-	private static final int    MSG_NUM = 100;
-	private static final String ALGORITHM;
-	
-	private static volatile int count = 0;
+	private static final    Log    LOG        = LogFactory.getLog(TestSslCodec.class);
+	private static final    String SSL_CODEC  = "ssl.codec"                          ;
+	private static final    int    PORT                                              ;      
+	private static final    int    MSG_NUM    = 100                                  ;
+	private static final    String ALGORITHM                                         ;
+	private static volatile int    count      = 0                                    ;
 	
 	
 	static {
