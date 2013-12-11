@@ -107,19 +107,20 @@ public class NioTcpAcceptor extends NioAcceptor {
 				return null;
 			}
 			sc.configureBlocking(false);
+			NioByteChannel channel = new NioTcpByteChannel(sc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()), dispatcher);
+			return channel;
 		} catch (IOException e) {
-			LOG.warn(e.getMessage(), e);
+			LOG.error(e.getMessage(), e);
 			if(sc != null) {
 				try {
 					sc.close();
 				} catch (IOException ex) {
-					LOG.warn(ex.getMessage(), ex);
+					LOG.error(ex.getMessage(), ex);
 				}
 			}
 		}
 		
-		NioByteChannel channel = new NioTcpByteChannel(sc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()), dispatcher);
-		return channel;
+		return null;
 	}
 
 }
