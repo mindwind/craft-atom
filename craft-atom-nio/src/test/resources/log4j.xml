@@ -16,7 +16,7 @@
 	</category>
 	
 	<category name="org.craft.atom.io" additivity="false">
-		<priority value="debug" />
+		<priority value="info" />
 		<appender-ref ref="console" />
 	</category>
 

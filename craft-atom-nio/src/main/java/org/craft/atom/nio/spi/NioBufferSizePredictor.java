@@ -18,7 +18,7 @@ public interface NioBufferSizePredictor {
 	int next();
 	
 	/**
-	 * Updates predictor by specifying the actual size  in the previous operation.
+	 * Updates predictor by specifying the actual size in the previous operation.
 	 * 
 	 * @param previousSize the actual size in the previous read operation
 	 */

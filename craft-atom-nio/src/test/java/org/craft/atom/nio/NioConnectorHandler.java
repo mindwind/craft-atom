@@ -1,5 +1,9 @@
 package org.craft.atom.nio;
 
+import lombok.Getter;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.AbstractIoHandler;
 import org.craft.atom.io.Channel;
 
@@ -9,20 +13,26 @@ import org.craft.atom.io.Channel;
  */
 public class NioConnectorHandler extends AbstractIoHandler {
 	
-	private static final byte LF = 10; 
-	private StringBuilder buf = new StringBuilder();
+	private static final Log  LOG = LogFactory.getLog(NioConnectorHandler.class);
+	private static final byte LF  = 10                                         ;
+	
+	
+	@Getter private StringBuilder buf = new StringBuilder();
+	@Getter private String        rcv = null               ;
+	
 	
 	@Override
 	public void channelRead(Channel<byte[]> channel, byte[] bytes) {
-		System.out.println("[Nio Connector Handler] channel read bytes size=" + bytes.length);
+		LOG.debug("[CRAFT-ATOM-NIO] Channel read bytes size=" + bytes.length);
 		
 		for (byte b : bytes) {
 			buf.append((char) b);
 		}
 		
 		if (bytes[bytes.length - 1] == LF) {
+			rcv = buf.toString();
 			byte[] echoBytes = buf.toString().getBytes();
-			System.out.println("\nEcho received bytes size=" + echoBytes.length + "\n");
+			LOG.debug("[CRAFT-ATOM-NIO] Echo received bytes size=" + echoBytes.length + "\n");
 			buf = new StringBuilder();
 			synchronized(channel) {
 				channel.notifyAll();

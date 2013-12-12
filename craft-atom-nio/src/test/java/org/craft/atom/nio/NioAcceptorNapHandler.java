@@ -1,5 +1,7 @@
 package org.craft.atom.nio;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.AbstractIoHandler;
 import org.craft.atom.io.Channel;
 
@@ -9,12 +11,17 @@ import org.craft.atom.io.Channel;
  */
 public class NioAcceptorNapHandler extends AbstractIoHandler {
 	
-	private static final byte LF = 10; 
+	
+	private static final Log  LOG = LogFactory.getLog(NioAcceptorHandler.class);
+	private static final byte LF  = 10                                         ; 
+	
+	
 	private StringBuilder buf = new StringBuilder();
 
+	
 	@Override
 	public void channelRead(Channel<byte[]> channel, byte[] bytes) {
-		System.out.println("[Nio Acceptor Handler] channel read bytes size=" + bytes.length + ", channle-paused=" + channel.isPaused());
+		LOG.debug("[CRAFT-ATOM-NIO] Channel read bytes size=" + bytes.length + ", channle-paused=" + channel.isPaused());
 		
 		for (byte b : bytes) {
 			buf.append((char) b);
@@ -24,16 +31,15 @@ public class NioAcceptorNapHandler extends AbstractIoHandler {
 		
 		if (bytes[bytes.length - 1] == LF) {
 			byte[] echoBytes = buf.toString().getBytes();
-			System.out.println("Echo bytes size=" + echoBytes.length + ", take a nap \n");
-			boolean b = channel.write(echoBytes);
-			System.out.println("Channel.write()=" + b);
+			LOG.debug("[CRAFT-ATOM-NIO] Echo bytes size=" + echoBytes.length + ", take a nap \n");
+			channel.write(echoBytes);
 			buf = new StringBuilder();
 		}
 	}
 	
 	private void nap() {
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(200);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

@@ -2,47 +2,39 @@ package org.craft.atom.nio;
 
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.craft.atom.nio.api.NioTcpAcceptor;
+import org.craft.atom.test.AvailablePortFinder;
+import org.craft.atom.test.CaseCounter;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author mindwind
  * @version 1.0, 2011-12-20
  */
-public class NioTcpAcceptorMain {
+public class TestNioTcpAcceptor {
 	
-	private static final int PORT = 12345;
+	private static final Log LOG  = LogFactory.getLog(TestNioTcpAcceptor.class);
+	private static final int PORT = AvailablePortFinder.getNextAvailable(33333);
 	
-	public static void main(String[] args) throws IOException {
-		NioTcpAcceptorMain tam = new NioTcpAcceptorMain();
-		
-		// case 1
-		tam.testDuplicateBind();
-		
-		// case 2
-		tam.testDuplicateUnbind();
-		
-		// case 3
-		tam.testBindAndUnbindManyTimes(16);
-		
-		// exit
-		System.exit(0);
-	}
 	
+	@Test
     public void testDuplicateBind() throws IOException {
 		NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), PORT);
-		
 		Assert.assertEquals(1, acceptor.getBoundAddresses().size());
 		
 		try {
 			acceptor.bind(PORT);
-			Assert.fail("Exception is not thrown");
+			Assert.fail();
 		} catch(IOException e) {
-			System.out.println("Duplicate bind throw exception=" + e);
-			Assert.assertTrue(true);
+			LOG.debug("[CRAFT-ATOM-NIO] Duplicate bind throw " + e);
 		}
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test nio tcp acceptor duplicate bind. ", CaseCounter.incr(1)));
 	}
 	
+	@Test
     public void testDuplicateUnbind() throws IOException {
     	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), PORT);
 
@@ -51,21 +43,22 @@ public class NioTcpAcceptorMain {
 
         // this shouldn't fail
         acceptor.unbind(PORT);
-        System.out.println("Duplicate unbind pass...");
-        
         Assert.assertEquals(0, acceptor.getBoundAddresses().size());
+        System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test nio tcp acceptor duplicate unbind. ", CaseCounter.incr(1)));
     }
     
-    public void testBindAndUnbindManyTimes(int times) throws IOException {
+	@Test
+    public void testBindAndUnbindManyTimes() throws IOException {
     	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), PORT);
 
-        for (int i = 0; i < times; i++) {
+        for (int i = 0; i < 16; i++) {
             acceptor.unbind(PORT);
             Assert.assertEquals(0, acceptor.getBoundAddresses().size());
             acceptor.bind(PORT);
-            System.out.println("Bind and unbind time=" + i);
+            LOG.debug("[CRAFT-ATOM-NIO] Bind and unbind time " + i);
         }
         Assert.assertEquals(1, acceptor.getBoundAddresses().size());
+        System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test nio tcp acceptor bind & unbind many times. ", CaseCounter.incr(1)));
     }
 	
 }
