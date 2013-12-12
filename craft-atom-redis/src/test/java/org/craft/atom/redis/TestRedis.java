@@ -687,23 +687,12 @@ public class TestRedis extends AbstractRedisTests {
 	
 	
 	@Test
-	public void testBlpopLpush() {
-		final Lock lock = new ReentrantLock();
-		final Condition c = lock.newCondition();
-		
+	public void testBlpopLpush() throws InterruptedException {
 		Thread t1 = new Thread(new Runnable() {	
 			@Override
 			public void run() {
 				String v = redis1.blpop(key);
 				Assert.assertEquals("3", v);
-				lock.lock();
-				try {
-					c.signal();
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					lock.unlock();
-				}
 			}
 		});
 		
@@ -717,15 +706,7 @@ public class TestRedis extends AbstractRedisTests {
 		
 		t1.start();
 		t2.start();
-		
-		lock.lock();
-		try {
-			c.await();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			lock.unlock();
-		}
+		t1.join();
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test blpop & lpush. ", CaseCounter.incr(2)));
 	}
 	
@@ -749,23 +730,12 @@ public class TestRedis extends AbstractRedisTests {
 	}
 	
 	@Test
-	public void testBrpop() {
-		final Lock lock = new ReentrantLock();
-		final Condition c = lock.newCondition();
-		
+	public void testBrpop() throws InterruptedException {
 		Thread t1 = new Thread(new Runnable() {	
 			@Override
 			public void run() {
 				String v = redis1.brpop(key);
 				Assert.assertEquals("3", v);
-				lock.lock();
-				try {
-					c.signal();
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					lock.unlock();
-				}
 			}
 		});
 		
@@ -778,15 +748,7 @@ public class TestRedis extends AbstractRedisTests {
 		
 		t1.start();
 		t2.start();
-		
-		lock.lock();
-		try {
-			c.await();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			lock.unlock();
-		}
+		t1.join();
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test brpop. ", CaseCounter.incr(1)));
 	}
 	
