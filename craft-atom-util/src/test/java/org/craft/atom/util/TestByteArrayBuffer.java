@@ -1,5 +1,6 @@
 package org.craft.atom.util;
 
+import org.craft.atom.test.CaseCounter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,14 +10,15 @@ import org.junit.Test;
  * @author mindwind
  * @version 1.0, 2011-12-21
  */
-public class ByteArrayBufferTest {
+public class TestByteArrayBuffer {
 
 	@Test
 	public void testAppendNull() {
 		ByteArrayBuffer buffer = new ByteArrayBuffer(8);
 		
-		buffer.append((byte[])null, 0, 0);
+		buffer.append((byte[]) null, 0, 0);
         Assert.assertEquals(0, buffer.length());
+        System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test append null. ", CaseCounter.incr(1)));
 	}
 	
 	@Test
@@ -24,6 +26,7 @@ public class ByteArrayBufferTest {
 		ByteArrayBuffer buffer = new ByteArrayBuffer(8);
         buffer.append(new byte[] {});
         Assert.assertEquals(0, buffer.length());
+        System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test append empty. ", CaseCounter.incr(1)));
 	}
 
 	@Test
@@ -39,6 +42,7 @@ public class ByteArrayBufferTest {
 		for (int i = 0; i < tmp.length; i++) {
 			Assert.assertEquals(tmp[i], buffer.byteAt(i));
 		}
+		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test append bytes. ", CaseCounter.incr(3)));
 	}
 	
     @Test
@@ -54,6 +58,7 @@ public class ByteArrayBufferTest {
         } catch (IllegalArgumentException ex) {
         	// expected
         }
+        System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test constructor. ", CaseCounter.incr(5)));
     }
     
     @Test
@@ -73,6 +78,7 @@ public class ByteArrayBufferTest {
 
         Assert.assertEquals(16, buffer.capacity());
         Assert.assertEquals(10, buffer.length());
+        System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test expand append. ", CaseCounter.incr(5)));
     }
 	
     @Test
@@ -111,6 +117,7 @@ public class ByteArrayBufferTest {
         } catch (IndexOutOfBoundsException ex) {
             // expected
         }
+        System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test invalid append. ", CaseCounter.incr(5)));
     }
     
     @Test
@@ -130,6 +137,7 @@ public class ByteArrayBufferTest {
         Assert.assertEquals(index1, buffer.indexOf(COLON, 0, 1000));
         Assert.assertEquals(-1, buffer.indexOf(COLON, 2, 1));
         Assert.assertEquals(index2, buffer.indexOf(COLON, index1 + 1, buffer.length()));
+        System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test indexof. ", CaseCounter.incr(6)));
     }
     
     @Test
@@ -138,5 +146,6 @@ public class ByteArrayBufferTest {
     	byte[] bytes = buffer.array(0, 0);
     	Assert.assertNotNull(bytes);
     	Assert.assertEquals(0, bytes.length);
+    	System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test array. ", CaseCounter.incr(2)));
     }
 }
