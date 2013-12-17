@@ -14,5 +14,10 @@
 			<artifactId>craft-atom-protocol</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.craft.atom</groupId>
+			<artifactId>craft-atom-test</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

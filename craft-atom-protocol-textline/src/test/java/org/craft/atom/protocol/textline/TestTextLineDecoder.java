@@ -6,6 +6,7 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.craft.atom.protocol.ProtocolException;
+import org.craft.atom.test.CaseCounter;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,10 +17,15 @@ import org.junit.Test;
  * @author Hu Feng
  * @version 1.0, Oct 17, 2012
  */
-public class TextLineDecoderTest {
+public class TestTextLineDecoder {
+	
 	
 	private static final Charset UTF_8 = Charset.forName("utf-8");
+	
+	
 	private TextLineDecoder decoder;
+	
+	
 	
 	@Before
 	public void setup() {
@@ -88,5 +94,6 @@ public class TextLineDecoderTest {
 		decoder.decode(c7.getBytes(UTF_8));
 		l = decoder.decode("\n".getBytes(UTF_8));
 		Assert.assertEquals(c7 + c7, l.get(0));
+		System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-TEXTLINE] (^_^)  <%s>  Case -> test decode. ", CaseCounter.incr(16)));
 	}
 }
