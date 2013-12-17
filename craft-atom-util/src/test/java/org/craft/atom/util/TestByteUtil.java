@@ -10,7 +10,7 @@ import org.junit.Test;
  * @author Hu Feng
  * @version 1.0, 2011-12-21
  */
-public class ByteUtilTest {
+public class TestByteUtil {
 	
 	@Test
 	public void testIndexOf() {
