@@ -11,6 +11,16 @@ CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
 
 
 
+craft-atom 2.1.0  >>> coming soon
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: LOW
+
+* craft-atom
+  [IMPROVE]  - unify logger and format 
+  
+* craft-atom-redis
+  [IMPROVE]  - support redis 2.8.*
+
 
 
 craft-atom 2.0.0 
@@ -24,6 +34,8 @@ UPGRADE URGENCY: CRITICAL
 * craft-atom-nio
   [IMPROVE]  - refactor nio design and implementation, provide more clean and consistent api and better performance.
   [FIX]      - idle timer oom issue.
+  [FIX]      - acceptor handle null accept right.
+  [FIX]      - clean api. 
   
 * craft-atom-protocol-http
   [FIX]      - http protocol header model, use list instead of map, because header name can be repeatable.
