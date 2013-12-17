@@ -534,7 +534,7 @@ public class StringUtil {
 	 * @param src
 	 *            the CharSequence to check (may be <code>null</code>)
 	 * @return <code>true</code> if the CharSequence is not null and has length
-	 * @see #hasText(String)
+	 * @see #hasText(CharSequence)
 	 */
 	public static boolean hasLength(CharSequence src) {
 		return (src != null && src.length() > 0);

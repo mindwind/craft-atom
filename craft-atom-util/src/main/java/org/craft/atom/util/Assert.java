@@ -158,7 +158,7 @@ public abstract class Assert {
 	 *            the String to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
-	 * @see StringUtils#hasLength
+	 * @see StringUtil#hasLength
 	 */
 	public static void hasLength(String text, String message) {
 		if (!StringUtil.hasLength(text)) {
@@ -176,7 +176,7 @@ public abstract class Assert {
 	 * 
 	 * @param text
 	 *            the String to check
-	 * @see StringUtils#hasLength
+	 * @see StringUtil#hasLength
 	 */
 	public static void hasLength(String text) {
 		hasLength(
@@ -197,7 +197,7 @@ public abstract class Assert {
 	 *            the String to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
-	 * @see StringUtils#hasText
+	 * @see StringUtil#hasText
 	 */
 	public static void hasText(String text, String message) {
 		if (!StringUtil.hasText(text)) {
@@ -216,7 +216,7 @@ public abstract class Assert {
 	 * 
 	 * @param text
 	 *            the String to check
-	 * @see StringUtils#hasText
+	 * @see StringUtil#hasText
 	 */
 	public static void hasText(String text) {
 		hasText(text,
