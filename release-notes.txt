@@ -19,6 +19,7 @@ UPGRADE URGENCY: LOW
   [IMPROVE]  - unify logger and format 
   
 * craft-atom-redis
+  [FIX]      - shutdown command, jedis doesn't support SAVE/NOSAVE modifier
   [IMPROVE]  - support redis 2.8.*
 
 
