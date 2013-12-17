@@ -10,3 +10,5 @@
 target/javadoc-bundle-options/javadoc-options-javadoc-resources.xml
 
 *.backup
+
+*.versionsBackup
