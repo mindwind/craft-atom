@@ -409,7 +409,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		
 		unbindAddresses.addAll(localAddresses);
 		
-		if(!unbindAddresses.isEmpty()) {
+		if (!unbindAddresses.isEmpty()) {
 			synchronized (lock) {
 				// wake up for unblocking the select() to process unbinded addresses
 				selector.wakeup();

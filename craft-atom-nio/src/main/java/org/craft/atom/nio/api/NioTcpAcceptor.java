@@ -111,7 +111,7 @@ public class NioTcpAcceptor extends NioAcceptor {
 			return channel;
 		} catch (IOException e) {
 			LOG.error(e.getMessage(), e);
-			if(sc != null) {
+			if (sc != null) {
 				try {
 					sc.close();
 				} catch (IOException ex) {

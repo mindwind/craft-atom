@@ -8,7 +8,6 @@ import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoAcceptor;
 import org.craft.atom.io.IoConnector;
 import org.craft.atom.nio.api.NioFactory;
-import org.craft.atom.nio.api.NioTcpConnector;
 import org.craft.atom.test.AvailablePortFinder;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
@@ -41,7 +40,7 @@ public class TestNioTcpEchoServer {
 	@Test
     public void test2048Msg() throws Exception {
     	NioConnectorHandler handler = new NioConnectorHandler();
-		connector = new NioTcpConnector(handler);
+		connector = NioFactory.newTcpConnector(handler);
     	String msg = build(2048);
     	test(msg, PORT);
     	Assert.assertEquals(msg, handler.getRcv().toString());
@@ -51,7 +50,7 @@ public class TestNioTcpEchoServer {
 	@Test
     public void test5000Msg() throws Exception {
     	NioConnectorHandler handler = new NioConnectorHandler();
-		connector = new NioTcpConnector(handler);
+		connector = NioFactory.newTcpConnector(handler);
     	String msg = build(5000);
     	test(msg, PORT);
     	Assert.assertEquals(msg, handler.getRcv().toString());
@@ -61,7 +60,7 @@ public class TestNioTcpEchoServer {
 	@Test
     public void test98304Msg() throws Exception {
 		NioConnectorHandler handler = new NioConnectorHandler();
-		connector = new NioTcpConnector(handler);
+		connector = NioFactory.newTcpConnector(handler);
     	String msg = build(98304);
     	test(msg, PORT);
     	Assert.assertEquals(msg, handler.getRcv().toString());
@@ -71,7 +70,7 @@ public class TestNioTcpEchoServer {
 	@Test
     public void test200000Msg() throws Exception {
 		NioConnectorHandler handler = new NioConnectorHandler();
-		connector = new NioTcpConnector(handler);
+		connector = NioFactory.newTcpConnector(handler);
     	String msg = build(200000);
     	test(msg, PORT);
     	Assert.assertEquals(msg, handler.getRcv().toString());
@@ -99,5 +98,5 @@ public class TestNioTcpEchoServer {
     	sb.append("\n");
     	return sb.toString();
     }
-	
+    
 }
