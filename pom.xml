@@ -1,11 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
 
 	<groupId>org.craft.atom</groupId>
 	<artifactId>craft-atom</artifactId>
-	<version>2.1.0-SNAPSHOT</version>
+	<version>2.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
+	<description>A crafted and atomic component library for java</description>
 	<url>https://github.com/mindwind/craft-atom</url>
 
 	<licenses>
@@ -45,6 +53,7 @@
 		<v.plugin.release>2.4</v.plugin.release>
 		<v.plugin.javadoc>2.9</v.plugin.javadoc>
 		<v.plugin.surefire>2.16</v.plugin.surefire>
+		<v.plugin.gpg>1.4</v.plugin.gpg>
 		<v.jdk>1.6</v.jdk>
 
 		<v.commons.logging>1.1.1</v.commons.logging>
@@ -129,20 +138,7 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${v.plugin.javadoc}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>${v.plugin.release}</version>
 				<configuration>
 					<tagBase>https://github.com/mindwind/craft-atom.git</tagBase>
 					<useReleaseProfile>false</useReleaseProfile>
@@ -151,6 +147,48 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>release-sign-artifacts</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>${v.plugin.gpg}</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>${v.plugin.javadoc}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<developers>
 		<developer>
@@ -164,8 +202,8 @@
 			<timezone>+8</timezone>
 		</developer>
 	</developers>
-	
-	<distributionManagement>
+
+<!-- 	<distributionManagement>
 		<snapshotRepository>
 			<id>jd.repository.snapshots</id>
 			<name>jd.repository.snapshots</name>
@@ -176,6 +214,6 @@
 			<name>jd.repository</name>
 			<url>http://artifactory.360buy-develop.com/libs-releases-local</url>
 		</repository>
-	</distributionManagement>
+	</distributionManagement> -->
 
 </project>
