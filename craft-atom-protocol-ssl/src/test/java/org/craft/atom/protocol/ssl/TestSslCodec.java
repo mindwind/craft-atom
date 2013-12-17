@@ -35,9 +35,9 @@ public class TestSslCodec {
 	
 	private static final    Log    LOG        = LogFactory.getLog(TestSslCodec.class);
 	private static final    String SSL_CODEC  = "ssl.codec"                          ;
+	private static final    String ALGORITHM                                         ;
 	private static final    int    PORT                                              ;      
 	private static final    int    MSG_NUM    = 100                                  ;
-	private static final    String ALGORITHM                                         ;
 	private static volatile int    count      = 0                                    ;
 	
 	
@@ -72,9 +72,10 @@ public class TestSslCodec {
         
         KeyStore ks = KeyStore.getInstance("JKS");
         KeyStore ts = KeyStore.getInstance("JKS");
-
-        ks.load(TestSslCodec.class.getResourceAsStream("ssl.keystore"), passphrase);
-        ts.load(TestSslCodec.class.getResourceAsStream("ssl.truststore"), passphrase);
+        
+        
+        ks.load(TestSslCodec.class.getResourceAsStream("/ssl.keystore"), passphrase);
+        ts.load(TestSslCodec.class.getResourceAsStream("/ssl.truststore"), passphrase);
 
         kmf.init(ks, passphrase);
         tmf.init(ts);

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -1366,12 +1367,14 @@ public class TestRedis extends AbstractRedisTests {
 			}
 		});
 		t1.start();
+		Thread.sleep(100);
 		
 		Thread t2 = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				lock.lock();
 				try {
+					Thread.sleep(100);
 					redis1.set(wkey, "1");
 					c1.signal();
 				} catch (Exception e) {
@@ -1385,7 +1388,7 @@ public class TestRedis extends AbstractRedisTests {
 		
 		lock.lock();
 		try {
-			c2.await();
+			c2.await(100, TimeUnit.MILLISECONDS);
 		} finally {
 			lock.unlock();
 		}
