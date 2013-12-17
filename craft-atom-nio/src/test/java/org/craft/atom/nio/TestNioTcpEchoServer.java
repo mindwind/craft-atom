@@ -5,7 +5,9 @@ import java.util.concurrent.Future;
 import junit.framework.Assert;
 
 import org.craft.atom.io.Channel;
-import org.craft.atom.nio.api.NioTcpAcceptor;
+import org.craft.atom.io.IoAcceptor;
+import org.craft.atom.io.IoConnector;
+import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.nio.api.NioTcpConnector;
 import org.craft.atom.test.AvailablePortFinder;
 import org.craft.atom.test.CaseCounter;
@@ -23,13 +25,13 @@ public class TestNioTcpEchoServer {
 	private static final int PORT = AvailablePortFinder.getNextAvailable();
 	
 	
-	private NioTcpConnector connector;
+	private IoConnector connector;
     
 	
 	@Test
     public void testHelloMsg() throws Exception {
 		NioConnectorHandler handler = new NioConnectorHandler();
-		connector = new NioTcpConnector(handler);
+		connector = NioFactory.newTcpConnector(handler);
     	String msg = "hello\n";
     	test(msg, PORT);
     	Assert.assertEquals(msg, handler.getRcv().toString());
@@ -77,7 +79,8 @@ public class TestNioTcpEchoServer {
     }
     
     private void test(String msg, int port) throws Exception {
-    	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), port);
+    	IoAcceptor acceptor = NioFactory.newTcpAcceptor(new NioAcceptorHandler());
+    	acceptor.bind(port);
     	
     	Future<Channel<byte[]>> future = connector.connect("127.0.0.1", port);
     	Channel<byte[]> channel = future.get();

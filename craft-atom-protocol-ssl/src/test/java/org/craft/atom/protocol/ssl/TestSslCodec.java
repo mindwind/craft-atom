@@ -19,8 +19,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.AbstractIoHandler;
 import org.craft.atom.io.Channel;
+import org.craft.atom.io.IoAcceptor;
 import org.craft.atom.io.IoHandler;
-import org.craft.atom.nio.api.NioTcpAcceptor;
+import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.test.AvailablePortFinder;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
@@ -83,8 +84,8 @@ public class TestSslCodec {
     }
 	
 	private static void startServer() throws Exception {
-		IoHandler handler       = new TestIoHandler();
-		NioTcpAcceptor acceptor = new NioTcpAcceptor(handler);
+		IoHandler  handler  = new TestIoHandler();
+		IoAcceptor acceptor = NioFactory.newTcpAcceptor(handler);
 		acceptor.bind(PORT);
 	}
 	

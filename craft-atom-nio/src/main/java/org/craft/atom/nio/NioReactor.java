@@ -3,6 +3,7 @@ package org.craft.atom.nio;
 import lombok.ToString;
 
 import org.craft.atom.io.IoHandler;
+import org.craft.atom.io.IoReactor;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
@@ -17,14 +18,18 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @see NioConnector
  */
 @ToString(of = { "handler", "dispatcher", "predictorFactory" })
-abstract public class NioReactor {
+abstract public class NioReactor implements IoReactor {
 
+	
 	protected IoHandler handler;
 	protected NioChannelEventDispatcher dispatcher;
 	protected NioBufferSizePredictorFactory predictorFactory;
 	
+	
 	// ~ ----------------------------------------------------------------------------------------------------------
 
+	
+	@Override
 	public IoHandler getHandler() {
 		return handler;
 	}
@@ -32,7 +37,7 @@ abstract public class NioReactor {
 	public void setHandler(IoHandler handler) {
 		this.handler = handler;
 	}
-
+	
 	public NioChannelEventDispatcher getDispatcher() {
 		return dispatcher;
 	}
@@ -40,7 +45,7 @@ abstract public class NioReactor {
 	public void setDispatcher(NioChannelEventDispatcher dispatcher) {
 		this.dispatcher = dispatcher;
 	}
-
+	
 	public NioBufferSizePredictorFactory getPredictorFactory() {
 		return predictorFactory;
 	}

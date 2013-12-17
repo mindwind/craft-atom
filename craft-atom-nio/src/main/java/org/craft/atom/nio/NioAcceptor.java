@@ -241,25 +241,12 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		new AcceptThread().start();
 	}
 	
-	/**
-	 * Binds to specified local port with any local address and start to accept incoming connections.
-	 * 
-	 * @param port
-	 * @throws throw if bind failed.
-	 */
+	@Override
 	synchronized public void bind(int port) throws IOException {
 		bind(new InetSocketAddress(port));
 	}
 	
-	/**
-	 * Binds to the specified local addresses and start to accept incoming connections. 
-	 * If any address binding failed then rollback the already bound addresses. 
-	 * Bind operation is fail fast, if encounter the first bind exception then throw it immediately.
-	 * 
-	 * @param firstLocalAddress
-	 * @param otherLocalAddresses
-	 * @throws throw if bind failed.
-	 */
+	@Override
 	synchronized public void bind(SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) throws IOException {
 		if (!this.selectable) {
             init();
@@ -366,9 +353,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		}
 	}
 	
-	/** 
-	 * Shutdown the acceptor, once do it the acceptor should be disposed because it is useless 
-	 */
+	@Override
 	public void shutdown() {
 		this.selectable = false;
 		this.selector.wakeup();
@@ -393,35 +378,17 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		if (LOG.isDebugEnabled()) { LOG.debug("Shutdown acceptor successful!"); }
 	}
 	
-	/**
-	 * Get bound addresses
-	 * 
-	 * @return bound addresses
-	 */
+	@Override
 	public Set<SocketAddress> getBoundAddresses() {
 		return new HashSet<SocketAddress>(boundmap.keySet());
 	}
 	
-	/**
-	 * Unbinds specified local addresses that is already bound to and stops to accept incoming connections at the port. 
-	 * 
-	 * @param port
-	 * @throws IOException throw if unbind failed
-	 */
+	@Override
 	synchronized public final void unbind(int port) throws IOException {
 		unbind(new InetSocketAddress(port));
 	}
 	
-	/**
-	 * Unbinds specified local addresses that is already bound to and stops to accept incoming connections at the specified addresses. 
-	 * All connections with these addresses will be closed.
-	 * 
-	 * <p><b>NOTE:</b> This method returns silently if no local address is bound yet.
-	 * 
-	 * @param firstLocalAddress
-	 * @param otherLocalAddresses
-	 * @throws IOException throw if unbind failed
-	 */
+	@Override
 	synchronized public final void unbind(SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) throws IOException {
 		if (firstLocalAddress == null) {
 			return;

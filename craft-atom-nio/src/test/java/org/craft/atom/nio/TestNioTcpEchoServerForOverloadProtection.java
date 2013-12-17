@@ -5,10 +5,11 @@ import java.util.concurrent.Future;
 import junit.framework.Assert;
 
 import org.craft.atom.io.Channel;
+import org.craft.atom.io.IoAcceptor;
+import org.craft.atom.io.IoConnector;
 import org.craft.atom.nio.api.NioAcceptorConfig;
 import org.craft.atom.nio.api.NioConnectorConfig;
-import org.craft.atom.nio.api.NioTcpAcceptor;
-import org.craft.atom.nio.api.NioTcpConnector;
+import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.test.AvailablePortFinder;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class TestNioTcpEchoServerForOverloadProtection {
 	private static final int PORT = AvailablePortFinder.getNextAvailable();
 	
 	
-	private NioTcpConnector connector;
+	private IoConnector connector;
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
@@ -34,7 +35,7 @@ public class TestNioTcpEchoServerForOverloadProtection {
     	config.setTotalEventSize(1);
     	config.setChannelEventSize(1);
     	NioConnectorHandler handler = new NioConnectorHandler();
-    	connector = new NioTcpConnector(handler, config);
+    	connector = NioFactory.newTcpConnector(handler, config);
     	
     	String msg = build(20000);
     	test(msg, PORT);
@@ -46,7 +47,8 @@ public class TestNioTcpEchoServerForOverloadProtection {
     	NioAcceptorConfig config = new NioAcceptorConfig();
     	config.setTotalEventSize(1);
     	config.setChannelEventSize(1);
-    	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorNapHandler(), config, new NioOrderedDirectChannelEventDispatcher(), port);
+    	IoAcceptor acceptor = NioFactory.newTcpAcceptor(new NioAcceptorNapHandler(), config, new NioOrderedDirectChannelEventDispatcher());
+    	acceptor.bind(port);
     	
     	Future<Channel<byte[]>> future = connector.connect("127.0.0.1", port);
     	Channel<byte[]> channel = future.get();

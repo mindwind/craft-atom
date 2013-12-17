@@ -4,10 +4,13 @@ import java.io.IOException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.craft.atom.nio.api.NioTcpAcceptor;
+import org.craft.atom.io.IoAcceptor;
+import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.test.AvailablePortFinder;
 import org.craft.atom.test.CaseCounter;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -16,13 +19,26 @@ import org.junit.Test;
  */
 public class TestNioTcpAcceptor {
 	
+	
 	private static final Log LOG  = LogFactory.getLog(TestNioTcpAcceptor.class);
 	private static final int PORT = AvailablePortFinder.getNextAvailable(33333);
 	
 	
+	private IoAcceptor acceptor;
+	
+	@Before
+	public void before() throws IOException {
+		acceptor = NioFactory.newTcpAcceptor(new NioAcceptorHandler());
+		acceptor.bind(PORT);
+	}
+	
+	@After
+	public void after() {
+		acceptor.shutdown();
+	}
+	
 	@Test
     public void testDuplicateBind() throws IOException {
-		NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), PORT);
 		Assert.assertEquals(1, acceptor.getBoundAddresses().size());
 		
 		try {
@@ -36,8 +52,6 @@ public class TestNioTcpAcceptor {
 	
 	@Test
     public void testDuplicateUnbind() throws IOException {
-    	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), PORT);
-
         // this should succeed
         acceptor.unbind(PORT);
 
@@ -49,8 +63,6 @@ public class TestNioTcpAcceptor {
     
 	@Test
     public void testBindAndUnbindManyTimes() throws IOException {
-    	NioTcpAcceptor acceptor = new NioTcpAcceptor(new NioAcceptorHandler(), PORT);
-
         for (int i = 0; i < 16; i++) {
             acceptor.unbind(PORT);
             Assert.assertEquals(0, acceptor.getBoundAddresses().size());
