@@ -11,6 +11,8 @@ CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
 
 
 
+
+
 craft-atom 2.1.0  >>> coming soon
 -----------------------------------------------------------------------------------------------------------------------
 UPGRADE URGENCY: LOW
@@ -24,9 +26,21 @@ UPGRADE URGENCY: LOW
 
 
 
+
+
+craft-atom 2.0.1
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: LOW
+
+* craft-atom
+  [IMPROVE]  - change group id as me.mindwind as a real domain name under my control
+
+
+
+
+
 craft-atom 2.0.0 
 -----------------------------------------------------------------------------------------------------------------------
-
 UPGRADE URGENCY: CRITICAL
 
 * craft-atom-redis
