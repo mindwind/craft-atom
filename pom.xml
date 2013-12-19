@@ -232,17 +232,4 @@
 		</developer>
 	</developers>
 
-<!-- 	<distributionManagement>
-		<snapshotRepository>
-			<id>jd.repository.snapshots</id>
-			<name>jd.repository.snapshots</name>
-			<url>http://artifactory.360buy-develop.com/libs-snapshots-local</url>
-		</snapshotRepository>
-		<repository>
-			<id>jd.repository</id>
-			<name>jd.repository</name>
-			<url>http://artifactory.360buy-develop.com/libs-releases-local</url>
-		</repository>
-	</distributionManagement> -->
-
 </project>
