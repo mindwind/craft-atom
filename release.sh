@@ -1,3 +1,7 @@
+mvn clean
+mvn install
+mvn javadoc:jar
+mvn source:jar
 mvn release:clean
-mvn release:prepare -DpreparationGoals=clean install
+mvn release:prepare
 mvn release:perform
