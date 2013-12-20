@@ -94,7 +94,7 @@ public class NioTcpAcceptor extends NioAcceptor {
 	}
 
 	@Override
-	protected NioByteChannel acceptByProtocol(SelectionKey key) {
+	protected NioByteChannel acceptByProtocol(SelectionKey key) throws IOException {
 		if (key == null || !key.isValid() || !key.isAcceptable()) {
             return null;
         }
@@ -110,7 +110,6 @@ public class NioTcpAcceptor extends NioAcceptor {
 			NioByteChannel channel = new NioTcpByteChannel(sc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()), dispatcher);
 			return channel;
 		} catch (IOException e) {
-			LOG.error(e.getMessage(), e);
 			if (sc != null) {
 				try {
 					sc.close();
@@ -118,9 +117,8 @@ public class NioTcpAcceptor extends NioAcceptor {
 					LOG.error(ex.getMessage(), ex);
 				}
 			}
+			throw e;
 		}
-		
-		return null;
 	}
 
 }

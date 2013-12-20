@@ -3,6 +3,7 @@ package org.craft.atom.nio;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.nio.channels.ClosedSelectorException;
 import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -449,7 +450,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		}
 	}
 	
-	private void accept() {
+	private void accept() throws IOException {
 		Iterator<SelectionKey> it = selector.selectedKeys().iterator();
 		while (it.hasNext()) {
 			SelectionKey key = it.next();
@@ -477,9 +478,11 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	 * @param key
 	 * @return nio byte channel
 	 */
-	protected abstract NioByteChannel acceptByProtocol(SelectionKey key);
+	protected abstract NioByteChannel acceptByProtocol(SelectionKey key) throws IOException;
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	private class AcceptThread extends Thread {
 		public void run() {
@@ -496,8 +499,14 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 					
 					// unbind canceled addresses
 					unbind0();
-				} catch (Exception e) {
-					LOG.error("Unexpected exception caught while accept", e);
+				} catch (ClosedSelectorException e) {
+					LOG.error("[CRAFT-ATOM-NIO] Closed selector", e);
+					break;
+				} catch (Throwable t) {
+					LOG.error("[CRAFT-ATOM-NIO] Unexpected error.", t);
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {}
 				}
 			}
 			
@@ -505,7 +514,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 			try {
 				shutdown0();
 			} catch (Exception e) {
-				LOG.error("Unexpected exception caught while shutdown", e);
+				LOG.error("[CRAFT-ATOM-NIO] Unexpected exception caught while shutdown", e);
 			}
 		}
 	}
