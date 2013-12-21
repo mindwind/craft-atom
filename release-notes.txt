@@ -34,6 +34,7 @@ UPGRADE URGENCY: LOW
 
 * craft-atom
   [IMPROVE]  - change group id as me.mindwind as a real domain name under my control
+  [IMPROVE]  - using slf4j replace commons-logging as the default log api
 
 
 
