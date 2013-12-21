@@ -18,8 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.IoAcceptor;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.io.IoProtocol;
@@ -28,6 +26,8 @@ import org.craft.atom.nio.api.NioTcpAcceptor;
 import org.craft.atom.nio.api.NioUdpAcceptor;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Accepts incoming connection based TCP or datagram based UDP, communicates with clients, and fires events.
@@ -40,7 +40,9 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 @ToString(callSuper = true, of = { "config", "bindAddresses", "unbindAddresses", "boundmap" })
 abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	
-	private static final Log LOG = LogFactory.getLog(NioAcceptor.class);
+	
+	private static final Logger LOG = LoggerFactory.getLogger(NioAcceptor.class);
+	
 	
 	protected NioAcceptorConfig config;
 	
@@ -173,7 +175,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 				try {
 					selector.close();
 				} catch (IOException e) {
-					LOG.warn("Unexpected exception caught", e);
+					LOG.warn("[CRAFT-ATOM-NIO] Unexpected exception caught", e);
 				}
 			}
 		}
@@ -306,7 +308,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 					bindByProtocol(address);
 					success = true;
 
-					if (LOG.isDebugEnabled()) { LOG.debug("Bind address = " + address); }
+					LOG.debug("[CRAFT-ATOM-NIO] Bind address={}", address);
 				} catch (IOException e) {
 					exception = e;
 				} finally {
@@ -337,7 +339,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 			 try {
 				 close(entry.getValue());
 			 } catch (IOException e) {
-				 LOG.warn("Unexpected exception caught when rollback bind operation!", e);
+				 LOG.warn("[CRAFT-ATOM-NIO] Unexpected exception caught when rollback bind operation", e);
 			 } finally {
 				 it.remove();
 			 }
@@ -376,7 +378,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		// shutdown all the processor in the pool
 		pool.shutdown();
 
-		if (LOG.isDebugEnabled()) { LOG.debug("Shutdown acceptor successful!"); }
+		LOG.debug("[CRAFT-ATOM-NIO] Shutdown acceptor successful!");
 	}
 	
 	@Override
@@ -434,7 +436,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 						boundmap.remove(address);
 					}
 
-					if (LOG.isDebugEnabled()) { LOG.debug("Unbind address = " + address); }
+					LOG.debug("[CRAFT-ATOM-NIO] Unbind address={}" + address);
 				} catch (IOException e) {
 					exception = e;
 				} 
@@ -503,7 +505,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 					LOG.error("[CRAFT-ATOM-NIO] Closed selector", e);
 					break;
 				} catch (Throwable t) {
-					LOG.error("[CRAFT-ATOM-NIO] Unexpected error.", t);
+					LOG.error("[CRAFT-ATOM-NIO] Unexpected error", t);
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {}

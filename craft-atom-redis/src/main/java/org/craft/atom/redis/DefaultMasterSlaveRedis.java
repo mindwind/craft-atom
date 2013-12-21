@@ -8,8 +8,6 @@ import java.util.Set;
 
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.redis.api.MasterSlaveRedis;
 import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.RedisConnectionException;
@@ -19,6 +17,8 @@ import org.craft.atom.redis.api.Slowlog;
 import org.craft.atom.redis.api.handler.RedisMonitorHandler;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
@@ -27,10 +27,12 @@ import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 @ToString
 public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	
-	private static final Log LOG = LogFactory.getLog(DefaultMasterSlaveRedis.class);
 	
-	private List<Redis> chain;
-	private volatile int index;
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultMasterSlaveRedis.class);
+	
+	
+	private          List<Redis>  chain;
+	private volatile int          index;
 	
 	
 	// ~ ---------------------------------------------------------------------------------------------------------
@@ -147,7 +149,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		try {
 			s.slaveof(m.host(), m.port());
 		} catch (RedisConnectionException e) {
-			LOG.warn(String.format("%s slaveof %s failed", s.toString(), m.toString()));
+			LOG.warn("[CRAFT-ATOM-REDIS] {} slaveof {} failed", s.toString(), m.toString());
 		}
 	}
 	

@@ -5,8 +5,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoConnector;
 import org.craft.atom.nio.api.NioFactory;
@@ -15,6 +13,8 @@ import org.craft.atom.test.AvailablePortFinder;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Assert;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for {@link NioTcpConnector}
@@ -25,7 +25,7 @@ import org.junit.Test;
 public class TestNioTcpConnector {
 	
 	
-	private static final Log LOG = LogFactory.getLog(TestNioTcpConnector.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TestNioTcpConnector.class);
 	
 	
 	@Test

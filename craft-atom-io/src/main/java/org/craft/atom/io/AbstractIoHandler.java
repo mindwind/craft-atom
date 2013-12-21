@@ -2,8 +2,8 @@ package org.craft.atom.io;
 
 import java.util.Arrays;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An super abstract class for {@link IoHandler}.
@@ -14,41 +14,43 @@ import org.apache.commons.logging.LogFactory;
  */
 abstract public class AbstractIoHandler implements IoHandler {
 	
-	private static final Log LOG = LogFactory.getLog(AbstractIoHandler.class);
+	
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractIoHandler.class);
 
+	
 	@Override
 	public void channelOpened(Channel<byte[]> channel) {
-		if (LOG.isDebugEnabled()) { LOG.debug("Opened channel=" + channel); }
+		LOG.debug("[CRAFT-ATOM-IO] Opened channel={}", channel);
 	}
 
 	@Override
 	public void channelClosed(Channel<byte[]> channel) {
-		if (LOG.isDebugEnabled()) { LOG.debug("Closed channel=" + channel); }
+		LOG.debug("[CRAFT-ATOM-IO] Closed channel={}", channel); 
 	}
 
 	@Override
 	public void channelIdle(Channel<byte[]> channel) {
-		if (LOG.isDebugEnabled()) { LOG.debug("Idle channel=" + channel); }
+		LOG.debug("[CRAFT-ATOM-IO] Idle channel={}", channel);
 	}
 
 	@Override
 	public void channelRead(Channel<byte[]> channel, byte[] bytes) {
-		if (LOG.isDebugEnabled()) { LOG.debug("Read bytes, channel=" + channel + ", bytes=" + Arrays.toString(bytes)); }
+		LOG.debug("[CRAFT-ATOM-IO] Read channel={}, bytes={}", channel, Arrays.toString(bytes));
 	}
 
 	@Override
 	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {
-		if (LOG.isDebugEnabled()) { LOG.debug("Flush bytes, channel=" + channel + ", bytes=" + Arrays.toString(bytes)); }
+		LOG.debug("[CRAFT-ATOM-IO] Flush channel={}, bytes={}", channel, Arrays.toString(bytes));
 	}
 
 	@Override
 	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {
-		if (LOG.isDebugEnabled()) { LOG.debug("Written bytes, channel=" + channel + ", bytes=" + Arrays.toString(bytes)); }	
+		LOG.debug("[CRAFT-ATOM-IO] Written channel={}, bytes={}", channel, Arrays.toString(bytes));
 	}
 
 	@Override
 	public void channelThrown(Channel<byte[]> channel, Throwable cause) {
-		LOG.warn("Thrown exception, channel=" + channel, cause);
+		LOG.warn("[CRAFT-ATOM-IO] Thrown channel={}", channel, cause);
 	}
 	
 }

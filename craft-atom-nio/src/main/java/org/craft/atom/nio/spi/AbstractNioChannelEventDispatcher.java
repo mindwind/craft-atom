@@ -4,9 +4,9 @@ import java.util.concurrent.Semaphore;
 
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.nio.NioByteChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -18,11 +18,15 @@ import org.craft.atom.nio.NioByteChannel;
 @ToString(of = { "semaphore" })
 abstract public class AbstractNioChannelEventDispatcher implements NioChannelEventDispatcher {
 	
-	private static final Log LOG = LogFactory.getLog(AbstractNioChannelEventDispatcher.class);
+	
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractNioChannelEventDispatcher.class);
+	
 	
 	protected final Semaphore semaphore;
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	public AbstractNioChannelEventDispatcher() {
 		this(Integer.MAX_VALUE);
@@ -41,7 +45,7 @@ abstract public class AbstractNioChannelEventDispatcher implements NioChannelEve
 		boolean b = channel.tryAcquire();
 		if (!b) {
 			channel.pause();
-			LOG.warn("Pause channel=" + channel + ", availablePermits=" + channel.availablePermits());
+			LOG.warn("[CRAFT-ATOM-NIO]] Pause channel={}, availablePermits={}", channel, channel.availablePermits());
 		}
 		
 		try {
@@ -55,7 +59,7 @@ abstract public class AbstractNioChannelEventDispatcher implements NioChannelEve
 		channel.release();
 		if (channel.isPaused()) {
 			channel.resume();
-			LOG.warn("Resume channel=" + channel + ", availablePermits=" + channel.availablePermits());
+			LOG.warn("[CRAFT-ATOM-NIO]] Resume channel={} availablePermits={}", channel, channel.availablePermits());
 		}
 		
 		semaphore.release();

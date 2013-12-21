@@ -2,10 +2,10 @@ package org.craft.atom.nio;
 
 import lombok.Getter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.AbstractIoHandler;
 import org.craft.atom.io.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
@@ -13,8 +13,9 @@ import org.craft.atom.io.Channel;
  */
 public class NioConnectorHandler extends AbstractIoHandler {
 	
-	private static final Log  LOG = LogFactory.getLog(NioConnectorHandler.class);
-	private static final byte LF  = 10                                         ;
+	
+	private static final Logger LOG = LoggerFactory.getLogger(NioConnectorHandler.class);
+	private static final byte   LF  = 10                                                ;
 	
 	
 	@Getter private StringBuilder buf = new StringBuilder();
@@ -23,7 +24,7 @@ public class NioConnectorHandler extends AbstractIoHandler {
 	
 	@Override
 	public void channelRead(Channel<byte[]> channel, byte[] bytes) {
-		LOG.debug("[CRAFT-ATOM-NIO] Channel read bytes size=" + bytes.length);
+		LOG.debug("[CRAFT-ATOM-NIO] Channel read bytes size={}", bytes.length);
 		
 		for (byte b : bytes) {
 			buf.append((char) b);
@@ -32,7 +33,7 @@ public class NioConnectorHandler extends AbstractIoHandler {
 		if (bytes[bytes.length - 1] == LF) {
 			rcv = buf.toString();
 			byte[] echoBytes = buf.toString().getBytes();
-			LOG.debug("[CRAFT-ATOM-NIO] Echo received bytes size=" + echoBytes.length + "\n");
+			LOG.debug("[CRAFT-ATOM-NIO] Echo received bytes size={} \n", echoBytes.length);
 			buf = new StringBuilder();
 			synchronized(channel) {
 				channel.notifyAll();
@@ -40,5 +41,4 @@ public class NioConnectorHandler extends AbstractIoHandler {
 		}
 	}
 
-	
 }

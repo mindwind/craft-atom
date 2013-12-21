@@ -5,12 +5,12 @@ import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.test.CaseCounter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
@@ -19,7 +19,7 @@ import org.junit.Test;
 public class TestTimingWheel {
 	
 	
-	private static final Log LOG = LogFactory.getLog(TestTimingWheel.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TestTimingWheel.class);
 	
 	
 	private          TimingWheel<String> wheel    ;
@@ -43,7 +43,7 @@ public class TestTimingWheel {
 	public void testAdd() throws InterruptedException {
 		startTime = System.currentTimeMillis();
 		long ttl = wheel.add("test-0");
-		LOG.debug("[CRAFT-ATOM-UTIL] Add object test-0 to timing wheel, will timeout after " + ttl + " ms, start-time=" + new Date(startTime));
+		LOG.debug("[CRAFT-ATOM-UTIL] Add object test-0 to timing wheel, will timeout after {} ms, start time={}", ttl, new Date(startTime));
 		for (int i = 1; i <= 30; i++) {
 			Thread.sleep(10);
 			wheel.add("test-" + i);
@@ -71,11 +71,11 @@ public class TestTimingWheel {
 	public void testAddTwice() throws InterruptedException {
 		startTime = System.currentTimeMillis();
 		long ttl = wheel.add("test-1");
-		LOG.debug("[CRAFT-ATOM-UTIL] Add object test-1 to timing wheel, will timeout after " + ttl + " ms, start-time=" + new Date(startTime));
+		LOG.debug("[CRAFT-ATOM-UTIL] Add object test-1 to timing wheel, will timeout after {} ms, start time={}", ttl, new Date(startTime));
 		
 		Thread.sleep(20);
 		ttl = wheel.add("test-1");
-		LOG.debug("[CRAFT-ATOM-UTIL] Add object test-1 second to timing wheel, will timeout after " + ttl + " ms, start-time=" + new Date(startTime));
+		LOG.debug("[CRAFT-ATOM-UTIL] Add object test-1 second to timing wheel, will timeout after {} ms, start time={}", ttl, new Date(startTime));
 		Assert.assertEquals(1, wheel.size());
 		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test timing wheel add twice. ", CaseCounter.incr(1)));
 	}
@@ -86,7 +86,7 @@ public class TestTimingWheel {
 		long ttl = wheel.add("test-1");
 		while(endTime == 0);
 		long deviation = (endTime - startTime) - ttl;
-		LOG.debug("[CRAFT-ATOM-UTIL] Timing wheel deviation=" + deviation);
+		LOG.debug("[CRAFT-ATOM-UTIL] Timing wheel deviation={}", deviation);
 		Assert.assertTrue(deviation <= 2);
 		Assert.assertTrue(deviation >= -2);
 		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test timing wheel expire. ", CaseCounter.incr(2)));
@@ -96,7 +96,7 @@ public class TestTimingWheel {
 		@Override
 		public void expired(String expiredObject) {
 			endTime = System.currentTimeMillis();
-			LOG.debug("Object expired: " + expiredObject + ", end-time=" + new Date(endTime));
+			LOG.debug("[CRAFT-ATOM-UTIL] Expired object={} end time={}", expiredObject, new Date(endTime));
 		}
 	}
 }

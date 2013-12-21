@@ -14,8 +14,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.io.IoProtocol;
@@ -25,6 +23,8 @@ import org.craft.atom.nio.NioProcessor;
 import org.craft.atom.nio.NioTcpByteChannel;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Connects to server based TCP.
@@ -35,14 +35,18 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 @ToString(callSuper = true, of = { "connectQueue",  "cancelQueue" })
 public class NioTcpConnector extends NioConnector {
 	
-	private static final Log LOG = LogFactory.getLog(NioTcpConnector.class);
 	
-	private final Queue<ConnectionCall> connectQueue = new ConcurrentLinkedQueue<ConnectionCall>();
-	private final Queue<ConnectionCall> cancelQueue = new ConcurrentLinkedQueue<ConnectionCall>();
-	private final AtomicReference<ConnectThread> connectThreadRef = new AtomicReference<ConnectThread>();
+	private static final Logger LOG = LoggerFactory.getLogger(NioTcpConnector.class);
+	
+	
+	private final Queue<ConnectionCall>          connectQueue     = new ConcurrentLinkedQueue<ConnectionCall>();
+	private final Queue<ConnectionCall>          cancelQueue      = new ConcurrentLinkedQueue<ConnectionCall>();
+	private final AtomicReference<ConnectThread> connectThreadRef = new AtomicReference<ConnectThread>()       ;
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	public NioTcpConnector(IoHandler handler) {
 		super(handler);
 	}
@@ -71,24 +75,21 @@ public class NioTcpConnector extends NioConnector {
                 // return true immediately, as established a local connection,
             	Future<Channel<byte[]>> future = executorService.submit(new ConnectionCall(sc));
             	success = true;
-            	
-            	if (LOG.isDebugEnabled()) {
-            		LOG.debug("Established local connection");
-            	}
+            	LOG.debug("[CRAFT-ATOM-NIO] Established local connection");
             	
                 return future;
             }
 
             success = true;
         } catch (IOException e) {
-            LOG.error("Connect error", e);
+            LOG.error("[CRAFT-ATOM-NIO] Connect error", e);
             throw new RuntimeException(e);
         } finally {
             if (!success && sc != null) {
                 try {
                     close(sc);
                 } catch (IOException e) {
-                	LOG.warn("Unexpected exception caught", e);
+                	LOG.warn("[CRAFT-ATOM-NIO] Unexpected exception caught", e);
                 }
             }
         }
@@ -131,7 +132,7 @@ public class NioTcpConnector extends NioConnector {
 	}
 	
 	private void close(SocketChannel sc) throws IOException {
-		if (LOG.isDebugEnabled()) { LOG.debug("Close socket channel = " + sc); }
+		LOG.debug("[CRAFT-ATOM-NIO] Close socket channel={}", sc);
 
 		SelectionKey key = sc.keyFor(selector);
 
@@ -156,7 +157,7 @@ public class NioTcpConnector extends NioConnector {
 				n++;
 			} catch (Exception e) {
 				close(sc);
-				LOG.warn("Register connect event with exception", e);
+				LOG.warn("[CRAFT-ATOM-NIO] Register connect event with exception", e);
 			}
 		}
 		return n;
@@ -238,7 +239,7 @@ public class NioTcpConnector extends NioConnector {
 		// shutdown all the processor in the pool
 		pool.shutdown();
 
-		if (LOG.isDebugEnabled()) { LOG.debug("Shutdown connector successful!"); }
+		LOG.debug("[CRAFT-ATOM-NIO] Shutdown connector successful");
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -278,7 +279,7 @@ public class NioTcpConnector extends NioConnector {
 						}
 					}
 				} catch (Exception e) {
-					LOG.error("Unexpected exception caught while connect", e);
+					LOG.error("[CRAFT-ATOM-NIO] Unexpected exception caught while connect", e);
 				}
 			}
 

@@ -6,10 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.lock.api.DLock;
 import org.craft.atom.redis.api.ShardedRedisCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A implementation of the {@code DLock} base on redis version 2.6.x, which using sharded redis instance.
@@ -20,7 +20,10 @@ import org.craft.atom.redis.api.ShardedRedisCommand;
 @ToString(of = "shardedRedis")
 public class ShardedRedis26DLock implements DLock {
 	
-	private static final Log LOG = LogFactory.getLog(ShardedRedis26DLock.class);
+	
+	private static final Logger LOG = LoggerFactory.getLogger(ShardedRedis26DLock.class);
+	
+	
 	@Getter @Setter private ShardedRedisCommand shardedRedis;
 	
 	public ShardedRedis26DLock() {
@@ -53,7 +56,7 @@ public class ShardedRedis26DLock implements DLock {
 				success = false;
 			} 
 		} catch (Exception e) {
-			LOG.error(String.format("Try lock fail, args=<lockKey=%s, ttl=%s, unit=%s>", lockKey, ttl, unit), e);
+			LOG.error("[CRAFT-ATOM-LOCK] Try lock fail, lockKey={}, ttl={}, unit={}", lockKey, ttl, unit, e);
 			success = false;
 		}
 		return success;
@@ -66,7 +69,7 @@ public class ShardedRedis26DLock implements DLock {
 		try {
 			shardedRedis.del(lockKey, lockKey);
 		} catch (Exception e) {
-			LOG.error(String.format("Unlock fail, args=<lockKey=%s>", lockKey), e);
+			LOG.error("[CRAFT-ATOM-LOCK] Unlock fail, lockKey={}", lockKey, e);
 			success = false;
 		}
 		

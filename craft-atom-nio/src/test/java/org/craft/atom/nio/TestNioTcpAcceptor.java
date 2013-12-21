@@ -2,8 +2,6 @@ package org.craft.atom.nio;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.IoAcceptor;
 import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.test.AvailablePortFinder;
@@ -12,6 +10,8 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
@@ -20,11 +20,12 @@ import org.junit.Test;
 public class TestNioTcpAcceptor {
 	
 	
-	private static final Log LOG  = LogFactory.getLog(TestNioTcpAcceptor.class);
-	private static final int PORT = AvailablePortFinder.getNextAvailable(33333);
+	private static final Logger LOG  = LoggerFactory.getLogger(TestNioTcpAcceptor.class);
+	private static final int    PORT = AvailablePortFinder.getNextAvailable(33333)      ;
 	
 	
 	private IoAcceptor acceptor;
+	
 	
 	@Before
 	public void before() throws IOException {
@@ -45,7 +46,7 @@ public class TestNioTcpAcceptor {
 			acceptor.bind(PORT);
 			Assert.fail();
 		} catch(IOException e) {
-			LOG.debug("[CRAFT-ATOM-NIO] Duplicate bind throw " + e);
+			LOG.debug("[CRAFT-ATOM-NIO] Duplicate bind throw exception", e);
 		}
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test nio tcp acceptor duplicate bind. ", CaseCounter.incr(1)));
 	}
@@ -67,7 +68,7 @@ public class TestNioTcpAcceptor {
             acceptor.unbind(PORT);
             Assert.assertEquals(0, acceptor.getBoundAddresses().size());
             acceptor.bind(PORT);
-            LOG.debug("[CRAFT-ATOM-NIO] Bind and unbind time " + i);
+            LOG.debug("[CRAFT-ATOM-NIO] Bind and unbind time {} ", i);
         }
         Assert.assertEquals(1, acceptor.getBoundAddresses().size());
         System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test nio tcp acceptor bind & unbind many times. ", CaseCounter.incr(1)));

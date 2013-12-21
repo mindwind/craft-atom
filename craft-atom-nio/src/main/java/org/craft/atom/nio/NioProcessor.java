@@ -21,13 +21,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.ChannelEventType;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 import org.craft.atom.util.NamedThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Processor process actual I/O operations. 
@@ -39,33 +39,28 @@ import org.craft.atom.util.NamedThreadFactory;
 @ToString(callSuper = true, of = { "config", "newChannels", "flushingChannels", "closingChannels", "udpChannels" })
 public class NioProcessor extends NioReactor {
 	
-	private static final Log LOG = LogFactory.getLog(NioProcessor.class);
 	
-	/** Flush spin count */
-	private static final long FLUSH_SPIN_COUNT = 256;
+	private static final Logger LOG              = LoggerFactory.getLogger(NioProcessor.class);
+	private static final long   FLUSH_SPIN_COUNT = 256                                        ;
 	
-	/** A channel queue containing the newly created channel */
-	private final Queue<NioByteChannel> newChannels = new ConcurrentLinkedQueue<NioByteChannel>();
 	
-	/** A queue used to store the channel to be flushed */
-    private final Queue<NioByteChannel> flushingChannels= new ConcurrentLinkedQueue<NioByteChannel>();
+	private final    Queue<NioByteChannel>          newChannels       = new ConcurrentLinkedQueue<NioByteChannel>()    ;
+    private final    Queue<NioByteChannel>          flushingChannels  = new ConcurrentLinkedQueue<NioByteChannel>()    ;
+    private final    Queue<NioByteChannel>          closingChannels   = new ConcurrentLinkedQueue<NioByteChannel>()    ;
+    private final    Map<String, NioByteChannel>    udpChannels       = new ConcurrentHashMap<String, NioByteChannel>();
+    private final    AtomicReference<ProcessThread> processThreadRef  = new AtomicReference<ProcessThread>()           ;
+    private final    NioByteBufferAllocator         allocator         = new NioByteBufferAllocator()                   ;
+    private final    AtomicBoolean                  wakeupCalled      = new AtomicBoolean(false)                       ;
+    private final    NioChannelIdleTimer            idleTimer         = NioChannelIdleTimer.getInstance()              ;
+    private final    NioConfig                      config                                                             ;
+    private final    Executor                       executor                                                           ;
+    private          IoProtocol                     protocol                                                           ;
+    private volatile Selector                       selector                                                           ;
+    private volatile boolean                        shutdown          = false                                          ;                                         
     
-    /** A queue used to store the channel to be closed */
-    private final Queue<NioByteChannel> closingChannels = new ConcurrentLinkedQueue<NioByteChannel>();
-    
-    /** UDP channel holders */
-    private final Map<String, NioByteChannel> udpChannels = new ConcurrentHashMap<String, NioByteChannel>();
-    private final NioConfig config;
-    private final Executor executor;
-    private final AtomicReference<ProcessThread> processThreadRef = new AtomicReference<ProcessThread>();
-    private final NioByteBufferAllocator allocator = new NioByteBufferAllocator();
-    private final AtomicBoolean wakeupCalled = new AtomicBoolean(false);
-    private final NioChannelIdleTimer idleTimer = NioChannelIdleTimer.getInstance();
-    private IoProtocol protocol;
-    private volatile Selector selector;
-    private volatile boolean shutdown = false;
     
 	// ~ ------------------------------------------------------------------------------------------------------------
+    
     
     NioProcessor(NioConfig config, IoHandler handler, NioChannelEventDispatcher dispatcher) {
 		this.config = config;
@@ -80,6 +75,7 @@ public class NioProcessor extends NioReactor {
         }
 	}
     
+    
     // ~ ------------------------------------------------------------------------------------------------------------
     
 	/**
@@ -93,7 +89,7 @@ public class NioProcessor extends NioReactor {
 		}
 		
 		if (channel == null) {
-			LOG.warn("Add null, return!");
+			LOG.warn("[CRAFT-ATOM-NIO] Add null, return!");
 			return;
 		}
 		
@@ -138,27 +134,26 @@ public class NioProcessor extends NioReactor {
 		// close processor selector
 		this.selector.close();
 
-		if (LOG.isDebugEnabled()) { LOG.debug("shutdown processor successful!"); }
+		LOG.debug("[CRAFT-ATOM-NIO] Shutdown processor successful");
 	}
 	
 	private void close() throws IOException {
 		for (NioByteChannel channel = closingChannels.poll(); channel != null; channel = closingChannels.poll()) {
 			idleTimer.remove(channel);
 			if (channel.isClosed()) {
-				if (LOG.isDebugEnabled()) { LOG.debug("Skip closes channel=" + channel); }
+				LOG.debug("[CRAFT-ATOM-NIO] Skip closes channel={}", channel);
 				continue;
 			}
 			
 			channel.setClosing();
-			if (LOG.isDebugEnabled()) { LOG.debug("Closing channel=" + channel); }
+			LOG.debug("[CRAFT-ATOM-NIO] Closing channel={}", channel);
 			
 			close(channel);
 			channel.setClosed();
 			
 			// fire channel closed event
 			fireChannelClosed(channel);
-			
-			if (LOG.isDebugEnabled()) { LOG.debug("Closed channel=" + channel); }
+			LOG.debug("[CRAFT-ATOM-NIO] Closed channel={}" + channel);
 		}
 	}
 	
@@ -177,9 +172,9 @@ public class NioProcessor extends NioReactor {
 		if ((selected == 0) && !wakeupCalled.get()) {
             // the select() may have been interrupted because we have had an closed channel.
             if (isBrokenConnection()) {
-                LOG.warn("Broken connection wakeup");
+                LOG.warn("[CRAFT-ATOM-NIO] Broken connection wakeup");
             } else {
-                LOG.warn("Create a new selector. Selected is 0");
+                LOG.warn("[CRAFT-ATOM-NIO] Create a new selector, selected is 0");
                 
                 // it is a workaround method for jdk bug, see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6403933
                 registerNewSelector();
@@ -251,7 +246,7 @@ public class NioProcessor extends NioReactor {
 			if (channel.isValid()) {
 				process0(channel);
 			} else {
-				LOG.warn("Channel is invalid, but some event trigger to process! channel=" + channel);
+				LOG.warn("[CRAFT-ATOM-NIO] Channel is invalid, channel={}", channel);
 			}
 			it.remove();
 		}
@@ -263,13 +258,13 @@ public class NioProcessor extends NioReactor {
 		
 		// Process reads
 		if (channel.isReadable()) {
-			if (LOG.isDebugEnabled()) { LOG.debug("Read event process on channel=" + channel); }
+			LOG.debug("[CRAFT-ATOM-NIO] Read event process on channel={}", channel);
 			read(channel);
 		}
 
 		// Process writes
 		if (channel.isWritable()) {
-			if (LOG.isDebugEnabled()) { LOG.debug("Write event process on channel=" + channel); }
+			LOG.debug("[CRAFT-ATOM-NIO] Write event process on channel={}", channel);
 			scheduleFlush(channel);
 		}
 	}
@@ -277,7 +272,7 @@ public class NioProcessor extends NioReactor {
 	private void read(NioByteChannel channel) {
 		int bufferSize = channel.getPredictor().next();
 		ByteBuffer buf = allocator.allocate(bufferSize);
-		if (LOG.isDebugEnabled()) { LOG.debug("Predict buffer size=" + bufferSize + ", allocate buffer=" + buf); }
+		LOG.debug("[CRAFT-ATOM-NIO] Predict buffer size={}, allocate buffer={}", bufferSize, buf);
 		
 		int readBytes = 0;
 		try {
@@ -287,7 +282,7 @@ public class NioProcessor extends NioReactor {
 				readBytes = readUdp(channel, buf);
 			}
 		} catch (Throwable t) {
-			LOG.warn("Catch read exception and fire it, channel=" + channel, t);
+			LOG.warn("[CRAFT-ATOM-NIO] Catch read exception and fire it, channel={}", channel, t);
 
 			// fire exception caught event
 			fireChannelThrown(channel, t);
@@ -314,7 +309,7 @@ public class NioProcessor extends NioReactor {
 		if (readBytes > 0) {
 			channel.getPredictor().previous(readBytes);
 			fireChannelRead(channel, buf, readBytes);
-			if (LOG.isDebugEnabled()) { LOG.debug("Actual read=" + readBytes); }
+			LOG.debug("[CRAFT-ATOM-NIO] Actual read={}", readBytes);
 		}
 
 		// read end-of-stream, remote peer may close channel so close channel.
@@ -396,7 +391,7 @@ public class NioProcessor extends NioReactor {
             
             try {
             	if (channel.isClosed() || channel.isClosing()) {
-            		if (LOG.isDebugEnabled()) { LOG.debug("Channel=" + channel + ", flushing channel size=" + flushingChannels.size()); }
+            		LOG.debug("[CRAFT-ATOM-NIO] Channel={}, flushing channel size={}", channel, flushingChannels.size());
             		continue;
             	} else {
             		// spin counter avoid infinite loop in this method.
@@ -404,7 +399,7 @@ public class NioProcessor extends NioReactor {
             		flush0(channel);
             	}
 			} catch (Throwable t) {
-				LOG.warn("Catch flush exception and fire it", t);
+				LOG.warn("[CRAFT-ATOM-NIO] Catch flush exception and fire it", t);
 				
 				// fire channel thrown event 
 				fireChannelThrown(channel, t);
@@ -418,7 +413,7 @@ public class NioProcessor extends NioReactor {
 	}
 	
 	private void flush0(NioByteChannel channel) throws IOException {
-		if (LOG.isDebugEnabled()) { LOG.debug("Flushing channel=" + channel); }
+		LOG.debug("[CRAFT-ATOM-NIO] Flushing channel={}", channel);
 		
 		Queue<ByteBuffer> writeQueue = channel.getWriteBufferQueue();
 
@@ -465,7 +460,7 @@ public class NioProcessor extends NioReactor {
 		ByteBuffer buf = null;
 		int writtenBytes = 0;
 		final int maxWrittenBytes = channel.getMaxWriteBufferSize();
-		if (LOG.isDebugEnabled()) { LOG.debug("Max write byte size=" + maxWrittenBytes); }
+		LOG.debug("[CRAFT-ATOM-NIO] Max write byte size={}", maxWrittenBytes);
 		
 		do {
 			if (buf == null) {
@@ -480,14 +475,13 @@ public class NioProcessor extends NioReactor {
 			
 			int qota = maxWrittenBytes - writtenBytes;
 			int localWrittenBytes = write(channel, buf, qota);
-			
-			if (LOG.isDebugEnabled()) {  LOG.debug("Flush buffer=" + new String(buf.array()) + " channel=" + channel + " written-bytes=" + localWrittenBytes + " buf-bytes=" + buf.array().length + " qota=" + qota + " buf-remaining=" + buf.hasRemaining()); }
-			
+			LOG.debug("[CRAFT-ATOM-NIO] Flush buffer={}, channel={}, bytes={}, size={}, qota={}, remaining={}", new String(buf.array()), channel, localWrittenBytes, buf.array().length, qota, buf.remaining());
+		
 			writtenBytes += localWrittenBytes;
 			
 			// The buffer is all flushed, remove it from write queue
 			if (!buf.hasRemaining()) {
-				if (LOG.isDebugEnabled()) { LOG.debug("The buffer is all flushed, remove it from write queue"); }
+				LOG.debug("[CRAFT-ATOM-NIO] The buffer is all flushed, remove it from write queue");
 				
 				writeQueue.remove();
 				
@@ -501,7 +495,7 @@ public class NioProcessor extends NioReactor {
 
 			// 0 byte be written, maybe kernel buffer is full so we re-interest in writing and later flush it.
 			if (localWrittenBytes == 0) {
-				if (LOG.isDebugEnabled()) { LOG.debug("Zero byte be written, maybe kernel buffer is full so we re-interest in writing and later flush it, channel=" + channel); }
+				LOG.debug("[CRAFT-ATOM-NIO] Zero byte be written, maybe kernel buffer is full so we re-interest in writing and later flush it, channel={}", channel);
 				
 				setInterestedInWrite(channel, true);
 				scheduleFlush(channel);
@@ -510,7 +504,7 @@ public class NioProcessor extends NioReactor {
 			
 			// The buffer isn't empty(bytes to flush more than max bytes), we re-interest in writing and later flush it.
 			if (localWrittenBytes > 0 && buf.hasRemaining()) {
-				if (LOG.isDebugEnabled()) { LOG.debug("The buffer isn't empty(bytes to flush more than max bytes), we re-interest in writing and later flush it, channel=" + channel); }
+				LOG.debug("[CRAFT-ATOM-NIO] The buffer isn't empty(bytes to flush more than max bytes), we re-interest in writing and later flush it, channel={}", channel);
 				
 				setInterestedInWrite(channel, true);
 				scheduleFlush(channel);
@@ -519,9 +513,7 @@ public class NioProcessor extends NioReactor {
 
 			// Wrote too much, so we re-interest in writing and later flush other bytes.
 			if (writtenBytes >= maxWrittenBytes && buf.hasRemaining()) {
-				if (LOG.isDebugEnabled()) {
-					LOG.debug("Wrote too much, so we re-interest in writing and later flush other bytes, channel=" + channel);
-				}
+				LOG.debug("[CRAFT-ATOM-NIO] Wrote too much, so we re-interest in writing and later flush other bytes, channel={}", channel);
 				
 				setInterestedInWrite(channel, true);
 				scheduleFlush(channel);
@@ -552,7 +544,7 @@ public class NioProcessor extends NioReactor {
 	
 	private int write(NioByteChannel channel, ByteBuffer buf, int maxLength) throws IOException {		
 		int writtenBytes = 0;
-		if (LOG.isDebugEnabled()) { LOG.debug("Allow write max len=" + maxLength + ", Waiting write byte buffer=" + buf); }
+		LOG.debug("[CRAFT-ATOM-NIO] Allow write max len={}, Waiting write byte buffer={}", maxLength, buf); 
 
 		if (buf.hasRemaining()) {
 			int length = Math.min(buf.remaining(), maxLength);
@@ -563,8 +555,7 @@ public class NioProcessor extends NioReactor {
 			}
 		}
 		
-		if (LOG.isDebugEnabled()) { LOG.debug("Actual written byte size=" + writtenBytes); }
-
+		LOG.debug("[CRAFT-ATOM-NIO] Actual written byte size={}", writtenBytes);
 		return writtenBytes;
 	}
 	
@@ -665,7 +656,7 @@ public class NioProcessor extends NioReactor {
 					close();
 					
 				} catch (Exception e) {
-					LOG.error("Unexpected exception caught while process", e);
+					LOG.error("[CRAFT-ATOM-NIO] Unexpected exception caught while process", e);
 				}
 			}
 			
@@ -674,7 +665,7 @@ public class NioProcessor extends NioReactor {
 				try {
 					shutdown0();
 				} catch (Exception e) {
-					LOG.error("Unexpected exception caught while shutdown", e);
+					LOG.error("[CRAFT-ATOM-NIO] Unexpected exception caught while shutdown", e);
 				}
 			}
 		}

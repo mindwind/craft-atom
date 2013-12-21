@@ -13,12 +13,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.http.HttpCookieDecoder;
 import org.craft.atom.protocol.http.HttpHeaders;
 import org.craft.atom.protocol.http.HttpParameterDecoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -39,17 +39,21 @@ import org.craft.atom.protocol.http.HttpParameterDecoder;
  */
 @ToString(callSuper = true, of = { "requestLine", "parameterMap" })
 public class HttpRequest extends HttpMessage {
-
-	private static final Log LOG = LogFactory.getLog(HttpRequest.class);
-	private static final long serialVersionUID = 2454619732646455653L;
-	private static final HttpCookieDecoder COOKIE_DECODER = new HttpCookieDecoder();
-	private static final HttpParameterDecoder PARAMETER_DECODER = new HttpParameterDecoder();
 	
-	@Getter @Setter private HttpRequestLine requestLine = new HttpRequestLine();
-	@Setter private Map<String, List<String>> parameterMap;
+	
+	private static final long                 serialVersionUID  = 2454619732646455653L                      ;
+	private static final Logger               LOG               = LoggerFactory.getLogger(HttpRequest.class);
+	private static final HttpCookieDecoder    COOKIE_DECODER    = new HttpCookieDecoder()                   ;
+	private static final HttpParameterDecoder PARAMETER_DECODER = new HttpParameterDecoder()                ;
+	
+	
+	@Getter @Setter private HttpRequestLine           requestLine  = new HttpRequestLine();
+	@Setter         private Map<String, List<String>> parameterMap                        ;
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	public HttpRequest() {
 		super();
 	}
@@ -153,7 +157,7 @@ public class HttpRequest extends HttpMessage {
 				map = paras.get(0);
 			}
 		} catch (ProtocolException e) {
-			LOG.error("Decode request parameter error", e);
+			LOG.error("[CRAFT-ATOM-PROTOCOL-HTTP] Decode request parameter error", e);
 			return map;
 		}
 		
@@ -201,7 +205,7 @@ public class HttpRequest extends HttpMessage {
 				List<Cookie> cl = COOKIE_DECODER.decode(cookieValue.getBytes(COOKIE_DECODER.getCharset()));
 				cookies.addAll(cl);
 			} catch (ProtocolException e) {
-				LOG.error("Decode request cookie error", e);
+				LOG.error("[CRAFT-ATOM-PROTOCOL-HTTP] Decode request cookie error", e);
 				return cookies;
 			}
 		}

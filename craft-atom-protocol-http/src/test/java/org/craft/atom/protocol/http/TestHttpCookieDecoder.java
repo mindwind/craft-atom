@@ -4,12 +4,12 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.http.model.Cookie;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
@@ -18,7 +18,7 @@ import org.junit.Test;
 public class TestHttpCookieDecoder {
 	
 	
-	private static final Log LOG = LogFactory.getLog(TestHttpCookieDecoder.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TestHttpCookieDecoder.class);
 	
 	
 	private HttpCookieDecoder cookieDecoder    = new HttpCookieDecoder()    ;
@@ -32,14 +32,14 @@ public class TestHttpCookieDecoder {
 		List<Cookie> cookies = cookieDecoder.decode(cookie1.getBytes());
 		Assert.assertEquals(2, cookies.size());
 		for (Cookie cookie : cookies) {
-			LOG.debug(new String(encoder.encode(cookie)));
+			LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Encoded cookie={}", new String(encoder.encode(cookie)));
 		}
 		
 		String cookie2 = "test=test123";
 		cookies = cookieDecoder.decode(cookie2.getBytes());
 		Assert.assertEquals(1, cookies.size());
 		for (Cookie cookie : cookies) {
-			LOG.debug(new String(encoder.encode(cookie)));
+			LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Encoded cookie={}", new String(encoder.encode(cookie)));
 		}
 		System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-HTTP] (^_^)  <%s>  Case -> test cookie. ", CaseCounter.incr(2)));
 	}

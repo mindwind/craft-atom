@@ -4,13 +4,13 @@ import java.util.concurrent.TimeUnit;
 
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.ChannelEventType;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 import org.craft.atom.util.schedule.ExpirationListener;
 import org.craft.atom.util.schedule.TimingWheel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Nio channel idle timer
@@ -22,7 +22,7 @@ import org.craft.atom.util.schedule.TimingWheel;
 public class NioChannelIdleTimer {
 	
 	
-	private static final Log                 LOG             = LogFactory.getLog(NioChannelIdleTimer.class);
+	private static final Logger              LOG             = LoggerFactory.getLogger(NioChannelIdleTimer.class);
 	private static final NioChannelIdleTimer INSTANCE        = new NioChannelIdleTimer()                   ;
 
 
@@ -78,7 +78,7 @@ public class NioChannelIdleTimer {
 				timingWheel.add(channel);
 			}
 			
-			LOG.info(String.format("[CRAFT-ATOM-NIO] Nio active channel count is <%s>", timingWheel.size()));
+			LOG.info("[CRAFT-ATOM-NIO] Nio active channel count is {}", timingWheel.size());
 		}
 		
 	}

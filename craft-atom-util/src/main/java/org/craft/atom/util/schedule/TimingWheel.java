@@ -13,8 +13,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A timing-wheel optimized for approximated I/O timeout scheduling.<br>
@@ -55,22 +55,24 @@ import org.apache.commons.logging.LogFactory;
 @ToString(of = { "tickDuration", "ticksPerWheel", "currentTickIndex", "wheel", "indicator"})
 public class TimingWheel<E> {
 	
-	private static final Log LOG = LogFactory.getLog(TimingWheel.class);
 	
-	private final long tickDuration;
-	private final int ticksPerWheel;
-	private volatile int currentTickIndex = 0;
+	private static final Logger LOG = LoggerFactory.getLogger(TimingWheel.class);
 	
-	private final CopyOnWriteArrayList<ExpirationListener<E>> expirationListeners = new CopyOnWriteArrayList<ExpirationListener<E>>();
-	private final ArrayList<Slot<E>> wheel;
-	private final Map<E, Slot<E>> indicator = new ConcurrentHashMap<E, Slot<E>>();
 	
-	private final AtomicBoolean shutdown = new AtomicBoolean(false);
-	private final ReadWriteLock lock = new ReentrantReadWriteLock();
-	private Thread workerThread;
+	private final    long                                        tickDuration                                                           ;
+	private final    int                                         ticksPerWheel                                                          ;
+	private final    ArrayList<Slot<E>>                          wheel                                                                  ;
+	private final    Map<E, Slot<E>>                             indicator           = new ConcurrentHashMap<E, Slot<E>>()              ;
+	private final    AtomicBoolean                               shutdown            = new AtomicBoolean(false)                         ;
+	private final    ReadWriteLock                               lock                = new ReentrantReadWriteLock()                     ;
+	private final    CopyOnWriteArrayList<ExpirationListener<E>> expirationListeners = new CopyOnWriteArrayList<ExpirationListener<E>>();
+	private volatile int                                         currentTickIndex    = 0                                                ;
+	private          Thread                                      workerThread                                                           ;
+	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 
+	
 	/**
 	 * Construct a timing wheel.
 	 * 
@@ -257,7 +259,7 @@ public class TimingWheel<E> {
 			for (;;) {
                 long currentTime = System.currentTimeMillis();
                 long sleepTime = tickDuration * tick - (currentTime - startTime);
-                if (LOG.isDebugEnabled()) { LOG.debug("wait for next tick sleep time=" + sleepTime); }
+                LOG.debug("[CRAFT-ATOM-UTIL] Wait for next tick sleep time={}", sleepTime);
                 
                 if (sleepTime <= 0) {
                     break;

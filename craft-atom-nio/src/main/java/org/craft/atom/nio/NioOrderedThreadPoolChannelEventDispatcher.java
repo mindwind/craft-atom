@@ -8,11 +8,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.ChannelEvent;
 import org.craft.atom.nio.spi.AbstractNioChannelEventDispatcher;
 import org.craft.atom.util.NamedThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link NioOrderedThreadPoolChannelEventDispatcher} that maintains order of {@link NioByteChannelEvent} in the same channel.
@@ -24,12 +24,16 @@ import org.craft.atom.util.NamedThreadFactory;
 @ToString(callSuper = true, of = { "channelQueue", "executor" })
 public class NioOrderedThreadPoolChannelEventDispatcher extends AbstractNioChannelEventDispatcher {
 	
-	private static final Log LOG = LogFactory.getLog(NioOrderedThreadPoolChannelEventDispatcher.class);
+	
+	private static final Logger LOG = LoggerFactory.getLogger(NioOrderedThreadPoolChannelEventDispatcher.class);
+	
 	
 	private final BlockingQueue<NioByteChannel> channelQueue;
-	private final Executor executor;
+	private final Executor                      executor    ;
 
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	NioOrderedThreadPoolChannelEventDispatcher() {
 		this(Runtime.getRuntime().availableProcessors() * 8, Integer.MAX_VALUE);
@@ -43,13 +47,14 @@ public class NioOrderedThreadPoolChannelEventDispatcher extends AbstractNioChann
 		}
 		
 		this.channelQueue = new LinkedBlockingQueue<NioByteChannel>();
-		this.executor = Executors.newFixedThreadPool(executorSize, new NamedThreadFactory("craft-atom-nio-executor"));
+		this.executor = Executors.newFixedThreadPool(executorSize, new NamedThreadFactory("craft-atom-nio-ordered-dispatcher"));
 		for (int i = 0; i < executorSize; i++) {
 			executor.execute(new Worker());
 		}
 	}
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	@Override
 	public void dispatch(ChannelEvent<byte[]> event) {
@@ -65,7 +70,9 @@ public class NioOrderedThreadPoolChannelEventDispatcher extends AbstractNioChann
 		}
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	private class Worker implements Runnable {
 		
@@ -113,7 +120,7 @@ public class NioOrderedThreadPoolChannelEventDispatcher extends AbstractNioChann
 					}
 				}
 			} catch (Throwable t) {
-				LOG.warn(t.getMessage(), t);
+				LOG.warn("[CRAFT-ATOM-NIO] Fire event error", t);
 			}
 		}
 	}

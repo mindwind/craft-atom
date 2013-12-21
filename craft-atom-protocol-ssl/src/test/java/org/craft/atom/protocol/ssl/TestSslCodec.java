@@ -15,8 +15,6 @@ import javax.xml.ws.ProtocolException;
 
 import junit.framework.Assert;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.AbstractIoHandler;
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoAcceptor;
@@ -25,6 +23,8 @@ import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.test.AvailablePortFinder;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
@@ -33,12 +33,13 @@ import org.junit.Test;
 public class TestSslCodec {
 	
 	
-	private static final    Log    LOG        = LogFactory.getLog(TestSslCodec.class);
-	private static final    String SSL_CODEC  = "ssl.codec"                          ;
-	private static final    String ALGORITHM                                         ;
-	private static final    int    PORT                                              ;      
-	private static final    int    MSG_NUM    = 100                                  ;
-	private static volatile int    count      = 0                                    ;
+	private static final    Logger     LOG        = LoggerFactory.getLogger(TestSslCodec.class);
+	private static final    String     SSL_CODEC  = "ssl.codec"                                ;
+	private static final    String     ALGORITHM                                               ;
+	private static final    int        PORT                                                    ;      
+	private static final    int        MSG_NUM    = 100                                        ;
+	private static volatile int        count      = 0                                          ;
+	private static          Exception clientError = null                                       ;
 	
 	
 	static {
@@ -102,13 +103,13 @@ public class TestSslCodec {
         Socket socket = factory.createSocket(parent, address.getCanonicalHostName(), PORT, false);
 
         for (int i = 0; i < MSG_NUM; i++) {
-            LOG.debug("Client send: hello-" + i);
+            LOG.debug("[CRAFT-ATOM-PROTOCOL-SSL] Client send: hello {}", i);
             socket.getOutputStream().write("hello\n".getBytes());
             socket.getOutputStream().flush();
             socket.setSoTimeout(10000);
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             String line = in.readLine();
-            LOG.debug("Client got: " + line);
+            LOG.debug("[CRAFT-ATOM-PROTOCOL-SSL] Client got {}", line);
             ++count;
 		}
         
@@ -135,8 +136,6 @@ public class TestSslCodec {
          Assert.assertEquals(MSG_NUM, count);
          System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-SSL] (^_^)  <%s>  Case -> test ssl codec. ", CaseCounter.incr(1)));
     }
-    
-    private static Exception clientError = null;
 	
 	
 	// ~ ---------------------------------------------------------------------------------------------------------
@@ -157,12 +156,12 @@ public class TestSslCodec {
 		public void channelRead(Channel<byte[]> channel, byte[] bytes) {
 			SslCodec codec = (SslCodec) channel.getAttribute(SSL_CODEC);
 			byte[] ddata = codec.decode(bytes);
-			if (ddata != null) { LOG.debug("Receive data: " + new String(ddata)); }
+			if (ddata != null) { LOG.debug("[CRAFT-ATOM-PROTOCOL-SSL] Receive data={}", new String(ddata)); }
 			
 			if (ddata != null) {
 				byte[] edata = codec.encode("hi, how are you?\n".getBytes());
 				channel.write(edata);
-				if (edata != null) { LOG.debug("Sent data: " + new String(edata)); }
+				if (edata != null) { LOG.debug("[CRAFT-ATOM-PROTOCOL-SSL] Sent data={}", new String(edata)); }
 			}
  		}
 	}

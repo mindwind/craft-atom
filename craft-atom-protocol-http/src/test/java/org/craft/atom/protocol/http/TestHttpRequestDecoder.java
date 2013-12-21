@@ -6,8 +6,6 @@ import java.util.Random;
 
 import junit.framework.Assert;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.http.model.Cookie;
 import org.craft.atom.protocol.http.model.HttpRequest;
@@ -15,6 +13,8 @@ import org.craft.atom.test.CaseCounter;
 import org.craft.atom.util.StringUtil;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
@@ -23,7 +23,7 @@ import org.junit.Test;
 public class TestHttpRequestDecoder {
 	
 	
-	private static final Log LOG = LogFactory.getLog(TestHttpRequestDecoder.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TestHttpRequestDecoder.class);
 	
 	
 	private HttpRequestEncoder encoder                            ;
@@ -45,7 +45,7 @@ public class TestHttpRequestDecoder {
 		String req = "\r\nGET /s?wd=java+jdk7&rsv_bp=0&inputT=14326 HTTP/1.1\r\nHost: www.baidu.com\r\nUser-Agent: Mozilla/5.0 (Windows NT 6.1; rv:5.0) Gecko/20100101 Firefox/5.0\r\nAccept: text/html,application/xhtml+xml,\r\n\tapplication/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nAccept-Charset: GB2312,utf-8;q=0.7,*;q=0.7\r\nConnection: keep-alive\r\nReferer: http://www.baidu.com/\r\nCookie: BAIDUID=34C25418C0B70D93E53A8E1CB8CB150F:FG=1\r\n\r\n";
 		List<HttpRequest> reqs = decoder.decode(req.getBytes(charset));
 		Assert.assertEquals(1, reqs.size());
-		LOG.debug(new String(encoder.encode(reqs.get(0)), charset));
+		LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Encoded request={}", new String(encoder.encode(reqs.get(0)), charset));
 		System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-HTTP] (^_^)  <%s>  Case -> test one request without entity. ", CaseCounter.incr(1)));
 	}
 	
@@ -58,12 +58,12 @@ public class TestHttpRequestDecoder {
 		req = "\n\tapplication/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nAccept-Charset: GB2312,utf-8;q=0.7,*;q=0.7\r\nConnection: keep-alive\r\nReferer: http://www.baidu.com/\r\nCookie: BAIDUID=34C25418C0B70D93E53A8E1CB8CB150F:FG=1\r\n\r\nGET /s?wd=java+jdk7&rsv_bp=0&inputT=14326 HTTP/1.1\r";
 		reqs = decoder.decode(req.getBytes(charset));
 		Assert.assertEquals(1, reqs.size());
-		LOG.debug(new String(encoder.encode(reqs.get(0)), charset));
+		LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Encoded request={}", new String(encoder.encode(reqs.get(0)), charset));
 		
 		req = "\nAccept-Language: zh-cn,zh;q=0.5\r\n\r\n";
 		reqs = decoder.decode(req.getBytes(charset));
 		Assert.assertEquals(1, reqs.size());
-		LOG.debug(new String(encoder.encode(reqs.get(0)), charset));
+		LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Encoded request={}", new String(encoder.encode(reqs.get(0)), charset));
 		System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-HTTP] (^_^)  <%s>  Case -> test one and half request without entity. ", CaseCounter.incr(3)));
 	}
 	
@@ -92,7 +92,7 @@ public class TestHttpRequestDecoder {
 		req = "\nAccept: text/html,application/xhtml+xml,\r\n\tapplication/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: zh-cn,zh;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nAccept-Charset: GB2312,utf-8;q=0.7,*;q=0.7\r\nConnection: keep-alive\r\nReferer: http://www.baidu.com/\r\nCookie: BAIDUID=34C25418C0B70D93E53A8E1CB8CB150F:FG=1\r\n\r\n";
 		reqs = decoder.decode(req.getBytes(charset));
 		Assert.assertEquals(1, reqs.size());
-		LOG.debug(new String(encoder.encode(reqs.get(0)), charset));
+		LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Encoded request={}", new String(encoder.encode(reqs.get(0)), charset));
 		
 		req = "GET /s?wd=java+jdk7&rsv_bp=0&inputT=14326 HTTP/1.1\r\nAccept-Language: zh-cn,zh;q=0.5\r\n\r\n";
 		reqs = decoder.decode(req.getBytes(charset));
@@ -116,7 +116,7 @@ public class TestHttpRequestDecoder {
 		List<HttpRequest> reqs = decoder.decode(req.getBytes(charset));
 		
 		Assert.assertEquals(1, reqs.size());
-		LOG.debug(new String(encoder.encode(reqs.get(0)), charset));
+		LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Encoded request={}", new String(encoder.encode(reqs.get(0)), charset));
 		System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-HTTP] (^_^)  <%s>  Case -> test one request with fix length entity. ", CaseCounter.incr(1)));
 	}
 
@@ -162,7 +162,7 @@ public class TestHttpRequestDecoder {
 		Assert.assertEquals(3, cookies.size());
 		
 		for (Cookie cookie : cookies) {
-			LOG.debug(cookie.toHttpString());
+			LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Cookie http string={}", cookie.toHttpString());
 		}
 		System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-HTTP] (^_^)  <%s>  Case -> test one request with cookie. ", CaseCounter.incr(2)));
 	}
@@ -183,8 +183,8 @@ public class TestHttpRequestDecoder {
 			}
 			
 			Assert.assertEquals(1, reqs.size());
-			LOG.debug("split num=" + num);
-			LOG.debug(new String(encoder.encode(reqs.get(0)), charset));	
+			LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Split num={}" + num);
+			LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Encoded request={}", new String(encoder.encode(reqs.get(0)), charset));	
 		}
 	}
 

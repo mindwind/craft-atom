@@ -9,14 +9,14 @@ import java.nio.channels.SocketChannel;
 
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.NioAcceptor;
 import org.craft.atom.nio.NioByteChannel;
 import org.craft.atom.nio.NioTcpByteChannel;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Acceptor for incoming connection based on TCP.
@@ -27,7 +27,9 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 @ToString(callSuper = true)
 public class NioTcpAcceptor extends NioAcceptor {
 	
-	private static final Log LOG = LogFactory.getLog(NioTcpAcceptor.class);
+	
+	private static final Logger LOG = LoggerFactory.getLogger(NioTcpAcceptor.class);
+	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
@@ -114,7 +116,7 @@ public class NioTcpAcceptor extends NioAcceptor {
 				try {
 					sc.close();
 				} catch (IOException ex) {
-					LOG.error(ex.getMessage(), ex);
+					LOG.error("[CRAFT-ATOM-NIO] Close error", ex);
 				}
 			}
 			throw e;

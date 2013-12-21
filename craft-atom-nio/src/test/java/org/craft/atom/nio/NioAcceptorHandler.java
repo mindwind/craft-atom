@@ -1,9 +1,9 @@
 package org.craft.atom.nio;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.AbstractIoHandler;
 import org.craft.atom.io.Channel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
@@ -11,7 +11,7 @@ import org.craft.atom.io.Channel;
  */
 public class NioAcceptorHandler extends AbstractIoHandler {
 	
-	private static final Log  LOG = LogFactory.getLog(NioAcceptorHandler.class);
+	private static final Logger  LOG = LoggerFactory.getLogger(NioAcceptorHandler.class);
 	private static final byte LF  = 10                                         ;
 	
 	
@@ -20,7 +20,7 @@ public class NioAcceptorHandler extends AbstractIoHandler {
 	
 	@Override
 	public void channelRead(Channel<byte[]> channel, byte[] bytes) {
-		LOG.debug("[CRAFT-ATOM-NIO] Channel read bytes size=" + bytes.length);
+		LOG.debug("[CRAFT-ATOM-NIO] Channel read bytes size={}", bytes.length);
 		
 		for (byte b : bytes) {
 			buf.append((char) b);
@@ -28,7 +28,7 @@ public class NioAcceptorHandler extends AbstractIoHandler {
 		
 		if (bytes[bytes.length - 1] == LF) {
 			byte[] echoBytes = buf.toString().getBytes();
-			LOG.debug("[CRAFT-ATOM-NIO] Echo bytes size=" + echoBytes.length + "\n");
+			LOG.debug("[CRAFT-ATOM-NIO] Echo bytes size={} \n", echoBytes.length);
 			channel.write(echoBytes);
 			buf = new StringBuilder();
 		}

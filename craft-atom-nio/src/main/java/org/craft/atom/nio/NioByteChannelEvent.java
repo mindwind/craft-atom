@@ -2,10 +2,10 @@ package org.craft.atom.nio;
 
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.ChannelEventType;
 import org.craft.atom.io.IoHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * NIO byte channel event consume by {@link IoHandler}
@@ -16,12 +16,16 @@ import org.craft.atom.io.IoHandler;
 @ToString(of = { "parameter" })
 public class NioByteChannelEvent extends AbstractNioByteChannelEvent {
 	
-	private static final Log LOG = LogFactory.getLog(NioByteChannelEvent.class);
 	
-	private final Object parameter;
-	private final IoHandler handler;
+	private static final Logger LOG = LoggerFactory.getLogger(NioByteChannelEvent.class);
+	
+	
+	private final Object    parameter;
+	private final IoHandler handler  ;
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
+	
 	
 	NioByteChannelEvent(ChannelEventType type, NioByteChannel channel, IoHandler handler) {
         this(type, channel, handler, null);
@@ -48,7 +52,7 @@ public class NioByteChannelEvent extends AbstractNioByteChannelEvent {
 			try {
 				handler.channelThrown(channel, t);
 			} catch (Throwable t1) {
-				LOG.warn("Catch hanlder.channelThrown() thrown exception", t1);
+				LOG.warn("[CRAFT-ATOM-NIO] Catch channel thrown exception", t1);
 			}
 		}
 	}

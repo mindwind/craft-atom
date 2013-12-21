@@ -10,8 +10,6 @@ import java.util.concurrent.Future;
 
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoConnector;
 import org.craft.atom.io.IoHandler;
@@ -19,6 +17,9 @@ import org.craft.atom.nio.api.NioConnectorConfig;
 import org.craft.atom.nio.api.NioTcpConnector;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
+import org.craft.atom.util.NamedThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Connects to server based on TCP or UDP, communicates with the server, and fires events.
@@ -30,18 +31,21 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 @ToString(callSuper = true, of = { "config" })
 abstract public class NioConnector extends NioReactor implements IoConnector {
 	
-	private static final Log LOG = LogFactory.getLog(NioConnector.class);
 	
-	protected final NioConnectorConfig config;
-	protected final IoHandler handler;
-	protected final NioProcessorPool pool;
-	protected final ExecutorService executorService = Executors.newCachedThreadPool();
+	private static final Logger LOG = LoggerFactory.getLogger(NioConnector.class);
 	
-	protected volatile Selector selector;
-	protected volatile boolean selectable = false;
-	protected volatile boolean shutdown = false;
+	
+	protected final    NioConnectorConfig config                                                                                             ;
+	protected final    IoHandler          handler                                                                                            ;
+	protected final    NioProcessorPool   pool                                                                                               ;
+	protected final    ExecutorService    executorService = Executors.newCachedThreadPool(new NamedThreadFactory("craft-atom-nio-connector"));
+	protected volatile boolean            selectable      = false                                                                            ;
+	protected volatile boolean            shutdown        = false                                                                            ;
+	protected volatile Selector           selector                                                                                           ;
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	/**
 	 * Constructs a new connector with default configuration.
@@ -106,7 +110,9 @@ abstract public class NioConnector extends NioReactor implements IoConnector {
 		}
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	private void init() throws IOException {
 		selector = Selector.open();

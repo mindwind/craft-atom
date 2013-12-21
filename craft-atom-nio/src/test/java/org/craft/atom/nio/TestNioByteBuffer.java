@@ -4,10 +4,10 @@ import java.nio.ByteBuffer;
 
 import junit.framework.Assert;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
@@ -16,7 +16,8 @@ import org.junit.Test;
 public class TestNioByteBuffer {
 	
 	
-	private static final Log LOG = LogFactory.getLog(TestNioByteBuffer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TestNioByteBuffer.class);
+	
 	
 	private int[] arr = new int[] { 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 10240 };
 
@@ -37,8 +38,8 @@ public class TestNioByteBuffer {
 		e = System.nanoTime();
 		long heapElapse = e - s;
 		
-		LOG.info(String.format("[CRAFT-ATOM-NIO] Test allocate heap elpase=%s ns", heapElapse));
-		LOG.info(String.format("[CRAFT-ATOM-NIO] Test allocate direct elpase=%s ns", directElapse));
+		LOG.info("[CRAFT-ATOM-NIO] Test allocate heap elpase={} ns", heapElapse);
+		LOG.info("[CRAFT-ATOM-NIO] Test allocate direct elpase={} ns", directElapse);
 		Assert.assertTrue(true);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test allocate direct & heap. ", CaseCounter.incr(1)));
 	}
@@ -59,8 +60,8 @@ public class TestNioByteBuffer {
 		e = System.nanoTime();
 		long heapElapse = e - s;
 		
-		LOG.info(String.format("[CRAFT-ATOM-NIO] Test allocate heap enum elpase=%s ns", heapElapse));
-		LOG.info(String.format("[CRAFT-ATOM-NIO] Test allocate direct enum elpase=%s ns", directElapse));
+		LOG.info("[CRAFT-ATOM-NIO] Test allocate heap enum elpase={} ns", heapElapse);
+		LOG.info("[CRAFT-ATOM-NIO] Test allocate direct enum elpase={} ns", directElapse);
 		Assert.assertTrue(true);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test allocate direct & heap enum . ", CaseCounter.incr(1)));
 	}
@@ -81,8 +82,8 @@ public class TestNioByteBuffer {
 		e = System.nanoTime();
 		long heapElapse = e - s;
 		
-		LOG.info(String.format("[CRAFT-ATOM-NIO] Test allocate heap fix elpase=%s ns", heapElapse));
-		LOG.info(String.format("[CRAFT-ATOM-NIO] Test allocate direct fix elpase=%s ns", directElapse));
+		LOG.info("[CRAFT-ATOM-NIO] Test allocate heap fix elpase={} ns", heapElapse);
+		LOG.info("[CRAFT-ATOM-NIO] Test allocate direct fix elpase={} ns", directElapse);
 		Assert.assertTrue(true);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test allocate direct & heap fix . ", CaseCounter.incr(1)));
 	}
@@ -113,8 +114,8 @@ public class TestNioByteBuffer {
 		e = System.nanoTime();
 		long directElapse = e - s;
 		
-		LOG.info(String.format("[CRAFT-ATOM-NIO] Test heap byte buffer copy elpase=%s ns", heapElapse));
-		LOG.info(String.format("[CRAFT-ATOM-NIO] Test direct byte buffer copy elpase=%s ns", directElapse));
+		LOG.info("[CRAFT-ATOM-NIO] Test heap byte buffer copy elpase={} ns", heapElapse);
+		LOG.info("[CRAFT-ATOM-NIO] Test direct byte buffer copy elpase={} ns", directElapse);
 		Assert.assertTrue(true);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test direct & heap byte buffer copy. ", CaseCounter.incr(1)));
 	}

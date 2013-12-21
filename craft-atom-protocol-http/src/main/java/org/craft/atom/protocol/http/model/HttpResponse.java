@@ -8,11 +8,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.http.HttpCookieDecoder;
 import org.craft.atom.protocol.http.HttpHeaders;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HTTP response message.
@@ -31,14 +31,18 @@ import org.craft.atom.protocol.http.HttpHeaders;
 @ToString(callSuper = true, of = { "statusLine" })
 public class HttpResponse extends HttpMessage {
 
-	private static final long serialVersionUID = 1532809882773093282L;
-	private static final Log LOG = LogFactory.getLog(HttpResponse.class);
-	private static final HttpCookieDecoder SET_COOKIE_DECODER = new HttpCookieDecoder(true);
+	
+	private static final Logger            LOG                = LoggerFactory.getLogger(HttpResponse.class);
+	private static final long              serialVersionUID   = 1532809882773093282L                       ;
+	private static final HttpCookieDecoder SET_COOKIE_DECODER = new HttpCookieDecoder(true)                ;
+	
 	
 	@Getter @Setter private HttpStatusLine statusLine;
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	public HttpResponse() {
 		super();
 	}
@@ -53,7 +57,9 @@ public class HttpResponse extends HttpMessage {
 		this.statusLine = statusLine;
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	@Override
 	public void addCookie(Cookie cookie) {
@@ -71,7 +77,7 @@ public class HttpResponse extends HttpMessage {
 				List<Cookie> cl = SET_COOKIE_DECODER.decode(cookieValue.getBytes(SET_COOKIE_DECODER.getCharset()));
 				cookies.addAll(cl);
 			} catch (ProtocolException e) {
-				LOG.error("Decode response cookie error", e);
+				LOG.error("[CRAFT-ATOM-PROTOCOL-HTTP] Decode response cookie error", e);
 				return cookies;
 			}
 		}
@@ -80,7 +86,9 @@ public class HttpResponse extends HttpMessage {
 		return this.cookies;
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	public String toHttpString(Charset charset) {
 		StringBuilder sb = new StringBuilder();

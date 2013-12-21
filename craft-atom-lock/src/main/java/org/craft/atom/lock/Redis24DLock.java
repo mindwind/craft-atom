@@ -7,11 +7,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.craft.atom.lock.api.DLock;
 import org.craft.atom.redis.api.RedisCommand;
 import org.craft.atom.redis.api.RedisTransaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A implementation of the {@code DLock} base on redis version 2.4.x, which using singleton redis instance.
@@ -22,7 +22,10 @@ import org.craft.atom.redis.api.RedisTransaction;
 @ToString(of = "redis")
 public class Redis24DLock implements DLock {
 	
-	private static final Log LOG = LogFactory.getLog(Redis24DLock.class);
+	
+	private static final Logger LOG = LoggerFactory.getLogger(Redis24DLock.class);
+	
+	
 	@Getter @Setter private RedisCommand redis;
 	
 	public Redis24DLock() {
@@ -57,7 +60,7 @@ public class Redis24DLock implements DLock {
 				success = false;
 			}
 		} catch (Exception e) {
-			LOG.error(String.format("Try lock fail, args=<lockKey=%s, ttl=%s, unit=%s>", lockKey, ttl, unit), e);
+			LOG.error("[CRAFT-ATOM-LOCK] Try lock fail, lockKey={}, ttl={}, unit={}", lockKey, ttl, unit, e);
 			success = false;
 		} finally {
 			redis.unwatch();
@@ -79,7 +82,7 @@ public class Redis24DLock implements DLock {
 		try {
 			redis.del(lockKey);
 		} catch (Exception e) {
-			LOG.error(String.format("Unlock fail, args=<lockKey=%s>", lockKey), e);
+			LOG.error("[CRAFT-ATOM-LOCK] Unlock fail, lockKey={}", lockKey, e);
 			success = false;
 		}
 		

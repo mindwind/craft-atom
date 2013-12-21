@@ -56,7 +56,7 @@
 		<v.plugin.gpg>1.4</v.plugin.gpg>
 		<v.jdk>1.6</v.jdk>
 
-		<v.commons.logging>1.1.1</v.commons.logging>
+		<v.slf4j>1.7.5</v.slf4j>
 		<v.log4j>1.2.17</v.log4j>
 		<v.junit>4.8.2</v.junit>
 		<v.jedis>2.2.1</v.jedis>
@@ -64,11 +64,6 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>${v.commons.logging}</version>
-		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -86,11 +81,20 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${v.slf4j}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${v.slf4j}</version>
+			</dependency>
+			<dependency>
 				<groupId>log4j</groupId>
 				<artifactId>log4j</artifactId>
 				<version>${v.log4j}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>redis.clients</groupId>
 				<artifactId>jedis</artifactId>
@@ -121,7 +125,8 @@
 						<attach>true</attach>
 					</configuration>
 				</plugin>
-				<!-- add this for get rid of warning maven-enforcer-plugin (goal "enforce") is ignored by m2e -->
+				<!-- add this for get rid of warning maven-enforcer-plugin (goal "enforce") 
+					is ignored by m2e -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
