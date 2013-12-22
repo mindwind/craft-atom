@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import org.craft.atom.nio.NioConfig;
+import org.craft.atom.nio.NioTcpAcceptor;
 
 /**
  * Configuration object for {@link NioTcpAcceptor}

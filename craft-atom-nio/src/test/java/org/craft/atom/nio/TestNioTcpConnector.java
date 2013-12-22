@@ -8,7 +8,6 @@ import java.util.concurrent.TimeoutException;
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoConnector;
 import org.craft.atom.nio.api.NioFactory;
-import org.craft.atom.nio.api.NioTcpConnector;
 import org.craft.atom.test.AvailablePortFinder;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Assert;

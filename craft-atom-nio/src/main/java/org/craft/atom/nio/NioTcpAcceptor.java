@@ -1,4 +1,4 @@
-package org.craft.atom.nio.api;
+package org.craft.atom.nio;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -10,9 +10,7 @@ import java.nio.channels.SocketChannel;
 import lombok.ToString;
 
 import org.craft.atom.io.IoHandler;
-import org.craft.atom.nio.NioAcceptor;
-import org.craft.atom.nio.NioByteChannel;
-import org.craft.atom.nio.NioTcpByteChannel;
+import org.craft.atom.nio.api.NioAcceptorConfig;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 import org.slf4j.Logger;

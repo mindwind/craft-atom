@@ -14,7 +14,6 @@ import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoConnector;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.api.NioConnectorConfig;
-import org.craft.atom.nio.api.NioTcpConnector;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 import org.craft.atom.util.NamedThreadFactory;
