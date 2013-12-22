@@ -1,6 +1,7 @@
 package org.craft.atom.redis.api;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.pool.impl.GenericObjectPool.Config;
@@ -131,6 +132,10 @@ public class RedisFactory {
 		return new DefaultShardedRedis(shards);
 	}
 	
+	public static ShardedRedis newShardedRedis(Redis... shards) {
+		return new DefaultShardedRedis(Arrays.asList(shards));
+	}
+	
 	/**
 	 * Creates a sharded redis client.
 	 * 
@@ -157,6 +162,10 @@ public class RedisFactory {
 	
 	public static MasterSlaveShardedRedis newMasterSlaveShardedRedis(List<MasterSlaveRedis> shards) {
 		return new DefaultMasterSlaveShardedRedis(shards);
+	}
+	
+	public static MasterSlaveShardedRedis newMasterSlaveShardedRedis(MasterSlaveRedis... shards) {
+		return new DefaultMasterSlaveShardedRedis(Arrays.asList(shards));
 	}
 	
 	/**
