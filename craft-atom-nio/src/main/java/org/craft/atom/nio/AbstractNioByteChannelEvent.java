@@ -14,8 +14,13 @@ import org.craft.atom.io.ChannelEventType;
 @ToString(callSuper = true, of = "channel")
 abstract public class AbstractNioByteChannelEvent extends AbstractChannelEvent implements ChannelEvent<byte[]> {
 	
+	
 	protected final NioByteChannel channel;
+	
+	
+	// ~ --------------------------------------------------------------------------------------------------------------
 
+	
 	AbstractNioByteChannelEvent(ChannelEventType type, NioByteChannel channel) {
 		super(type);
 		if (channel == null) {
@@ -23,6 +28,10 @@ abstract public class AbstractNioByteChannelEvent extends AbstractChannelEvent i
         }
 		this.channel = channel;
 	}
+	
+	
+	// ~ --------------------------------------------------------------------------------------------------------------
+	
 
 	@Override
 	public Channel<byte[]> getChannel() {

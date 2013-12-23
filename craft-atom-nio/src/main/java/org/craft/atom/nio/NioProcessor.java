@@ -158,11 +158,16 @@ public class NioProcessor extends NioReactor {
 	}
 	
 	private void close(NioByteChannel channel) throws IOException {
-		channel.close0();
-		
-		if (protocol == IoProtocol.UDP) {
-			String key = udpChannelKey(channel.getLocalAddress(), channel.getRemoteAddress());
-			udpChannels.remove(key);
+		try {
+			channel.close0();
+			
+			if (protocol == IoProtocol.UDP) {
+				String key = udpChannelKey(channel.getLocalAddress(), channel.getRemoteAddress());
+				udpChannels.remove(key);
+			}
+		} catch (Throwable t) {
+			LOG.warn("[CRAFT-ATOM-NIO] Catch close exception and fire it, channel={}", channel, t);
+			fireChannelThrown(channel, t);
 		}
 	}
 	

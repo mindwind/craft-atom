@@ -18,7 +18,12 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  */
 public class NioTcpByteChannel extends NioByteChannel {
 	
+	
 	private SocketChannel socketChannel;
+	
+	
+	// ~ --------------------------------------------------------------------------------------------------------------
+	
 	
 	public NioTcpByteChannel(SocketChannel socketChannel, NioConfig config, NioBufferSizePredictor predictor, NioChannelEventDispatcher dispatcher) {
 		super(config, predictor, dispatcher);
@@ -28,9 +33,13 @@ public class NioTcpByteChannel extends NioByteChannel {
 		}
 		
 		this.socketChannel = socketChannel;
-		this.localAddress = socketChannel.socket().getLocalSocketAddress();
+		this.localAddress  = socketChannel.socket().getLocalSocketAddress();
 		this.remoteAddress = socketChannel.socket().getRemoteSocketAddress();
 	}
+	
+	
+	// ~ --------------------------------------------------------------------------------------------------------------
+	
 
 	@Override
 	protected SelectableChannel innerChannel() {

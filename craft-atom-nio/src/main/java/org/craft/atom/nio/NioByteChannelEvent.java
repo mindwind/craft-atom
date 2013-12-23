@@ -24,7 +24,7 @@ public class NioByteChannelEvent extends AbstractNioByteChannelEvent {
 	private final IoHandler handler  ;
 	
 	
-	// ~ ----------------------------------------------------------------------------------------------------------
+	// ~ --------------------------------------------------------------------------------------------------------------
 	
 	
 	NioByteChannelEvent(ChannelEventType type, NioByteChannel channel, IoHandler handler) {
@@ -42,7 +42,9 @@ public class NioByteChannelEvent extends AbstractNioByteChannelEvent {
         this.parameter = parameter;
     }
 	
-	// ~ ----------------------------------------------------------------------------------------------------------
+	
+	// ~ --------------------------------------------------------------------------------------------------------------
+	
 	
 	@Override
 	public void fire() {

@@ -28,23 +28,25 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  */
 @ToString(callSuper = true, of = { "localAddress", "remoteAddress" })
 abstract public class NioByteChannel extends AbstractIoByteChannel {
+	                   
 	
-	protected SocketAddress localAddress;
-	protected SocketAddress remoteAddress;
+	protected          SocketAddress               localAddress                                                        ;
+	protected          SocketAddress               remoteAddress                                                       ;
+	protected          SelectionKey                selectionKey                                                        ;
+	protected          NioProcessor                processor                                                           ;
+	protected final    Semaphore                   semaphore                                                           ;
+	protected final    NioChannelEventDispatcher   dispatcher                                                          ;
+	protected final    NioBufferSizePredictor      predictor                                                           ;
+	protected final    Queue<ByteBuffer>           writeBufferQueue = new ConcurrentLinkedQueue<ByteBuffer>()          ;
+	protected final    Queue<ChannelEvent<byte[]>> eventQueue       = new ConcurrentLinkedQueue<ChannelEvent<byte[]>>();
+	protected final    Object                      lock             = new Object()                                     ;
+	protected final    AtomicBoolean               scheduleFlush    = new AtomicBoolean(false)                         ;
+	protected volatile boolean                     eventProcessing  = false                                            ;
 	
-	protected SelectionKey selectionKey;
-	protected NioProcessor processor;
-	protected final Semaphore semaphore;
-	protected final NioChannelEventDispatcher dispatcher;
-	protected final NioBufferSizePredictor predictor;
-	protected final Queue<ByteBuffer> writeBufferQueue = new ConcurrentLinkedQueue<ByteBuffer>();
-	protected final Queue<ChannelEvent<byte[]>> eventQueue = new ConcurrentLinkedQueue<ChannelEvent<byte[]>>();
-	protected final Object lock = new Object();
-	protected final AtomicBoolean scheduleFlush = new AtomicBoolean(false);
-	protected volatile boolean eventProcessing = false;
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	public NioByteChannel(NioConfig config, NioBufferSizePredictor predictor, NioChannelEventDispatcher dispatcher) {
 		super(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize());
 		this.semaphore = new Semaphore(config.getChannelEventSize(), false);
@@ -52,8 +54,10 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 		this.dispatcher = dispatcher;
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	@Override
 	public void close() {
 		synchronized (lock) {
@@ -124,8 +128,10 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
         return true;
     }
 	
+    
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
+    
 	void add(ChannelEvent<byte[]> event) {
 		eventQueue.offer(event);
 	}
@@ -190,8 +196,10 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 		return predictor;
 	}
 
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	protected void close0() throws IOException { /* override this */ }
 	protected int readTcp(ByteBuffer buf) throws IOException { return 0; /* override this */ }
 	protected int writeTcp(ByteBuffer buf) throws IOException { return 0; /* override this */ }

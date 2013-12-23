@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 public class NioChannelIdleTimer {
 	
 	
-	private static final Logger              LOG             = LoggerFactory.getLogger(NioChannelIdleTimer.class);
-	private static final NioChannelIdleTimer INSTANCE        = new NioChannelIdleTimer()                   ;
+	private static final Logger              LOG      = LoggerFactory.getLogger(NioChannelIdleTimer.class);
+	private static final NioChannelIdleTimer INSTANCE = new NioChannelIdleTimer()                         ;
 
 
 	private TimingWheel<NioByteChannel> timingWheel    ;

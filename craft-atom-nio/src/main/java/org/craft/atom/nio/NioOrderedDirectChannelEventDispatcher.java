@@ -16,6 +16,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 @ToString(callSuper = true)
 public class NioOrderedDirectChannelEventDispatcher extends AbstractNioChannelEventDispatcher {
 	
+	
 	public NioOrderedDirectChannelEventDispatcher() {
 		super();
 	}
@@ -24,8 +25,10 @@ public class NioOrderedDirectChannelEventDispatcher extends AbstractNioChannelEv
 		super(totalEventSize);
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	@Override
 	public void dispatch(ChannelEvent<byte[]> event) {
 		NioByteChannel channel = (NioByteChannel) event.getChannel();
