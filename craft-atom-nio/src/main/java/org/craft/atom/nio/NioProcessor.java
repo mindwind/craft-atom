@@ -42,6 +42,7 @@ public class NioProcessor extends NioReactor {
 	
 	private static final Logger LOG              = LoggerFactory.getLogger(NioProcessor.class);
 	private static final long   FLUSH_SPIN_COUNT = 256                                        ;
+	private static final long   SELECT_TIMEOUT   = 1000L                                      ;
 	
 	
 	private final    Queue<NioByteChannel>          newChannels       = new ConcurrentLinkedQueue<NioByteChannel>()    ;
@@ -172,9 +173,12 @@ public class NioProcessor extends NioReactor {
 	}
 	
 	private int select() throws IOException {
-		int selected = selector.select();
+		long t0 = System.currentTimeMillis();
+		int selected = selector.select(SELECT_TIMEOUT);
+		long t1 = System.currentTimeMillis();
+		long delta = (t1 - t0);
 		
-		if ((selected == 0) && !wakeupCalled.get()) {
+		if ((selected == 0) && !wakeupCalled.get() && (delta < 100)) {
             // the select() may have been interrupted because we have had an closed channel.
             if (isBrokenConnection()) {
                 LOG.warn("[CRAFT-ATOM-NIO] Broken connection wakeup");
@@ -215,7 +219,7 @@ public class NioProcessor extends NioReactor {
     }
 	
 	private boolean isBrokenConnection() throws IOException {
-		boolean brokenSession = false;
+		boolean broken = false;
 		
 		synchronized (selector) {
 			Set<SelectionKey> keys = selector.keys();
@@ -224,12 +228,12 @@ public class NioProcessor extends NioReactor {
 				if (!((SocketChannel) channel).isConnected()) {
 					// The channel is not connected anymore. Cancel the associated key.
 					key.cancel();
-					brokenSession = true;
+					broken = true;
 				}
 			}
 		}
 		
-		return brokenSession;
+		return broken;
 	}
 	
 	private void register() throws ClosedChannelException {
