@@ -18,6 +18,7 @@ public class IoReactorX implements Serializable {
 	
 	private static final long serialVersionUID = 3536608515158732642L;
 
+	
 	@Getter @Setter protected boolean            isSelectable                                    ;
 	@Getter @Setter protected List<IoProcessorX> ioProcessorXList = new ArrayList<IoProcessorX>();
 

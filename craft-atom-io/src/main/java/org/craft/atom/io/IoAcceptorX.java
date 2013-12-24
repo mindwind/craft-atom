@@ -12,7 +12,7 @@ import lombok.ToString;
  * @author mindwind
  * @version 1.0, Dec 24, 2013
  */
-@ToString
+@ToString(callSuper = true)
 public class IoAcceptorX extends IoReactorX implements Serializable {
 
 	
