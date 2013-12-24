@@ -79,6 +79,7 @@ public class NioProcessor extends NioReactor {
     
     // ~ ------------------------------------------------------------------------------------------------------------
     
+    
 	/**
 	 * Adds a nio channel to processor's new channel queue, so that processor can process I/O operations associated this channel.
 	 * 
@@ -183,7 +184,7 @@ public class NioProcessor extends NioReactor {
             if (isBrokenConnection()) {
                 LOG.warn("[CRAFT-ATOM-NIO] Broken connection wakeup");
             } else {
-                LOG.warn("[CRAFT-ATOM-NIO] Create a new selector, selected is 0");
+                LOG.warn("[CRAFT-ATOM-NIO] Create a new selector, selected={}, delta={}", selected, delta);
                 
                 // it is a workaround method for jdk bug, see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6403933
                 registerNewSelector();
