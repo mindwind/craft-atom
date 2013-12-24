@@ -1,6 +1,7 @@
 package org.craft.atom.util.schedule;
 
 import java.util.Date;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
@@ -64,7 +65,9 @@ public class TestTimingWheel {
 		wheel.remove("test-4");
 		wheel.remove("test-5");
 		Assert.assertEquals(7, wheel.size());
-		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test timing wheel remove. ", CaseCounter.incr(2)));
+		Set<String> set = wheel.elements();
+		Assert.assertEquals(7, set.size());
+		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> test timing wheel remove. ", CaseCounter.incr(3)));
 	}
 	
 	@Test
