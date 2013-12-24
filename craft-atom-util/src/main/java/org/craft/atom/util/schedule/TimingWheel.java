@@ -228,8 +228,17 @@ public class TimingWheel<E> {
 		return indicator.size();
 	}
 	
+	/**
+	 * @return the elements within timing wheel.
+	 */
+	public Set<E> elements() {
+		return indicator.keySet();
+	}
+	
+	
 	// ~ -------------------------------------------------------------------------------------------------------------
-	 
+	
+	
 	private class TickWorker implements Runnable {
 
 		private long startTime;
