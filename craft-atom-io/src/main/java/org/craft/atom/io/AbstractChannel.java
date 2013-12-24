@@ -18,13 +18,17 @@ import lombok.ToString;
 @ToString(of = { "id", "state" })
 abstract public class AbstractChannel {
 	
+	
 	private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
 	
-	@Getter protected long id;
-	protected Map<Object, Object> attributes = new ConcurrentHashMap<Object, Object>();
-	protected volatile ChannelState state = ChannelState.OPEN;
+	
+	@Getter protected long                  id                                                  ;
+	        protected Map<Object, Object>   attributes = new ConcurrentHashMap<Object, Object>();
+	        protected volatile ChannelState state      = ChannelState.OPEN                      ;
+	
 	
 	// ~ -----------------------------------------------------------------------------------------------------------
+	
 	
 	public AbstractChannel() {
 		id = ID_GENERATOR.incrementAndGet();
@@ -34,7 +38,9 @@ abstract public class AbstractChannel {
 		this.id = id;
 	}
 
+	
 	// ~ -----------------------------------------------------------------------------------------------------------
+	
 	
 	public boolean isOpen() {
 		return state == ChannelState.OPEN;

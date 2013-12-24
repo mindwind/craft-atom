@@ -21,8 +21,8 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 abstract public class NioReactor implements IoReactor {
 
 	
-	protected IoHandler handler;
-	protected NioChannelEventDispatcher dispatcher;
+	protected IoHandler                     handler         ;
+	protected NioChannelEventDispatcher     dispatcher      ;
 	protected NioBufferSizePredictorFactory predictorFactory;
 	
 	

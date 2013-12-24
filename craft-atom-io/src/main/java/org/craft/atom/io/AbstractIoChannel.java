@@ -13,13 +13,16 @@ import lombok.ToString;
 @ToString(callSuper = true, of = {})
 public abstract class AbstractIoChannel extends AbstractChannel {
 
-	@Getter @Setter protected long lastIoTime = System.currentTimeMillis();
-	@Getter protected int minReadBufferSize = IoConfig.MIN_READ_BUFFER_SIZE;
-	@Getter protected int defaultReadBufferSize = IoConfig.DEFAULT_READ_BUFFER_SIZE;
-	@Getter protected int maxReadBufferSize = IoConfig.MAX_READ_BUFFER_SIZE;
-	@Getter protected int maxWriteBufferSize = maxReadBufferSize + (maxReadBufferSize >>> 1);
+	
+	@Getter @Setter protected long lastIoTime           = System.currentTimeMillis()                   ;
+	@Getter         protected int minReadBufferSize     = IoConfig.MIN_READ_BUFFER_SIZE                ;
+	@Getter         protected int defaultReadBufferSize = IoConfig.DEFAULT_READ_BUFFER_SIZE            ;
+	@Getter         protected int maxReadBufferSize     = IoConfig.MAX_READ_BUFFER_SIZE                ;
+	@Getter         protected int maxWriteBufferSize    = maxReadBufferSize + (maxReadBufferSize >>> 1);
+	
 	
 	// ~ -----------------------------------------------------------------------------------------------------------
+	
 	
 	public AbstractIoChannel() {
 		super();
@@ -36,24 +39,24 @@ public abstract class AbstractIoChannel extends AbstractChannel {
 	
 	public AbstractIoChannel(int minReadBufferSize, int defaultReadBufferSize) {
 		super();
-		this.minReadBufferSize = minReadBufferSize;
+		this.minReadBufferSize     = minReadBufferSize    ;
 		this.defaultReadBufferSize = defaultReadBufferSize;
 	}
 	
 	public AbstractIoChannel(int minReadBufferSize, int defaultReadBufferSize, int maxReadBufferSize) {
 		super();
-		this.minReadBufferSize = minReadBufferSize;
+		this.minReadBufferSize     = minReadBufferSize    ;
 		this.defaultReadBufferSize = defaultReadBufferSize;
-		this.maxReadBufferSize = maxReadBufferSize;
+		this.maxReadBufferSize     = maxReadBufferSize    ;
 	}
 	
 	public AbstractIoChannel(long lastIoTime, int minReadBufferSize, int defaultReadBufferSize, int maxReadBufferSize, int maxWriteBufferSize) {
 		super();
-		this.lastIoTime = lastIoTime;
-		this.minReadBufferSize = minReadBufferSize;
+		this.lastIoTime            = lastIoTime           ;
+		this.minReadBufferSize     = minReadBufferSize    ;
 		this.defaultReadBufferSize = defaultReadBufferSize;
-		this.maxReadBufferSize = maxReadBufferSize;
-		this.maxWriteBufferSize = maxWriteBufferSize;
+		this.maxReadBufferSize     = maxReadBufferSize    ;
+		this.maxWriteBufferSize    = maxWriteBufferSize   ;
 	}
 
 	// ~ -----------------------------------------------------------------------------------------------------------

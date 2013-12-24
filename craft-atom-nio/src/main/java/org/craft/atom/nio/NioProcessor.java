@@ -659,7 +659,6 @@ public class NioProcessor extends NioReactor {
 					
 					// close channels
 					close();
-					
 				} catch (Exception e) {
 					LOG.error("[CRAFT-ATOM-NIO] Unexpected exception caught while process", e);
 				}
