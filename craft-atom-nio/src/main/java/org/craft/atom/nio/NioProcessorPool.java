@@ -20,6 +20,7 @@ public class NioProcessorPool {
 	@Getter private final NioConfig                 config    ;
 	@Getter private final NioChannelEventDispatcher dispatcher;
 	@Getter private final IoHandler                 handler   ;
+	@Getter private final NioChannelIdleTimer       idleTimer ;
 	
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
@@ -35,11 +36,11 @@ public class NioProcessorPool {
 			size = 1;
 		}
 		
-		this.pool = new NioProcessor[size];
-		this.config = config;
-		this.handler = handler;
+		this.pool       = new NioProcessor[size];
+		this.config     = config;
+		this.handler    = handler;
 		this.dispatcher = dispatcher;
-		NioChannelIdleTimer.getInstance().init(dispatcher, handler, config.getIoTimeoutInMillis());
+		this.idleTimer  = new NioChannelIdleTimer(dispatcher, handler, config.getIoTimeoutInMillis());
 		fill(pool);
 	}
 	
@@ -53,7 +54,7 @@ public class NioProcessorPool {
 		}
 
 		for (int i = 0; i < pool.length; i++) {
-			pool[i] = new NioProcessor(config, handler, dispatcher);
+			pool[i] = new NioProcessor(config, handler, dispatcher, idleTimer);
 		}
 	}
 	

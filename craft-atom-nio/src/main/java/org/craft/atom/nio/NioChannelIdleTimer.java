@@ -1,5 +1,6 @@
 package org.craft.atom.nio;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -23,8 +24,7 @@ import org.slf4j.LoggerFactory;
 public class NioChannelIdleTimer {
 	
 	
-	private static final Logger              LOG      = LoggerFactory.getLogger(NioChannelIdleTimer.class);
-	private static final NioChannelIdleTimer INSTANCE = new NioChannelIdleTimer()                         ;
+	private static final Logger LOG      = LoggerFactory.getLogger(NioChannelIdleTimer.class); 
 
 
 	private TimingWheel<NioByteChannel> timingWheel    ;
@@ -36,16 +36,11 @@ public class NioChannelIdleTimer {
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
 	
-	public static NioChannelIdleTimer getInstance() {
-		return INSTANCE;
-	}
-	
-	void init(NioChannelEventDispatcher dispatcher, IoHandler handler, int timeoutInMillis) {
+	NioChannelIdleTimer(NioChannelEventDispatcher dispatcher, IoHandler handler, int timeoutInMillis) {
 		this.dispatcher      = dispatcher;
 		this.handler         = handler;
 		this.timeoutInMillis = timeoutInMillis;
 		this.timingWheel     = new TimingWheel<NioByteChannel>(1000, timeoutInMillis / 1000, TimeUnit.MILLISECONDS);
-		
 		this.timingWheel.addExpirationListener(new NioChannelIdleListener());
 		this.timingWheel.start();
 	}
@@ -59,7 +54,12 @@ public class NioChannelIdleTimer {
 	}
 	
 	Set<NioByteChannel> aliveChannels() {
+		try {
 		return timingWheel.elements();
+		} catch (Throwable t) {
+			t.printStackTrace();
+			return Collections.emptySet();
+		}
 	}
 	
 	private void fireChannelIdle(NioByteChannel channel) {

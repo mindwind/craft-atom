@@ -55,7 +55,7 @@ public class NioProcessor extends NioReactor {
     private final    AtomicReference<ProcessThread> processThreadRef  = new AtomicReference<ProcessThread>()           ;
     private final    NioByteBufferAllocator         allocator         = new NioByteBufferAllocator()                   ;
     private final    AtomicBoolean                  wakeupCalled      = new AtomicBoolean(false)                       ;
-    private final    NioChannelIdleTimer            idleTimer         = NioChannelIdleTimer.getInstance()              ;
+    private final    NioChannelIdleTimer            idleTimer                                                          ;
     private final    NioConfig                      config                                                             ;
     private final    Executor                       executor                                                           ;
     private          IoProtocol                     protocol                                                           ;
@@ -66,11 +66,12 @@ public class NioProcessor extends NioReactor {
 	// ~ ------------------------------------------------------------------------------------------------------------
     
     
-    NioProcessor(NioConfig config, IoHandler handler, NioChannelEventDispatcher dispatcher) {
-		this.config = config;
-		this.handler = handler;
+    NioProcessor(NioConfig config, IoHandler handler, NioChannelEventDispatcher dispatcher, NioChannelIdleTimer idleTimer) {
+		this.config     = config;
+		this.handler    = handler;
 		this.dispatcher = dispatcher;
-		this.executor = Executors.newCachedThreadPool(new NamedThreadFactory("craft-atom-nio-processor"));
+		this.idleTimer  = idleTimer;
+		this.executor   = Executors.newCachedThreadPool(new NamedThreadFactory("craft-atom-nio-processor"));
 		
 		try {
 			selector = Selector.open();
