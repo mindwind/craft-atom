@@ -24,6 +24,7 @@ abstract public class NioReactor implements IoReactor {
 	protected IoHandler                     handler         ;
 	protected NioChannelEventDispatcher     dispatcher      ;
 	protected NioBufferSizePredictorFactory predictorFactory;
+	protected NioProcessorPool              pool            ;
 	
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
@@ -33,24 +34,13 @@ abstract public class NioReactor implements IoReactor {
 	public IoHandler getHandler() {
 		return handler;
 	}
-
-	public void setHandler(IoHandler handler) {
-		this.handler = handler;
-	}
 	
 	public NioChannelEventDispatcher getDispatcher() {
 		return dispatcher;
-	}
-
-	public void setDispatcher(NioChannelEventDispatcher dispatcher) {
-		this.dispatcher = dispatcher;
 	}
 	
 	public NioBufferSizePredictorFactory getPredictorFactory() {
 		return predictorFactory;
 	}
 
-	public void setPredictorFactory(NioBufferSizePredictorFactory predictorFactory) {
-		this.predictorFactory = predictorFactory;
-	}
 }

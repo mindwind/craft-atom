@@ -10,7 +10,7 @@ import java.util.Set;
  * @author mindwind
  * @version 1.0, Mar 12, 2013
  */
-public interface IoAcceptor extends IoReactor {
+public interface IoAcceptor extends IoReactor, IoAcceptorMXBean {
 	
 	/**
 	 * Binds to specified local port with any local address and start to accept incoming request.

@@ -17,12 +17,23 @@ craft-atom 2.1.0  >>> coming soon
 -----------------------------------------------------------------------------------------------------------------------
 UPGRADE URGENCY: LOW
 
-* craft-atom
-  [IMPROVE]  - unify logger and format 
-  
 * craft-atom-redis
   [FIX]      - shutdown command, jedis doesn't support SAVE/NOSAVE modifier
   [IMPROVE]  - support redis 2.8.*
+
+
+
+
+
+craft-atom 2.0.2
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: HIGH
+
+* craft-atom
+  [IMPROVE]  - unify logger and format
+
+* craft-atom-nio
+  [NEW]      - jmx MXBean support
 
 
 

@@ -80,8 +80,10 @@ public class NioTcpAcceptor extends NioAcceptor {
 		super(handler, config, dispatcher, predictorFactory);
 	}
 	
+	
 	// ~ -------------------------------------------------------------------------------------------------------------
 
+	
 	@Override
 	protected void bindByProtocol(SocketAddress address) throws IOException {
 		ServerSocketChannel ssc = ServerSocketChannel.open();

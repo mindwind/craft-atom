@@ -1,5 +1,6 @@
 package org.craft.atom.nio;
 
+import lombok.Getter;
 import lombok.ToString;
 
 import org.craft.atom.io.IoHandler;
@@ -14,12 +15,15 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 @ToString(of = { "pool", "config" })
 public class NioProcessorPool {
 	
-	private final NioProcessor[] pool;
-	private final NioConfig config;
-	private final NioChannelEventDispatcher dispatcher;
-	private final IoHandler handler;
+	
+	@Getter private final NioProcessor[]            pool      ;
+	@Getter private final NioConfig                 config    ;
+	@Getter private final NioChannelEventDispatcher dispatcher;
+	@Getter private final IoHandler                 handler   ;
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
+	
 	
 	public NioProcessorPool(NioConfig config, IoHandler handler, NioChannelEventDispatcher dispatcher) {
 		if (config == null) {
@@ -39,7 +43,9 @@ public class NioProcessorPool {
 		fill(pool);
 	}
 	
+	
 	// ~ ----------------------------------------------------------------------------------------------------------
+	
 	
 	private void fill(NioProcessor[] pool) {
 		if (pool == null) {

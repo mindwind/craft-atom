@@ -1,5 +1,6 @@
 package org.craft.atom.nio;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import lombok.ToString;
@@ -55,6 +56,10 @@ public class NioChannelIdleTimer {
 	
 	void remove(NioByteChannel channel) {
 		timingWheel.remove(channel);
+	}
+	
+	Set<NioByteChannel> aliveChannels() {
+		return timingWheel.elements();
 	}
 	
 	private void fireChannelIdle(NioByteChannel channel) {

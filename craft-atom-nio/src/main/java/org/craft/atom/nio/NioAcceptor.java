@@ -19,7 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.ToString;
 
 import org.craft.atom.io.IoAcceptor;
+import org.craft.atom.io.IoAcceptorX;
 import org.craft.atom.io.IoHandler;
+import org.craft.atom.io.IoProcessorX;
 import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.api.NioAcceptorConfig;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
@@ -42,32 +44,19 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	private static final Logger LOG = LoggerFactory.getLogger(NioAcceptor.class);
 	
 	
-	protected NioAcceptorConfig config;
-	
-	/** Wait for bindding addresses */
-	protected final Set<SocketAddress> bindAddresses = new HashSet<SocketAddress>();
-	
-	/** Wait for unbinding addresses */
-	protected final Set<SocketAddress> unbindAddresses = new HashSet<SocketAddress>();
-	
-	/** Already bound addresses and the server socket channel */
-	protected final Map<SocketAddress, SelectableChannel> boundmap = new ConcurrentHashMap<SocketAddress, SelectableChannel>();
-	
-	protected Selector selector;
-	protected volatile boolean selectable = false;
-	protected final NioProcessorPool pool;
-	
-	/** Lock object for bind/unbind */
-	protected final Object lock = new Object();
-	
-	/** End flag for bind/unbind operation */
-	protected volatile boolean endFlag = false;
-	
-	/** Bind/unbind exception reference */
-	protected IOException exception;
+	protected final    Set<SocketAddress>                    bindAddresses   = new HashSet<SocketAddress>()                             ;
+	protected final    Set<SocketAddress>                    unbindAddresses = new HashSet<SocketAddress>()                             ;
+	protected final    Map<SocketAddress, SelectableChannel> boundmap        = new ConcurrentHashMap<SocketAddress, SelectableChannel>();
+	protected final    Object                                lock            = new Object()                                             ;
+	protected volatile boolean                               selectable      = false                                                    ;
+	protected volatile boolean                               endFlag         = false                                                    ;
+	protected          NioAcceptorConfig                     config                                                                     ;
+	protected          IOException                           exception                                                                  ;
+	protected          Selector                              selector                                                                   ;
 	
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
+	
 	
 	/**
 	 * Constructs a new nio acceptor with default configuration, binds to the specified local address port.
@@ -229,7 +218,9 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		this.pool = new NioProcessorPool(config, handler, dispatcher);
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	/**
 	 * Init nio acceptor to ready state for bind socket address.
@@ -517,6 +508,21 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 				LOG.error("[CRAFT-ATOM-NIO] Unexpected exception caught while shutdown", e);
 			}
 		}
+	}
+	
+	@Override
+	public IoAcceptorX x() {
+		IoAcceptorX iax = new IoAcceptorX();
+		iax.setSelectable(selectable);
+		iax.setWaitBindAddresses(new HashSet<SocketAddress>(bindAddresses));
+		iax.setWaitUnbindAddresses(new HashSet<SocketAddress>(unbindAddresses));
+		iax.setBoundAddresses(new HashSet<SocketAddress>(boundmap.keySet()));
+		NioProcessor[] nps = pool.getPool();
+		for (NioProcessor np : nps) {
+			IoProcessorX ipx = np.x();
+			iax.add(ipx);
+		}
+		return iax;
 	}
 
 }

@@ -8,6 +8,7 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
@@ -21,8 +22,10 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import lombok.ToString;
 
+import org.craft.atom.io.Channel;
 import org.craft.atom.io.ChannelEventType;
 import org.craft.atom.io.IoHandler;
+import org.craft.atom.io.IoProcessorX;
 import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 import org.craft.atom.util.NamedThreadFactory;
@@ -617,7 +620,9 @@ public class NioProcessor extends NioReactor {
 		wakeup();
     }
 	
+    
 	// ~ -------------------------------------------------------------------------------------------------------------
+    
     
     private void fireChannelOpened(NioByteChannel channel) {
     	dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_OPENED, channel, handler));
@@ -646,8 +651,10 @@ public class NioProcessor extends NioReactor {
 		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_CLOSED, channel, handler));
 	}
 	
+	
 	// ~ -------------------------------------------------------------------------------------------------------------
 
+	
 	private class ProcessThread implements Runnable {
 		public void run() {
 			while (!shutdown) {
@@ -680,10 +687,21 @@ public class NioProcessor extends NioReactor {
 		}
 	}
 	
+	
 	// ~ -------------------------------------------------------------------------------------------------------------
+	
 	
 	public void setProtocol(IoProtocol protocol) {
 		this.protocol = protocol;
+	}
+	
+	IoProcessorX x() {
+		IoProcessorX ipx = new IoProcessorX();
+		ipx.setNewChannels(new HashSet<Channel<byte[]>>(newChannels));
+		ipx.setFlushingChannels(new HashSet<Channel<byte[]>>(flushingChannels));
+		ipx.setClosingChannels(new HashSet<Channel<byte[]>>(closingChannels));
+		ipx.setAliveChannels(new HashSet<Channel<byte[]>>(idleTimer.aliveChannels()));
+		return ipx;
 	}
 
 }

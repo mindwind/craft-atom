@@ -34,9 +34,7 @@ abstract public class NioConnector extends NioReactor implements IoConnector {
 	private static final Logger LOG = LoggerFactory.getLogger(NioConnector.class);
 	
 	
-	protected final    NioConnectorConfig config                                                                                             ;
-	protected final    IoHandler          handler                                                                                            ;
-	protected final    NioProcessorPool   pool                                                                                               ;
+	protected final    NioConnectorConfig config                                                                                             ;                                                                                          ;                                                                                             ;
 	protected final    ExecutorService    executorService = Executors.newCachedThreadPool(new NamedThreadFactory("craft-atom-nio-connector"));
 	protected volatile boolean            selectable      = false                                                                            ;
 	protected volatile boolean            shutdown        = false                                                                            ;
