@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.ToString;
 
+import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoAcceptor;
 import org.craft.atom.io.IoAcceptorX;
 import org.craft.atom.io.IoHandler;
@@ -517,6 +518,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		iax.setWaitBindAddresses(new HashSet<SocketAddress>(bindAddresses));
 		iax.setWaitUnbindAddresses(new HashSet<SocketAddress>(unbindAddresses));
 		iax.setBoundAddresses(new HashSet<SocketAddress>(boundmap.keySet()));
+		iax.setAliveChannels(new HashSet<Channel<byte[]>>(pool.getIdleTimer().aliveChannels()));
 		NioProcessor[] nps = pool.getPool();
 		for (NioProcessor np : nps) {
 			IoProcessorX ipx = np.x();

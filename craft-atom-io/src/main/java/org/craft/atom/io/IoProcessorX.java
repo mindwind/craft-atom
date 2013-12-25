@@ -22,6 +22,5 @@ public class IoProcessorX implements Serializable {
 	@Getter @Setter private Set<Channel<byte[]>> newChannels      = Collections.emptySet();
 	@Getter @Setter private Set<Channel<byte[]>> flushingChannels = Collections.emptySet();
 	@Getter @Setter private Set<Channel<byte[]>> closingChannels  = Collections.emptySet();
-	@Getter @Setter private Set<Channel<byte[]>> aliveChannels    = Collections.emptySet();
 	
 }

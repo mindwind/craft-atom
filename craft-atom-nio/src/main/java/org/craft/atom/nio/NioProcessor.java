@@ -701,7 +701,6 @@ public class NioProcessor extends NioReactor {
 		ipx.setNewChannels(new HashSet<Channel<byte[]>>(newChannels));
 		ipx.setFlushingChannels(new HashSet<Channel<byte[]>>(flushingChannels));
 		ipx.setClosingChannels(new HashSet<Channel<byte[]>>(closingChannels));
-		ipx.setAliveChannels(new HashSet<Channel<byte[]>>(idleTimer.aliveChannels()));
 		return ipx;
 	}
 

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.Callable;
@@ -342,6 +343,7 @@ public class NioTcpConnector extends NioConnector {
 	public IoConnectorX x() {
 		IoConnectorX icx = new IoConnectorX();
 		icx.setSelectable(selectable);
+		icx.setAliveChannels(new HashSet<Channel<byte[]>>(pool.getIdleTimer().aliveChannels()));
 		for (ConnectionCall cc : connectQueue) {
 			icx.addConnectingChannel(cc.getSocketChannel());
 		}
