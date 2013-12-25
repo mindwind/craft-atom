@@ -14,9 +14,9 @@ import lombok.ToString;
  */
 @ToString
 public class IoProcessorX implements Serializable {
-
 	
-	private static final long serialVersionUID = 3536608515158732642L;
+	
+	private static final long serialVersionUID = 5369014456865137851L;
 	
 	
 	@Getter @Setter private Set<Channel<byte[]>> newChannels      = Collections.emptySet();

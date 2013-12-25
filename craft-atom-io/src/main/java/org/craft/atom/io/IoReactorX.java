@@ -15,8 +15,8 @@ import lombok.ToString;
 @ToString
 public class IoReactorX implements Serializable {
 
-	
-	private static final long serialVersionUID = 3536608515158732642L;
+
+	private static final long serialVersionUID = 5772691776878955554L;
 
 	
 	@Getter @Setter protected boolean            isSelectable                                    ;

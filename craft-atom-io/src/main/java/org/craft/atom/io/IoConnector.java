@@ -9,7 +9,7 @@ import java.util.concurrent.Future;
  * @author mindwind
  * @version 1.0, Mar 12, 2013
  */
-public interface IoConnector extends IoReactor {
+public interface IoConnector extends IoReactor, IoConnectorMXBean {
 	
 	/**
 	 * Connects to the specified ip and port.
