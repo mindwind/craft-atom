@@ -75,7 +75,7 @@ public class NioTcpByteChannel extends NioByteChannel {
 
 	@Override
 	public String toString() {
-		return String.format("{id=%s: <%s - %s>}", getIdAsString(), localAddress, remoteAddress, state);
+		return String.format("<id=%s, %s -- %s, state=%s>", getIdAsString(), localAddress, remoteAddress, state);
 	}
 
 }
