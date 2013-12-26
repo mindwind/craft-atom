@@ -296,7 +296,7 @@ public class NioProcessor extends NioReactor {
 				readBytes = readUdp(channel, buf);
 			}
 		} catch (Throwable t) {
-			LOG.warn("[CRAFT-ATOM-NIO] Catch read exception and fire it, channel={}", channel, t);
+			LOG.info("[CRAFT-ATOM-NIO] Catch read exception and fire it, channel={}", channel, t);
 
 			// fire exception caught event
 			fireChannelThrown(channel, t);
@@ -413,7 +413,7 @@ public class NioProcessor extends NioReactor {
             		flush0(channel);
             	}
 			} catch (Throwable t) {
-				LOG.warn("[CRAFT-ATOM-NIO] Catch flush exception and fire it", t);
+				LOG.info("[CRAFT-ATOM-NIO] Catch flush exception and fire it", t);
 				
 				// fire channel thrown event 
 				fireChannelThrown(channel, t);
