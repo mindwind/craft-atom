@@ -34,6 +34,7 @@ UPGRADE URGENCY: HIGH
 
 * craft-atom-nio
   [NEW]      - jmx MXBean support
+  [FIX]      - file descriptor leak.
 
 
 
