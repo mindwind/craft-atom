@@ -785,7 +785,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Set<String> sunion(String... keys) {
-		return sunion(keys);
+		return master().sunion(keys);
 	}
 
 	@Override
