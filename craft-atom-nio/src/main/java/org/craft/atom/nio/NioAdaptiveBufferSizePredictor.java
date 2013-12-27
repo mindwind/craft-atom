@@ -22,21 +22,25 @@ import org.craft.atom.nio.spi.NioBufferSizePredictor;
 @ToString(of = { "minIndex", "maxIndex", "index", "nextSize", "decreaseNow" })
 public class NioAdaptiveBufferSizePredictor implements NioBufferSizePredictor {
 	
-	private static final int DEFAULT_MINIMUM = 64;
-	private static final int DEFAULT_INITIAL = 1024;
-	private static final int DEFAULT_MAXIMUM = 65536;
-	private static final int INDEX_INCREMENT = 4;
-    private static final int INDEX_DECREMENT = 1;
-    private static final int[] SIZE_TABLE;
+	
+	private static final int   DEFAULT_MINIMUM = 64   ;
+	private static final int   DEFAULT_INITIAL = 1024 ;
+	private static final int   DEFAULT_MAXIMUM = 65536;
+	private static final int   INDEX_INCREMENT = 4    ;
+    private static final int   INDEX_DECREMENT = 1    ;
+    private static final int[] SIZE_TABLE             ;
     
-    private final int minIndex;
-    private final int maxIndex;
-    private int index;
-    private int nextSize;
-    private boolean decreaseNow;
+    
+    private final int     minIndex   ;
+    private final int     maxIndex   ;
+    private       int     index      ;
+    private       int     nextSize   ;
+    private       boolean decreaseNow;
+    
     
     // ~ -------------------------------------------------------------------------------------------------------------
 
+    
     static {
         List<Integer> sizeTable = new ArrayList<Integer>();
         for (int i = 1; i <= 8; i ++) {
@@ -89,7 +93,9 @@ public class NioAdaptiveBufferSizePredictor implements NioBufferSizePredictor {
         throw new Error("shouldn't reach here; please file a bug report.");
     }
     
+    
     // ~ -------------------------------------------------------------------------------------------------------------
+    
     
     /**
      * Creates a new predictor with the default parameters.  With the default
@@ -136,8 +142,10 @@ public class NioAdaptiveBufferSizePredictor implements NioBufferSizePredictor {
         nextSize = SIZE_TABLE[index];
     }
     
+    
     // ~ -------------------------------------------------------------------------------------------------------------
 
+    
 	@Override
 	public int next() {
 		 return nextSize;
