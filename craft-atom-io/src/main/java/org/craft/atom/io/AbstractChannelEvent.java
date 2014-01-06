@@ -12,7 +12,12 @@ import lombok.ToString;
 @ToString(of = "type")
 abstract public class AbstractChannelEvent {
 	
+	
 	@Getter protected final ChannelEventType type;
+	
+	
+	// ~ -----------------------------------------------------------------------------------------------------------
+	
 	
 	public AbstractChannelEvent(ChannelEventType type) {
 		if (type == null) {
