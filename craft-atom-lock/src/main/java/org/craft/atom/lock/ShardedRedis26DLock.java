@@ -26,6 +26,10 @@ public class ShardedRedis26DLock implements DLock {
 	
 	@Getter @Setter private ShardedRedisCommand shardedRedis;
 	
+	
+	// ~ ----------------------------------------------------------------------------------------------------------
+	
+	
 	public ShardedRedis26DLock() {
 		super();
 	}

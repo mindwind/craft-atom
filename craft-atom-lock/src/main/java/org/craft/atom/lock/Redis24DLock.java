@@ -28,6 +28,10 @@ public class Redis24DLock implements DLock {
 	
 	@Getter @Setter private RedisCommand redis;
 	
+	
+	// ~ ----------------------------------------------------------------------------------------------------------
+	
+	
 	public Redis24DLock() {
 		super();
 	}

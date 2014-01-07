@@ -26,6 +26,10 @@ public class Redis26DLock implements DLock {
 	
 	@Getter @Setter private RedisCommand redis;
 	
+	
+	// ~ ----------------------------------------------------------------------------------------------------------
+	
+	
 	public Redis26DLock() {
 		super();
 	}
