@@ -20,7 +20,9 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 @ToString(callSuper = true)
 public class NioUdpByteChannel extends NioByteChannel {
 	
+	
 	private DatagramChannel datagramChannel; 
+	
 
 	public NioUdpByteChannel(DatagramChannel datagramChannel, NioConfig config, NioBufferSizePredictor predictor, NioChannelEventDispatcher dispatcher) {
 		super(config, predictor, dispatcher);

@@ -70,8 +70,10 @@ public class NioUdpAcceptor extends NioAcceptor {
 		super(handler, config, dispatcher, predictorFactory);
 	}
 	
+	
 	// ~ -------------------------------------------------------------------------------------------------------------
 
+	
 	@Override
 	protected void bindByProtocol(SocketAddress address) throws IOException {
 		DatagramChannel dc = DatagramChannel.open();

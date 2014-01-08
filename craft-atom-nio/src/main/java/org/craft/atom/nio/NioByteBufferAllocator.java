@@ -16,12 +16,15 @@ import lombok.ToString;
 @ToString(of = { "buf", "exceedCount", "maxExceedCount", "percentual" })
 public class NioByteBufferAllocator {
 	
-	private ByteBuffer buf;
-    private int exceedCount;
-    private final int maxExceedCount;
-    private final int percentual;
+	
+	private       ByteBuffer buf           ;
+    private       int        exceedCount   ;
+    private final int        maxExceedCount;
+    private final int        percentual    ;
     
-    // ~ ----------------------
+    
+    // ~ -------------------------------------------------------------------------------------------------------------
+    
     
     NioByteBufferAllocator() {
         this(16, 80);
@@ -31,6 +34,10 @@ public class NioByteBufferAllocator {
         this.maxExceedCount = maxExceedCount;
         this.percentual = percentual;
     }
+    
+    
+    // ~ -------------------------------------------------------------------------------------------------------------
+    
     
     ByteBuffer allocate(int size) {
         if (buf == null) {
