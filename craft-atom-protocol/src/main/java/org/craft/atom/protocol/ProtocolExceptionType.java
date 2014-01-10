@@ -8,12 +8,15 @@ package org.craft.atom.protocol;
  */
 public enum ProtocolExceptionType {
 
-	UNEXPECTED("Unexpected protocol processing error, cause="),
+	
+	UNEXPECTED       ("Unexpected protocol processing error, cause="),
 	LINE_LENGTH_LIMIT("Line length limit exceeded, limit="), 
-	MAX_SIZE_LIMIT("Max size limit exceeded, limit=");
+	MAX_SIZE_LIMIT   ("Max size limit exceeded, limit=");
+	
 	
 	private final String desc;
 
+	
 	private ProtocolExceptionType(String desc) {
 		this.desc = desc;
 	}

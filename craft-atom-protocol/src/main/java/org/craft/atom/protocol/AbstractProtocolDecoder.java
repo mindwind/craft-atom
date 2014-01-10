@@ -7,27 +7,32 @@ import lombok.ToString;
 import org.craft.atom.util.ByteArrayBuffer;
 
 /**
+ * A protocol decoder base class.
+ * <p>
+ * It contains three index for concrete protocol decoder using:
+ * - splitIndex : The separator index position according to specific protocol, indicates next byte nearby last complete protocol object.<br>
+ * - searchIndex: The cursor index position for protocol process, indicates next byte would be process by protocol codec.<br>
+ * - stateIndex : The index position for protocol state machine process .
+ * 
+ * 
  * @author mindwind
  * @version 1.0, Feb 3, 2013
  */
 @ToString(callSuper = true, of = { "defaultBufferSize", "maxSize", "splitIndex", "searchIndex", "stateIndex", "buf" })
 abstract public class AbstractProtocolDecoder extends AbstractProtocolCodec {
 	
-	/** The separator index position according to specific protocol, indicates next byte nearby last complete protocol object. */
-	@Getter @Setter protected int splitIndex = 0;
+
+	@Getter @Setter protected int             splitIndex        = 0                                     ;
+	@Getter @Setter protected int             searchIndex       = 0                                     ;
+	@Getter @Setter protected int             stateIndex        = 0                                     ;
+	@Getter @Setter protected int             defaultBufferSize = 2048                                  ;
+	@Getter @Setter protected int             maxSize           = defaultBufferSize * 1024              ;
+	@Getter @Setter protected ByteArrayBuffer buf               = new ByteArrayBuffer(defaultBufferSize);
 	
-	/** The cursor index position for protocol process, indicates next byte would be process by protocol codec. */
-	@Getter @Setter protected int searchIndex = 0;
-	
-	/** The index position for protocol state machine process */
-	@Getter @Setter protected int stateIndex = 0;
-	
-	@Getter @Setter protected int defaultBufferSize = 2048;
-	@Getter @Setter protected int maxSize = defaultBufferSize * 1024;
-	@Getter @Setter protected ByteArrayBuffer buf = new ByteArrayBuffer(defaultBufferSize);
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
 
+	
 	protected void reset() {
 		if (splitIndex > 0 && splitIndex < buf.length()) {
 			byte[] tailBytes = buf.array(splitIndex, buf.length());
