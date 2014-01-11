@@ -1,7 +1,7 @@
 # craft-atom
 A crafted and atomic component library for java.
 
-## What is craft-atom?
+## What is it?
 
 It is a multi module projects, each module is a crafted and atomic java library for specific feature.
 
