@@ -23,9 +23,15 @@ import lombok.ToString;
 @ToString(callSuper = true, of = "status")
 public class HttpStatusLine extends HttpStartLine {
 
+	
 	private static final long serialVersionUID = -3219302257563696666L;
 	
+	
 	@Getter @Setter private HttpStatus status;
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
 
 	public HttpStatusLine() {
 		super();

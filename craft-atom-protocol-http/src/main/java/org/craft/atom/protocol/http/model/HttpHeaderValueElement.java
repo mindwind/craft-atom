@@ -43,14 +43,18 @@ import lombok.ToString;
 @ToString(of = { "name", "value", "params" })
 public class HttpHeaderValueElement implements Serializable {
 
+	
 	private static final long serialVersionUID = -5552007949156024715L;
 
-	@Getter @Setter private String name;
-	@Getter @Setter private String value;
+	
+	@Getter @Setter private String              name                                        ;
+	@Getter @Setter private String              value                                       ;
 	@Getter @Setter private Map<String, String> params = new LinkedHashMap<String, String>();
+	
 	
 	// ~ -----------------------------------------------------------------------------------------------------------
 
+	
 	public HttpHeaderValueElement() {
 		super();
 	}
@@ -61,7 +65,9 @@ public class HttpHeaderValueElement implements Serializable {
 		this.params = params;
 	}
 	
+	
 	// ~ -----------------------------------------------------------------------------------------------------------
+	
 	
 	/**
 	 * Add a name value pair parameter, if exists replace it.

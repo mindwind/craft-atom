@@ -15,20 +15,17 @@ import java.util.TimeZone;
  */
 public class HttpDates {
 	
+	
 	/** The date format pattern used to generate the header in RFC 1123 format. */
-    private static final String DATE_FORMAT_RFC1123 = "EEE, dd MMM yyyy HH:mm:ss zzz";
+    private static final String                  DATE_FORMAT_RFC1123 = "EEE, dd MMM yyyy HH:mm:ss zzz";
+    private static final TimeZone                GMT                 = TimeZone.getTimeZone("GMT")    ;
+    private static final ThreadLocal<DateFormat> threadLocal         = new ThreadLocal<DateFormat>()  ;
+    private static       long                    dateAsLong          = 0L                             ;
+    private static       String                  dateAsText          = null                           ;
     
-    /** The time zone to use in the date header. */
-    private static final TimeZone GMT = TimeZone.getTimeZone("GMT");
-    
-    /** The date format thread local object */
-    private static final ThreadLocal<DateFormat> threadLocal = new ThreadLocal<DateFormat>();
-   
-    
-    private static long dateAsLong = 0L;
-    private static String dateAsText = null;
     
     // ~ -----------------------------------------------------------------------------------------------------------
+    
     
     private static DateFormat getDateFormat() {
     	DateFormat df = threadLocal.get();

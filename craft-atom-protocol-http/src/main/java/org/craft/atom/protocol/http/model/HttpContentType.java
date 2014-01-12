@@ -17,13 +17,16 @@ import lombok.ToString;
 @ToString(of = { "mimeType", "charset" })
 public class HttpContentType implements Serializable {
 	
-	private static final long serialVersionUID = -7286615457150709389L;
-	public static final HttpContentType DEFAULT = new HttpContentType(MimeType.TEXT_HTML, Charset.forName("utf-8"));
+	private static final long            serialVersionUID = -7286615457150709389L                                            ;
+	public  static final HttpContentType DEFAULT          = new HttpContentType(MimeType.TEXT_HTML, Charset.forName("utf-8"));
 		
+	
 	@Getter private final MimeType mimeType;
-	@Getter private final Charset charset;
+	@Getter private final Charset  charset ;
+	
 	
 	// ~ -----------------------------------------------------------------------------------------------------------
+	
 	
 	public HttpContentType(Charset charset) {
 		this(null, charset);
@@ -38,7 +41,9 @@ public class HttpContentType implements Serializable {
 		this.charset = charset;
 	}
 	
+	
 	// ~ -----------------------------------------------------------------------------------------------------------
+	
 	
     public String toHttpString() {
         StringBuilder buf = new StringBuilder();

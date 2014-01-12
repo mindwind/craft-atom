@@ -48,38 +48,41 @@ import org.craft.atom.util.GzipUtil;
 @ToString(callSuper = true, of = { "state", "maxLineLength" })
 abstract public class HttpDecoder<T extends HttpMessage> extends AbstractProtocolDecoder {
 	
-	protected static final int START = 0;
-	protected static final int METHOD = 11;
-	protected static final int REQUEST_URI = 12;
-	protected static final int STATUS_CODE = 21;
-	protected static final int REASON_PHRASE = 22;
-	protected static final int VERSION = 30;
-	protected static final int HEADER_NAME = 40;
-	protected static final int HEADER_VALUE_PREFIX = 41;
-	protected static final int HEADER_VALUE = 42;
-	protected static final int HEADER_VALUE_SUFFIX = 43;
-	protected static final int ENTITY = 50;
-	protected static final int ENTITY_LENGTH = 51;
-	protected static final int ENTITY_CHUNKED_SIZE = 52;
-	protected static final int ENTITY_CHUNKED_EXTENSION_NAME = 53;
-	protected static final int ENTITY_CHUNKED_EXTENSION_VALUE = 54;
-	protected static final int ENTITY_CHUNKED_DATA = 55;
-	protected static final int ENTITY_CHUNKED_TRAILER_NAME = 56;
-	protected static final int ENTITY_CHUNKED_TRAILER_VALUE = 57;
-	protected static final int ENTITY_ENCODING = 58;
-	protected static final int END = -1;
 	
-	@Getter @Setter protected int maxLineLength = defaultBufferSize;
-	@Getter protected int state = START;
-	@Getter protected int trailerSize;
-	@Getter protected HttpHeader header;
-	@Getter protected HttpEntity entity;
-	@Getter protected HttpChunk chunk;
-	@Getter protected HttpContentType contentType;
-	@Getter protected String chunkExtName;
-	@Getter protected T httpMessage;
+	protected static final int START                          = 0;
+	protected static final int METHOD                         = 11;
+	protected static final int REQUEST_URI                    = 12;
+	protected static final int STATUS_CODE                    = 21;
+	protected static final int REASON_PHRASE                  = 22;
+	protected static final int VERSION                        = 30;
+	protected static final int HEADER_NAME                    = 40;
+	protected static final int HEADER_VALUE_PREFIX            = 41; 
+	protected static final int HEADER_VALUE                   = 42;
+	protected static final int HEADER_VALUE_SUFFIX            = 43;
+	protected static final int ENTITY                         = 50;
+	protected static final int ENTITY_LENGTH                  = 51;
+	protected static final int ENTITY_CHUNKED_SIZE            = 52;
+	protected static final int ENTITY_CHUNKED_EXTENSION_NAME  = 53;
+	protected static final int ENTITY_CHUNKED_EXTENSION_VALUE = 54;
+	protected static final int ENTITY_CHUNKED_DATA            = 55;
+	protected static final int ENTITY_CHUNKED_TRAILER_NAME    = 56;
+	protected static final int ENTITY_CHUNKED_TRAILER_VALUE   = 57;
+	protected static final int ENTITY_ENCODING                = 58;
+	protected static final int END                            = -1;
+	
+	@Getter @Setter protected int             maxLineLength = defaultBufferSize;
+	@Getter         protected int             state         = START            ;
+	@Getter         protected int             trailerSize                      ;
+	@Getter         protected HttpHeader      header                           ;
+	@Getter         protected HttpEntity      entity                           ;
+	@Getter         protected HttpChunk       chunk                            ;
+	@Getter         protected HttpContentType contentType                      ;
+	@Getter         protected String          chunkExtName                     ;
+	@Getter         protected T               httpMessage                      ;
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	protected void state4END(List<T> httpMessages) throws ProtocolException {
 		// enter END state means search index stay for the last byte of the HttpMessage, move to next

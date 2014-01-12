@@ -26,21 +26,24 @@ import org.craft.atom.protocol.http.model.Cookie;
 @ToString(callSuper = true)
 public class HttpCookieDecoder extends AbstractProtocolCodec implements ProtocolDecoder<Cookie> {
 	
-	private static final int START = 0;
-	private static final int NAME = 1;
-	private static final int VALUE = 2;
-	private static final int ATTRIBUTE_START = 3;
-	private static final int ATTRIBUTE_NAME = 4;
-	private static final int DOMAIN_ATTRIBUTE_VALUE = 5;
-	private static final int PATH_ATTRIBUTE_VALUE = 6;
-	private static final int EXPIRES_ATTRIBUTE_VALUE = 7;
-	private static final int MAX_AGE_ATTRIBUTE_VALUE = 8;
-	private static final int EXTENSION_ATTRIBUTE_VALUE = 9;
-	private static final int END = -1;
+	
+	private static final int START                     =  0;
+	private static final int NAME                      =  1;
+	private static final int VALUE                     =  2;
+	private static final int ATTRIBUTE_START           =  3;
+	private static final int ATTRIBUTE_NAME            =  4;
+	private static final int DOMAIN_ATTRIBUTE_VALUE    =  5;
+	private static final int PATH_ATTRIBUTE_VALUE      =  6;
+	private static final int EXPIRES_ATTRIBUTE_VALUE   =  7;
+	private static final int MAX_AGE_ATTRIBUTE_VALUE   =  8;
+	private static final int EXTENSION_ATTRIBUTE_VALUE =  9;
+	private static final int END                       = -1;
 	
 	private boolean setCookie = false;
 	
+	
 	// ~ ----------------------------------------------------------------------------------------------------------
+	
 	
 	public HttpCookieDecoder() {}
 	
@@ -48,7 +51,9 @@ public class HttpCookieDecoder extends AbstractProtocolCodec implements Protocol
 		this.setCookie = setCookie;
 	}
 	
+	
 	// ~ ----------------------------------------------------------------------------------------------------------
+	
 	
 	@Override
 	public List<Cookie> decode(byte[] bytes) throws ProtocolException {

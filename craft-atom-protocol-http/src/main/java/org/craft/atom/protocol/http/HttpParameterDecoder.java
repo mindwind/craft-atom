@@ -29,11 +29,16 @@ import org.craft.atom.protocol.ProtocolException;
 @ToString(callSuper = true)
 public class HttpParameterDecoder extends AbstractProtocolCodec implements ProtocolDecoder<Map<String, List<String>>> {
 	
-	private static final int START = 0;
-	private static final int NAME = 1;
-	private static final int VALUE = 2;
-	private static final int END = -1;
+	
+	private static final int START =  0;
+	private static final int NAME  =  1;
+	private static final int VALUE =  2;
+	private static final int END   = -1;
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	@Override
 	public List<Map<String, List<String>>> decode(byte[] bytes) throws ProtocolException {
 		try {

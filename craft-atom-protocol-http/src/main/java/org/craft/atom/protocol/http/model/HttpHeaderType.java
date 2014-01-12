@@ -8,6 +8,7 @@ package org.craft.atom.protocol.http.model;
  */
 public enum HttpHeaderType {
 
+	
 	// ~ --------------------------------------------------------------------------------------- general headers
 	
 	
@@ -1112,8 +1113,10 @@ public enum HttpHeaderType {
 	 */
 	RANGE("Range");
 
+	
 	// ~ ---------------------------------------------------------------------------------------------------------
 
+	
 	private final String name;
 
 	private HttpHeaderType(String name) {

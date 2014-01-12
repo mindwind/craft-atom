@@ -19,13 +19,17 @@ import lombok.ToString;
 @ToString(of = { "contentType", "content" })
 public class HttpEntity implements Serializable {
 
+	
 	private static final long serialVersionUID = -3461343279665456788L;
 	
+	
 	@Getter @Setter protected HttpContentType contentType = HttpContentType.DEFAULT;
-	@Getter @Setter protected byte[] content;
+	@Getter @Setter protected byte[]          content                              ;
+	
 	
 	// ~ -----------------------------------------------------------------------------------------------------------
 
+	
 	public HttpEntity() {
 		super();
 	}
@@ -40,7 +44,9 @@ public class HttpEntity implements Serializable {
 		this.content = content.getBytes(charset == null ? Charset.defaultCharset() : charset);
 	}
 	
+	
 	// ~ -----------------------------------------------------------------------------------------------------------
+	
 	
 	public String getContentAsString() {
 		Charset charset = contentType.getCharset();

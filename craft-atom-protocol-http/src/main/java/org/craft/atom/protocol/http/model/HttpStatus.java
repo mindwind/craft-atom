@@ -10,6 +10,7 @@ package org.craft.atom.protocol.http.model;
  */
 public enum HttpStatus {
 	
+	
 	// ~ 1xx --------------------------------------------------------------------------------------- Informational
 	
 	
@@ -155,8 +156,10 @@ public enum HttpStatus {
 	
 	// ~ ---------------------------------------------------------------------------------------------------------
 	
-	private final int statusCode;
+	
+	private final int    statusCode  ;
 	private final String reasonPhrase;
+	
 	
 	private HttpStatus(int statusCode, String reasonPhrase) {
 		this.statusCode = statusCode;

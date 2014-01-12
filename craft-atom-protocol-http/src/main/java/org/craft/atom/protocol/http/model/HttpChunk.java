@@ -25,13 +25,17 @@ import lombok.ToString;
 @ToString(of = { "size", "extension", "data" })
 public class HttpChunk implements Serializable {
 
+	
 	private static final long serialVersionUID = 8782130672644634878L;
 	
-	@Getter @Setter private int size;
+	
+	@Getter @Setter private int                 size                                           ;
 	@Getter @Setter private Map<String, String> extension = new LinkedHashMap<String, String>();
-	@Getter @Setter private byte[] data;
+	@Getter @Setter private byte[]              data                                           ;
+	
 	
 	// ~ --------------------------------------------------------------------------------------------------------
+	
 	
 	public HttpChunk() {
 		super();
@@ -61,7 +65,9 @@ public class HttpChunk implements Serializable {
 		this.extension = extension;
 	}
 	
+	
 	// ~ --------------------------------------------------------------------------------------------------------
+	
 	
 	public String getDataString(Charset charset) {
 		return new String(data, charset);

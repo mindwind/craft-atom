@@ -76,28 +76,32 @@ import org.craft.atom.protocol.http.HttpDates;
 @ToString(of = { "name", "value", "domain", "path", "httpOnly", "secure", "expires", "maxAge", "extension" })
 public class Cookie implements Serializable {
 
+	
 	private static final long serialVersionUID = 5584804359930330729L;
+	public  static final String DOMAIN         = "Domain"            ;
+	public  static final String PATH           = "Path"              ;
+	public  static final String HTTP_ONLY      = "HttpOnly"          ;
+	public  static final String SECURE         = "Secure"            ;
+	public  static final String EXPIRES        = "Expires"           ;
+	public  static final String MAX_AGE        = "Max-Age"           ;
 	
-	public static final String DOMAIN = "Domain";
-	public static final String PATH = "Path";
-	public static final String HTTP_ONLY = "HttpOnly";
-	public static final String SECURE = "Secure";
-	public static final String EXPIRES = "Expires";
-	public static final String MAX_AGE = "Max-Age";
+	
+	// ~ ----------------------------------------------------------------------------------------------------------
+	
+	
+	@Getter @Setter private String              name                                           ; 
+	@Getter @Setter private String              value                                          ;
+	@Getter @Setter private String              domain                                         ;
+	@Getter @Setter private String              path                                           ;
+	@Setter         private Boolean             httpOnly                                       ; 
+	@Setter         private Boolean             secure                                         ;
+	@Getter @Setter private Date                expires                                        ;
+	@Getter @Setter private Integer             maxAge                                         ; 
+	                private Map<String, String> extension = new LinkedHashMap<String, String>();
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
 	
-	@Getter @Setter private String name; 
-	@Getter @Setter private String value;
-	@Getter @Setter private String domain;
-	@Getter @Setter private String path;
-	@Setter private Boolean httpOnly;
-	@Setter private Boolean secure;
-	@Getter @Setter private Date expires;
-	@Getter @Setter private Integer maxAge; 
-	private Map<String, String> extension = new LinkedHashMap<String, String>();
-	
-	// ~ ----------------------------------------------------------------------------------------------------------
 	
 	public Cookie() {
 		super();

@@ -48,13 +48,17 @@ import lombok.ToString;
 @ToString(of = { "name", "value" })
 public class HttpHeader implements Serializable {
 
+	
 	private static final long serialVersionUID = -689954816191532018L;
 
-	@Getter @Setter private String name;
+	
+	@Getter @Setter private String name ;
 	@Getter @Setter private String value;
+	
 	
 	// ~ -----------------------------------------------------------------------------------------------------------
 
+	
 	public HttpHeader() {
 		super();
 	}
@@ -64,7 +68,9 @@ public class HttpHeader implements Serializable {
 		this.value = value;
 	}
 	
+	
 	// ~ -----------------------------------------------------------------------------------------------------------
+	
 	
 	public void appendValue(String valuePart) {
 		if (value == null) {

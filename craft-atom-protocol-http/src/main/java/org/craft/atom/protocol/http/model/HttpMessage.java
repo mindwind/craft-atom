@@ -42,14 +42,18 @@ import lombok.ToString;
 @ToString(of = { "headers", "entity", "cookies" })
 public abstract class HttpMessage implements Serializable {
 
+	
 	private static final long serialVersionUID = -8373186983205172162L;
 	
+	
 	@Getter @Setter protected List<HttpHeader> headers = new ArrayList<HttpHeader>();
-	@Getter @Setter protected HttpEntity entity;
-	@Setter protected List<Cookie> cookies;
+	@Getter @Setter protected HttpEntity       entity                               ;
+	@Setter         protected List<Cookie>     cookies                              ;
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	public HttpMessage() {
 		super();
 	}
@@ -62,6 +66,7 @@ public abstract class HttpMessage implements Serializable {
 		this.headers = headers;
 		this.entity = entity;
 	}
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 	

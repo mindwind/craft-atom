@@ -11,6 +11,7 @@ package org.craft.atom.protocol.http.model;
  */
 public enum MimeType {
 	
+	
 	// ~ ---------------------------------------------------------------------------------------------------------
 	
 	
@@ -31,7 +32,9 @@ public enum MimeType {
 	// wildcard
 	WILDCARD("*", "*");
 	
+	
 	// ~ ---------------------------------------------------------------------------------------------------------
+	
 	
 	public static MimeType from(String type) {
 		if (APPLICATION_X_WWW_FORM_URLENCODED.toString().equalsIgnoreCase(type)) {
@@ -70,10 +73,13 @@ public enum MimeType {
 		return primaryType + "/" + subType;
 	}
 	
+	
 	// ~ ---------------------------------------------------------------------------------------------------------
 	
+	
 	private final String primaryType;
-	private final String subType;
+	private final String subType    ;
+	
 
 	private MimeType(String primaryType, String subType) {
 		this.primaryType = primaryType;

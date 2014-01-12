@@ -24,13 +24,17 @@ import lombok.ToString;
 @ToString(callSuper = true, of = { "method", "uri" })
 public class HttpRequestLine extends HttpStartLine {
 
+	
 	private static final long serialVersionUID = 1393510808581169505L;
 
+	
 	@Getter @Setter private HttpMethod method;
-	@Getter @Setter private String uri;
+	@Getter @Setter private String     uri   ;
 
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	public HttpRequestLine() {
 		super();
 	}
@@ -41,7 +45,9 @@ public class HttpRequestLine extends HttpStartLine {
 		this.uri = uri;
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	public String toHttpString() {
 		StringBuilder sb = new StringBuilder();

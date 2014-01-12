@@ -49,12 +49,16 @@ import org.craft.atom.util.ByteArrayBuffer;
 @ToString(callSuper = true, of = { "chunks", "trailers" })
 public class HttpChunkEntity extends HttpEntity {
 
+	
 	private static final long serialVersionUID = -8469016024998851045L;
 	
-	@Getter @Setter private List<HttpChunk> chunks = new ArrayList<HttpChunk>();
+	
+	@Getter @Setter private List<HttpChunk>         chunks   = new ArrayList<HttpChunk>()             ;
 	@Getter @Setter private Map<String, HttpHeader> trailers = new LinkedHashMap<String, HttpHeader>();
 	
+	
 	// ~ --------------------------------------------------------------------------------------------------------
+	
 	
 	public HttpChunkEntity() {
 		super();
@@ -73,7 +77,9 @@ public class HttpChunkEntity extends HttpEntity {
 		this.trailers = trailers;
 	}
 	
+	
 	// ~ --------------------------------------------------------------------------------------------------------
+	
 	
 	/**
 	 * Add a chunk 

@@ -17,9 +17,15 @@ import lombok.ToString;
 @ToString(of = "version")
 public abstract class HttpStartLine implements Serializable {
 
+	
 	private static final long serialVersionUID = -2856300388955363870L;
 	
+	
 	@Getter @Setter protected HttpVersion version;
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	public HttpStartLine() {
 		super();

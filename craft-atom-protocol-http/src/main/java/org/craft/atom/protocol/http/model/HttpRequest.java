@@ -72,7 +72,9 @@ public class HttpRequest extends HttpMessage {
 		this.requestLine = requestLine;
 	}
 
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	/**
 	 * Returns the value of a request parameter as a <code>String</code>, or
@@ -214,8 +216,10 @@ public class HttpRequest extends HttpMessage {
 		return this.cookies;
 	}
 	
+    
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
+    
 	public String toHttpString(Charset charset) {
 		StringBuilder sb = new StringBuilder();
 		
