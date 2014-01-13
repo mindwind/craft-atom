@@ -26,43 +26,36 @@ import org.craft.atom.util.buffer.AdaptiveByteBuffer;
  */
 public class SslCodec {
 	
-	/** Set true if the engine will <em>request</em> client authentication.This option is only useful to engines in the server mode.*/
-	@Getter @Setter private boolean                         wantClientAuth;   
 	
-	/** Set true if the engine will <em>require</em> client authentication.This option is only useful to engines in the server mode.*/
-	@Getter @Setter private boolean                         needClientAuth;    
-	
-	/** Set true if the engine is set to use client mode when handshaking */
-	@Getter @Setter private boolean                         clientMode;
-	
-	/** The cipher suites to be enabled when {@link SSLEngine} is initialized. <tt>null</tt> means use {@link SSLEngine}'s default. */
-	@Getter @Setter private String[]                        enabledCipherSuites;
-	
-	/** The protocols to be enabled when {@link SSLEngine} is initialized.<tt>null</tt> means use {@link SSLEngine}'s default.*/
-	@Getter @Setter private String[]                        enabledProtocols;
-	
-	/** Encrypted data from the net */
-    private AdaptiveByteBuffer                              inNetBuffer;
-    
-    /** Encrypted data to be written to the net */
-    private AdaptiveByteBuffer                              outNetBuffer;
-    
-    /** Application cleartext data to be read by application */
-    private AdaptiveByteBuffer                              appBuffer;
-    
-    /** Empty buffer used during initial handshake and close operations */
-    private final AdaptiveByteBuffer                        emptyBuffer         = AdaptiveByteBuffer.allocate(0);
-    
-    /** A flag set to true when a SSL Handshake has been completed */
-    private boolean                                         handshakeComplete;
-    
-    private SslHandshakeHandler                             handshakeHandler;
-	
-    
-	@Getter @Setter private InetSocketAddress               peer;
-	@Getter @Setter private SSLContext                      sslContext;
-	@Getter @Setter private SSLEngine                       sslEngine;
-	@Getter         private SSLEngineResult.HandshakeStatus handshakeStatus;
+	/** 
+	 * Field description <br>
+	 * 
+	 * wantClientAuth     : Set true if the engine will <em>request</em> client authentication.This option is only useful to engines in the server mode. <br>
+	 * needClientAuth     : Set true if the engine will <em>require</em> client authentication.This option is only useful to engines in the server mode. <br>
+	 * clientMode         : Set true if the engine is set to use client mode when handshaking. <br>
+	 * enabledCipherSuites: The cipher suites to be enabled when {@link SSLEngine} is initialized. <tt>null</tt> means use {@link SSLEngine}'s default. <br>
+	 * enabledProtocols   : The protocols to be enabled when {@link SSLEngine} is initialized.<tt>null</tt> means use {@link SSLEngine}'s default. <br>
+	 * inNetBuffer        : Encrypted data from the net. <br>
+	 * outNetBuffer       : Encrypted data to be written to the net. <br>
+	 * appBuffer          : Application cleartext data to be read by application <br>
+	 * emptyBuffer        : Empty buffer used during initial handshake and close operations. <br>
+	 * handshakeComplete  : A flag set to true when a SSL Handshake has been completed. <br>
+	 */
+	@Getter @Setter private       boolean                         wantClientAuth                                      ;   
+	@Getter @Setter private       boolean                         needClientAuth                                      ;    
+	@Getter @Setter private       boolean                         clientMode                                          ;
+	@Getter @Setter private       String[]                        enabledCipherSuites                                 ;
+	@Getter @Setter private       String[]                        enabledProtocols                                    ;
+                    private       AdaptiveByteBuffer              inNetBuffer                                         ;
+                    private       AdaptiveByteBuffer              outNetBuffer                                        ;
+                    private       AdaptiveByteBuffer              appBuffer                                           ;
+                    private       boolean                         handshakeComplete                                   ;
+                    private       SslHandshakeHandler             handshakeHandler                                    ;
+	@Getter @Setter private       InetSocketAddress               peer                                                ;
+	@Getter @Setter private       SSLContext                      sslContext                                          ;
+	@Getter @Setter private       SSLEngine                       sslEngine                                           ;
+	@Getter         private       SSLEngineResult.HandshakeStatus handshakeStatus                                     ;
+	                private final AdaptiveByteBuffer              emptyBuffer         = AdaptiveByteBuffer.allocate(0);
 
 	
 	// ~ -----------------------------------------------------------------------------------------------------------
