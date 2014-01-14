@@ -26,7 +26,6 @@ public class TestTextLineDecoder {
 	private TextLineDecoder decoder;
 	
 	
-	
 	@Before
 	public void setup() {
 		decoder = new TextLineDecoder();

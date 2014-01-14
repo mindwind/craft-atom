@@ -21,10 +21,13 @@ import org.craft.atom.protocol.ProtocolException;
 @ToString(callSuper = true, of = { "delimiter" })
 public class TextLineEncoder extends AbstractProtocolEncoder implements ProtocolEncoder<String> {
 	
-	@Getter @Setter private String delimiter = "\n";
-	private int maxLineLength = Integer.MAX_VALUE;
+	
+	@Getter @Setter private String delimiter     = "\n"             ;
+	                private int    maxLineLength = Integer.MAX_VALUE;
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	public TextLineEncoder() {
 		super();
@@ -44,8 +47,10 @@ public class TextLineEncoder extends AbstractProtocolEncoder implements Protocol
 		this.maxLineLength = maxLineLength;
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	@Override
 	public byte[] encode(String str) throws ProtocolException {
 		str += delimiter;

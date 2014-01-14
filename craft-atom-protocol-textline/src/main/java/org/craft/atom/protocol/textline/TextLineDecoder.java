@@ -24,11 +24,14 @@ import org.craft.atom.protocol.ProtocolExceptionType;
 @ToString(callSuper = true, of = { "delimiter" })
 public class TextLineDecoder extends AbstractProtocolDecoder implements ProtocolDecoder<String> {
 	
-	@Getter @Setter private String delimiter = "\n";
-	private byte[] delimiterBytes = delimiter.getBytes(charset);
-	private int delimiterLen = delimiterBytes.length;
+	
+	@Getter @Setter private String delimiter      = "\n"                       ;
+	                private byte[] delimiterBytes = delimiter.getBytes(charset);
+	                private int    delimiterLen   = delimiterBytes.length      ;
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	public TextLineDecoder() {
 		super();
@@ -56,8 +59,10 @@ public class TextLineDecoder extends AbstractProtocolDecoder implements Protocol
 		this.maxSize = maxLineLength;
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
 	@Override
 	public List<String> decode(byte[] bytes) throws ProtocolException {
 		List<String> strs = new ArrayList<String>();
