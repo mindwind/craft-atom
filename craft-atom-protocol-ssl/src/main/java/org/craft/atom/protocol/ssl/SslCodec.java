@@ -44,12 +44,12 @@ public class SslCodec {
 	@Getter @Setter private       boolean                         wantClientAuth                                      ;   
 	@Getter @Setter private       boolean                         needClientAuth                                      ;    
 	@Getter @Setter private       boolean                         clientMode                                          ;
+	                private       boolean                         handshakeComplete                                   ;
 	@Getter @Setter private       String[]                        enabledCipherSuites                                 ;
 	@Getter @Setter private       String[]                        enabledProtocols                                    ;
                     private       AdaptiveByteBuffer              inNetBuffer                                         ;
                     private       AdaptiveByteBuffer              outNetBuffer                                        ;
                     private       AdaptiveByteBuffer              appBuffer                                           ;
-                    private       boolean                         handshakeComplete                                   ;
                     private       SslHandshakeHandler             handshakeHandler                                    ;
 	@Getter @Setter private       InetSocketAddress               peer                                                ;
 	@Getter @Setter private       SSLContext                      sslContext                                          ;
