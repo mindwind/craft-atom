@@ -6,8 +6,10 @@ package org.craft.atom.redis.api;
  */
 public class RedisDataException extends RedisException {
 	
+	
     private static final long serialVersionUID = 3878126572474819403L;
 
+    
     public RedisDataException(String message) {
         super(message);
     }

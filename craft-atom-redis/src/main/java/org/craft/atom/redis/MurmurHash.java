@@ -18,6 +18,7 @@ import org.craft.atom.redis.api.RedisException;
  * @author jedis, this implementation come from jedis
  */
 public class MurmurHash {
+	
     /**
      * Hashes bytes in an array.
      * 

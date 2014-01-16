@@ -51,18 +51,20 @@ import redis.clients.jedis.exceptions.JedisDataException;
 @SuppressWarnings("unchecked")
 public class DefaultRedis implements Redis {
 	
-	private static final String OK = "OK";
+	private static final String             OK                 = "OK"                    ;
 	private static final ThreadLocal<Jedis> THREAD_LOCAL_JEDIS = new ThreadLocal<Jedis>();
 	
-	private String host;
-	private String password;
-	private int port = 6379;
-	private int timeout = 2000;
-	private int database = 0;
-	private Config poolConfig = poolConfig(100);
-	private volatile JedisPool pool;
+	private          String    host                        ;
+	private          String    password                    ;
+	private          int       port       = 6379           ;
+	private          int       timeout    = 2000           ;
+	private          int       database   = 0              ;
+	private          Config    poolConfig = poolConfig(100);
+	private volatile JedisPool pool                        ;
+	
 	
 	// ~ ---------------------------------------------------------------------------------------------------------
+	
 	
 	public DefaultRedis(String host, int port) {
 		this.host = host;

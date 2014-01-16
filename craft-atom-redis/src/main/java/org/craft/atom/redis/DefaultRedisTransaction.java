@@ -31,9 +31,11 @@ import redis.clients.jedis.ZParams.Aggregate;
 @SuppressWarnings("unchecked")
 public class DefaultRedisTransaction implements RedisTransaction {
 	
-	private Jedis j;
-	private Transaction t;
+	
+	private Jedis        j;
+	private Transaction  t;
 	private DefaultRedis r;
+	
 	
 	DefaultRedisTransaction(Jedis j, Transaction t, DefaultRedis r) {
 		this.j = j;

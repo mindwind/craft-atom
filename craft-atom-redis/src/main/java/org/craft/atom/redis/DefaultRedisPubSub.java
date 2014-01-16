@@ -13,7 +13,9 @@ import redis.clients.jedis.JedisPubSub;
 @ToString
 public class DefaultRedisPubSub implements RedisPubSub {
 	
+	
 	private JedisPubSub jps;
+	
 	
 	DefaultRedisPubSub(JedisPubSub jps) {
 		this.jps = jps;

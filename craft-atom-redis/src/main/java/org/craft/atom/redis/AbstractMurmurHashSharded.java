@@ -16,9 +16,14 @@ import org.craft.atom.redis.api.RedisCommand;
 @ToString(of = {"shards"})
 public abstract class AbstractMurmurHashSharded<R extends RedisCommand> {
 	
-	private TreeMap<Long, R> nodes;
-	private List<R> shards; 
-	private MurmurHash murmur;
+	
+	private TreeMap<Long, R> nodes ;
+	private List<R>          shards; 
+	private MurmurHash       murmur;
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	public AbstractMurmurHashSharded(List<R> shards) {
 		this.shards = shards;
