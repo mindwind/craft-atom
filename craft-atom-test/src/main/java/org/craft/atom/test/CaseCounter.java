@@ -11,7 +11,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class CaseCounter {
 	
+	
 	private static final AtomicInteger counter = new AtomicInteger(0);
+	
 	
 	public static String incr(int delta) {
 		String format = "00000";

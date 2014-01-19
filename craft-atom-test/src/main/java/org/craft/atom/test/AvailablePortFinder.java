@@ -32,16 +32,13 @@ import java.util.TreeSet;
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public class AvailablePortFinder {
-    /**
-     * The minimum number of server port number.
-     */
-    public static final int MIN_PORT_NUMBER = 1;
-
-    /**
-     * The maximum number of server port number.
-     */
+    
+	
+	/** The minimum / maximum number of server port number. */
+    public static final int MIN_PORT_NUMBER = 1    ;
     public static final int MAX_PORT_NUMBER = 49151;
 
+    
     /**
      * Creates a new instance.
      */
