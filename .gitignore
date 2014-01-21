@@ -13,6 +13,4 @@ target/javadoc-bundle-options/javadoc-options-javadoc-resources.xml
 
 *.versionsBackup
 
-target/craft-atom-2.0.2.pom
-
-target/craft-atom-2.0.2.pom.asc
+target/*
