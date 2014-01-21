@@ -3012,7 +3012,9 @@ public class DefaultRedis implements Redis {
 			}
 		} catch (Exception e) {
 			RedisException re = handleException(e, j, args);
-			j = null;
+			if (re instanceof RedisConnectionException) {
+				j = null;
+			}
 			throw re;
 		} finally {
 			release(j);
