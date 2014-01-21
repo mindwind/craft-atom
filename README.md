@@ -3,12 +3,15 @@ A crafted and atomic component library for java.
 
 ## What is it?
 
-It is a multi module projects, each module is a crafted and atomic java library for specific feature.
-
+It is a multi module projects, each module is a crafted and atomic java library for specific feature.  
 The module list and brief introduction:
 
-- craft-atom-io
-- craft-atom-nio
+- craft-atom-io  
+  A base io model api definition, other modules implements it such as: ```craft-atom-nio```.
+
+- craft-atom-nio  
+  A very thin wrap for java nio to make it use easily, it implements ```craft-atom-io``` model api definition.
+
 - craft-atom-redis
 - craft-atom-lock
 - craft-atom-util
