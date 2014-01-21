@@ -8,6 +8,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.RedisDataException;
 import org.craft.atom.redis.api.RedisFactory;
+import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
 
 import redis.clients.jedis.JedisPoolConfig;
@@ -34,6 +35,7 @@ public class TestJedisLeak extends AbstractRedisTests {
 		jpc.setMinIdle(0);
 		jpc.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_FAIL);
 		redis = RedisFactory.newRedis(HOST, PORT1, 2000, jpc);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test jedis leak. ", CaseCounter.incr(1)));
 	}
 	
 	
