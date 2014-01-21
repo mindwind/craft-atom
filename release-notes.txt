@@ -13,7 +13,7 @@ CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
 
 
 
-craft-atom 2.1.0  >>> coming soon
+craft-atom 2.1.0    under planning
 -----------------------------------------------------------------------------------------------------------------------
 UPGRADE URGENCY: LOW
 
@@ -21,6 +21,17 @@ UPGRADE URGENCY: LOW
   [FIX]      - shutdown command, jedis doesn't support SAVE/NOSAVE modifier
   [IMPROVE]  - support redis 2.8.*
 
+
+
+
+
+craft-atom 2.0.3
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: HIGH
+
+* craft-atom-redis
+  [FIX]      - issue #1  https://github.com/mindwind/craft-atom/issues/1
+  
 
 
 
