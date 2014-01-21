@@ -27,43 +27,43 @@ public class RedisFactory {
 		return new DefaultRedis(host, port);
 	}
 	
-	public static Redis newRedis(String host, int port, int timeout) {
-		return new DefaultRedis(host, port, timeout);
+	public static Redis newRedis(String host, int port, int timeoutInMillis) {
+		return new DefaultRedis(host, port, timeoutInMillis);
 	}
 
-	public static Redis newRedis(String host, int port, int timeout, int poolSize) {
-		return new DefaultRedis(host, port, timeout, poolSize);
+	public static Redis newRedis(String host, int port, int timeoutInMillis, int poolSize) {
+		return new DefaultRedis(host, port, timeoutInMillis, poolSize);
 	}
 	
-	public static Redis newRedis(String host, int port, int timeout, int poolSize, String password) {
-		return new DefaultRedis(host, port, timeout, poolSize, password);
+	public static Redis newRedis(String host, int port, int timeoutInMillis, int poolSize, String password) {
+		return new DefaultRedis(host, port, timeoutInMillis, poolSize, password);
 	}
 	
-	public static Redis newRedis(String host, int port, int timeout, int poolSize, String password, int database) {
-		return new DefaultRedis(host, port, timeout, poolSize, password, database);
+	public static Redis newRedis(String host, int port, int timeoutInMillis, int poolSize, String password, int database) {
+		return new DefaultRedis(host, port, timeoutInMillis, poolSize, password, database);
 	}
 	
-	public static Redis newRedis(String host, int port, int timeout, Config poolConfig) {
-		return new DefaultRedis(host, port, timeout, poolConfig);
+	public static Redis newRedis(String host, int port, int timeoutInMillis, Config poolConfig) {
+		return new DefaultRedis(host, port, timeoutInMillis, poolConfig);
 	}
 	
-	public static Redis newRedis(String host, int port, int timeout, Config poolConfig, String password) {
-		return new DefaultRedis(host, port, timeout, poolConfig, password);
+	public static Redis newRedis(String host, int port, int timeoutInMillis, Config poolConfig, String password) {
+		return new DefaultRedis(host, port, timeoutInMillis, poolConfig, password);
 	}
 	
 	/**
 	 * Creates a singleton redis client
 	 * 
-	 * @param host         redis server host
-	 * @param port         redis server port
-	 * @param timeout      connect and read timeout in milliseconds
-	 * @param poolConfig   connection pool config, default poolConfig is maxActive=maxIdle=poolSize, minIdle=0
-	 * @param password     redis server auth password
-	 * @param database     redis server db index
-	 * @return a singleton redis client
+	 * @param host            redis server host
+	 * @param port            redis server port
+	 * @param timeoutInMillis connect and read timeout in milliseconds
+	 * @param poolConfig      connection pool config, default poolConfig is maxActive=maxIdle=poolSize, minIdle=0
+	 * @param password        redis server auth password
+	 * @param database        redis server db index
+	 * @return a singleton    redis client
 	 */
-	public static Redis newRedis(String host, int port, int timeout, Config poolConfig, String password, int database) {
-		return new DefaultRedis(host, port, timeout, poolConfig, password, database);
+	public static Redis newRedis(String host, int port, int timeoutInMillis, Config poolConfig, String password, int database) {
+		return new DefaultRedis(host, port, timeoutInMillis, poolConfig, password, database);
 	}
 	
 	/**
