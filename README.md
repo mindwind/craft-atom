@@ -12,7 +12,9 @@ The module list and brief introduction:
 - craft-atom-nio  
   A very thin wrap for java nio to make it use easily, it implements ```craft-atom-io``` model api definition.
 
-- craft-atom-redis
+- craft-atom-redis  
+  A easy use redis java client base on jedis.
+
 - craft-atom-lock
 - craft-atom-util
 - craft-atom-test 
