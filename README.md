@@ -15,7 +15,9 @@ The module list and brief introduction:
 - craft-atom-redis  
   A easy use redis java client base on jedis.
 
-- craft-atom-lock
+- craft-atom-lock  
+  A kind of distributed lock base on redis.
+
 - craft-atom-util
 - craft-atom-test 
 - craft-atom-protocol
