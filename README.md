@@ -18,7 +18,9 @@ The module list and brief introduction:
 - craft-atom-lock  
   A kind of distributed lock base on redis.
 
-- craft-atom-util
+- craft-atom-util  
+  A util package without any other dependency.
+
 - craft-atom-test 
 - craft-atom-protocol
 - craft-atom-protocol-http
