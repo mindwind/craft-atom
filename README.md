@@ -19,9 +19,11 @@ The module list and brief introduction:
   A kind of distributed lock base on redis.
 
 - craft-atom-util  
-  A util package without any other dependency.
+  A util component with some useful tools.
 
-- craft-atom-test 
+- craft-atom-test  
+  A unit test supported component used by other atom component.
+
 - craft-atom-protocol
 - craft-atom-protocol-http
 - craft-atom-protocol-ssl
