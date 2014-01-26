@@ -15,9 +15,13 @@ import lombok.ToString;
 @ToString
 public class NamedThreadFactory implements ThreadFactory {
 	
+	
 	private static final AtomicInteger threadNumber = new AtomicInteger(1);
-	private final String name;
+	
+	
+	private final String  name  ;
 	private final boolean daemon;
+	
 	
 	public NamedThreadFactory(String prefix) {
 		this(prefix, false);

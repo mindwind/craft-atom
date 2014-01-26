@@ -23,15 +23,17 @@ import java.util.Set;
  */
 public class HttpUtil {
 
-	public static final String DEFAULT_CHARSET = "UTF-8";
-	public static final String DEFAULT_CONTENT_TYPE = "application/x-www-form-urlencoded;charset=";
+	
+	public  static final String              DEFAULT_CHARSET      = "UTF-8"                                     ;
+	public  static final String              DEFAULT_CONTENT_TYPE = "application/x-www-form-urlencoded;charset=";
+	private static final Map<String, String> DEFAULT_HEADER       = new HashMap<String, String>()               ;
 
-	private static final Map<String, String> DEFAULT_HEADER = new HashMap<String, String>();
-
+	
 	static {
 		DEFAULT_HEADER.put("User-Agent", "http-util");
 		DEFAULT_HEADER.put("Accept", "text/xml,text/javascript,text/html");
 	}
+	
 
 	/**
 	 * Build http query string.

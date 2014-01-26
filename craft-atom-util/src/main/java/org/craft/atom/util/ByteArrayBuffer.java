@@ -15,10 +15,12 @@ import lombok.ToString;
 @ToString
 public final class ByteArrayBuffer implements Serializable {
 
+	
 	private static final long serialVersionUID = -5219299551050201309L;
 
+	
 	private byte[] buffer;
-	private int len;
+	private int    len   ;
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------

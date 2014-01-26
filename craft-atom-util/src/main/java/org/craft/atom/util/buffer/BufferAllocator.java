@@ -28,6 +28,7 @@ import java.nio.ByteBuffer;
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
  */
 public interface BufferAllocator {
+	
     /**
      * Returns the buffer which is capable of the specified size.
      *

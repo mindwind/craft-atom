@@ -56,21 +56,24 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * performance advantage if {@link AdaptiveByteBuffer#free()} is called properly.
  *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author mindwind
  */
 public class CachedBufferAllocator implements BufferAllocator {
 
-    private static final int DEFAULT_MAX_POOL_SIZE = 8;
+	
+    private static final int DEFAULT_MAX_POOL_SIZE          = 8      ;
+    private static final int DEFAULT_MAX_CACHED_BUFFER_SIZE = 1 << 18;              // 256KB
+   
+    
+    private final int                                            maxPoolSize        ;
+    private final int                                            maxCachedBufferSize;
+    private final ThreadLocal<Map<Integer, Queue<CachedBuffer>>> heapBuffers        ;
+    private final ThreadLocal<Map<Integer, Queue<CachedBuffer>>> directBuffers      ;
 
-    private static final int DEFAULT_MAX_CACHED_BUFFER_SIZE = 1 << 18; // 256KB
-
-    private final int maxPoolSize;
-
-    private final int maxCachedBufferSize;
-
-    private final ThreadLocal<Map<Integer, Queue<CachedBuffer>>> heapBuffers;
-
-    private final ThreadLocal<Map<Integer, Queue<CachedBuffer>>> directBuffers;
-
+    
+    // ~ -------------------------------------------------------------------------------------------------------------
+    
+    
     /**
      * Creates a new instance with the default parameters
      * ({@literal #DEFAULT_MAX_POOL_SIZE} and {@literal #DEFAULT_MAX_CACHED_BUFFER_SIZE}). 

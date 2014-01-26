@@ -57,35 +57,33 @@ import java.util.Set;
  * @see BufferAllocator
  */
 public abstract class AbstractAdaptiveByteBuffer extends AdaptiveByteBuffer {
-    /** Tells if a buffer has been created from an existing buffer */
-    private final boolean derived;
-
-    /** A flag set to true if the buffer can extend automatically */
-    private boolean autoExpand;
-
-    /** A flag set to true if the buffer can shrink automatically */
-    private boolean autoShrink;
-
-    /** Tells if a buffer can be expanded */
-    private boolean recapacityAllowed = true;
-
-    /** The minimum number of bytes the IoBuffer can hold */
-    private int minimumCapacity;
-
-    /** A mask for a byte */
-    private static final long BYTE_MASK = 0xFFL;
-
-    /** A mask for a short */
-    private static final long SHORT_MASK = 0xFFFFL;
-
-    /** A mask for an int */
-    private static final long INT_MASK = 0xFFFFFFFFL;
-
-    /**
-     * We don't have any access to Buffer.markValue(), so we need to track it down,
-     * which will cause small extra overhead.
+	
+	
+    private static final long BYTE_MASK  = 0xFFL      ;
+    private static final long SHORT_MASK = 0xFFFFL    ;
+    private static final long INT_MASK   = 0xFFFFFFFFL;
+    
+	
+    /** 
+     * <pre>
+     * derived          : Tells if a buffer has been created from an existing buffer
+     * autoExpand       : A flag set to true if the buffer can extend automatically
+     * autoShrink       : A flag set to true if the buffer can shrink automatically
+     * recapacityAllowed: Tells if a buffer can be expanded
+     * minimumCapacity  : The minimum number of bytes the IoBuffer can hold
+     * mark             : We don't have any access to Buffer.markValue(), so we need to track it down, which will cause small extra overhead.
+     * </pre>
      */
-    private int mark = -1;
+    private final boolean derived                 ;
+    private       boolean autoExpand              ;
+    private       boolean autoShrink              ;
+    private       boolean recapacityAllowed = true;
+    private       int     minimumCapacity         ;
+    private       int     mark              = -1  ;
+    
+    
+    // ~ -------------------------------------------------------------------------------------------------------------
+    
 
     /**
      * Creates a new parent buffer.

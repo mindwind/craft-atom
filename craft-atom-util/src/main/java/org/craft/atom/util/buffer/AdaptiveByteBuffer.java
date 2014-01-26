@@ -130,11 +130,20 @@ import java.util.Set;
  * @version 1.0, 2013/10/09
  */
 public abstract class AdaptiveByteBuffer implements Comparable<AdaptiveByteBuffer> {
-    /** The allocator used to create new buffers */
-    private static BufferAllocator allocator = new SimpleBufferAllocator();
-
-    /** A flag indicating which type of buffer we are using : heap or direct */
-    private static boolean useDirectBuffer = false;
+    
+	
+	/** 
+	 * <pre>
+	 * allocator      : The allocator used to create new buffers 
+	 * useDirectBuffer: A flag indicating which type of buffer we are using: heap or direct
+	 * </pre>
+	 */
+    private static BufferAllocator allocator       = new SimpleBufferAllocator();
+    private static boolean         useDirectBuffer = false                      ;
+    
+    
+    // ~ ----------------------------------------------------------------------------------------------------------
+    
 
     /**
      * Returns the allocator used by existing and new buffers

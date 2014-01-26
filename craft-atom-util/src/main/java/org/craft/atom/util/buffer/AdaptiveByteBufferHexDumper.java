@@ -23,18 +23,20 @@ package org.craft.atom.util.buffer;
  * Provides utility methods to dump an {@link AdaptiveByteBuffer} into a hex formatted string.
  *
  * @author <a href="http://mina.apache.org">Apache MINA Project</a>
+ * @author mindwind
  */
 class AdaptiveByteBufferHexDumper {
 
+	
     /**
-     * The high digits lookup table.
+     * <pre>
+     * highDigits: The high digits lookup table.
+     * lowDigits : The low digits lookup table.
+     * </pre>
      */
     private static final byte[] highDigits;
-
-    /**
-     * The low digits lookup table.
-     */
-    private static final byte[] lowDigits;
+    private static final byte[] lowDigits ;
+    
 
     /**
      * Initialize lookup tables.
@@ -54,6 +56,10 @@ class AdaptiveByteBufferHexDumper {
         highDigits = high;
         lowDigits = low;
     }
+    
+    
+    // ~ -------------------------------------------------------------------------------------------------------------
+    
 
     /**
      * Dumps an {@link AdaptiveByteBuffer} to a hex formatted string.

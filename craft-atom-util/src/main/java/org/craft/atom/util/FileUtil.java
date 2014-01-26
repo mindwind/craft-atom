@@ -18,8 +18,10 @@ import java.io.OutputStream;
  */
 public class FileUtil {
 
+	
 	private static final int BUFFER_SIZE = 16 * 1024;
 
+	
 	private FileUtil() {
 		throw new UnsupportedOperationException();
 	}
