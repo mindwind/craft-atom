@@ -7,7 +7,7 @@ It is a multi module projects, each module is a crafted and atomic java library 
 The module list and brief introduction:
 
 - craft-atom-io  
-  A base io model api definition, other modules implements it such as: ```craft-atom-nio```.
+  A base io model api definition, other component implements it such as: ```craft-atom-nio```.
 
 - craft-atom-nio  
   A very thin wrap for java nio to make it use easily, it implements ```craft-atom-io``` model api definition.
@@ -24,7 +24,9 @@ The module list and brief introduction:
 - craft-atom-test  
   A unit test supported component used by other atom component.
 
-- craft-atom-protocol
+- craft-atom-protocol  
+  A base protocol codec api definition, other component implements it such as: ```craft-atom-protocol-http```.
+
 - craft-atom-protocol-http
 - craft-atom-protocol-ssl
 - craft-atom-protocol-textline
