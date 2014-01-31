@@ -1,0 +1,84 @@
+.header {
+	border-bottom-color   : rgb(230, 230, 230);
+	border-bottom-style   : solid;
+	border-bottom-width   : 1px;
+	color                 : rgb(64, 64, 64);
+	display               : block;
+	font-family           : 'Lucida Grande', 'Lucida Sans Unicode', Helvetica, Arial, Verdana, sans-serif;
+	font-size             : 12px;
+	font-style            : normal;
+	font-variant          : normal;
+	font-weight           : normal;
+	line-height           : 18px;
+	overflow              : hidden;
+	margin-bottom         : 60px;
+	-webkit-font-smoothing: antialiased;
+}
+
+.header h1 {
+	font-size    : 28px;
+	font-weight  : bold;
+	float        : left;
+	margin-bottom: 6px;
+	margin-top   : 18px;
+	margin-left  : 12px;
+	line-height  : 18px;
+}
+
+.header ul {
+	display            : inline;
+	float              : right;
+	list-style-image   : none;
+    list-style-position: outside;
+    list-style-type    : none;
+    margin-bottom      : 6px;
+    height             : 32px;
+}
+
+.header h1 a {
+	color          : rgb(64, 64, 64);
+	text-decoration: none;
+	font-size      : 28px;
+	font-weight    : bold;
+}
+
+.header ul li {
+	display: inline;
+}
+
+.header ul li a {
+	color          : #333;
+	float          : left !important;
+	margin-left    : 24px;
+	margin-top     : 12px;
+	margin-right   : 16px;
+	font-family    : 'Lucida Grande', 'Lucida Sans Unicode', Helvetica, Arial, Verdana, sans-serif;
+	font-size      : 12px;
+	font-style     : normal;
+	font-variant   : normal;
+	font-weight    : normal;
+	line-height    : 18px;
+	text-decoration: none;
+	text-align     : left;
+	text-shadow    : rgb(255, 255, 255) 0px 1px 0px;
+}
+
+.header a:hover {
+	color: #b85b5a;
+}
+
+.footer {
+	border-top  : 1px solid #ddd;
+    clear       : both;
+    color       : rgb(136, 136, 136);
+    display     : block;
+    font-family : 'Lucida Grande', 'Lucida Sans Unicode', Helvetica, Arial, Verdana, sans-serif;
+    font-size   : 12px;
+    font-style  : normal;
+    font-variant: normal;
+    font-weight : normal;
+    text-align  : center;
+    margin-top  : 30px;
+    padding-top : 10px;
+}
+
