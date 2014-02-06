@@ -9,7 +9,7 @@ The module list and brief introduction:
   A base io model api definition, other component implements it such as: ```craft-atom-nio```.
 
 - craft-atom-nio  
-  A very thin wrap for java nio to make it use easily, it implements ```craft-atom-io``` model api definition.
+  A very thin wrap for java nio to make it use easily, it implements ```craft-atom-io``` api model definition.
 
 - craft-atom-redis  
   A easy use redis java client base on jedis.
