@@ -29,10 +29,10 @@ The module list and brief introduction:
 - craft-atom-protocol-http  
   A simple http protocol implementation.  
 
-- craft-atom-protocol-ssl
+- craft-atom-protocol-ssl  
   A simple ssl protocol implementation.  
 
-- craft-atom-protocol-textline
+- craft-atom-protocol-textline  
   A simple textline protocol implementation.
 
 ## Goal
