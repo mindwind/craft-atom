@@ -3,10 +3,13 @@ package org.craft.atom.io;
 
 
 /**
- * Accepts I/O incoming request base on specific implementation. 
+ * Abstracts reactor model, base api interface.
  * 
  * @author mindwind
  * @version 1.0, Mar 12, 2013
+ * @see IoAcceptor
+ * @see IoConnector
+ * @see IoProcessor
  */
 public interface IoReactor {
 	

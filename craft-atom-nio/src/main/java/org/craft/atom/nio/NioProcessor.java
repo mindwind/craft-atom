@@ -25,6 +25,7 @@ import lombok.ToString;
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.ChannelEventType;
 import org.craft.atom.io.IoHandler;
+import org.craft.atom.io.IoProcessor;
 import org.craft.atom.io.IoProcessorX;
 import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
@@ -40,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0, Feb 22, 2013
  */
 @ToString(callSuper = true, of = { "config", "newChannels", "flushingChannels", "closingChannels", "udpChannels" })
-public class NioProcessor extends NioReactor {
+public class NioProcessor extends NioReactor implements IoProcessor {
 	
 	
 	private static final Logger LOG              = LoggerFactory.getLogger(NioProcessor.class);
@@ -696,7 +697,7 @@ public class NioProcessor extends NioReactor {
 		this.protocol = protocol;
 	}
 	
-	IoProcessorX x() {
+	public IoProcessorX x() {
 		IoProcessorX ipx = new IoProcessorX();
 		ipx.setNewChannels(new HashSet<Channel<byte[]>>(newChannels));
 		ipx.setFlushingChannels(new HashSet<Channel<byte[]>>(flushingChannels));

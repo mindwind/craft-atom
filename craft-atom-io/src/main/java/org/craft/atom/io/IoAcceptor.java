@@ -9,6 +9,7 @@ import java.util.Set;
  * 
  * @author mindwind
  * @version 1.0, Mar 12, 2013
+ * @see NioAcceptor
  */
 public interface IoAcceptor extends IoReactor, IoAcceptorMXBean {
 	
