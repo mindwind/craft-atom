@@ -19,7 +19,17 @@
 				<div class="date">Feb 2, 2014 by mindwind</div>
 				
 				<h3>Introduction</h3>
-				<p>A base io api model definition, other component, like <a href="doc-craft-atom-nio.html" target="_blank"><code>craft-atom-nio</code></a> implements it.</p>
+				<p>A reactor io api model definition, other component, like <a href="doc-craft-atom-nio.html" target="_blank"><code>craft-atom-nio</code></a> implements it.</p>
+				
+				<h3>Reactor io model</h3>
+				<p>
+					Reactor io model architect as shown in the figure below.<br>
+					
+					<code>IoAcceptor</code> accepts I/O incoming request.<br>
+					<code>IoProcessor</code> process I/O read and write.<br>
+					<code>IoConnector</code> connects to server.<br>
+					<code>Channel</code>  is a nexus for I/O operations.
+				</p>
 			</div>
 		</div>
 		
