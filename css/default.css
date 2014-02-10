@@ -221,6 +221,10 @@ blockquote:first-letter {
 	font-weight: bold;
 }
 
+pre {
+	margin-bottom: 30px;
+}
+
 code {
 	display              : inline-block;
 	font-family          : 'Monaco';
