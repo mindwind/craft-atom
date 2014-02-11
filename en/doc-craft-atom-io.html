@@ -23,12 +23,15 @@
 				
 				<h3>Reactor io model</h3>
 				<p>
-					Reactor io model architect as shown in the figure below.<br>
-					
+					Reactor io model architect as shown in the figure 1.<br>
+					<code>Channel</code>  is a nexus for I/O operations.<br>
+					<code>IoHandler</code> handles I/O events.<br>
 					<code>IoAcceptor</code> accepts I/O incoming request.<br>
 					<code>IoProcessor</code> process I/O read and write.<br>
 					<code>IoConnector</code> connects to server.<br>
-					<code>Channel</code>  is a nexus for I/O operations.
+					<code>ChannelEvent</code> is an I/O event associated with a <code>Channel</code>.<br>
+					<br>
+					<a href="doc-craft-atom-io-reactor-model.png" target="_blank"><img src="doc-craft-atom-io-reactor-model.png"/></a>
 				</p>
 			</div>
 		</div>
