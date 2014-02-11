@@ -11,7 +11,7 @@ import java.util.Set;
  * @version 1.0, Mar 12, 2013
  * @see NioAcceptor
  */
-public interface IoAcceptor extends IoReactor, IoAcceptorMXBean {
+public interface IoAcceptor extends IoReactor, IoAcceptorMBean {
 	
 	/**
 	 * Binds to specified local port with any local address and start to accept incoming request.

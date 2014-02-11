@@ -7,6 +7,6 @@ package org.craft.atom.io;
  * @version 1.0, Feb 8, 2014
  * @see NioProcessor
  */
-public interface IoProcessor extends IoReactor, IoProcessorMXBean {
+public interface IoProcessor extends IoReactor, IoProcessorMBean {
 
 }
