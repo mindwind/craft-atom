@@ -32,5 +32,14 @@ public class DefaultMasterSlaveShardedRedis extends AbstractShardedRedis<MasterS
 	public List<MasterSlaveRedis> shards() {
 		return sharded.shards();
 	}
+
+	@Override
+	public void readSlave() {
+		for (MasterSlaveRedis msr : shards()) {
+			msr.readSlave();
+		}
+	}
+	
+	
 	
 }
