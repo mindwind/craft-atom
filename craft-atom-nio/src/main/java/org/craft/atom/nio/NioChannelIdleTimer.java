@@ -54,12 +54,7 @@ public class NioChannelIdleTimer {
 	}
 	
 	Set<NioByteChannel> aliveChannels() {
-		try {
 		return timingWheel.elements();
-		} catch (Throwable t) {
-			t.printStackTrace();
-			return Collections.emptySet();
-		}
 	}
 	
 	private void fireChannelIdle(NioByteChannel channel) {
