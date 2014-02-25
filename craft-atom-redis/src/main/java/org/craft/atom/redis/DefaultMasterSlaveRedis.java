@@ -31,8 +31,9 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultMasterSlaveRedis.class);
 	
 	
-	private          List<Redis>  chain;
-	private volatile int          index;
+	private          List<Redis>  chain    ;
+	private volatile int          index    ;
+	private volatile boolean      readSlave;
 	
 	
 	// ~ ---------------------------------------------------------------------------------------------------------
@@ -153,6 +154,16 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		}
 	}
 	
+	private Redis firstSlave() {
+		int slaveIndex = (index + 1) % chain.size();
+		return chain.get(slaveIndex);
+	}
+	
+	@Override
+	public void readSlave() {
+		this.readSlave = true;
+	}
+	
 	
 	// ~ --------------------------------------------------------------------------------------------------------- Keys
 
@@ -169,7 +180,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Boolean exists(String key) {
-		return master().exists(key);
+		return readSlave ? firstSlave().exists(key) : master().exists(key);
 	}
 
 	@Override
@@ -184,7 +195,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Set<String> keys(String pattern) {
-		return master().keys(pattern);
+		return readSlave ? firstSlave().keys(pattern) : master().keys(pattern);
 	}
 
 	@Override
@@ -199,17 +210,17 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Long objectrefcount(String key) {
-		return master().objectrefcount(key);
+		return readSlave ? firstSlave().objectrefcount(key) : master().objectrefcount(key);
 	}
 
 	@Override
 	public String objectencoding(String key) {
-		return master().objectencoding(key);
+		return readSlave ? firstSlave().objectencoding(key) : master().objectencoding(key);
 	}
 
 	@Override
 	public Long objectidletime(String key) {
-		return master().objectidletime(key);
+		return readSlave ? firstSlave().objectidletime(key) : master().objectidletime(key);
 	}
 
 	@Override
@@ -229,12 +240,12 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Long pttl(String key) {
-		return master().pttl(key);
+		return readSlave ? firstSlave().pttl(key) : master().pttl(key);
 	}
 
 	@Override
 	public String randomkey() {
-		return master().randomkey();
+		return readSlave ? firstSlave().randomkey() : master().randomkey();
 	}
 
 	@Override
@@ -254,112 +265,112 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public List<String> sort(String key) {
-		return master().sort(key);
+		return readSlave ? firstSlave().sort(key) : master().sort(key);
 	}
 
 	@Override
 	public List<String> sort(String key, boolean desc) {
-		return master().sort(key, desc);
+		return readSlave ? firstSlave().sort(key, desc) : master().sort(key, desc);
 	}
 
 	@Override
 	public List<String> sort(String key, boolean alpha, boolean desc) {
-		return master().sort(key, alpha, desc);
+		return readSlave ? firstSlave().sort(key, alpha, desc) : master().sort(key, alpha, desc);
 	}
 
 	@Override
 	public List<String> sort(String key, int offset, int count) {
-		return master().sort(key, offset, count);
+		return readSlave ? firstSlave().sort(key, offset, count) : master().sort(key, offset, count);
 	}
 
 	@Override
 	public List<String> sort(String key, int offset, int count, boolean alpha, boolean desc) {
-		return master().sort(key, offset, count, alpha, desc);
+		return readSlave ? firstSlave().sort(key, offset, count, alpha, desc) : master().sort(key, offset, count, alpha, desc);
 	}
 
 	@Override
 	public List<String> sort(String key, String bypattern, String... getpatterns) {
-		return master().sort(key, bypattern, getpatterns);
+		return readSlave ? firstSlave().sort(key, bypattern, getpatterns) : master().sort(key, bypattern, getpatterns);
 	}
 
 	@Override
 	public List<String> sort(String key, String bypattern, boolean desc, String... getpatterns) {
-		return master().sort(key, bypattern, desc, getpatterns);
+		return readSlave ? firstSlave().sort(key, bypattern, desc, getpatterns) : master().sort(key, bypattern, desc, getpatterns);
 	}
 
 	@Override
 	public List<String> sort(String key, String bypattern, boolean alpha, boolean desc, String... getpatterns) {
-		return master().sort(key, bypattern, alpha, desc, getpatterns);
+		return readSlave ? firstSlave().sort(key, bypattern, alpha, desc, getpatterns) : master().sort(key, bypattern, alpha, desc, getpatterns);
 	}
 
 	@Override
 	public List<String> sort(String key, String bypattern, int offset, int count, String... getpatterns) {
-		return master().sort(key, bypattern, offset, count, getpatterns);
+		return readSlave ? firstSlave().sort(key, bypattern, offset, count, getpatterns) : master().sort(key, bypattern, offset, count, getpatterns);
 	}
 
 	@Override
 	public List<String> sort(String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String... getpatterns) {
-		return master().sort(key, bypattern, offset, count, alpha, desc, getpatterns);
+		return readSlave ? firstSlave().sort(key, bypattern, offset, count, alpha, desc, getpatterns) : master().sort(key, bypattern, offset, count, alpha, desc, getpatterns);
 	}
 
 	@Override
 	public Long sort(String key, String destination) {
-		return master().sort(key, destination);
+		return readSlave ? firstSlave().sort(key, destination) : master().sort(key, destination);
 	}
 
 	@Override
 	public Long sort(String key, boolean desc, String destination) {
-		return master().sort(key, desc, destination);
+		return readSlave ? firstSlave().sort(key, desc, destination) : master().sort(key, desc, destination);
 	}
 
 	@Override
 	public Long sort(String key, boolean alpha, boolean desc, String destination) {
-		return master().sort(key, alpha, desc, destination);
+		return readSlave ? firstSlave().sort(key, alpha, desc, destination) : master().sort(key, alpha, desc, destination);
 	}
 
 	@Override
 	public Long sort(String key, int offset, int count, String destination) {
-		return master().sort(key, offset, count, destination);
+		return readSlave ? firstSlave().sort(key, offset, count, destination) : master().sort(key, offset, count, destination);
 	}
 
 	@Override
 	public Long sort(String key, int offset, int count, boolean alpha, boolean desc, String destination) {
-		return master().sort(key, offset, count, alpha, desc, destination);
+		return readSlave ? firstSlave().sort(key, offset, count, alpha, desc, destination) : master().sort(key, offset, count, alpha, desc, destination);
 	}
 
 	@Override
 	public Long sort(String key, String bypattern, String destination, String... getpatterns) {
-		return master().sort(key, bypattern, destination, getpatterns);
+		return readSlave ? firstSlave().sort(key, bypattern, destination, getpatterns) : master().sort(key, bypattern, destination, getpatterns);
 	}
 
 	@Override
 	public Long sort(String key, String bypattern, boolean desc, String destination, String... getpatterns) {
-		return master().sort(key, bypattern, desc, destination, getpatterns);
+		return readSlave ? firstSlave().sort(key, bypattern, desc, destination, getpatterns) : master().sort(key, bypattern, desc, destination, getpatterns);
 	}
 
 	@Override
 	public Long sort(String key, String bypattern, boolean alpha, boolean desc, String destination, String... getpatterns) {
-		return master().sort(key, bypattern, alpha, desc, destination, getpatterns);
+		return readSlave ? firstSlave().sort(key, bypattern, alpha, desc, destination, getpatterns) : master().sort(key, bypattern, alpha, desc, destination, getpatterns);
 	}
 
 	@Override
 	public Long sort(String key, String bypattern, int offset, int count, String destination, String... getpatterns) {
-		return master().sort(key, bypattern, offset, count, destination, getpatterns);
+		return readSlave ? firstSlave().sort(key, bypattern, offset, count, destination, getpatterns) : master().sort(key, bypattern, offset, count, destination, getpatterns);
 	}
 
 	@Override
 	public Long sort(String key, String bypattern, int offset, int count, boolean alpha, boolean desc, String destination, String... getpatterns) {
-		return master().sort(key, bypattern, offset, count, alpha, desc, destination, getpatterns);
+		return readSlave ? firstSlave().sort(key, bypattern, offset, count, alpha, desc, destination, getpatterns) : master().sort(key, bypattern, offset, count, alpha, desc, destination, getpatterns);
 	}
 
 	@Override
 	public Long ttl(String key) {
-		return master().ttl(key);
+		return readSlave ? firstSlave().ttl(key) : master().ttl(key);
 	}
 
 	@Override
 	public String type(String key) {
-		return master().type(key);
+		return readSlave ? firstSlave().type(key) : master().type(key);
 	}
 	
 	
@@ -373,12 +384,12 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Long bitcount(String key) {
-		return master().bitcount(key);
+		return readSlave ? firstSlave().bitcount(key) : master().bitcount(key);
 	}
 
 	@Override
 	public Long bitcount(String key, long start, long end) {
-		return master().bitcount(key, start, end);
+		return readSlave ? firstSlave().bitcount(key) : master().bitcount(key, start, end);
 	}
 
 	@Override
@@ -413,17 +424,17 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public String get(String key) {
-		return master().get(key);
+		return readSlave ? firstSlave().get(key) : master().get(key);
 	}
 
 	@Override
 	public Boolean getbit(String key, long offset) {
-		return master().getbit(key, offset);
+		return readSlave ? firstSlave().getbit(key, offset) : master().getbit(key, offset);
 	}
 
 	@Override
 	public String getrange(String key, long start, long end) {
-		return master().getrange(key, start, end);
+		return readSlave ? firstSlave().getrange(key, start, end) : master().getrange(key, start, end);
 	}
 
 	@Override
@@ -448,7 +459,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public List<String> mget(String... keys) {
-		return master().mget(keys);
+		return readSlave ? firstSlave().mget(keys) : master().mget(keys);
 	}
 
 	@Override
@@ -518,7 +529,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Long strlen(String key) {
-		return master().strlen(key);
+		return readSlave ? firstSlave().strlen(key) : master().strlen(key);
 	}
 	
 	
@@ -532,17 +543,17 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Boolean hexists(String key, String field) {
-		return master().hexists(key, field);
+		return readSlave ? firstSlave().hexists(key, field) : master().hexists(key, field);
 	}
 
 	@Override
 	public String hget(String key, String field) {
-		return master().hget(key, field);
+		return readSlave ? firstSlave().hget(key, field) : master().hget(key, field);
 	}
 
 	@Override
 	public Map<String, String> hgetall(String key) {
-		return master().hgetall(key);
+		return readSlave ? firstSlave().hgetall(key) : master().hgetall(key);
 	}
 
 	@Override
@@ -557,17 +568,17 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Set<String> hkeys(String key) {
-		return master().hkeys(key);
+		return readSlave ? firstSlave().hkeys(key) : master().hkeys(key);
 	}
 
 	@Override
 	public Long hlen(String key) {
-		return master().hlen(key);
+		return readSlave ? firstSlave().hlen(key) : master().hlen(key);
 	}
 
 	@Override
 	public List<String> hmget(String key, String... fields) {
-		return master().hmget(key, fields);
+		return readSlave ? firstSlave().hmget(key, fields) : master().hmget(key, fields);
 	}
 
 	@Override
@@ -587,7 +598,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public List<String> hvals(String key) {
-		return master().hvals(key);
+		return readSlave ? firstSlave().hvals(key) : master().hvals(key);
 	}
 	
 	
@@ -596,42 +607,42 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public String blpop(String key) {
-		return master().blpop(key);
+		return readSlave ? firstSlave().blpop(key) : master().blpop(key);
 	}
 
 	@Override
 	public String blpop(String key, int timeout) {
-		return master().blpop(key, timeout);
+		return readSlave ? firstSlave().blpop(key, timeout) : master().blpop(key, timeout);
 	}
 
 	@Override
 	public Map<String, String> blpop(String... keys) {
-		return master().blpop(keys);
+		return readSlave ? firstSlave().blpop(keys) : master().blpop(keys);
 	}
 
 	@Override
 	public Map<String, String> blpop(int timeout, String... keys) {
-		return master().blpop(timeout, keys);
+		return readSlave ? firstSlave().blpop(timeout, keys) : master().blpop(timeout, keys);
 	}
 
 	@Override
 	public String brpop(String key) {
-		return master().brpop(key);
+		return readSlave ? firstSlave().brpop(key) : master().brpop(key);
 	}
 
 	@Override
 	public String brpop(String key, int timeout) {
-		return master().brpop(key, timeout);
+		return readSlave ? firstSlave().brpop(key, timeout) : master().brpop(key, timeout);
 	}
 
 	@Override
 	public Map<String, String> brpop(String... keys) {
-		return master().brpop(keys);
+		return readSlave ? firstSlave().brpop(keys) : master().brpop(keys);
 	}
 
 	@Override
 	public Map<String, String> brpop(int timeout, String... keys) {
-		return master().brpop(timeout, keys);
+		return readSlave ? firstSlave().brpop(timeout, keys) : master().brpop(timeout, keys);
 	}
 
 	@Override
@@ -641,7 +652,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public String lindex(String key, long index) {
-		return master().lindex(key, index);
+		return readSlave ? firstSlave().lindex(key, index) : master().lindex(key, index);
 	}
 
 	@Override
@@ -656,12 +667,12 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Long llen(String key) {
-		return master().llen(key);
+		return readSlave ? firstSlave().llen(key) : master().llen(key);
 	}
 
 	@Override
 	public String lpop(String key) {
-		return master().lpop(key);
+		return readSlave ? firstSlave().lpop(key) : master().lpop(key);
 	}
 
 	@Override
@@ -676,7 +687,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public List<String> lrange(String key, long start, long stop) {
-		return master().lrange(key, start, stop);
+		return readSlave ? firstSlave().lrange(key, start, stop) : master().lrange(key, start, stop);
 	}
 
 	@Override
@@ -696,7 +707,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public String rpop(String key) {
-		return master().rpop(key);
+		return readSlave ? firstSlave().rpop(key) : master().rpop(key);
 	}
 
 	@Override
@@ -725,12 +736,12 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Long scard(String key) {
-		return master().scard(key);
+		return readSlave ? firstSlave().scard(key) : master().scard(key);
 	}
 
 	@Override
 	public Set<String> sdiff(String... keys) {
-		return master().sdiff(keys);
+		return readSlave ? firstSlave().sdiff(keys) : master().sdiff(keys);
 	}
 
 	@Override
@@ -740,7 +751,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Set<String> sinter(String... keys) {
-		return master().sinter(keys);
+		return readSlave ? firstSlave().sinter(keys) : master().sinter(keys);
 	}
 
 	@Override
@@ -750,12 +761,12 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Boolean sismember(String key, String member) {
-		return master().sismember(key, member);
+		return readSlave ? firstSlave().sismember(key, member) : master().sismember(key, member);
 	}
 
 	@Override
 	public Set<String> smembers(String key) {
-		return master().smembers(key);
+		return readSlave ? firstSlave().smembers(key) : master().smembers(key);
 	}
 
 	@Override
@@ -765,17 +776,17 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public String spop(String key) {
-		return master().spop(key);
+		return readSlave ? firstSlave().spop(key) : master().spop(key);
 	}
 
 	@Override
 	public List<String> srandmember(String key, int count) {
-		return master().srandmember(key, count);
+		return readSlave ? firstSlave().srandmember(key, count) : master().srandmember(key, count);
 	}
 
 	@Override
 	public String srandmember(String key) {
-		return master().srandmember(key);
+		return readSlave ? firstSlave().srandmember(key) : master().srandmember(key);
 	}
 
 	@Override
@@ -785,7 +796,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Set<String> sunion(String... keys) {
-		return master().sunion(keys);
+		return readSlave ? firstSlave().sunion(keys) : master().sunion(keys);
 	}
 
 	@Override
@@ -809,17 +820,17 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Long zcard(String key) {
-		return master().zcard(key);
+		return readSlave ? firstSlave().zcard(key) : master().zcard(key);
 	}
 
 	@Override
 	public Long zcount(String key, double min, double max) {
-		return master().zcount(key, min, max);
+		return readSlave ? firstSlave().zcount(key, min, max) : master().zcount(key, min, max);
 	}
 
 	@Override
 	public Long zcount(String key, String min, String max) {
-		return master().zcount(key, min, max);
+		return readSlave ? firstSlave().zcount(key, min, max) : master().zcount(key, min, max);
 	}
 
 	@Override
@@ -859,57 +870,57 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Set<String> zrange(String key, long start, long stop) {
-		return master().zrange(key, start, stop);
+		return readSlave ? firstSlave().zrange(key, start, stop) : master().zrange(key, start, stop);
 	}
 
 	@Override
 	public Map<String, Double> zrangewithscores(String key, long start, long stop) {
-		return master().zrangewithscores(key, start, stop);
+		return readSlave ? firstSlave().zrangewithscores(key, start, stop) : master().zrangewithscores(key, start, stop);
 	}
 
 	@Override
 	public Set<String> zrangebyscore(String key, double min, double max) {
-		return master().zrangebyscore(key, min, max);
+		return readSlave ? firstSlave().zrangebyscore(key, min, max) : master().zrangebyscore(key, min, max);
 	}
 
 	@Override
 	public Set<String> zrangebyscore(String key, String min, String max) {
-		return master().zrangebyscore(key, min, max);
+		return readSlave ? firstSlave().zrangebyscore(key, min, max) : master().zrangebyscore(key, min, max);
 	}
 
 	@Override
 	public Set<String> zrangebyscore(String key, double min, double max, int offset, int count) {
-		return master().zrangebyscore(key, min, max, offset, count);
+		return readSlave ? firstSlave().zrangebyscore(key, min, max, offset, count) : master().zrangebyscore(key, min, max, offset, count);
 	}
 
 	@Override
 	public Set<String> zrangebyscore(String key, String min, String max, int offset, int count) {
-		return master().zrangebyscore(key, min, max, offset, count);
+		return readSlave ? firstSlave().zrangebyscore(key, min, max, offset, count) : master().zrangebyscore(key, min, max, offset, count);
 	}
 
 	@Override
 	public Map<String, Double> zrangebyscorewithscores(String key, double min, double max) {
-		return master().zrangebyscorewithscores(key, min, max);
+		return readSlave ? firstSlave().zrangebyscorewithscores(key, min, max) : master().zrangebyscorewithscores(key, min, max);
 	}
 
 	@Override
 	public Map<String, Double> zrangebyscorewithscores(String key, String min, String max) {
-		return master().zrangebyscorewithscores(key, min, max);
+		return readSlave ? firstSlave().zrangebyscorewithscores(key, min, max) : master().zrangebyscorewithscores(key, min, max);
 	}
 
 	@Override
 	public Map<String, Double> zrangebyscorewithscores(String key, double min, double max, int offset, int count) {
-		return master().zrangebyscorewithscores(key, min, max, offset, count);
+		return readSlave ? firstSlave().zrangebyscorewithscores(key, min, max, offset, count) : master().zrangebyscorewithscores(key, min, max, offset, count);
 	}
 
 	@Override
 	public Map<String, Double> zrangebyscorewithscores(String key, String min, String max, int offset, int count) {
-		return master().zrangebyscorewithscores(key, min, max, offset, count);
+		return readSlave ? firstSlave().zrangebyscorewithscores(key, min, max, offset, count) : master().zrangebyscorewithscores(key, min, max, offset, count);
 	}
 
 	@Override
 	public Long zrank(String key, String member) {
-		return master().zrank(key, member);
+		return readSlave ? firstSlave().zrank(key, member) : master().zrank(key, member);
 	}
 
 	@Override
@@ -934,62 +945,62 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Set<String> zrevrange(String key, long start, long stop) {
-		return master().zrevrange(key, start, stop);
+		return readSlave ? firstSlave().zrevrange(key, start, stop) : master().zrevrange(key, start, stop);
 	}
 
 	@Override
 	public Map<String, Double> zrevrangewithscores(String key, long start, long stop) {
-		return master().zrevrangewithscores(key, start, stop);
+		return readSlave ? firstSlave().zrevrangewithscores(key, start, stop) : master().zrevrangewithscores(key, start, stop);
 	}
 
 	@Override
 	public Set<String> zrevrangebyscore(String key, double max, double min) {
-		return master().zrevrangebyscore(key, max, min);
+		return readSlave ? firstSlave().zrevrangebyscore(key, max, min) : master().zrevrangebyscore(key, max, min);
 	}
 
 	@Override
 	public Set<String> zrevrangebyscore(String key, String max, String min) {
-		return master().zrevrangebyscore(key, max, min);
+		return readSlave ? firstSlave().zrevrangebyscore(key, max, min) : master().zrevrangebyscore(key, max, min);
 	}
 
 	@Override
 	public Set<String> zrevrangebyscore(String key, double max, double min, int offset, int count) {
-		return master().zrevrangebyscore(key, max, min, offset, count);
+		return readSlave ? firstSlave().zrevrangebyscore(key, max, min, offset, count) : master().zrevrangebyscore(key, max, min, offset, count);
 	}
 
 	@Override
 	public Set<String> zrevrangebyscore(String key, String max, String min, int offset, int count) {
-		return master().zrevrangebyscore(key, max, min, offset, count);
+		return readSlave ? firstSlave().zrevrangebyscore(key, max, min, offset, count) : master().zrevrangebyscore(key, max, min, offset, count);
 	}
 
 	@Override
 	public Map<String, Double> zrevrangebyscorewithscores(String key, double max, double min) {
-		return master().zrevrangebyscorewithscores(key, max, min);
+		return readSlave ? firstSlave().zrevrangebyscorewithscores(key, max, min) : master().zrevrangebyscorewithscores(key, max, min);
 	}
 
 	@Override
 	public Map<String, Double> zrevrangebyscorewithscores(String key, String max, String min) {
-		return master().zrevrangebyscorewithscores(key, max, min);
+		return readSlave ? firstSlave().zrevrangebyscorewithscores(key, max, min) : master().zrevrangebyscorewithscores(key, max, min);
 	}
 
 	@Override
 	public Map<String, Double> zrevrangebyscorewithscores(String key, double max, double min, int offset, int count) {
-		return master().zrevrangebyscorewithscores(key, max, min, offset, count);
+		return readSlave ? firstSlave().zrevrangebyscorewithscores(key, max, min, offset, count) : master().zrevrangebyscorewithscores(key, max, min, offset, count);
 	}
 
 	@Override
 	public Map<String, Double> zrevrangebyscorewithscores(String key, String max, String min, int offset, int count) {
-		return master().zrevrangebyscorewithscores(key, max, min, offset, count);
+		return readSlave ? firstSlave().zrevrangebyscorewithscores(key, max, min, offset, count) : master().zrevrangebyscorewithscores(key, max, min, offset, count);
 	}
 
 	@Override
 	public Long zrevrank(String key, String member) {
-		return master().zrevrank(key, member);
+		return readSlave ? firstSlave().zrevrank(key, member) : master().zrevrank(key, member);
 	}
 
 	@Override
 	public Double zscore(String key, String member) {
-		return master().zscore(key, member);
+		return readSlave ? firstSlave().zscore(key, member) : master().zscore(key, member);
 	}
 
 	@Override
@@ -1028,7 +1039,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public RedisPubSub psubscribe(RedisPsubscribeHandler handler, String... patterns) {
-		return master().psubscribe(handler, patterns);
+		return readSlave ? firstSlave().psubscribe(handler, patterns) : master().psubscribe(handler, patterns);
 	}
 
 	@Override
@@ -1038,17 +1049,23 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public void punsubscribe(RedisPubSub pubsub, String... patterns) {
-		master().punsubscribe(pubsub, patterns);
+		if (readSlave) 
+			firstSlave().punsubscribe(pubsub, patterns);
+		else 
+			master().punsubscribe(pubsub, patterns);
 	}
 
 	@Override
 	public RedisPubSub subscribe(RedisSubscribeHandler handler, String... channels) {
-		return master().subscribe(handler, channels);
+		return readSlave ? firstSlave().subscribe(handler, channels) : master().subscribe(handler, channels);
 	}
 
 	@Override
 	public void unsubscribe(RedisPubSub pubsub, String... channels) {
-		master().unsubscribe(pubsub, channels);
+		if (readSlave) 
+			firstSlave().unsubscribe(pubsub, channels);
+		else 
+			master().unsubscribe(pubsub, channels);
 	}
 	
 	
@@ -1116,12 +1133,12 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Boolean scriptexists(String sha1) {
-		return master().scriptexists(sha1);
+		return readSlave ? firstSlave().scriptexists(sha1) : master().scriptexists(sha1);
 	}
 
 	@Override
 	public Boolean[] scriptexists(String... sha1s) {
-		return master().scriptexists(sha1s);
+		return readSlave ? firstSlave().scriptexists(sha1s) : master().scriptexists(sha1s);
 	}
 
 	@Override
@@ -1316,4 +1333,5 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public Long microtime() {
 		return master().microtime();
 	}
+
 }

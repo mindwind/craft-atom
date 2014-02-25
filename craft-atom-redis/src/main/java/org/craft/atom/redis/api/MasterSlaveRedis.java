@@ -30,6 +30,17 @@ public interface MasterSlaveRedis extends RedisCommand {
 	void master(int index);
 	
 	/**
+	 * Reset master-slave chain, using zero-index node as the master. 
+	 */
+	void reset();
+	
+	/**
+	 * Set read from slave and write still on master.
+	 * For commands type "Server" "Connection" and "Transaction" all commands of these type all send to master.
+	 */
+	void readSlave();
+	
+	/**
 	 * @return master redis node.
 	 */
 	Redis master();
@@ -43,10 +54,5 @@ public interface MasterSlaveRedis extends RedisCommand {
 	 * @return master-slave redis chain list.
 	 */
 	List<Redis> chain();
-	
-	/**
-	 * Reset master-slave chain, using zero-index node as the master. 
-	 */
-	void reset();
 	
 }

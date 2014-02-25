@@ -97,4 +97,25 @@ public class TestMasterSlaveRedis extends AbstractRedisTests {
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test switchover exception. ", CaseCounter.incr(3)));
 	}
 	
+	@Test
+	public void testReadSlave() throws InterruptedException {
+		// write to master
+		String key = "test";
+		String value = "123";
+		masterSlaveRedis.readSlave();
+		masterSlaveRedis.set(key, value);
+		Boolean b = masterSlaveRedis.exists(key);
+		Assert.assertFalse(b);
+		
+		// wait a while for master-slave sync.
+		Thread.sleep(1000);
+		
+		// read from slave
+		b = masterSlaveRedis.exists(key);
+		String v = masterSlaveRedis.get(key);
+		Assert.assertTrue(b);
+		Assert.assertEquals(value, v);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test read slave. ", CaseCounter.incr(3)));
+	}
+	
 }
