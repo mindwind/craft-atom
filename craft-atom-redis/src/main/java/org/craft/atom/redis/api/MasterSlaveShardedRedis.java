@@ -16,10 +16,17 @@ public interface MasterSlaveShardedRedis extends ShardedRedisCommand {
 	List<MasterSlaveRedis> shards();
 	
 	/**
-	 * Set all <code>MasterSlaveRedis</code> shard read from slave and write on master.
+	 * Enable all <code>MasterSlaveRedis</code> shards read from slave and write on master.
 	 * 
-	 * @see MasterSlaveRedis#readSlave()
+	 * @see MasterSlaveRedis#enableReadSlave()
 	 */
-	void readSlave();
+	void enableReadSlave();
+
 	
+	/**
+	 * Disable all <code>MasterSlaveRedis</code> shards read from slave.
+	 * 
+	 * @see MasterSlaveRedis#disableReadSlave();
+	 */
+	void disableReadSlave();
 }

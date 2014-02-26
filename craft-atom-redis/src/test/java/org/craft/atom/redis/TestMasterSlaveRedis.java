@@ -102,7 +102,7 @@ public class TestMasterSlaveRedis extends AbstractRedisTests {
 		// write to master
 		String key = "test";
 		String value = "123";
-		masterSlaveRedis.readSlave();
+		masterSlaveRedis.enableReadSlave();
 		masterSlaveRedis.set(key, value);
 		Boolean b = masterSlaveRedis.exists(key);
 		Assert.assertFalse(b);

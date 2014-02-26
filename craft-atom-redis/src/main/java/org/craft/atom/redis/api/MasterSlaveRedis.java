@@ -35,10 +35,15 @@ public interface MasterSlaveRedis extends RedisCommand {
 	void reset();
 	
 	/**
-	 * Set read from slave and write still on master.
+	 * Enable read from slave and write still on master.
 	 * For commands type "Server" "Connection" and "Transaction" all commands of these type all send to master.
 	 */
-	void readSlave();
+	void enableReadSlave();
+	
+	/**
+	 * Disable read from slave.
+	 */
+	void disableReadSlave();
 	
 	/**
 	 * @return master redis node.

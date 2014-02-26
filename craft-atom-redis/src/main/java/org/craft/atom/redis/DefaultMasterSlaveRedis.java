@@ -160,8 +160,13 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 	
 	@Override
-	public void readSlave() {
+	public void enableReadSlave() {
 		this.readSlave = true;
+	}
+	
+	@Override
+	public void disableReadSlave() {
+		this.readSlave = false;
 	}
 	
 	
