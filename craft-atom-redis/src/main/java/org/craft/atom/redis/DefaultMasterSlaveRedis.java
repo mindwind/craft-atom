@@ -612,42 +612,42 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public String blpop(String key) {
-		return readSlave ? firstSlave().blpop(key) : master().blpop(key);
+		return master().blpop(key);
 	}
 
 	@Override
 	public String blpop(String key, int timeout) {
-		return readSlave ? firstSlave().blpop(key, timeout) : master().blpop(key, timeout);
+		return master().blpop(key, timeout);
 	}
 
 	@Override
 	public Map<String, String> blpop(String... keys) {
-		return readSlave ? firstSlave().blpop(keys) : master().blpop(keys);
+		return master().blpop(keys);
 	}
 
 	@Override
 	public Map<String, String> blpop(int timeout, String... keys) {
-		return readSlave ? firstSlave().blpop(timeout, keys) : master().blpop(timeout, keys);
+		return master().blpop(timeout, keys);
 	}
 
 	@Override
 	public String brpop(String key) {
-		return readSlave ? firstSlave().brpop(key) : master().brpop(key);
+		return master().brpop(key);
 	}
 
 	@Override
 	public String brpop(String key, int timeout) {
-		return readSlave ? firstSlave().brpop(key, timeout) : master().brpop(key, timeout);
+		return master().brpop(key, timeout);
 	}
 
 	@Override
 	public Map<String, String> brpop(String... keys) {
-		return readSlave ? firstSlave().brpop(keys) : master().brpop(keys);
+		return master().brpop(keys);
 	}
 
 	@Override
 	public Map<String, String> brpop(int timeout, String... keys) {
-		return readSlave ? firstSlave().brpop(timeout, keys) : master().brpop(timeout, keys);
+		return master().brpop(timeout, keys);
 	}
 
 	@Override
@@ -677,7 +677,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public String lpop(String key) {
-		return readSlave ? firstSlave().lpop(key) : master().lpop(key);
+		return master().lpop(key);
 	}
 
 	@Override
@@ -712,7 +712,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public String rpop(String key) {
-		return readSlave ? firstSlave().rpop(key) : master().rpop(key);
+		return master().rpop(key);
 	}
 
 	@Override
