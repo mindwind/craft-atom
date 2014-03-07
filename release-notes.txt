@@ -18,7 +18,7 @@ UPGRADE URGENCY: LOW
 
 * craft-atom-redis
   [IMPROVE]  - add master slave redis reading and writing separation, so read from slave and write still on master.
-
+  [NEW]      - add new nio builder for easy use.
 
 
 
