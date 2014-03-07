@@ -16,7 +16,7 @@ import org.craft.atom.nio.NioConnector;
 @ToString(callSuper = true, of = "connectTimeoutInMillis")
 public class NioConnectorConfig extends NioConfig {
 	
-	/** 30 seconds as default connect timeout */
-	@Getter @Setter private int connectTimeoutInMillis = 30000;
+	/** 2 seconds as default connect timeout */
+	@Getter @Setter private int connectTimeoutInMillis = 2000;
 	
 }
