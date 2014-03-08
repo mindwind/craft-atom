@@ -15,7 +15,7 @@ import org.junit.Test;
  * @author mindwind
  * @version 1.0, Dec 25, 2013
  */
-public class TestNioMXBean {
+public class TestNioMBean {
 	
 	private static final String HOST  = "127.0.0.1"                           ;
 	private static final int    PORT1 = AvailablePortFinder.getNextAvailable();
@@ -24,7 +24,7 @@ public class TestNioMXBean {
 	
 	
 	@Test
-	public void testMXBean() throws Exception {
+	public void testMBean() throws Exception {
 		IoAcceptor acceptor = NioFactory.newTcpAcceptor(new NioAcceptorHandler());
     	acceptor.bind(PORT1);
     	acceptor.bind(PORT2);
