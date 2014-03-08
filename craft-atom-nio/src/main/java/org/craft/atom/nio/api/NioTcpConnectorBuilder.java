@@ -10,7 +10,7 @@ import org.craft.atom.nio.NioTcpConnector;
  * @author mindwind
  * @version 1.0, Mar 7, 2014
  */
-public class NioTcpConnectorBuilder extends NioBuilder {
+public class NioTcpConnectorBuilder extends NioBuilder<IoConnector> {
 
 
 	private int connectTimeoutInMillis = 2000;

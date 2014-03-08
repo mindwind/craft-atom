@@ -12,7 +12,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
  * @author mindwind
  * @version 1.0, Mar 7, 2014
  */
-public abstract class NioBuilder {
+public abstract class NioBuilder<T> {
 	
 	protected final   IoHandler                     handler                                                             ;
 	protected         NioChannelEventDispatcher     dispatcher        = new NioOrderedThreadPoolChannelEventDispatcher();
@@ -33,17 +33,17 @@ public abstract class NioBuilder {
 	}
 	
 	
-	public NioBuilder minReadBufferSize(int size)                              { this.minReadBufferSize = size;       return this; }
-	public NioBuilder maxReadBufferSize(int size)                              { this.maxReadBufferSize = size;       return this; }
-	public NioBuilder readBufferSize   (int size)                              { this.readBufferSize    = size;       return this; }
-	public NioBuilder processorPoolSize(int size)                              { this.processorPoolSize = size;       return this; }
-	public NioBuilder executorSize     (int size)                              { this.executorSize      = size;       return this; }
-	public NioBuilder channelEventSize (int size)                              { this.channelEventSize  = size;       return this; }
-	public NioBuilder totalEventSize   (int size)                              { this.totalEventSize    = size;       return this; }
-	public NioBuilder readWriteFair    (boolean fair)                          { this.readWriteFair     = fair;       return this; }
-	public NioBuilder ioTimeoutInMillis(int timeout)                           { this.ioTimeoutInMillis = timeout;    return this; }
-	public NioBuilder dispatcher       (NioChannelEventDispatcher dispatcher)  { this.dispatcher        = dispatcher; return this; }
-	public NioBuilder predictorFactory (NioBufferSizePredictorFactory factory) { this.predictorFactory  = factory;    return this; }
+	public NioBuilder<T> minReadBufferSize(int size)                              { this.minReadBufferSize = size;       return this; }
+	public NioBuilder<T> maxReadBufferSize(int size)                              { this.maxReadBufferSize = size;       return this; }
+	public NioBuilder<T> readBufferSize   (int size)                              { this.readBufferSize    = size;       return this; }
+	public NioBuilder<T> processorPoolSize(int size)                              { this.processorPoolSize = size;       return this; }
+	public NioBuilder<T> executorSize     (int size)                              { this.executorSize      = size;       return this; }
+	public NioBuilder<T> channelEventSize (int size)                              { this.channelEventSize  = size;       return this; }
+	public NioBuilder<T> totalEventSize   (int size)                              { this.totalEventSize    = size;       return this; }
+	public NioBuilder<T> readWriteFair    (boolean fair)                          { this.readWriteFair     = fair;       return this; }
+	public NioBuilder<T> ioTimeoutInMillis(int timeout)                           { this.ioTimeoutInMillis = timeout;    return this; }
+	public NioBuilder<T> dispatcher       (NioChannelEventDispatcher dispatcher)  { this.dispatcher        = dispatcher; return this; }
+	public NioBuilder<T> predictorFactory (NioBufferSizePredictorFactory factory) { this.predictorFactory  = factory;    return this; }
 	
 	
 	protected void set(NioConfig config) {
@@ -57,5 +57,7 @@ public abstract class NioBuilder {
 		config.setMinReadBufferSize(minReadBufferSize);
 		config.setMaxReadBufferSize(maxReadBufferSize);
 	}
+	
+	abstract public T build();
 	
 }

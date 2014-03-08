@@ -10,7 +10,7 @@ import org.craft.atom.nio.NioTcpAcceptor;
  * @author mindwind
  * @version 1.0, Mar 7, 2014
  */
-public class NioTcpAcceptorBuilder extends NioBuilder {
+public class NioTcpAcceptorBuilder extends NioBuilder<IoAcceptor> {
 	
 	
 	private int     backlog      = 50  ;
