@@ -48,4 +48,12 @@ public class NioFactory {
 	public static IoConnector newTcpConnector(IoHandler handler, NioConnectorConfig config, NioChannelEventDispatcher dispatcher, NioBufferSizePredictorFactory predictorFactory) {
 		return new NioTcpConnector(handler, config, dispatcher, predictorFactory);
 	}
+	
+	public static NioTcpAcceptorBuilder newTcpAcceptorBuilder(IoHandler handler) {
+		return new NioTcpAcceptorBuilder(handler);
+	}
+	
+	public static NioTcpConnectorBuilder newTcpConnectorBuilder(IoHandler handler) {
+		return new NioTcpConnectorBuilder(handler);
+	}
 }
