@@ -15,14 +15,79 @@
 		
 		<div id="center" class="center">
 			<div id="content" class="content">
-				<h1>craft-atom-nio</h1>
-				<div class="date">Feb 3, 2014 by mindwind</div>
-				
-				<h3>Introduction</h3>
-				<p>A very thin wrap for java nio to make it use easily, it implements <a href="doc-craft-atom-io.html" target="_blank"><code>craft-atom-io</code></a> api model definition.</p>
-				
-				<h3>Getting Started</h3>
-				
+<h1>craft-atom-nio</h1>
+<div class="date">Mar 15, 2014 by mindwind</div>
+
+<h3>Introduction</h3>
+<p>A very thin wrap for java nio to make it use easily, it implements <a href="doc-craft-atom-io.html" target="_blank"><code>craft-atom-io</code></a> api model definition.</p>
+
+<h3>Getting Started</h3>
+<p>
+Before getting started, you should understand the reactor io model, defined in the <a href="doc-craft-atom-io.html" target="_blank">craft-atom-io</a>.
+Then we get started with a simple example, and you will learn how to write a client and server on top of <code>craft-atom-nio</code>.
+</p>
+
+<p>
+<b>Writing an Echo Server</b><br>
+In order to use <code>craft-atom-nio</code> the only thing to do is implements <code>IoHandler</code> which handles I/O events.
+An example as follows:
+</p>
+<pre><code>
+package org.craft.atom.nio;
+
+import org.craft.atom.io.AbstractIoHandler;
+import org.craft.atom.io.Channel;
+
+/**
+ * @author mindwind
+ * @version 1.0, Mar 15, 2014
+ */
+public class NioEchoServerHandler extends AbstractIoHandler {
+	
+    @Override
+    public void channelRead(Channel<byte[]> channel, byte[] bytes) {
+        channel.write(bytes);
+    }
+    
+}
+</code></pre>
+<p>
+So far so good. We have implemented the first part of the Echo Server. 
+What's left now is to write the main() method which starts the server with the <code>NioEchoServerHandler</code>.
+</p>
+<pre><code>
+package org.craft.atom.nio;
+
+import java.io.IOException;
+
+import org.craft.atom.io.IoAcceptor;
+import org.craft.atom.nio.api.NioFactory;
+
+/**
+ * @author mindwind
+ * @version 1.0, Mar 15, 2014
+ */
+public class NioEchoServer {
+
+    private int port;
+	
+    public NioEchoServer(int port) {
+        this.port = port;
+    }
+    
+    public void start() throws IOException {
+        IoAcceptor acceptor = NioFactory.newTcpAcceptorBuilder(new NioEchoServerHandler()).build();
+        acceptor.bind(port);
+    }
+    
+    public static void main(String[] args) throws IOException {
+        new NioEchoServer(1314).start();
+    }
+}
+</code></pre>
+<p>
+Congratulations! Our Echo Server done.
+</p>
 			</div>
 		</div>
 		
