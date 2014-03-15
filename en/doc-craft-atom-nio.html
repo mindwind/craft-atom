@@ -5,8 +5,12 @@
 	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
 	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
 		<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
 		<script type="text/javascript" src="../js/craft.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
 		<title>Documentation: craft-atom-nio</title>
 	</head>
 
@@ -19,7 +23,7 @@
 <div class="date">Mar 15, 2014 by mindwind</div>
 
 <h3>Introduction</h3>
-<p>A very thin wrap for java nio to make it use easily, it implements <a href="doc-craft-atom-io.html" target="_blank"><code>craft-atom-io</code></a> api model definition.</p>
+<p>A very thin wrap for java nio to make it use easily, it implements <a href="doc-craft-atom-io.html" target="_blank">craft-atom-io</a> api model definition.</p>
 
 <h3>Getting Started</h3>
 <p>
@@ -32,7 +36,7 @@ Then we get started with a simple example, and you will learn how to write a cli
 In order to use <code>craft-atom-nio</code> the only thing to do is implements <code>IoHandler</code> which handles I/O events.
 An example as follows:
 </p>
-<pre><code>
+<pre><code data-language="java">
 package org.craft.atom.nio;
 
 import org.craft.atom.io.AbstractIoHandler;
@@ -45,7 +49,7 @@ import org.craft.atom.io.Channel;
 public class NioEchoServerHandler extends AbstractIoHandler {
 	
     @Override
-    public void channelRead(Channel<byte[]> channel, byte[] bytes) {
+    public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
         channel.write(bytes);
     }
     
@@ -55,7 +59,7 @@ public class NioEchoServerHandler extends AbstractIoHandler {
 So far so good. We have implemented the first part of the Echo Server. 
 What's left now is to write the main() method which starts the server with the <code>NioEchoServerHandler</code>.
 </p>
-<pre><code>
+<pre><code data-language="java">
 package org.craft.atom.nio;
 
 import java.io.IOException;
