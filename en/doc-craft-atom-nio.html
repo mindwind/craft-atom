@@ -155,6 +155,33 @@ public class NioEchoClient {
 
 }
 </code></pre>
+
+<h3>Advanced</h3>
+<p>
+Actually above Echo Server and Client example lack a important part in network programming. The missing part is protocol
+codec, because they don't need it, but a complete client and server must handle protocol codec.<br>
+</p>
+
+<p>
+<b>Protocol Codec</b><br>
+For simplicity and atomicity <a href="#">craft-atom-nio</a> is not responsible for protocol codec. 
+The responsibility of protocol codec belong to <a href="doc-craft-atom-protocol" target="_blank">craft-atom-protocol</a> series components.
+</p>
+
+<p>
+<b>Thread Mode</b><br>
+<a>craft-atom-nio Thread Mode Illustration</a>: I/O thread, executor and dispatcher.
+</p>
+
+<p>
+<b>Event Mode</b><br>
+<a>craft-atom-nio Event Mode Illustration</a>: Event definition and handle.
+</p>
+
+<p>
+<b>Performance</b><br>
+<a>craft-atom-nio Benchmark and Comparison with mina and netty</a>: Fast enough?
+</p>
 			</div>
 		</div>
 		
