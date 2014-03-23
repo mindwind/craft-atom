@@ -37,11 +37,6 @@ In order to use <a href="#">craft-atom-nio</a> the only thing to do is implement
 An example as follows:
 </p>
 <pre><code data-language="java">
-package org.craft.atom.nio;
-
-import org.craft.atom.io.AbstractIoHandler;
-import org.craft.atom.io.Channel;
-
 public class NioEchoServerHandler extends AbstractIoHandler {
 	
     @Override
@@ -56,13 +51,6 @@ So far so good. We have implemented the first part of the Echo Server.
 What's left now is to write the main() method which starts the server with the <code>NioEchoServerHandler</code>.
 </p>
 <pre><code data-language="java">
-package org.craft.atom.nio;
-
-import java.io.IOException;
-
-import org.craft.atom.io.IoAcceptor;
-import org.craft.atom.nio.api.NioFactory;
-
 public class NioEchoServer {
 
     private int port;
@@ -90,13 +78,6 @@ Congratulations! Our Echo Server done.
 It is similar to Echo Server, first we need implement a client handler, as follows:
 </p>
 <pre><code data-language="java">
-package org.craft.atom.nio;
-
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.craft.atom.io.AbstractIoHandler;
-import org.craft.atom.io.Channel;
-
 public class NioEchoClientHandler extends AbstractIoHandler {
 	
     private AtomicInteger counter = new AtomicInteger();
@@ -126,13 +107,6 @@ public class NioEchoClientHandler extends AbstractIoHandler {
 An client with main() method as follows:
 </p>
 <pre><code data-language="java">
-package org.craft.atom.nio;
-
-import java.io.IOException;
-
-import org.craft.atom.io.IoConnector;
-import org.craft.atom.nio.api.NioFactory;
-
 public class NioEchoClient {
 
     private String ip;
