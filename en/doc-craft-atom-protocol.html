@@ -5,8 +5,12 @@
 	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
 	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
 		<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
 		<script type="text/javascript" src="../js/craft.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
 		<title>Documentation: craft-atom-protocol</title>
 	</head>
 
@@ -15,11 +19,57 @@
 		
 		<div id="center" class="center">
 			<div id="content" class="content">
-				<h1>craft-atom-protocol</h1>
-				<div class="date">Feb 7, 2014 by mindwind</div>
-				
-				<h3>Introduction</h3>
-				<p>A base protocol codec api definition, other component, like <a href="doc-craft-atom-protocol-http.html" target="_blank"><code>craft-atom-protocol-http</code></a> implements it.</p>
+<h1>craft-atom-protocol</h1>
+<div class="date">Mar 23, 2014 by mindwind</div>
+
+<h3>Introduction</h3>
+<p>
+A base protocol codec api definition, other component, like <a href="doc-craft-atom-protocol-textline.html" target="_blank">craft-atom-protocol-textline</a> implements it.
+Protocol codec contains two parts: decoding and encoding.
+</p>
+
+<h3>Protocol Decode</h3>
+<p>
+Protocol decode handles the binary data from network, decodes bytes into higher-level protocol objects.
+Protocol decode api definition as follows:
+</p>
+<pre><code data-language="java">
+public interface ProtocolDecoder&lt;P&gt; {
+	
+    /**
+     * Decodes binary data into higher-level protocol objects.
+     * 
+     * @param bytes
+     * @return higher-level protocol objects, an empty list returned if these bytes are incomplete for protocol definition.
+     * @throws ProtocolException
+     */
+    List&lt;P&gt; decode(byte[] bytes) throws ProtocolException;
+	
+}
+</code></pre>
+<p>
+The incoming bytes may be streaming based, so the protocol decoder implementor should save temporary decoding state.
+</p>
+
+<h3>Protocol Encode</h3>
+<p>
+Protocol encode handles higher-level protocol objects, transform them to binary data to transport through network.
+Protocol encode api definition as follows:
+</p>
+<pre><code data-language="java">
+public interface ProtocolEncoder&lt;P&gt; {
+	
+    /**
+     * Encodes higher-level protocol objects into binary data.
+     * 
+     * @param protocolObject
+     * @return byte array
+     * @throws ProtocolException
+     */
+    byte[] encode(P protocolObject) throws ProtocolException;
+	
+}
+</code></pre>
 			</div>
 		</div>
 		
