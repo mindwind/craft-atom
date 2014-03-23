@@ -1,7 +1,7 @@
 package org.craft.atom.protocol;
 
 /**
- * Encodes higher-level message objects into binary data, implementor should be thread safe.
+ * Encodes higher-level protocol objects into binary data, implementor should be thread safe.
  * 
  * @author mindwind
  * @version 1.0, Oct 16, 2012
