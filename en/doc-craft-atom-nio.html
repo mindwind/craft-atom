@@ -45,7 +45,6 @@ public class NioEchoServerHandler extends AbstractIoHandler {
     public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
         channel.write(bytes);
     }
-    
 }
 </code></pre>
 <p>
@@ -101,7 +100,6 @@ public class NioEchoClientHandler extends AbstractIoHandler {
         channel.write(toSend.getBytes());
         System.out.println("ECHO-SENT: " + toSend);
     }
-	
 }
 </code></pre>
 
@@ -128,7 +126,6 @@ public class NioEchoClient {
     public static void main(String[] args) throws IOException {
         new NioEchoClient("127.0.0.1", 1314).start();
     }
-
 }
 </code></pre>
 
