@@ -15,11 +15,40 @@
 		
 		<div id="center" class="center">
 			<div id="content" class="content">
-				<h1>craft-atom-protocol-textline</h1>
-				<div class="date">Feb 7, 2014 by mindwind</div>
-				
-				<h3>Introduction</h3>
-				<p>A simple textline protocol implementation.</p>
+<h1>craft-atom-protocol-textline</h1>
+<div class="date">Mar 25, 2014 by mindwind</div>
+
+<h3>Introduction</h3>
+<p>
+A simple textline protocol implementor, which implements <a href="doc-craft-atom-protocol" target="_blank">craft-atom-protocol</a> api.
+</p>
+
+<h3>Getting Started</h3>
+<p>
+First of all, we look at an example of text-line decode as follows:
+</p>
+<pre><code data-language="java">
+public class NioTextlineServerHandler extends AbstractIoHandler {
+	
+    @Override
+    public void channelOpened(Channel<byte[]> channel) {
+        TextLineDecoder decoder = new TextLineDecoder(Charset.forName("utf-8"), "\n", 2048, 10240);
+        channel.setAttribute("decoder", decoder);
+    }
+	
+    @Override
+    public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
+        TextLineDecoder decoder = (TextLineDecoder) channel.getAttribute("decoder");
+        List&lt;String&gt; lines = decoder.decode(bytes);
+        // do something others
+    }
+}
+</code></pre>
+<p>
+Above we read some bytes from network, and decode by text-line decoder with delimiter character <code>\n</code>.
+So simple, for the text-line encoder it is more simple than decoder, so there is no need to describe it, 
+spend ten seconds to see the source code you can completely understand it.
+</p>
 			</div>
 		</div>
 		
