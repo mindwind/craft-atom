@@ -9,7 +9,7 @@ package org.craft.atom.protocol.ssl;
 public interface SslHandshakeHandler {
 	
 	/**
-	 * Need write to remote side before handshake can continue.
+	 * Need write some handshake data to remote side before handshake can continue.
 	 * 
 	 * @param bytes
 	 */
