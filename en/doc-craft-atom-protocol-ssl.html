@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
+		<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="../js/craft.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
+		<title>Documentation: craft-atom-protocol-ssl</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-protocol-ssl</h1>
+<div class="date">Mar 26, 2014 by mindwind</div>
+
+<h3>Introduction</h3>
+<p>
+A simple ssl protocol implementor, it wraps <code>SSLEngine</code> to make it use easily.
+</p>
+
+<h3>Getting Started</h3>
+<p>
+First of all, we look at an example of ssl decode as follows:
+</p>
+<pre><code data-language="java">
+public class NioSslServerHandler extends AbstractIoHandler {
+	
+    @Override
+    public void channelOpened(Channel&lt;byte[]&gt; channel) {
+        SslCodec codec = new SslCodec(sslContext, new ChannelSslHandshakeHandler(channel));
+        codec.init();
+        channel.setAttribute("ssl_codec", codec);
+    }
+	
+    @Override
+    public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
+        SslCodec codec = (SslCodec) channel.getAttribute("ssl_codec");
+        byte[] decryptData = codec.decode(bytes);
+        if (decryptData != null) {
+            // here, ssl handshake complete and we got data after decrypt. 
+            // do something, then write back some encrypt data
+            byte[] encryptData = sslCodec.encode("some data...".getBytes());
+            channel.write(encryptData);
+        }
+    }
+}
+</code></pre>
+<p>
+<code>SslCodec</code> need a <code>SslHandshakeHandler</code> implementor to handle the ssl handshake.
+Because ssl handshake is related to transport implementation, herer <code>ChannelSslHandshakeHandler</code> is a example using I/O channel as the transport.
+</p>
+<pre><code data-language="java">
+public class ChannelSslHandshakeHandler implements SslHandshakeHandler {
+
+    private Channel&lt;byte[]&gt; channel;
+    
+    public ChannelSslHandshakeHandler(Channel&lt;byte[]&gt; channel) {
+        this.channel = channel;
+    }
+    
+    @Override
+    public void needWrite(byte[] bytes) {
+        channel.write(bytes);
+    }
+}
+</code></pre>
+<p>
+To summarize, we want to use <code>SslCodec</code> class, follow three steps:<br>
+1. New a instance.<br>
+2. Init the new instance.<br>
+3. Complete the handshake.<br>
+</p>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
