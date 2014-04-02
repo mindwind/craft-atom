@@ -88,10 +88,11 @@
 }
 
 .content {
-	width      : 800px;
-	float      : left;
-	margin-left: 20px;
-	text-align : left;
+	width       : 940px;
+	float       : left;
+	margin-left : 20px;
+	margin-right: 20px;
+	text-align  : left;
 }
 
 body {
