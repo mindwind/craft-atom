@@ -24,7 +24,7 @@ public class HttpResponseEncoder extends HttpEncoder implements ProtocolEncoder<
 	}
 	
 	public HttpResponseEncoder(Charset charset)  {
-		
+		this.charset = charset;
 	}
 
 	@Override
