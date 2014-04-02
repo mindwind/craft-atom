@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
+		<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="../js/craft.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
+		<title>Documentation: craft-atom-protocol-http</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-protocol-http</h1>
+<div class="date">Apr 2, 2014 by mindwind</div>
+
+<h3>Introduction</h3>
+<p>
+A simple http protocol implementor, which implements <a href="doc-craft-atom-protocol" target="_blank">craft-atom-protocol</a> api.
+But now we just implement http request decoder and response encoder, so you can use it to implement your own http server.
+</p>
+
+<h3>Getting Started</h3>
+<p>
+First of all, we look at an example of http request decode as follows:
+</p>
+<pre><code data-language="java">
+public class NioHttpServerHandler extends AbstractIoHandler {
+	
+    @Override
+    public void channelOpened(Channel&lt;byte[]&gt; channel) {
+        HttpRequestDecoder decoder = new HttpRequestDecoder(Charset.forName("utf-8"), 20480, 1024, 20480);
+        channel.setAttribute("decoder", decoder);
+    }
+	
+    @Override
+    public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
+        HttpRequestDecoder decoder = (HttpRequestDecoder) channel.getAttribute("decoder");
+        List&lt;HttpRequest&gt; requests = decoder.decode(bytes);
+        // handle the requests
+    }
+}
+</code></pre>
+<p>
+After handle a request, we should produce a response and send back to client.
+</p>
+<pre><code data-language="java">
+HttpResponse response = HttpResponses.new200Response("response content");
+HttpResponseEncoder encoder = new HttpResponseEncoder(Charset.forName("utf-8"));
+byte[] bytes = encoder.encode(response);
+</code></pre>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
