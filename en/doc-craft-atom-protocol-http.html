@@ -25,12 +25,11 @@
 <h3>Introduction</h3>
 <p>
 A simple http protocol implementor, which implements <a href="doc-craft-atom-protocol" target="_blank">craft-atom-protocol</a> api.
-But now we just implement http request decoder and response encoder, so you can use it to implement your own http server.
 </p>
 
 <h3>Getting Started</h3>
 <p>
-First of all, we look at an example of http request decode as follows:
+First of all, we look at an example of http request decode and response encode as follows:
 </p>
 <pre><code data-language="java">
 public class NioHttpServerHandler extends AbstractIoHandler {
@@ -45,18 +44,18 @@ public class NioHttpServerHandler extends AbstractIoHandler {
     public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
         HttpRequestDecoder decoder = (HttpRequestDecoder) channel.getAttribute("decoder");
         List&lt;HttpRequest&gt; requests = decoder.decode(bytes);
-        // handle the requests
+        
+        // After handle the request, we should produce a response and send back to client.
+        HttpResponse response = HttpResponses.new200Response("response content");
+        HttpResponseEncoder encoder = new HttpResponseEncoder(Charset.forName("utf-8"));
+        byte[] bytes = encoder.encode(response);
+        channel.write(bytes);
     }
 }
 </code></pre>
 <p>
-After handle a request, we should produce a response and send back to client.
+But now we just implement http request decoder and response encoder, so you can only use it to implement your own http server.
 </p>
-<pre><code data-language="java">
-HttpResponse response = HttpResponses.new200Response("response content");
-HttpResponseEncoder encoder = new HttpResponseEncoder(Charset.forName("utf-8"));
-byte[] bytes = encoder.encode(response);
-</code></pre>
 			</div>
 		</div>
 		
