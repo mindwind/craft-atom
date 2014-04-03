@@ -15,7 +15,7 @@ import java.io.OutputStream;
  * 
  * @author  mindwind
  * @version 1.0, 2009-9-1
- * @deprecated
+ * @deprecated use <code>org.apache.commons.io.FileUtils</code> as an alternative
  */
 public class FileUtil {
 

@@ -8,7 +8,7 @@ import java.util.Date;
  * 
  * @author  mindwind
  * @version 1.0, May 15, 2012
- * @deprecated
+ * @deprecated use <code>org.apache.commons.lang3.time.DateUtils</code> as an alternative
  */
 public class DateUtil {
 	
