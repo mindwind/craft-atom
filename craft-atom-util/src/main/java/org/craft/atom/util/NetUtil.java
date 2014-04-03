@@ -7,9 +7,9 @@ import java.net.Socket;
 import java.util.Enumeration;
 
 /**
- * Net util class
+ * A net utility class that helps to get local host ip address.
  * 
- * @author Hu Feng
+ * @author  mindwind
  * @version 1.0, 2011-9-6
  */
 public class NetUtil {
