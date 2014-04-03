@@ -16,9 +16,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 /**
- * Http util class.
+ * A http utility class that sends http request and parse response.
  * 
- * @author Hu Feng
+ * @author mindwind
  * @version 1.0, 2011-10-18
  */
 public class HttpUtil {
@@ -199,8 +199,7 @@ public class HttpUtil {
 
 	private static String getStreamAsString(InputStream stream, String charset) throws IOException {
 		try {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					stream, charset));
+			BufferedReader reader = new BufferedReader(new InputStreamReader(stream, charset));
 			StringWriter writer = new StringWriter();
 
 			char[] chars = new char[256];
