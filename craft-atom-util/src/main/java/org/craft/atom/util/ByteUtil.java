@@ -1,9 +1,9 @@
 package org.craft.atom.util;
 
 /**
- * Byte Util class
+ * A byte utility class that manipulates bytes.
  * 
- * @author Hu Feng
+ * @author  mindwind
  * @version 1.0, 2011-8-2
  */
 public class ByteUtil {
