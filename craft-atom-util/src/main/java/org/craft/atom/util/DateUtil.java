@@ -6,8 +6,9 @@ import java.util.Date;
 /**
  * Date Util
  * 
- * @author Hu Feng
+ * @author  mindwind
  * @version 1.0, May 15, 2012
+ * @deprecated
  */
 public class DateUtil {
 	

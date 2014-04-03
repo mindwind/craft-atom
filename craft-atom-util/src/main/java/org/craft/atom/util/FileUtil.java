@@ -13,8 +13,9 @@ import java.io.OutputStream;
 /**
  * File util class
  * 
- * @author Frank Hu
+ * @author  mindwind
  * @version 1.0, 2009-9-1
+ * @deprecated
  */
 public class FileUtil {
 
