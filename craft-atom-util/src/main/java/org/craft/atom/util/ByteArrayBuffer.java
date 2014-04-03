@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.ToString;
 
 /**
- * A byte array buffer.
+ * A resizable byte array.
  * <br>
  * <b>NOTE: </b> it's not thread safe.
  * 
@@ -58,8 +58,10 @@ public final class ByteArrayBuffer implements Serializable {
 		this.len = bytes.length;
 	}
 
+	
 	// ~ -------------------------------------------------------------------------------------------------------------
 
+	
 	private void checkCapacity(int capacity) {
 		if (capacity < 0) {
 			throw new IllegalArgumentException("Buffer capacity may not be negative");
