@@ -7,7 +7,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 /**
- * GZip util
+ * A Gzip utility class that zip and unzip bytes.
  * 
  * @author mindwind
  * @version 1.0, Jun 3, 2012
