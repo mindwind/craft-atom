@@ -6,10 +6,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import lombok.ToString;
 
 /**
- * Named thread factory.<br>
+ * A named thread factory implementor.<br>
  * When using thread pool with your own named thread is a better practice.
  * 
- * @author Hu Feng
+ * @author  mindwind
  * @version 1.0, Nov 19, 2012
  */
 @ToString

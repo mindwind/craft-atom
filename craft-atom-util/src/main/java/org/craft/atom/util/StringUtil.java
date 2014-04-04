@@ -5,10 +5,13 @@ import java.util.Locale;
 import java.util.Random;
 
 /**
- * String util class.
+ * A string utility class that manipulates string.
+ * It is <code>null</code> safe, means it handles input string quietly.
+ * That is to say if a <code>null</code> input will return <code>null</code>, 
+ * there is no <code>NullPointerException</code> will be thrown.
  *
- * @author Hu Feng
- * @version 1.0, 2011-12-23
+ * @author mindwind
+ * @version 1.0, 2006-12-23
  */
 public class StringUtil {
 	

@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A timing-wheel optimized for approximated I/O timeout scheduling.<br>
+ * A timing wheel data structures to efficiently implement a timer facility, such as I/O timeout scheduling.<br>
  * {@link TimingWheel} creates a new thread whenever it is instantiated and started, so don't create many instances.
  * <p>
  * <b>The classic usage as follows:</b><br>
