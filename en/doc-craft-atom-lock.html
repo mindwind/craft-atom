@@ -5,8 +5,12 @@
 	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
 	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
 		<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
 		<script type="text/javascript" src="../js/craft.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
 		<title>Documentation: craft-atom-lock</title>
 	</head>
 
@@ -15,11 +19,32 @@
 		
 		<div id="center" class="center">
 			<div id="content" class="content">
-				<h1>craft-atom-lock</h1>
-				<div class="date">Feb 4, 2014 by mindwind</div>
-				
-				<h3>Introduction</h3>
-				<p>A kind of distributed lock base on redis.</p>
+<h1>craft-atom-lock</h1>
+<div class="date">Apr 9, 2014 by mindwind</div>
+
+<h3>Introduction</h3>
+<p>A kind of distributed lock base on redis.</p>
+
+<h3>Getting Started</h3>
+<p>A typical usage idiom for this component would be:</p>
+<pre><code data-language="java">
+DLock dlock = ...;
+if (dlock.tryLock("lockKey", 10, TimeUnit.SECONDS)) {
+    try {
+        // manipulate protected state
+    } finally {
+        dlock.unlock();
+    }
+}
+</code></pre>
+<p>How to get a <code>DLock</code> instance?</p>
+<pre><code data-language="java">
+// base on redis 2.4+
+DLock dlock = DLockFactory.newRedis24DLock(...);
+
+// base on redis 2.6.12+
+DLock dlock = DLockFactory.newRedis26DLock(...);
+</code></pre>
 			</div>
 		</div>
 		
