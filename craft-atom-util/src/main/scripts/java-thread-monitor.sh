@@ -31,5 +31,5 @@ function monitor()
 while [ "1" = "1" ]
 do
     monitor
-    sleep 10
+    sleep 5
 done
