@@ -15,11 +15,29 @@
 		
 		<div id="center" class="center">
 			<div id="content" class="content">
-				<h1>craft-atom-redis</h1>
-				<div class="date">Feb 4, 2014 by mindwind</div>
-				
-				<h3>Introduction</h3>
-				<p>A easy use redis java client base on jedis.</p>
+<h1>craft-atom-redis</h1>
+<div class="date">Apr 10, 2014 by mindwind</div>
+
+<h3>Introduction</h3>
+<p>A easy use redis java client base on jedis.</p>
+
+<h3>What it provides and doesn't provides?</h3>
+<pre><code>
+1.  <a href="http://redis.io/commands" target="_blank">redis commands</a>
+    Now it is fully compatible with all commands supported by redis 2.6.17.
+2.  <a href="http://redis.io/topics/transactions" target="_blank">redis transactions</a>
+    A simple and elegant batch execution mechanism.
+3.  <a href="http://redis.io/topics/pubsub" target="_blank">redis pub/sub</a>
+    A simple publish/subscribe messaging paradigm.
+4.  <a href="https://github.com/mindwind/craft-atom/blob/master/craft-atom-redis/src/main/java/org/craft/atom/redis/api/ShardedRedis.java" target="_blank">redis sharding</a>
+    Default murmur hash strategy, and support extended hash strategy implementor.
+5.  <a href="https://github.com/mindwind/craft-atom/blob/master/craft-atom-redis/src/main/java/org/craft/atom/redis/api/MasterSlaveRedis.java" target="_blank">redis master slave</a>
+    An easy way to interact with (sharding) master slave redis architect.
+6.  <a href="http://redis.io/topics/pipelining" target="_blank"><s>redis pipelining</s></a>
+    Make a very difficult decision to give up redis pipelinling.
+</code></pre>
+
+<h3>Getting Started</h3>
 			</div>
 		</div>
 		
