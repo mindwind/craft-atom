@@ -26,11 +26,11 @@ public abstract class AbstractDLockTests {
 	}
 	
 	private void init() {
-		redis1       = RedisFactory.newRedis("localhost", 6379)         ;
-		redis2       = RedisFactory.newRedis("localhost", 6380)         ;
-		shardedRedis = RedisFactory.newShardedRedis(redis1, redis2)     ;
-		dLock        = DLockFactory.newRedis24DLock(redis1)             ;
-		shardedDLock = DLockFactory.newShardedRedis24DLock(shardedRedis);
+		redis1       = RedisFactory.newRedis("localhost", 6379)    ;
+		redis2       = RedisFactory.newRedis("localhost", 6380)    ;
+		shardedRedis = RedisFactory.newShardedRedis(redis1, redis2);
+		dLock        = DLockFactory.newRedis24DLock(redis1)        ;
+		shardedDLock = DLockFactory.newRedis24DLock(shardedRedis)  ;
 	}
 	
 	private void selfcheck() {

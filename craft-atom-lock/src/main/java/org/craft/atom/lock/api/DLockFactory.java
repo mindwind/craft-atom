@@ -48,7 +48,7 @@ public class DLockFactory {
 	}
 	
 	/**
-	 * @deprecated
+	 * @deprecated replace by {@link #newRedis24DLock(ShardedRedisCommand)}
 	 * @param redis
 	 * @return new distributed lock base on sharded redis version 2.4.x
 	 */
@@ -57,7 +57,7 @@ public class DLockFactory {
 	}
 	
 	/**
-	 * @deprecated
+	 * @deprecated replace by {@link #newRedis26DLock(ShardedRedisCommand)}
 	 * @param redis
 	 * @return new distributed lock base on sharded redis version 2.6.12+
 	 */
