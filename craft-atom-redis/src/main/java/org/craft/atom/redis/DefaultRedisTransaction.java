@@ -1302,17 +1302,17 @@ public class DefaultRedisTransaction implements RedisTransaction {
 
 	@Override
 	public void zadd(String key, double score, String member) {
-		Map<Double, String> scoremembers = new HashMap<Double, String>();
-		scoremembers.put(score, member);
+		Map<String, Double> scoremembers = new HashMap<String, Double>();
+		scoremembers.put(member, score);
 		zadd(key, scoremembers);
 	}
 	
 	@Override
-	public void zadd(String key, Map<Double, String> scoremembers) {
+	public void zadd(String key, Map<String, Double> scoremembers) {
 		executeCommand(CommandEnum.ZADD, key, scoremembers);
 	}
 
-	private void zadd0(String key, Map<Double, String> scoremembers) {
+	private void zadd0(String key, Map<String, Double> scoremembers) {
 		t.zadd(key, scoremembers);
 	}
 
@@ -2003,7 +2003,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 				
 			// Sorted Set
 			case ZADD:
-				zadd0((String) args[0], (Map<Double, String>) args[1]); break;
+				zadd0((String) args[0], (Map<String, Double>) args[1]); break;
 			case ZCARD:
 				zcard0((String) args[0]); break;
 			case ZCOUNT:

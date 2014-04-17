@@ -14,11 +14,11 @@ import java.util.concurrent.Semaphore;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import org.apache.commons.pool.impl.GenericObjectPool.Config;
 import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.RedisConnectionException;
 import org.craft.atom.redis.api.RedisDataException;
 import org.craft.atom.redis.api.RedisException;
+import org.craft.atom.redis.api.RedisPoolConfig;
 import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
 import org.craft.atom.redis.api.Slowlog;
@@ -54,13 +54,13 @@ public class DefaultRedis implements Redis {
 	private static final String             OK                 = "OK"                    ;
 	private static final ThreadLocal<Jedis> THREAD_LOCAL_JEDIS = new ThreadLocal<Jedis>();
 	
-	private          String    host                        ;
-	private          String    password                    ;
-	private          int       port       = 6379           ;
-	private          int       timeout    = 2000           ;
-	private          int       database   = 0              ;
-	private          Config    poolConfig = poolConfig(100);
-	private volatile JedisPool pool                        ;
+	private          String          host                             ;
+	private          String          password                         ;
+	private          int             port            = 6379           ;
+	private          int             timeoutInMillis = 2000           ;
+	private          int             database        = 0              ;
+	private          RedisPoolConfig poolConfig      = poolConfig(100);
+	private volatile JedisPool       pool                             ;
 	
 	
 	// ~ ---------------------------------------------------------------------------------------------------------
@@ -73,111 +73,135 @@ public class DefaultRedis implements Redis {
 	}
 	
 	public DefaultRedis(String host, int port, int timeout) {
-		this.host = host;
-		this.port = port;
-		this.timeout = timeout;
+		this.host            = host;
+		this.port            = port;
+		this.timeoutInMillis = timeout;
 		init();
 	}
 	
 	public DefaultRedis(String host, int port, int timeout, int poolSize) {
-		this.host = host;
-		this.port = port;
-		this.timeout = timeout;
-		this.poolConfig = poolConfig(poolSize);
+		this.host            = host;
+		this.port            = port;
+		this.timeoutInMillis = timeout;
+		this.poolConfig      = poolConfig(poolSize);
 		init();
 	}
 	
 	public DefaultRedis(String host, int port, int timeout, int poolSize, String password) {
-		this.host = host;
-		this.port = port;
-		this.timeout = timeout;
-		this.poolConfig = poolConfig(poolSize);
-		this.password = password;
+		this.host            = host;
+		this.port            = port;
+		this.timeoutInMillis = timeout;
+		this.poolConfig      = poolConfig(poolSize);
+		this.password        = password;
 		init();
 	}
 	
 	public DefaultRedis(String host, int port, int timeout, int poolSize, String password, int database) {
-		this.host = host;
-		this.port = port;
-		this.timeout = timeout;
-		this.poolConfig = poolConfig(poolSize);
-		this.password = password;
-		this.database = database;
+		this.host            = host;
+		this.port            = port;
+		this.timeoutInMillis = timeout;
+		this.poolConfig      = poolConfig(poolSize);
+		this.password        = password;
+		this.database        = database;
 		init();
 	}
 	
-	public DefaultRedis(String host, int port, int timeout, Config poolConfig) {
-		this.host = host;
-		this.port = port;
-		this.timeout = timeout;
-		this.poolConfig = poolConfig;
+	public DefaultRedis(String host, int port, int timeout, RedisPoolConfig poolConfig) {
+		this.host            = host;
+		this.port            = port;
+		this.timeoutInMillis = timeout;
+		this.poolConfig      = poolConfig;
 		init();
 	}
 	
-	public DefaultRedis(String host, int port, int timeout, Config poolConfig, String password) {
-		this.host = host;
-		this.port = port;
-		this.timeout = timeout;
-		this.poolConfig = poolConfig;
-		this.password = password;
+	public DefaultRedis(String host, int port, int timeout, RedisPoolConfig poolConfig, String password) {
+		this.host            = host;
+		this.port            = port;
+		this.timeoutInMillis = timeout;
+		this.poolConfig      = poolConfig;
+		this.password        = password;
 		init();
 	}
 
-	public DefaultRedis(String host, int port, int timeout, Config poolConfig, String password, int database) {
-		this.host = host;
-		this.port = port;
-		this.timeout = timeout;
-		this.poolConfig = poolConfig;
-		this.password = password;
-		this.database = database;
+	public DefaultRedis(String host, int port, int timeout, RedisPoolConfig poolConfig, String password, int database) {
+		this.host            = host;
+		this.port            = port;
+		this.timeoutInMillis = timeout;
+		this.poolConfig      = poolConfig;
+		this.password        = password;
+		this.database        = database;
 		init();
 	}
 	
-	private Config poolConfig(int poolSize) {
+	private RedisPoolConfig poolConfig(int poolSize) {
 		if (poolSize <= 0) {
 			throw new IllegalArgumentException(String.format("Redis init <poolSize=%s> must > 0", poolSize));
 		}
 		
-		JedisPoolConfig jpc = new JedisPoolConfig();
-		jpc.setMaxActive(poolSize);
-		jpc.setMaxIdle(poolSize);
-		jpc.setMinIdle(0);
-		return jpc;
+		RedisPoolConfig cfg = new RedisPoolConfig();
+		cfg.setMaxTotal(poolSize);
+		cfg.setMaxIdle(poolSize);
+		cfg.setMinIdle(0);
+		return cfg;
 	}
 	
 	private void init() {
-		if (timeout < 0) {
-			throw new IllegalArgumentException(String.format("Redis init <timeout=%s> must >= 0", timeout));
+		if (timeoutInMillis < 0) {
+			throw new IllegalArgumentException(String.format("Redis init [timeoutInMillis=%s] must >= 0", timeoutInMillis));
 		}
 		
-		pool = new JedisPool(poolConfig, host, port, timeout, password, database);
+		pool = new JedisPool(convert(poolConfig), host, port, timeoutInMillis, password, database);
+	}
+	
+	
+	private JedisPoolConfig convert(RedisPoolConfig cfg) {
+		JedisPoolConfig jpc = new JedisPoolConfig();
+		jpc.setBlockWhenExhausted(cfg.isBlockWhenExhausted());
+		jpc.setLifo(cfg.isLifo());
+		jpc.setMaxIdle(cfg.getMaxIdle());
+		jpc.setMaxTotal(cfg.getMaxTotal());
+		jpc.setMaxWaitMillis(cfg.getMaxWaitMillis());
+		jpc.setMinEvictableIdleTimeMillis(cfg.getMinEvictableIdleTimeMillis());
+		jpc.setMinIdle(cfg.getMinIdle());
+		jpc.setNumTestsPerEvictionRun(cfg.getNumTestsPerEvictionRun());
+		jpc.setTestOnBorrow(cfg.isTestOnBorrow());
+		jpc.setTestOnReturn(cfg.isTestOnReturn());
+		jpc.setTestWhileIdle(cfg.isTestWhileIdle());
+		jpc.setTimeBetweenEvictionRunsMillis(cfg.getTimeBetweenEvictionRunsMillis());
+		return jpc;
 	}
 	
 	
 	// ~ ---------------------------------------------------------------------------------------------------------
 	
 	
+	@Override
 	public String host() {
 		return host;
 	}
 	
+	@Override
 	public int port() {
 		return port;
 	}
-
+	
+	@Override
 	public String password() {
 		return password;
 	}
-
-	public int timeout() {
-		return timeout;
+	
+	@Override
+	public int timeoutInMillis() {
+		return timeoutInMillis;
 	}
-
+	
+	@Override
 	public int database() {
 		return database;
 	}
 
-	public Config config() {
+	@Override
+	public RedisPoolConfig poolConfig() {
 		return poolConfig;
 	}
 	
@@ -1440,17 +1464,17 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public Long zadd(String key, double score, String member) {
-		Map<Double, String> scoremembers = new HashMap<Double, String>();
-		scoremembers.put(score, member);
+		Map<String, Double> scoremembers = new HashMap<String, Double>();
+		scoremembers.put(member, score);
 		return zadd(key, scoremembers);
 	}
 
 	@Override
-	public Long zadd(String key, Map<Double, String> scoremembers) {
+	public Long zadd(String key, Map<String, Double> scoremembers) {
 		return (Long) executeCommand(CommandEnum.ZADD, key, scoremembers);
 	}
 	
-	private Long zadd0(Jedis j, String key, Map<Double, String> scoremembers) {
+	private Long zadd0(Jedis j, String key, Map<String, Double> scoremembers) {
 		return j.zadd(key, scoremembers);
 	}
 
@@ -2214,7 +2238,7 @@ public class DefaultRedis implements Redis {
 		pool.destroy();
 		unbind();
 		this.password = password;
-		pool = new JedisPool(poolConfig, host, port, timeout, password, database);
+		pool = new JedisPool(convert(poolConfig), host, port, timeoutInMillis, password, database);
 		return OK;
 	}
 	
@@ -2257,7 +2281,7 @@ public class DefaultRedis implements Redis {
 		}
 		
 		this.database = index;
-		pool = new JedisPool(poolConfig, host, port, timeout, password, database);
+		pool = new JedisPool(convert(poolConfig), host, port, timeoutInMillis, password, database);
 		return OK;
 	}
 	
@@ -2822,7 +2846,7 @@ public class DefaultRedis implements Redis {
 				
 			// Sorted Set
 			case ZADD:
-				return zadd0(j, (String) args[0], (Map<Double, String>) args[1]);
+				return zadd0(j, (String) args[0], (Map<String, Double>) args[1]);
 			case ZCARD:
 				return zcard0(j, (String) args[0]);
 			case ZCOUNT:

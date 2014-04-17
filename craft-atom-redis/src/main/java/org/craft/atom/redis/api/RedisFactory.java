@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.pool.impl.GenericObjectPool.Config;
 import org.craft.atom.redis.DefaultMasterSlaveRedis;
 import org.craft.atom.redis.DefaultMasterSlaveShardedRedis;
 import org.craft.atom.redis.DefaultRedis;
@@ -43,11 +42,11 @@ public class RedisFactory {
 		return new DefaultRedis(host, port, timeoutInMillis, poolSize, password, database);
 	}
 	
-	public static Redis newRedis(String host, int port, int timeoutInMillis, Config poolConfig) {
+	public static Redis newRedis(String host, int port, int timeoutInMillis, RedisPoolConfig poolConfig) {
 		return new DefaultRedis(host, port, timeoutInMillis, poolConfig);
 	}
 	
-	public static Redis newRedis(String host, int port, int timeoutInMillis, Config poolConfig, String password) {
+	public static Redis newRedis(String host, int port, int timeoutInMillis, RedisPoolConfig poolConfig, String password) {
 		return new DefaultRedis(host, port, timeoutInMillis, poolConfig, password);
 	}
 	
@@ -62,7 +61,7 @@ public class RedisFactory {
 	 * @param database        redis server db index
 	 * @return a singleton    redis client
 	 */
-	public static Redis newRedis(String host, int port, int timeoutInMillis, Config poolConfig, String password, int database) {
+	public static Redis newRedis(String host, int port, int timeoutInMillis, RedisPoolConfig poolConfig, String password, int database) {
 		return new DefaultRedis(host, port, timeoutInMillis, poolConfig, password, database);
 	}
 	

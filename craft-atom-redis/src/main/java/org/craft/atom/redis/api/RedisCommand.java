@@ -1892,7 +1892,7 @@ public interface RedisCommand {
 	 * @return The number of elements added to the sorted sets, not including elements already existing for which the score was updated.
 	 */
 	Long zadd(String key, double score, String member);
-	Long zadd(String key, Map<Double, String> scoremembers);
+	Long zadd(String key, Map<String, Double> scoremembers);
 	
 	/**
 	 * Available since 1.2.0<br>

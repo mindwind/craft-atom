@@ -4,14 +4,12 @@ import java.util.NoSuchElementException;
 
 import junit.framework.Assert;
 
-import org.apache.commons.pool.impl.GenericObjectPool;
 import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.RedisDataException;
 import org.craft.atom.redis.api.RedisFactory;
+import org.craft.atom.redis.api.RedisPoolConfig;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
-
-import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * This test is for issue #1, {@link https://github.com/mindwind/craft-atom/issues/1 }
@@ -29,12 +27,12 @@ public class TestJedisLeak extends AbstractRedisTests {
 	
 	
 	public TestJedisLeak() {
-		JedisPoolConfig jpc = new JedisPoolConfig();
-		jpc.setMaxActive(5);
-		jpc.setMaxIdle(5);
-		jpc.setMinIdle(0);
-		jpc.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_FAIL);
-		redis = RedisFactory.newRedis(HOST, PORT1, 2000, jpc);
+		RedisPoolConfig cfg = new RedisPoolConfig();
+		cfg.setMaxTotal(5);
+		cfg.setMaxIdle(5);
+		cfg.setMinIdle(0);
+		cfg.setBlockWhenExhausted(false);
+		redis = RedisFactory.newRedis(HOST, PORT1, 2000, cfg);
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test jedis leak. ", CaseCounter.incr(1)));
 	}
 	

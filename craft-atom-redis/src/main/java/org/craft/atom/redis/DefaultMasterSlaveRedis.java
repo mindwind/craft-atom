@@ -819,7 +819,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 	
 	@Override
-	public Long zadd(String key, Map<Double, String> scoremembers) {
+	public Long zadd(String key, Map<String, Double> scoremembers) {
 		return master().zadd(key, scoremembers);
 	}
 

@@ -1,6 +1,5 @@
 package org.craft.atom.redis.api;
 
-import org.apache.commons.pool.impl.GenericObjectPool.Config;
 
 /**
  * The singleton redis client.
@@ -26,14 +25,19 @@ public interface Redis extends RedisCommand {
 	String password();
 	
 	/**
-	 * @return redis server timeout in milliseconds.
+	 * @return socket connect/read timeout in milliseconds.
 	 */
-	int timeout();
+	int timeoutInMillis();
+	
+	/**
+	 * @return redis database num
+	 */
+	int database();
 	
 	/**
 	 * @return redis client connection pool config.
 	 */
-	Config config();
+	RedisPoolConfig poolConfig();
 	
 
 
