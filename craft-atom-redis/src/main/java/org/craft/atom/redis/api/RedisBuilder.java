@@ -19,12 +19,17 @@ public class RedisBuilder extends AbstractRedisBuilder<Redis> {
 	}
 	
 	/**
-	 * @param hostport format string e.g. 127.0.0.1:6379
+	 * @param hostport format string e.g. localhost:6379
 	 */
 	public RedisBuilder(String hostport) {
-		String[] a = hostport.trim().split(":");
+		String[] a = parse(hostport);
 		this.host = a[0];
 		this.port = Integer.parseInt(a[1]);
+	}
+	
+	
+	static String[] parse(String hostport) {
+		return hostport.trim().split(":");
 	}
 	
 	
