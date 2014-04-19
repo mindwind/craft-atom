@@ -45,22 +45,44 @@ public abstract class AbstractRedisBuilder<T> {
 	protected String  password                                 ;
 	
 	
-	AbstractRedisBuilder<T> timeoutInMillis                  (int timeout)     { this.timeoutInMillis                   = timeout ; return this; }
-	AbstractRedisBuilder<T> database                         (int database)    { this.database                          = database; return this; }
-	AbstractRedisBuilder<T> poolMinIdle                      (int minIdle)     { this.poolMinIdle                       = minIdle ; return this; }
-	AbstractRedisBuilder<T> poolMaxIdle                      (int maxIdle)     { this.poolMaxIdle                       = maxIdle ; return this; }
-	AbstractRedisBuilder<T> poolMaxTotal                     (int maxTotal)    { this.poolMaxTotal                      = maxTotal; return this; }
-	AbstractRedisBuilder<T> poolNumTestsPerEvictionRun       (int num)         { this.poolNumTestsPerEvictionRun        = num     ; return this; }
-	AbstractRedisBuilder<T> poolBlockWhenExhausted           (boolean block)   { this.poolBlockWhenExhausted            = block   ; return this; }
-	AbstractRedisBuilder<T> poolTestOnBorrow                 (boolean test)    { this.poolTestOnBorrow                  = test    ; return this; }
-	AbstractRedisBuilder<T> poolTestOnReturn                 (boolean test)    { this.poolTestOnReturn                  = test    ; return this; }
-	AbstractRedisBuilder<T> poolTestWhileIdle                (boolean test)    { this.poolTestWhileIdle                 = test    ; return this; }
-	AbstractRedisBuilder<T> poolLifo                         (boolean lifo)    { this.poolLifo                          = lifo    ; return this; }
-	AbstractRedisBuilder<T> poolMaxWaitMillis                (long maxWait)    { this.poolMaxWaitMillis                 = maxWait ; return this; }
-	AbstractRedisBuilder<T> poolTimeBetweenEvictionRunsMillis(long time)       { this.poolTimeBetweenEvictionRunsMillis = time    ; return this; }
-	AbstractRedisBuilder<T> poolMinEvictableIdleTimeMillis   (long time)       { this.poolMinEvictableIdleTimeMillis    = time    ; return this; }
-	AbstractRedisBuilder<T> password                         (String password) { this.password                          = password; return this; }
+	
+	public AbstractRedisBuilder<T> timeoutInMillis                  (int timeout)     { this.timeoutInMillis                   = timeout ; return this; }
+	public AbstractRedisBuilder<T> database                         (int database)    { this.database                          = database; return this; }
+	public AbstractRedisBuilder<T> poolMinIdle                      (int minIdle)     { this.poolMinIdle                       = minIdle ; return this; }
+	public AbstractRedisBuilder<T> poolMaxIdle                      (int maxIdle)     { this.poolMaxIdle                       = maxIdle ; return this; }
+	public AbstractRedisBuilder<T> poolMaxTotal                     (int maxTotal)    { this.poolMaxTotal                      = maxTotal; return this; }
+	public AbstractRedisBuilder<T> poolNumTestsPerEvictionRun       (int num)         { this.poolNumTestsPerEvictionRun        = num     ; return this; }
+	public AbstractRedisBuilder<T> poolBlockWhenExhausted           (boolean block)   { this.poolBlockWhenExhausted            = block   ; return this; }
+	public AbstractRedisBuilder<T> poolTestOnBorrow                 (boolean test)    { this.poolTestOnBorrow                  = test    ; return this; }
+	public AbstractRedisBuilder<T> poolTestOnReturn                 (boolean test)    { this.poolTestOnReturn                  = test    ; return this; }
+	public AbstractRedisBuilder<T> poolTestWhileIdle                (boolean test)    { this.poolTestWhileIdle                 = test    ; return this; }
+	public AbstractRedisBuilder<T> poolLifo                         (boolean lifo)    { this.poolLifo                          = lifo    ; return this; }
+	public AbstractRedisBuilder<T> poolMaxWaitMillis                (long maxWait)    { this.poolMaxWaitMillis                 = maxWait ; return this; }
+	public AbstractRedisBuilder<T> poolTimeBetweenEvictionRunsMillis(long time)       { this.poolTimeBetweenEvictionRunsMillis = time    ; return this; }
+	public AbstractRedisBuilder<T> poolMinEvictableIdleTimeMillis   (long time)       { this.poolMinEvictableIdleTimeMillis    = time    ; return this; }
+	public AbstractRedisBuilder<T> password                         (String password) { this.password                          = password; return this; }
 
+	
+	
+	protected AbstractRedisBuilder<T> copy(AbstractRedisBuilder<?> builder) {
+		this.timeoutInMillis                   = builder.timeoutInMillis                  ; 
+		this.database                          = builder.database                         ; 
+		this.poolMinIdle                       = builder.poolMinIdle                      ; 
+		this.poolMaxIdle                       = builder.poolMaxIdle                      ; 
+		this.poolMaxTotal                      = builder.poolMaxTotal                     ; 
+		this.poolNumTestsPerEvictionRun        = builder.poolNumTestsPerEvictionRun       ; 
+		this.poolBlockWhenExhausted            = builder.poolBlockWhenExhausted           ; 
+		this.poolTestOnBorrow                  = builder.poolTestOnBorrow                 ; 
+		this.poolTestOnReturn                  = builder.poolTestOnReturn                 ; 
+		this.poolTestWhileIdle                 = builder.poolTestWhileIdle                ; 
+		this.poolLifo                          = builder.poolLifo                         ; 
+		this.poolMaxWaitMillis                 = builder.poolMaxWaitMillis                ; 
+		this.poolTimeBetweenEvictionRunsMillis = builder.poolTimeBetweenEvictionRunsMillis; 
+		this.poolMinEvictableIdleTimeMillis    = builder.poolMinEvictableIdleTimeMillis   ; 
+		this.password                          = builder.password                         ; 
+		return this;
+	}
+	
 	
 	protected void set(RedisPoolConfig cfg) {
 		cfg.setMinIdle(poolMinIdle);
