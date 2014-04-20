@@ -3,6 +3,8 @@ package org.craft.atom.redis.api;
 import org.craft.atom.redis.DefaultRedis;
 
 /**
+ * Builder for {@link Redis}
+ * 
  * @author mindwind
  * @version 1.0, Apr 19, 2014
  */

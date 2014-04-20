@@ -7,6 +7,8 @@ import org.craft.atom.redis.DefaultMasterSlaveRedis;
 
 
 /**
+ * Builder for {@link MasterSlaveRedis}
+ * 
  * @author mindwind
  * @version 1.0, Apr 19, 2014
  */
@@ -17,7 +19,7 @@ public class MasterSlaveRedisBuilder extends AbstractRedisBuilder<MasterSlaveRed
 
 	
 	/**
-	 * @param hostport format string e.g. localhost:6379-localhost:6380-localhost:6381 the first is master, others are slaves.
+	 * @param masterslavestring format string e.g. localhost:6379-localhost:6380-localhost:6381 the first is master, others are slaves.
 	 */
 	public MasterSlaveRedisBuilder(String masterslavestring) {
 		this.masterslavestring = masterslavestring;

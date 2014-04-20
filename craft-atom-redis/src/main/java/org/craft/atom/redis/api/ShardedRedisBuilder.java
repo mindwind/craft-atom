@@ -7,6 +7,8 @@ import org.craft.atom.redis.DefaultShardedRedis;
 
 
 /**
+ * Builder for {@link ShardedRedis}
+ * 
  * @author mindwind
  * @version 1.0, Apr 19, 2014
  */
@@ -17,7 +19,7 @@ public class ShardedRedisBuilder extends AbstractRedisBuilder<ShardedRedis> {
 
 	
 	/**
-	 * @param hostport format string e.g. localhost:6379,localhost:6380,localhost:6381
+	 * @param shardstring format string e.g. localhost:6379,localhost:6380,localhost:6381
 	 */
 	public ShardedRedisBuilder(String shardstring) {
 		this.shardstring = shardstring;

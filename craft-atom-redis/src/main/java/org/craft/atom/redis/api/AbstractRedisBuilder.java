@@ -61,6 +61,23 @@ public abstract class AbstractRedisBuilder<T> {
 	public AbstractRedisBuilder<T> poolTimeBetweenEvictionRunsMillis(long time)       { this.poolTimeBetweenEvictionRunsMillis = time    ; return this; }
 	public AbstractRedisBuilder<T> poolMinEvictableIdleTimeMillis   (long time)       { this.poolMinEvictableIdleTimeMillis    = time    ; return this; }
 	public AbstractRedisBuilder<T> password                         (String password) { this.password                          = password; return this; }
+	
+	
+	public AbstractRedisBuilder<T> redisPoolConfig(RedisPoolConfig cfg) {
+		this.poolMinIdle                       = cfg.minIdle                      ;
+		this.poolMaxIdle                       = cfg.maxIdle                      ;
+		this.poolMaxTotal                      = cfg.maxTotal                     ;
+		this.poolNumTestsPerEvictionRun        = cfg.numTestsPerEvictionRun       ;
+		this.poolBlockWhenExhausted            = cfg.blockWhenExhausted           ;
+		this.poolTestOnBorrow                  = cfg.testOnBorrow                 ;
+		this.poolTestOnReturn                  = cfg.testOnReturn                 ;
+		this.poolTestWhileIdle                 = cfg.testWhileIdle                ;
+		this.poolLifo                          = cfg.lifo                         ;
+		this.poolMaxWaitMillis                 = cfg.maxWaitMillis                ;
+		this.poolTimeBetweenEvictionRunsMillis = cfg.timeBetweenEvictionRunsMillis;
+		this.poolMinEvictableIdleTimeMillis    = cfg.minEvictableIdleTimeMillis   ;
+		return this;
+	}
 
 	
 	

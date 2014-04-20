@@ -7,6 +7,8 @@ import org.craft.atom.redis.DefaultMasterSlaveShardedRedis;
 
 
 /**
+ * Builder for {@link MasterSlaveShardedRedis}
+ * 
  * @author mindwind
  * @version 1.0, Apr 19, 2014
  */
@@ -17,7 +19,7 @@ public class MasterSlaveShardedRedisBuilder extends AbstractRedisBuilder<MasterS
 
 	
 	/**
-	 * @param hostport format string e.g. localhost:6379-localhost:6380,localhost:6389-localhost:6390
+	 * @param masterslaveshardstring format string e.g. localhost:6379-localhost:6380,localhost:6389-localhost:6390
 	 */
 	public MasterSlaveShardedRedisBuilder(String masterslaveshardstring) {
 		this.masterslaveshardstring = masterslaveshardstring;
