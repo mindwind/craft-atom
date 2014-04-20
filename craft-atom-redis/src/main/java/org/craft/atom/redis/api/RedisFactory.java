@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.craft.atom.redis.DefaultMasterSlaveRedis;
 import org.craft.atom.redis.DefaultMasterSlaveShardedRedis;
-import org.craft.atom.redis.DefaultRedis;
 import org.craft.atom.redis.DefaultShardedRedis;
 import org.craft.atom.redis.spi.Sharded;
 
@@ -19,66 +18,90 @@ import org.craft.atom.redis.spi.Sharded;
 public class RedisFactory {
 	
 	
+	// ~ ---------------------------------------------------------------------------------------------- redis builder
+	
+	
+	public static RedisBuilder newRedisBuilder(String host, int port) {
+		return new RedisBuilder(host, port);
+	}
+	
+	/**
+	 * @param hostport format string e.g. localhost:6379
+	 */
+	public static RedisBuilder newRedisBuilder(String hostport) {
+		return new RedisBuilder(hostport);
+	}
+	
+	/**
+	 * @param masterslavestring format string e.g. localhost:6379-localhost:6380-localhost:6381 the first is master, others are slaves.
+	 */
+	public static MasterSlaveRedisBuilder newMasterSlaveRedisBuilder(String masterslavestring) {
+		return new MasterSlaveRedisBuilder(masterslavestring);
+	}
+	
+	/**
+	 * @param shardstring format string e.g. localhost:6379,localhost:6380,localhost:6381
+	 */
+	public static ShardedRedisBuilder newShardedRedisBuilder(String shardstring) {
+		return new ShardedRedisBuilder(shardstring);
+	}
+	
+	/**
+	 * @param masterslaveshardstring format string e.g. localhost:6379-localhost:6380,localhost:6389-localhost:6390
+	 * @return
+	 */
+	public static MasterSlaveShardedRedisBuilder newMasterSlaveShardedRedisBuilder(String masterslaveshardstring) {
+		return new MasterSlaveShardedRedisBuilder(masterslaveshardstring);
+	}
+	
+	
 	// ~ -------------------------------------------------------------------------------------------- Singleton Redis
 	
 	
 	public static Redis newRedis(String host, int port) {
-		return new DefaultRedis(host, port);
+		return newRedisBuilder(host, port).build();
 	}
 	
 	public static Redis newRedis(String host, int port, int timeoutInMillis) {
-		return new DefaultRedis(host, port, timeoutInMillis);
+		return newRedisBuilder(host, port).timeoutInMillis(timeoutInMillis).build();
 	}
 
 	public static Redis newRedis(String host, int port, int timeoutInMillis, int poolSize) {
-		return new DefaultRedis(host, port, timeoutInMillis, poolSize);
+		return newRedisBuilder(host, port).timeoutInMillis(timeoutInMillis).poolMinIdle(0).poolMaxIdle(poolSize).poolMaxTotal(poolSize).build();
 	}
 	
 	public static Redis newRedis(String host, int port, int timeoutInMillis, int poolSize, String password) {
-		return new DefaultRedis(host, port, timeoutInMillis, poolSize, password);
+		return newRedisBuilder(host, port).timeoutInMillis(timeoutInMillis).poolMinIdle(0).poolMaxIdle(poolSize).poolMaxTotal(poolSize).password(password).build();
 	}
 	
 	public static Redis newRedis(String host, int port, int timeoutInMillis, int poolSize, String password, int database) {
-		return new DefaultRedis(host, port, timeoutInMillis, poolSize, password, database);
+		return newRedisBuilder(host, port).timeoutInMillis(timeoutInMillis).poolMinIdle(0).poolMaxIdle(poolSize).poolMaxTotal(poolSize).password(password).database(database).build();
 	}
 	
 	public static Redis newRedis(String host, int port, int timeoutInMillis, RedisPoolConfig poolConfig) {
-		return new DefaultRedis(host, port, timeoutInMillis, poolConfig);
+		return newRedisBuilder(host, port).timeoutInMillis(timeoutInMillis).redisPoolConfig(poolConfig).build();
 	}
 	
 	public static Redis newRedis(String host, int port, int timeoutInMillis, RedisPoolConfig poolConfig, String password) {
-		return new DefaultRedis(host, port, timeoutInMillis, poolConfig, password);
+		return newRedisBuilder(host, port).timeoutInMillis(timeoutInMillis).redisPoolConfig(poolConfig).password(password).build();
 	}
 	
-	/**
-	 * Creates a singleton redis client
-	 * 
-	 * @param host            redis server host
-	 * @param port            redis server port
-	 * @param timeoutInMillis connect and read timeout in milliseconds
-	 * @param poolConfig      connection pool config, default poolConfig is maxActive=maxIdle=poolSize, minIdle=0
-	 * @param password        redis server auth password
-	 * @param database        redis server db index
-	 * @return a singleton    redis client
-	 */
+
 	public static Redis newRedis(String host, int port, int timeoutInMillis, RedisPoolConfig poolConfig, String password, int database) {
-		return new DefaultRedis(host, port, timeoutInMillis, poolConfig, password, database);
+		return newRedisBuilder(host, port).timeoutInMillis(timeoutInMillis).redisPoolConfig(poolConfig).password(password).database(database).build();
 	}
 	
-	/**
-	 * @param hostport  e.g. localhost:6379
-	 * @return a singleton redis client
-	 */
 	public static Redis newRedis(String hostport) {
-		String[] sarr = hostport.trim().split(":");
-		String host = sarr[0];
-		int port = Integer.parseInt(sarr[1]);
-		return new DefaultRedis(host, port);
+		return newRedisBuilder(hostport).build();
 	}
 	
 	
 	// ~ ----------------------------------------------------------------------------------------- Master-Slave Redis
 	
+	
+	public static MasterSlaveRedis newMasterSlaveRedis(String masterslavestring) {
+		return newMasterSlaveRedisBuilder(masterslavestring).build();
+	}
 	
 	public static MasterSlaveRedis newMasterSlaveRedis(Redis master, Redis... slaves) {
 		List<Redis> chain = new ArrayList<Redis>();
@@ -93,34 +116,8 @@ public class RedisFactory {
 		return newMasterSlaveRedis(chain, 0);
 	}
 	
-	/**
-	 * Creates a master-slave redis client
-	 * 
-	 * @param chain   master-slave redis chain, the chain is clockwise direction.
-	 * @param index   master index, default master index is 0.
-	 * @return a master-slave redis client
-	 */
 	public static MasterSlaveRedis newMasterSlaveRedis(List<Redis> chain, int index) {
 		return new DefaultMasterSlaveRedis(chain, index);
-	}
-	
-	/**
-	 * @param masterslavestring  e.g. localhost:6379-localhost:6380-localhost:6381 the first is master, others are slaves.
-	 * @return a master-slave redis client
-	 */
-	public static MasterSlaveRedis newMasterSlaveRedis(String masterslavestring) {
-		String[] hostports = masterslavestring.split("-");
-		List<Redis> chain = convert(hostports);
-		return newMasterSlaveRedis(chain);
-	}
-	
-	private static List<Redis> convert(String[] hostports) {
-		List<Redis> l = new ArrayList<Redis>(hostports.length);
-		for (String hostport : hostports) {
-			Redis redis = newRedis(hostport.trim());
-			l.add(redis);
-		}
-		return l;
 	}
 	
 	
@@ -135,24 +132,12 @@ public class RedisFactory {
 		return new DefaultShardedRedis(Arrays.asList(shards));
 	}
 	
-	/**
-	 * Creates a sharded redis client.
-	 * 
-	 * @param sharded
-	 * @return a sharded redis client.
-	 */
 	public static ShardedRedis newShardedRedis(Sharded<Redis> sharded) {
 		return new DefaultShardedRedis(sharded);
 	}
 	
-	/**
-	 * @param shardstring e.g. localhost:6379,localhost:6380
-	 * @return sharded redis client
-	 */
 	public static ShardedRedis newShardedRedis(String shardstring) {
-		String[] hostports = shardstring.split(",");
-		List<Redis> shards = convert(hostports);
-		return new DefaultShardedRedis(shards);
+		return newShardedRedisBuilder(shardstring).build();
 	}
 	
 	
@@ -167,27 +152,11 @@ public class RedisFactory {
 		return new DefaultMasterSlaveShardedRedis(Arrays.asList(shards));
 	}
 	
-	/**
-	 * Creates a master-salve sharded redis client.
-	 * 
-	 * @param sharded
-	 * @return a master-salve sharded redis client
-	 */
 	public static MasterSlaveShardedRedis newMasterSlaveShardedRedis(Sharded<MasterSlaveRedis> sharded) {
 		return new DefaultMasterSlaveShardedRedis(sharded);
 	}
 	
-	/**
-	 * @param masterslaveshards  e.g. localhost:6379-localhost:6380,localhost:6389-localhost:6390
-	 * @return a master-salve sharded redis client.
-	 */
-	public static MasterSlaveShardedRedis newMasterSlaveShardedRedis(String masterslaveshards) {
-		String[] masterslaves = masterslaveshards.split(",");
-		List<MasterSlaveRedis> shards = new ArrayList<MasterSlaveRedis>();
-		for (String masterslavestring : masterslaves) {
-			MasterSlaveRedis msr = newMasterSlaveRedis(masterslavestring);
-			shards.add(msr);
-		}
-		return newMasterSlaveShardedRedis(shards);
+	public static MasterSlaveShardedRedis newMasterSlaveShardedRedis(String masterslaveshardstring) {
+		return newMasterSlaveShardedRedisBuilder(masterslaveshardstring).build();
 	}
 }
