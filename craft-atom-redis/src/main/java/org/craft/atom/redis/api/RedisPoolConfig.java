@@ -13,18 +13,32 @@ import lombok.ToString;
 @ToString
 public class RedisPoolConfig {
 	
+	                     
+	static final int     DEFAULT_MIN_IDLE                          = 0    ;
+	static final int     DEFAULT_MAX_IDLE                          = 100  ;
+	static final int     DEFAULT_MAX_TOTAL                         = 100  ;
+	static final int     DEFAULT_NUM_TESTS_PER_EVICTION_RUN        = -1   ;
+	static final boolean DEFAULT_LIFO                              = true ;
+	static final boolean DEFAULT_TEST_ON_BORROW                    = false;
+	static final boolean DEFAULT_TEST_ON_RETURN                    = false;
+	static final boolean DEFAULT_TEST_WHILE_IDLE                   = true ;
+	static final boolean DEFAULT_BLOCK_WHEN_EXHAUSTED              = true ;
+	static final long    DEFAULT_MAX_WAIT_MILLIS                   = -1L  ;
+	static final long    DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS    = 60000;
+	static final long    DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS = 30000;
 	
-	@Getter @Setter private int     minIdle                       = 0    ;
-	@Getter @Setter private int     maxIdle                       = 100  ;
-	@Getter @Setter private int     maxTotal                      = 100  ;
-	@Getter @Setter private int     numTestsPerEvictionRun        = -1   ;
-	@Getter @Setter private boolean lifo                          = true ;
-	@Getter @Setter private boolean testOnBorrow                  = false;
-	@Getter @Setter private boolean testOnReturn                  = false;
-	@Getter @Setter private boolean testWhileIdle                 = true ;
-	@Getter @Setter private boolean blockWhenExhausted            = true ;
-	@Getter @Setter private long    maxWaitMillis                 = -1L  ;
-	@Getter @Setter private long    minEvictableIdleTimeMillis    = 60000;
-	@Getter @Setter private long    timeBetweenEvictionRunsMillis = 30000;
+	
+	@Getter @Setter int     minIdle                       = DEFAULT_MIN_IDLE                         ;
+	@Getter @Setter int     maxIdle                       = DEFAULT_MAX_IDLE                         ;
+	@Getter @Setter int     maxTotal                      = DEFAULT_MAX_TOTAL                        ;
+	@Getter @Setter int     numTestsPerEvictionRun        = DEFAULT_NUM_TESTS_PER_EVICTION_RUN       ;
+	@Getter @Setter boolean lifo                          = DEFAULT_LIFO                             ;
+	@Getter @Setter boolean testOnBorrow                  = DEFAULT_TEST_ON_BORROW                   ;
+	@Getter @Setter boolean testOnReturn                  = DEFAULT_TEST_ON_RETURN                   ;
+	@Getter @Setter boolean testWhileIdle                 = DEFAULT_TEST_WHILE_IDLE                  ;
+	@Getter @Setter boolean blockWhenExhausted            = DEFAULT_BLOCK_WHEN_EXHAUSTED             ;
+	@Getter @Setter long    maxWaitMillis                 = DEFAULT_MAX_WAIT_MILLIS                  ;
+	@Getter @Setter long    minEvictableIdleTimeMillis    = DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS   ;
+	@Getter @Setter long    timeBetweenEvictionRunsMillis = DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS;
 
 }

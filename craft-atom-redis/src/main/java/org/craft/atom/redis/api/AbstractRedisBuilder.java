@@ -28,21 +28,21 @@ public abstract class AbstractRedisBuilder<T> {
 	 * password                         : redis password
 	 * </pre>
 	 */
-	protected int     timeoutInMillis                   = 1000 ;
-	protected int     database                          = 0    ;
-	protected int     poolMinIdle                       = 0    ;
-	protected int     poolMaxIdle                       = 100  ; 
-	protected int     poolMaxTotal                      = 100  ;
-	protected int     poolNumTestsPerEvictionRun        = -1   ;
-	protected boolean poolBlockWhenExhausted            = true ;
-	protected boolean poolTestOnBorrow                  = false;
-	protected boolean poolTestOnReturn                  = false;
-	protected boolean poolTestWhileIdle                 = true ;
-	protected boolean poolLifo                          = true ;
-	protected long    poolMaxWaitMillis                 = -1L  ;
-	protected long    poolTimeBetweenEvictionRunsMillis = 30000;
-	protected long    poolMinEvictableIdleTimeMillis    = 60000;
-	protected String  password                                 ;
+	protected int     timeoutInMillis                   = 2000                                                     ;
+	protected int     database                          = 0                                                        ;
+	protected int     poolMinIdle                       = RedisPoolConfig.DEFAULT_MIN_IDLE                         ;
+	protected int     poolMaxIdle                       = RedisPoolConfig.DEFAULT_MAX_IDLE                         ; 
+	protected int     poolMaxTotal                      = RedisPoolConfig.DEFAULT_MAX_TOTAL                        ;
+	protected int     poolNumTestsPerEvictionRun        = RedisPoolConfig.DEFAULT_NUM_TESTS_PER_EVICTION_RUN       ;
+	protected boolean poolBlockWhenExhausted            = RedisPoolConfig.DEFAULT_BLOCK_WHEN_EXHAUSTED             ;
+	protected boolean poolTestOnBorrow                  = RedisPoolConfig.DEFAULT_TEST_ON_BORROW                   ;
+	protected boolean poolTestOnReturn                  = RedisPoolConfig.DEFAULT_TEST_ON_RETURN                   ;
+	protected boolean poolTestWhileIdle                 = RedisPoolConfig.DEFAULT_TEST_WHILE_IDLE                  ;
+	protected boolean poolLifo                          = RedisPoolConfig.DEFAULT_LIFO                             ;
+	protected long    poolMaxWaitMillis                 = RedisPoolConfig.DEFAULT_MAX_WAIT_MILLIS                  ;
+	protected long    poolTimeBetweenEvictionRunsMillis = RedisPoolConfig.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS;
+	protected long    poolMinEvictableIdleTimeMillis    = RedisPoolConfig.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS   ;
+	protected String  password                                                                                     ;
 	
 	
 	
