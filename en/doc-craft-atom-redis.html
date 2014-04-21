@@ -5,8 +5,12 @@
 	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
 	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
 		<script type="text/javascript" src="../js/jquery.js"></script>
 		<script type="text/javascript" src="../js/craft.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
 		<title>Documentation: craft-atom-redis</title>
 	</head>
 
@@ -38,6 +42,46 @@
 </code></pre>
 
 <h3>Getting Started</h3>
+<p>By default we support four type redis deployment architect.</p>
+
+<p>
+<b>Type 1 - singleton redis</b><br>
+Just a singleton redis server instance, figure 1 is the deployment architect diagram.
+A typical usage idiom for this type as follows:
+</p>
+<pre><code data-language="java">
+Redis redis = RedisFactory.newRedisBuilder(host, port).timeoutInMillis(1000).build();
+</code></pre>
+
+<p>
+<b>Type 2 - sharded redis</b><br>
+Sharded multiple redis server instances, figure 2 is the deployment architect diagram.
+A typical usage idiom for this type as follows:
+</p>
+<pre><code data-language="java">
+// shardstring format string e.g. localhost:6379,localhost:6380,localhost:6381
+ShardedRedis shardedRedis = RedisFactory.newShardedRedisBuilder(shardstring).timeoutInMillis(1000).build();
+</code></pre>
+
+<p>
+<b>Type 3 - master slave redis</b><br>
+Master slave redis server instances, one master and multiple slaves, figure 3 is the deployment architect diagram.
+A typical usage idiom for this type as follows:
+</p>
+<pre><code data-language="java">
+// masterslavestring format string e.g. localhost:6379-localhost:6380-localhost:6381 the first is master, others are slaves.
+MasterSlaveRedis masterSlaveRedis = RedisFactory.newMasterSlaveRedisBuilder(masterslavestring).timeoutInMillis(1000).build();
+</code></pre>
+
+<p>
+<b>Type 4 - master slave sharded redis</b><br>
+Master slave sharded redis server instances, multiple sharded redis instance and each shard has one or more slaves , figure 4 is the deployment architect diagram.
+A typical usage idiom for this type as follows:
+</p>
+<pre><code data-language="java">
+// masterslaveshardstring format string e.g. localhost:6379-localhost:6380,localhost:6389-localhost:6390
+MasterSlaveShardedRedis masterSlaveShardedRedis = RedisFactory.newMasterSlaveShardedRedisBuilder(masterslaveshardstring).timeoutInMillis(1000).build();
+</code></pre>
 			</div>
 		</div>
 		
