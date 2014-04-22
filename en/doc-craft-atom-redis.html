@@ -52,6 +52,7 @@ A typical usage idiom for this type as follows:
 <pre><code data-language="java">
 Redis redis = RedisFactory.newRedisBuilder(host, port).timeoutInMillis(1000).build();
 </code></pre>
+<a href="../img/doc-craft-atom-redis-singleton.png" target="_blank"><img src="../img/doc-craft-atom-redis-singleton.png"/></a>
 
 <p>
 <b>Type 2 - sharded redis</b><br>
@@ -62,6 +63,7 @@ A typical usage idiom for this type as follows:
 // shardstring format string e.g. localhost:6379,localhost:6380,localhost:6381
 ShardedRedis shardedRedis = RedisFactory.newShardedRedisBuilder(shardstring).timeoutInMillis(1000).build();
 </code></pre>
+<a href="../img/doc-craft-atom-redis-sharded.png" target="_blank"><img src="../img/doc-craft-atom-redis-sharded.png"/></a>
 
 <p>
 <b>Type 3 - master slave redis</b><br>
@@ -72,6 +74,7 @@ A typical usage idiom for this type as follows:
 // masterslavestring format string e.g. localhost:6379-localhost:6380-localhost:6381 the first is master, others are slaves.
 MasterSlaveRedis masterSlaveRedis = RedisFactory.newMasterSlaveRedisBuilder(masterslavestring).timeoutInMillis(1000).build();
 </code></pre>
+<a href="../img/doc-craft-atom-redis-master-slave.png" target="_blank"><img src="../img/doc-craft-atom-redis-master-slave.png"/></a>
 
 <p>
 <b>Type 4 - master slave sharded redis</b><br>
@@ -82,6 +85,7 @@ A typical usage idiom for this type as follows:
 // masterslaveshardstring format string e.g. localhost:6379-localhost:6380,localhost:6389-localhost:6390
 MasterSlaveShardedRedis masterSlaveShardedRedis = RedisFactory.newMasterSlaveShardedRedisBuilder(masterslaveshardstring).timeoutInMillis(1000).build();
 </code></pre>
+<a href="../img/doc-craft-atom-redis-master-slave-sharded.png" target="_blank"><img src="../img/doc-craft-atom-redis-master-slave-sharded.png"/></a>
 			</div>
 		</div>
 		
