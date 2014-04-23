@@ -32,10 +32,10 @@ public class Slowlog {
 
 	public Slowlog(long id, long timestamp, long elapse, List<String> command) {
 		super();
-		this.id = id;
+		this.id        = id       ;
 		this.timestamp = timestamp;
-		this.elapse = elapse;
-		this.command = command;
+		this.elapse    = elapse   ;
+		this.command   = command  ;
 	}
 
 }
