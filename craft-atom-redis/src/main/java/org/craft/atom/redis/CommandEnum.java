@@ -53,6 +53,10 @@ public enum CommandEnum {
 	SORT_BY_OFFSET_COUNT_ALPHA_DESC_DESTINATION_GET,
 	TTL,
 	TYPE,
+	SCAN,
+	SCAN_COUNT,
+	SCAN_MATCH,
+	SCAN_MATCH_COUNT,
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Strings

@@ -21,6 +21,7 @@ import org.craft.atom.redis.api.RedisException;
 import org.craft.atom.redis.api.RedisPoolConfig;
 import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
+import org.craft.atom.redis.api.ScanResult;
 import org.craft.atom.redis.api.Slowlog;
 import org.craft.atom.redis.api.handler.RedisMonitorHandler;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
@@ -34,6 +35,7 @@ import redis.clients.jedis.JedisMonitor;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.ScanParams;
 import redis.clients.jedis.SortingParams;
 import redis.clients.jedis.Transaction;
 import redis.clients.jedis.Tuple;
@@ -695,6 +697,53 @@ public class DefaultRedis implements Redis {
 	
 	private String type0(Jedis j, String key) {
 		return j.type(key);
+	}
+	
+	@Override
+	public ScanResult<String> scan(String cursor) {
+		return (ScanResult<String>) executeCommand(CommandEnum.SCAN, new Object[] { cursor });
+	}
+	
+	private ScanResult<String> scan0(Jedis j, String cursor) {
+		redis.clients.jedis.ScanResult<String> sr = j.scan(cursor);
+		return new ScanResult<String>(sr.getStringCursor(), sr.getResult());
+	}
+
+	@Override
+	public ScanResult<String> scan(String cursor, int count) {
+		return (ScanResult<String>) executeCommand(CommandEnum.SCAN_COUNT, new Object[] { cursor, count });
+	}
+	
+	private ScanResult<String> scan_count(Jedis j, String cursor, int count) {
+		ScanParams param = new ScanParams();
+		param.count(count);
+		redis.clients.jedis.ScanResult<String> sr = j.scan(cursor, param);
+		return new ScanResult<String>(sr.getStringCursor(), sr.getResult());
+	}
+
+	@Override
+	public ScanResult<String> scan(String cursor, String pattern) {
+		return (ScanResult<String>) executeCommand(CommandEnum.SCAN_MATCH, new Object[] { cursor, pattern });
+	}
+	
+	private ScanResult<String> scan_match(Jedis j, String cursor, String pattern) {
+		ScanParams param = new ScanParams();
+		param.match(pattern);
+		redis.clients.jedis.ScanResult<String> sr = j.scan(cursor, param);
+		return new ScanResult<String>(sr.getStringCursor(), sr.getResult());
+	}
+
+	@Override
+	public ScanResult<String> scan(String cursor, String pattern, int count) {
+		return (ScanResult<String>) executeCommand(CommandEnum.SCAN_MATCH_COUNT, new Object[] { cursor, pattern, count });
+	}
+	
+	private ScanResult<String> scan_match_count(Jedis j, String cursor, String pattern, int count) {
+		ScanParams param = new ScanParams();
+		param.match(pattern);
+		param.count(count);
+		redis.clients.jedis.ScanResult<String> sr = j.scan(cursor, param);
+		return new ScanResult<String>(sr.getStringCursor(), sr.getResult());
 	}
 	
 	
@@ -2685,6 +2734,15 @@ public class DefaultRedis implements Redis {
 				return ttl0(j, (String) args[0]);
 			case TYPE:
 				return type0(j, (String) args[0]);
+			case SCAN:
+				return scan0(j, (String) args[0]);
+			case SCAN_COUNT:
+				return scan_count(j, (String) args[0], (Integer) args[1]);
+			case SCAN_MATCH:
+				return scan_match(j, (String) args[0], (String) args[1]);
+			case SCAN_MATCH_COUNT:
+				return scan_match_count(j, (String) args[0], (String) args[1], (Integer) args[2]);
+				
 				
 			// Strings			
 			case APPEND:

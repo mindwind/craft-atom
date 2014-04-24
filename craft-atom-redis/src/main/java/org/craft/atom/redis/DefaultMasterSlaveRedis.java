@@ -13,12 +13,14 @@ import org.craft.atom.redis.api.Redis;
 import org.craft.atom.redis.api.RedisConnectionException;
 import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
+import org.craft.atom.redis.api.ScanResult;
 import org.craft.atom.redis.api.Slowlog;
 import org.craft.atom.redis.api.handler.RedisMonitorHandler;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * @author mindwind
@@ -376,6 +378,26 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	@Override
 	public String type(String key) {
 		return readSlave ? firstSlave().type(key) : master().type(key);
+	}
+	
+	@Override
+	public ScanResult<String> scan(String cursor) {
+		return readSlave ? firstSlave().scan(cursor) : master().scan(cursor);
+	}
+
+	@Override
+	public ScanResult<String> scan(String cursor, int count) {
+		return readSlave ? firstSlave().scan(cursor, count) : master().scan(cursor, count);
+	}
+
+	@Override
+	public ScanResult<String> scan(String cursor, String pattern) {
+		return readSlave ? firstSlave().scan(cursor, pattern) : master().scan(cursor, pattern);
+	}
+
+	@Override
+	public ScanResult<String> scan(String cursor, String pattern, int count) {
+		return readSlave ? firstSlave().scan(cursor, pattern, count) : master().scan(cursor, pattern, count);
 	}
 	
 	
