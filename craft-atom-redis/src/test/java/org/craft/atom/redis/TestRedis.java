@@ -19,6 +19,7 @@ import org.craft.atom.redis.api.RedisException;
 import org.craft.atom.redis.api.RedisFactory;
 import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
+import org.craft.atom.redis.api.ScanResult;
 import org.craft.atom.redis.api.Slowlog;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
@@ -51,6 +52,53 @@ public class TestRedis extends AbstractRedisTests {
 	
 	// ~ ---------------------------------------------------------------------------------------------------------- Keys
 	
+	
+	@Test
+	public void testScan() {
+		int expect = 100;
+		for (int i = 0; i < expect; i++) {
+			redis1.set(key + i, value + i);
+		}
+		
+		// 1
+		int count = 0;
+		String cursor = "0";
+		do {
+			ScanResult<String> sr = redis1.scan(cursor);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 2
+		do {
+			ScanResult<String> sr = redis1.scan(cursor, 20);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 3
+		do {
+			ScanResult<String> sr = redis1.scan(cursor, key + "*");
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 4
+		do {
+			ScanResult<String> sr = redis1.scan(cursor, key + "*", 20);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test scan. ", CaseCounter.incr(4)));
+	}
 	
 	@Test
 	public void testDel() {
