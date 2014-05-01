@@ -1152,9 +1152,55 @@ public class DefaultRedis implements Redis {
 		return j.hvals(key);
 	}
 	
+	@Override
+	public ScanResult<Map.Entry<String, String>> hscan(String key, String cursor) {
+		return (ScanResult<Map.Entry<String, String>>) executeCommand(CommandEnum.HSCAN, new Object[] { key, cursor });
+	}
+	
+	private ScanResult<Map.Entry<String, String>> hscan0(Jedis j, String key, String cursor) {
+		redis.clients.jedis.ScanResult<Map.Entry<String, String>> sr = j.hscan(key, cursor);
+		return new ScanResult<Map.Entry<String, String>>(sr.getStringCursor(), sr.getResult());
+	}
+
+	@Override
+	public ScanResult<Map.Entry<String, String>> hscan(String key, String cursor, int count) {
+		return (ScanResult<Map.Entry<String, String>>) executeCommand(CommandEnum.HSCAN_COUNT, new Object[] { key, cursor, count });
+	}
+	
+	private ScanResult<Map.Entry<String, String>> hscan_count(Jedis j, String key, String cursor, int count) {
+		ScanParams param = new ScanParams();
+		param.count(count);
+		redis.clients.jedis.ScanResult<Map.Entry<String, String>> sr = j.hscan(key, cursor, param);
+		return new ScanResult<Map.Entry<String, String>>(sr.getStringCursor(), sr.getResult());
+	}
+
+	@Override
+	public ScanResult<Map.Entry<String, String>> hscan(String key, String cursor, String pattern) {
+		return (ScanResult<Map.Entry<String, String>>) executeCommand(CommandEnum.HSCAN_MATCH, new Object[] { key, cursor, pattern });
+	}
+	
+	private ScanResult<Map.Entry<String, String>> hscan_match(Jedis j, String key, String cursor, String pattern) {
+		ScanParams param = new ScanParams();
+		param.match(pattern);
+		redis.clients.jedis.ScanResult<Map.Entry<String, String>> sr = j.hscan(key, cursor, param);
+		return new ScanResult<Map.Entry<String, String>>(sr.getStringCursor(), sr.getResult());
+	}
+
+	@Override
+	public ScanResult<Map.Entry<String, String>> hscan(String key, String cursor, String pattern, int count) {
+		return (ScanResult<Map.Entry<String, String>>) executeCommand(CommandEnum.HSCAN_MATCH_COUNT, new Object[] { key, cursor, pattern, count });
+	}
+	
+	private ScanResult<Map.Entry<String, String>> hscan_match_count(Jedis j, String key, String cursor, String pattern, int count) {
+		ScanParams param = new ScanParams();
+		param.match(pattern);
+		param.count(count);
+		redis.clients.jedis.ScanResult<Map.Entry<String, String>> sr = j.hscan(key, cursor, param);
+		return new ScanResult<Map.Entry<String, String>>(sr.getStringCursor(), sr.getResult());
+	}
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
-	
 	
 
 	@Override
@@ -2835,6 +2881,14 @@ public class DefaultRedis implements Redis {
 				return hsetnx0(j, (String) args[0], (String) args[1], (String) args[2]);
 			case HVALS:
 				return hvals0(j, (String) args[0]);
+			case HSCAN:
+				return hscan0(j, (String) args[0], (String) args[1]);
+			case HSCAN_COUNT:
+				return hscan_count(j, (String) args[0], (String) args[1], (Integer) args[2]);
+			case HSCAN_MATCH:
+				return hscan_match(j, (String) args[0], (String) args[1], (String) args[2]);
+			case HSCAN_MATCH_COUNT:
+				return hscan_match_count(j, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3]);
 				
 			// Lists
 			case BLPOP:

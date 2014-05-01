@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import lombok.ToString;
@@ -626,6 +627,26 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	@Override
 	public List<String> hvals(String key) {
 		return readSlave ? firstSlave().hvals(key) : master().hvals(key);
+	}
+	
+	@Override
+	public ScanResult<Entry<String, String>> hscan(String key, String cursor) {
+		return readSlave ? firstSlave().hscan(key, cursor) : master().hscan(key, cursor);
+	}
+
+	@Override
+	public ScanResult<Entry<String, String>> hscan(String key, String cursor, int count) {
+		return readSlave ? firstSlave().hscan(key, cursor, count) : master().hscan(key, cursor, count);
+	}
+
+	@Override
+	public ScanResult<Entry<String, String>> hscan(String key, String cursor, String pattern) {
+		return readSlave ? firstSlave().hscan(key, cursor, pattern) : master().hscan(key, cursor, pattern);
+	}
+
+	@Override
+	public ScanResult<Entry<String, String>> hscan(String key, String cursor, String pattern, int count) {
+		return readSlave ? firstSlave().hscan(key, cursor, pattern, count) : master().hscan(key, cursor, pattern, count);
 	}
 	
 	

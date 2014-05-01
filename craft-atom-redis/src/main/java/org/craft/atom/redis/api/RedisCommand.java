@@ -1369,6 +1369,12 @@ public interface RedisCommand {
 	List<String> hvals(String key);
 	
 	
+	ScanResult<Map.Entry<String, String>> hscan(String key, String cursor);
+	ScanResult<Map.Entry<String, String>> hscan(String key, String cursor, int count);
+	ScanResult<Map.Entry<String, String>> hscan(String key, String cursor, String pattern);
+	ScanResult<Map.Entry<String, String>> hscan(String key, String cursor, String pattern, int count);
+	
+	
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
 	
 	/**

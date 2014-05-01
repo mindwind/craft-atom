@@ -111,6 +111,10 @@ public enum CommandEnum {
 	HSET,
 	HSETNX,
 	HVALS,
+	HSCAN,
+	HSCAN_COUNT,
+	HSCAN_MATCH,
+	HSCAN_MATCH_COUNT,
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
