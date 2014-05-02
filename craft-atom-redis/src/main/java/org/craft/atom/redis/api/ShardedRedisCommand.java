@@ -114,6 +114,10 @@ public interface ShardedRedisCommand {
 	Long hset(String shardkey, String key, String field, String value);
 	Long hsetnx(String shardkey, String key, String field, String value);
 	List<String> hvals(String shardkey, String key);
+	ScanResult<Map.Entry<String, String>> hscan(String shardkey, String key, String cursor);
+	ScanResult<Map.Entry<String, String>> hscan(String shardkey, String key, String cursor, int count);
+	ScanResult<Map.Entry<String, String>> hscan(String shardkey, String key, String cursor, String pattern);
+	ScanResult<Map.Entry<String, String>> hscan(String shardkey, String key, String cursor, String pattern, int count);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------- Lists

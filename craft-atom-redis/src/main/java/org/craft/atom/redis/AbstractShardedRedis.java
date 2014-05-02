@@ -2,6 +2,7 @@ package org.craft.atom.redis;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import lombok.ToString;
@@ -9,6 +10,7 @@ import lombok.ToString;
 import org.craft.atom.redis.api.RedisCommand;
 import org.craft.atom.redis.api.RedisPubSub;
 import org.craft.atom.redis.api.RedisTransaction;
+import org.craft.atom.redis.api.ScanResult;
 import org.craft.atom.redis.api.ShardedRedisCommand;
 import org.craft.atom.redis.api.handler.RedisPsubscribeHandler;
 import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
@@ -459,6 +461,26 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	@Override
 	public List<String> hvals(String shardkey, String key) {
 		return sharded.shard(shardkey).hvals(key);
+	}
+	
+	@Override
+	public ScanResult<Entry<String, String>> hscan(String shardkey, String key, String cursor) {
+		return sharded.shard(shardkey).hscan(key, cursor);
+	}
+
+	@Override
+	public ScanResult<Entry<String, String>> hscan(String shardkey, String key, String cursor, int count) {
+		return sharded.shard(shardkey).hscan(key, cursor, count);
+	}
+
+	@Override
+	public ScanResult<Entry<String, String>> hscan(String shardkey, String key, String cursor, String pattern) {
+		return sharded.shard(shardkey).hscan(key, cursor, pattern);
+	}
+
+	@Override
+	public ScanResult<Entry<String, String>> hscan(String shardkey, String key, String cursor, String pattern, int count) {
+		return sharded.shard(shardkey).hscan(key, cursor, pattern, count);
 	}
 	
 	
