@@ -852,6 +852,26 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		return master().sunionstore(destination, keys);
 	}
 	
+	@Override
+	public ScanResult<String> sscan(String key, String cursor) {
+		return readSlave ? firstSlave().sscan(key, cursor) : master().sscan(key, cursor);
+	}
+
+	@Override
+	public ScanResult<String> sscan(String key, String cursor, int count) {
+		return readSlave ? firstSlave().sscan(key, cursor, count) : master().sscan(key, cursor, count);
+	}
+
+	@Override
+	public ScanResult<String> sscan(String key, String cursor, String pattern) {
+		return readSlave ? firstSlave().sscan(key, cursor, pattern) : master().sscan(key, cursor, pattern);
+	}
+
+	@Override
+	public ScanResult<String> sscan(String key, String cursor, String pattern, int count) {
+		return readSlave ? firstSlave().sscan(key, cursor, pattern, count) : master().sscan(key, cursor, pattern, count);
+	}
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------- Sorted Sets
 	
