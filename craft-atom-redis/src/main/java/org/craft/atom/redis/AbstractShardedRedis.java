@@ -686,6 +686,26 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 		return sharded.shard(shardkey).sunionstore(destination, keys);
 	}
 	
+	@Override
+	public ScanResult<String> sscan(String shardkey, String key, String cursor) {
+		return sharded.shard(shardkey).sscan(key, cursor);
+	}
+
+	@Override
+	public ScanResult<String> sscan(String shardkey, String key, String cursor, int count) {
+		return sharded.shard(shardkey).sscan(key, cursor, count);
+	}
+
+	@Override
+	public ScanResult<String> sscan(String shardkey, String key, String cursor, String pattern) {
+		return sharded.shard(shardkey).sscan(key, cursor, pattern);
+	}
+
+	@Override
+	public ScanResult<String> sscan(String shardkey, String key, String cursor, String pattern, int count) {
+		return sharded.shard(shardkey).sscan(key, cursor, pattern, count);
+	}
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------- Sorted Sets
 	

@@ -167,6 +167,10 @@ public interface ShardedRedisCommand {
 	Long srem(String shardkey, String key, String... members);
 	Set<String> sunion(String shardkey, String... keys);
 	Long sunionstore(String shardkey, String destination, String... keys);
+	ScanResult<String> sscan(String shardkey, String key, String cursor);
+	ScanResult<String> sscan(String shardkey, String key, String cursor, int count);
+	ScanResult<String> sscan(String shardkey, String key, String cursor, String pattern);
+	ScanResult<String> sscan(String shardkey, String key, String cursor, String pattern, int count);
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------- Sorted Sets
