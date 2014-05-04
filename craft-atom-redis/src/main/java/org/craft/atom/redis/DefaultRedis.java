@@ -1554,6 +1554,53 @@ public class DefaultRedis implements Redis {
 		return j.sunionstore(destination, keys);
 	}
 	
+	@Override
+	public ScanResult<String> sscan(String key, String cursor) {
+		return (ScanResult<String>) executeCommand(CommandEnum.SSCAN, new Object[] { key, cursor });
+	}
+	
+	private ScanResult<String> sscan0(Jedis j, String key, String cursor) {
+		redis.clients.jedis.ScanResult<String> sr = j.sscan(key, cursor);
+		return new ScanResult<String>(sr.getStringCursor(), sr.getResult());
+	}
+
+	@Override
+	public ScanResult<String> sscan(String key, String cursor, int count) {
+		return (ScanResult<String>) executeCommand(CommandEnum.SSCAN_COUNT, new Object[] { key, cursor, count });
+	}
+	
+	private ScanResult<String> sscan_count(Jedis j, String key, String cursor, int count) {
+		ScanParams param = new ScanParams();
+		param.count(count);
+		redis.clients.jedis.ScanResult<String> sr = j.sscan(key, cursor, param);
+		return new ScanResult<String>(sr.getStringCursor(), sr.getResult());
+	}
+
+	@Override
+	public ScanResult<String> sscan(String key, String cursor, String pattern) {
+		return (ScanResult<String>) executeCommand(CommandEnum.SSCAN_MATCH, new Object[] { key, cursor, pattern });
+	}
+	
+	private ScanResult<String> sscan_match(Jedis j, String key, String cursor, String pattern) {
+		ScanParams param = new ScanParams();
+		param.match(pattern);
+		redis.clients.jedis.ScanResult<String> sr = j.sscan(key, cursor, param);
+		return new ScanResult<String>(sr.getStringCursor(), sr.getResult());
+	}
+
+	@Override
+	public ScanResult<String> sscan(String key, String cursor, String pattern, int count) {
+		return (ScanResult<String>) executeCommand(CommandEnum.SSCAN_MATCH_COUNT, new Object[] { key, cursor, pattern, count });
+	}
+	
+	private ScanResult<String> sscan_match_count(Jedis j, String key, String cursor, String pattern, int count) {
+		ScanParams param = new ScanParams();
+		param.match(pattern);
+		param.count(count);
+		redis.clients.jedis.ScanResult<String> sr = j.sscan(key, cursor, param);
+		return new ScanResult<String>(sr.getStringCursor(), sr.getResult());
+	}
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------- Sorted Sets
 	
@@ -2957,6 +3004,14 @@ public class DefaultRedis implements Redis {
 				return sunion0(j, (String[]) args[0]);
 			case SUNIONSTORE:
 				return sunionstore0(j, (String) args[0], (String[]) args[1]);
+			case SSCAN:
+				return sscan0(j, (String) args[0], (String) args[1]);
+			case SSCAN_COUNT:
+				return sscan_count(j, (String) args[0], (String) args[1], (Integer) args[2]);
+			case SSCAN_MATCH:
+				return sscan_match(j, (String) args[0], (String) args[1], (String) args[2]);
+			case SSCAN_MATCH_COUNT:
+				return sscan_match_count(j, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3]);
 				
 			// Sorted Set
 			case ZADD:

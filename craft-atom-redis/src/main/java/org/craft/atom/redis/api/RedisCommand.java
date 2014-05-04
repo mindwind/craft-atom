@@ -1368,7 +1368,9 @@ public interface RedisCommand {
 	 */
 	List<String> hvals(String key);
 	
-	
+	/**
+	 * @see #scan(String)
+	 */
 	ScanResult<Map.Entry<String, String>> hscan(String key, String cursor);
 	ScanResult<Map.Entry<String, String>> hscan(String key, String cursor, int count);
 	ScanResult<Map.Entry<String, String>> hscan(String key, String cursor, String pattern);
@@ -2045,6 +2047,14 @@ public interface RedisCommand {
 	 * @return the number of elements in the resulting set
 	 */
 	Long sunionstore(String destination, String... keys);
+	
+	/**
+	 * @see #scan(String)
+	 */
+	ScanResult<String> sscan(String key, String cursor);
+	ScanResult<String> sscan(String key, String cursor, int count);
+	ScanResult<String> sscan(String key, String cursor, String pattern);
+	ScanResult<String> sscan(String key, String cursor, String pattern, int count);
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------- Sorted Sets

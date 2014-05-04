@@ -158,6 +158,10 @@ public enum CommandEnum {
 	SREM,
 	SUNION,
 	SUNIONSTORE,
+	SSCAN,
+	SSCAN_COUNT,
+	SSCAN_MATCH,
+	SSCAN_MATCH_COUNT,
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------- Sorted Sets
