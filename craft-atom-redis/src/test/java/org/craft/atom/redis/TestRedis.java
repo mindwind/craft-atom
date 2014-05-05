@@ -54,6 +54,55 @@ public class TestRedis extends AbstractRedisTests {
 	
 	
 	@Test
+	public void testSscan() {
+		int expect = 100;
+		for (int i = 0; i < expect; i++) {
+			redis1.sadd(key, value + i);
+		}
+		
+		// 1
+		int count = 0;
+		String cursor = "0";
+		do {
+			ScanResult<String> sr = redis1.sscan(key, cursor);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 2
+		cursor = "0";
+		do {
+			ScanResult<String> sr = redis1.sscan(key, cursor, 20);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 3
+		cursor = "0";
+		do {
+			ScanResult<String> sr = redis1.sscan(key, cursor, value + "*");
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 4
+		cursor = "0";
+		do {
+			ScanResult<String> sr = redis1.sscan(key, cursor, value + "*", 20);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test sscan. ", CaseCounter.incr(4)));
+	}
+	
+	@Test
 	public void testHscan() {
 		int expect = 100;
 		for (int i = 0; i < expect; i++) {
