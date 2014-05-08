@@ -220,6 +220,10 @@ public interface ShardedRedisCommand {
 	Long zunionstore(String shardkey, String destination, Map<String, Integer> weightkeys);
 	Long zunionstoremax(String shardkey, String destination, Map<String, Integer> weightkeys);
 	Long zunionstoremin(String shardkey, String destination, Map<String, Integer> weightkeys);
+	ScanResult<Map.Entry<String, Double>> zscan(String shardkey, String key, String cursor);
+	ScanResult<Map.Entry<String, Double>> zscan(String shardkey, String key, String cursor, int count);
+	ScanResult<Map.Entry<String, Double>> zscan(String shardkey, String key, String cursor, String pattern);
+	ScanResult<Map.Entry<String, Double>> zscan(String shardkey, String key, String cursor, String pattern, int count);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub

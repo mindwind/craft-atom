@@ -1101,6 +1101,26 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		return master().zunionstoremin(destination, weightkeys);
 	}
 	
+	@Override
+	public ScanResult<Entry<String, Double>> zscan(String key, String cursor) {
+		return readSlave ? firstSlave().zscan(key, cursor) : master().zscan(key, cursor);
+	}
+
+	@Override
+	public ScanResult<Entry<String, Double>> zscan(String key, String cursor, int count) {
+		return readSlave ? firstSlave().zscan(key, cursor, count) : master().zscan(key, cursor, count);
+	}
+
+	@Override
+	public ScanResult<Entry<String, Double>> zscan(String key, String cursor, String pattern) {
+		return readSlave ? firstSlave().zscan(key, cursor, pattern) : master().zscan(key, cursor, pattern);
+	}
+
+	@Override
+	public ScanResult<Entry<String, Double>> zscan(String key, String cursor, String pattern, int count) {
+		return readSlave ? firstSlave().zscan(key, cursor, pattern, count) : master().zscan(key, cursor, pattern, count);
+	}
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 	

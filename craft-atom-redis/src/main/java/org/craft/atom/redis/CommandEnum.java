@@ -211,6 +211,10 @@ public enum CommandEnum {
 	ZUNIONSTORE_WEIGHTS,
 	ZUNIONSTORE_WEIGHTS_MAX,
 	ZUNIONSTORE_WEIGHTS_MIN,
+	ZSCAN,
+	ZSCAN_COUNT,
+	ZSCAN_MATCH,
+	ZSCAN_MATCH_COUNT,
 	
 	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub

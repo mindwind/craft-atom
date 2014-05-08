@@ -1,5 +1,6 @@
 package org.craft.atom.redis;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -2069,6 +2070,64 @@ public class DefaultRedis implements Redis {
 		return j.zunionstore(destination, new ZParams().weights(weights).aggregate(Aggregate.MIN), keys);
 	}
 	
+	@Override
+	public ScanResult<Map.Entry<String, Double>> zscan(String key, String cursor) {
+		return (ScanResult<Map.Entry<String, Double>>) executeCommand(CommandEnum.ZSCAN, new Object[] { key, cursor });
+	}
+	
+	private ScanResult<Map.Entry<String, Double>> zscan0(Jedis j, String key, String cursor) {
+		redis.clients.jedis.ScanResult<Tuple> sr = j.zscan(key, cursor);
+		return new ScanResult<Map.Entry<String, Double>>(sr.getStringCursor(), convert(sr.getResult()));
+	}
+	
+	@Override
+	public ScanResult<Map.Entry<String, Double>> zscan(String key, String cursor, int count) {
+		return (ScanResult<Map.Entry<String, Double>>) executeCommand(CommandEnum.ZSCAN_COUNT, new Object[] { key, cursor, count });
+	}
+	
+	private ScanResult<Map.Entry<String, Double>> zscan_count(Jedis j, String key, String cursor, int count) {
+		ScanParams param = new ScanParams();
+		param.count(count);
+		redis.clients.jedis.ScanResult<Tuple> sr = j.zscan(key, cursor, param);
+		return new ScanResult<Map.Entry<String, Double>>(sr.getStringCursor(), convert(sr.getResult()));
+	}
+	
+	@Override
+	public ScanResult<Map.Entry<String, Double>> zscan(String key, String cursor, String pattern) {
+		return (ScanResult<Map.Entry<String, Double>>) executeCommand(CommandEnum.ZSCAN_MATCH, new Object[] { key, cursor, pattern });
+	}
+	
+	private ScanResult<Map.Entry<String, Double>> zscan_match(Jedis j, String key, String cursor, String pattern) {
+		ScanParams param = new ScanParams();
+		param.match(pattern);
+		redis.clients.jedis.ScanResult<Tuple> sr = j.zscan(key, cursor, param);
+		return new ScanResult<Map.Entry<String, Double>>(sr.getStringCursor(), convert(sr.getResult()));
+	}
+	
+	@Override
+	public ScanResult<Map.Entry<String, Double>> zscan(String key, String cursor, String pattern, int count) {
+		return (ScanResult<Map.Entry<String, Double>>) executeCommand(CommandEnum.ZSCAN_MATCH_COUNT, new Object[] { key, cursor, pattern, count });
+	}
+	
+	private ScanResult<Map.Entry<String, Double>> zscan_match_count(Jedis j, String key, String cursor, String pattern, int count) {
+		ScanParams param = new ScanParams();
+		param.match(pattern);
+		param.count(count);
+		redis.clients.jedis.ScanResult<Tuple> sr = j.zscan(key, cursor, param);
+		return new ScanResult<Map.Entry<String, Double>>(sr.getStringCursor(), convert(sr.getResult()));
+	}
+	
+	private List<Map.Entry<String, Double>> convert(List<Tuple> list) {
+		if (list == null || list.isEmpty()) return Collections.emptyList();
+		
+		List<Map.Entry<String, Double>> l = new ArrayList<Map.Entry<String,Double>>(list.size());
+		for (Tuple tuple : list) {
+			Map.Entry<String, Double> entry = new AbstractMap.SimpleEntry<String, Double>(tuple.getElement(), tuple.getScore());
+			l.add(entry);
+		}
+		return l;
+	}
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 	
@@ -3102,6 +3161,14 @@ public class DefaultRedis implements Redis {
 				return zunionstore_weights_max(j, (String) args[0], (Map<String, Integer>) args[1]);
 			case ZUNIONSTORE_WEIGHTS_MIN:
 				return zunionstore_weights_min(j, (String) args[0], (Map<String, Integer>) args[1]);
+			case ZSCAN:
+				return zscan0(j, (String) args[0], (String) args[1]);
+			case ZSCAN_COUNT:
+				return zscan_count(j, (String) args[0], (String) args[1], (Integer) args[2]);
+			case ZSCAN_MATCH:
+				return zscan_match(j, (String) args[0], (String) args[1], (String) args[2]);
+			case ZSCAN_MATCH_COUNT:
+				return zscan_match_count(j, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3]);
 			
 			// Pub/Sub
 			case PUBLISH:

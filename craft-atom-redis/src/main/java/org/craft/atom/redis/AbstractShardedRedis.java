@@ -930,6 +930,26 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 		return sharded.shard(shardkey).zunionstoremin(destination, weightkeys);
 	}
 	
+	@Override
+	public ScanResult<Entry<String, Double>> zscan(String shardkey, String key, String cursor) {
+		return sharded.shard(shardkey).zscan(key, cursor);
+	}
+
+	@Override
+	public ScanResult<Entry<String, Double>> zscan(String shardkey, String key, String cursor, int count) {
+		return sharded.shard(shardkey).zscan(key, cursor, count);
+	}
+
+	@Override
+	public ScanResult<Entry<String, Double>> zscan(String shardkey, String key, String cursor, String pattern) {
+		return sharded.shard(shardkey).zscan(key, cursor, pattern);
+	}
+
+	@Override
+	public ScanResult<Entry<String, Double>> zscan(String shardkey, String key, String cursor, String pattern, int count) {
+		return sharded.shard(shardkey).zscan(key, cursor, pattern, count);
+	}
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 

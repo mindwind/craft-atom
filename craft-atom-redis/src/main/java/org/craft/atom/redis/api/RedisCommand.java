@@ -2403,6 +2403,15 @@ public interface RedisCommand {
 	Long zunionstoremin(String destination, Map<String, Integer> weightkeys);
 	
 	
+	/**
+	 * @see #scan(String)
+	 */
+	ScanResult<Map.Entry<String, Double>> zscan(String key, String cursor);
+	ScanResult<Map.Entry<String, Double>> zscan(String key, String cursor, int count);
+	ScanResult<Map.Entry<String, Double>> zscan(String key, String cursor, String pattern);
+	ScanResult<Map.Entry<String, Double>> zscan(String key, String cursor, String pattern, int count);
+	
+	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
 	
 	
