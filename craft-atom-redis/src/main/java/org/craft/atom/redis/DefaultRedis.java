@@ -2260,6 +2260,7 @@ public class DefaultRedis implements Redis {
 	
 	@Override
 	public List<String> pubsubchannels(String pattern) {
+		if (pattern == null || pattern.equals("")) pattern = "*";
 		return (List<String>) executeCommand(CommandEnum.PUBSUB_CHANNELS, new Object[] { pattern });
 	}
 	
@@ -3207,7 +3208,7 @@ public class DefaultRedis implements Redis {
 			case PUBSUB_CHANNELS:
 				return pubsubchannels0(j, (String) args[0]);
 			case PUBSUB_NUMSUB:
-				return pubsubnumsub0(j);
+				return pubsubnumsub0(j, (String[]) args[0]);
 			case PUBSUB_NUMPAT:
 				return pubsubnumpat0(j);
 				

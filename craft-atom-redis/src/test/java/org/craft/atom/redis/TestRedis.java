@@ -1524,6 +1524,52 @@ public class TestRedis extends AbstractRedisTests {
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test psubscribe & publish & punsubscribe. ", CaseCounter.incr(1)));
 	}
 	
+	private static class TestRedisSubscribeHandler implements RedisSubscribeHandler {
+		@Override
+		public void onException(RedisException e) {}
+
+		@Override
+		public void onSubscribe(String channel, int no) {}
+
+		@Override
+		public void onMessage(String channel, String message) {}
+	}
+	
+	private static class TestRedisPsubscribeHandler implements RedisPsubscribeHandler {
+
+		@Override
+		public void onException(RedisException e) {}
+
+		@Override
+		public void onPsubscribe(String pattern, int no) {}
+
+		@Override
+		public void onMessage(String pattern, String channel, String message) {}
+		
+	}
+	
+	@Test
+	public void testPubSub() {
+		final Redis redis = RedisFactory.newRedisBuilder(HOST, PORT1).build();
+		redis.subscribe(new TestRedisSubscribeHandler(), "foo1", "foo2");
+		redis.subscribe(new TestRedisSubscribeHandler(), "foo1");
+		
+		List<String> channels = redis.pubsubchannels(null);
+		Assert.assertEquals(2, channels.size());
+		Assert.assertArrayEquals(new String[] { "foo1", "foo2" }, channels.toArray(new String[] {}));
+		
+		Map<String, String> map = redis.pubsubnumsub("foo1");
+		Assert.assertEquals("2", map.get("foo1"));
+		map = redis.pubsubnumsub("foo2");
+		Assert.assertEquals("1", map.get("foo2"));
+		
+		redis.psubscribe(new TestRedisPsubscribeHandler(), "bar1", "bar2");
+		redis.psubscribe(new TestRedisPsubscribeHandler(), "bar3", "bar4");
+		Long num = redis.pubsubnumpat();
+		Assert.assertEquals(4, num.longValue());
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test pubsub. ", CaseCounter.incr(5)));
+	}
+	
 	
 	// ~ -------------------------------------------------------------------------------------------------- Transactions
 	
