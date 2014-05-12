@@ -979,6 +979,21 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 		sharded.shard(shardkey).unsubscribe(pubsub, channels);
 	}
 	
+	@Override
+	public List<String> pubsubchannels(String shardkey, String pattern) {
+		return sharded.shard(shardkey).pubsubchannels(pattern);
+	}
+
+	@Override
+	public Long pubsubnumpat(String shardkey) {
+		return sharded.shard(shardkey).pubsubnumpat();
+	}
+
+	@Override
+	public Map<String, String> pubsubnumsub(String shardkey, String... channels) {
+		return sharded.shard(shardkey).pubsubnumsub(channels);
+	}
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------ Transactions
 

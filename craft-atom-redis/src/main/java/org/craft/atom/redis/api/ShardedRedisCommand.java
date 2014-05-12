@@ -234,6 +234,9 @@ public interface ShardedRedisCommand {
 	RedisPubSub subscribe(String shardkey, RedisSubscribeHandler handler, String... channels);
 	void punsubscribe(String shardkey, RedisPubSub pubsub, String... patterns);
 	void unsubscribe(String shardkey, RedisPubSub pubsub, String... channels);
+	List<String> pubsubchannels(String shardkey, String pattern);
+	Long pubsubnumpat(String shardkey);
+	Map<String, String> pubsubnumsub(String shardkey, String... channels);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------- Transactions
