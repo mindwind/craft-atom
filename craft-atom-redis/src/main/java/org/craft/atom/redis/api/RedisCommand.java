@@ -2473,7 +2473,7 @@ public interface RedisCommand {
 	RedisPubSub subscribe(RedisSubscribeHandler handler, String... channels);
 	
 	/**
-	 * Available since 2.0.0
+	 * Available since 2.0.0<br>
 	 * Time complexity: O(N) where N is the number of clients already subscribed to a channel.<br>
 	 * 
 	 * <p>
@@ -2485,6 +2485,46 @@ public interface RedisCommand {
 	 * @param channels
 	 */
 	 void unsubscribe(RedisPubSub pubsub, String... channels);
+	 
+	 /**
+	  * Available since 2.8.0<br>
+      * Time complexity: O(N) for the CHANNELS subcommand, where N is the number of active channels, and assuming constant 
+      * time pattern matching (relatively short channels and patterns). O(N) for the NUMSUB subcommand, 
+      * where N is the number of requested channels. O(1) for the NUMPAT subcommand.
+      * 
+      * <p>
+	  * The PUBSUB command is an introspection command that allows to inspect the state of the Pub/Sub subsystem. 
+	  * It is composed of subcommands that are documented separately. The general form is:
+	  * <pre><code>
+	  * PUBSUB subcommand ... args ...
+	  * </code></pre>
+	  * 
+	  * <p>
+	  * PUBSUB CHANNELS [pattern]
+      * Lists the currently active channels. An active channel is a Pub/Sub channel with one ore more subscribers (not including clients subscribed to patterns).
+      * If no pattern is specified, all the channels are listed, otherwise if pattern is specified only channels matching the specified glob-style pattern are listed.
+      * Return value
+      * Array reply: a list of active channels, optionally matching the specified pattern.
+      * 
+      * <p>
+      * PUBSUB NUMSUB [channel-1 ... channel-N]
+      * Returns the number of subscribers (not counting clients subscribed to patterns) for the specified channels.
+      * Return value
+      * Array reply: a list of channels and number of subscribers for every channel. The format is channel, count, channel, count, ..., so the list is flat. The order in which the channels are listed is the same as the order of the channels specified in the command call.
+      * Note that it is valid to call this command without channels. In this case it will just return an empty list.
+      * 
+      * <p>
+      * PUBSUB NUMPAT
+      * Returns the number of subscriptions to patterns (that are performed using the PSUBSCRIBE command). Note that this is not just the count of clients subscribed to patterns but the total number of patterns all the clients are subscribed to.
+      * Return value
+      * Integer reply: the number of patterns all the clients are subscribed to.
+	  * 
+	  * @param pattern
+	  * @return
+	  */
+	 List<String> pubsubchannels(String pattern);
+	 Long pubsubnumpat();
+	 Map<String, String> pubsubnumsub(String... channels);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------ Transactions

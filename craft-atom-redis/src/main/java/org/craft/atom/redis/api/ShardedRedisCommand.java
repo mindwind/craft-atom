@@ -231,8 +231,8 @@ public interface ShardedRedisCommand {
 	
 	RedisPubSub psubscribe(String shardkey, RedisPsubscribeHandler handler, String... patterns);
 	Long publish(String shardkey, String channel, String message);
-	void punsubscribe(String shardkey, RedisPubSub pubsub, String... patterns);
 	RedisPubSub subscribe(String shardkey, RedisSubscribeHandler handler, String... channels);
+	void punsubscribe(String shardkey, RedisPubSub pubsub, String... patterns);
 	void unsubscribe(String shardkey, RedisPubSub pubsub, String... channels);
 	
 	

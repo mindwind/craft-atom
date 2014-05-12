@@ -225,6 +225,9 @@ public enum CommandEnum {
 	PUNSUBSCRIBE,
 	SUBSCRIBE,
 	UNSUBSCRIBE,
+	PUBSUB_CHANNELS,
+	PUBSUB_NUMSUB,
+	PUBSUB_NUMPAT,
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------ Transactions

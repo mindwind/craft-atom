@@ -2258,6 +2258,33 @@ public class DefaultRedis implements Redis {
 		return OK;
 	}
 	
+	@Override
+	public List<String> pubsubchannels(String pattern) {
+		return (List<String>) executeCommand(CommandEnum.PUBSUB_CHANNELS, new Object[] { pattern });
+	}
+	
+	private List<String> pubsubchannels0(Jedis j, String pattern) {
+		return j.pubsubChannels(pattern);
+	}
+
+	@Override
+	public Long pubsubnumpat() {
+		return (Long) executeCommand(CommandEnum.PUBSUB_NUMPAT);
+	}
+	
+	private Long pubsubnumpat0(Jedis j) {
+		return j.pubsubNumPat();
+	}
+
+	@Override
+	public Map<String, String> pubsubnumsub(String... channels) {
+		return (Map<String, String>) executeCommand(CommandEnum.PUBSUB_NUMSUB, new Object[] { channels });
+	}
+	
+	private Map<String, String> pubsubnumsub0(Jedis j, String... channels) {
+		return j.pubsubNumSub(channels);
+	}
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------ Transactions
 	
@@ -3177,6 +3204,12 @@ public class DefaultRedis implements Redis {
 				return punsubscribe0((DefaultRedisPubSub) args[0], (String[]) args[1]);
 			case UNSUBSCRIBE:
 				return unsubscribe0((DefaultRedisPubSub) args[0], (String[]) args[1]);
+			case PUBSUB_CHANNELS:
+				return pubsubchannels0(j, (String) args[0]);
+			case PUBSUB_NUMSUB:
+				return pubsubnumsub0(j);
+			case PUBSUB_NUMPAT:
+				return pubsubnumpat0(j);
 				
 			// Transactions
 			case DISCARD:

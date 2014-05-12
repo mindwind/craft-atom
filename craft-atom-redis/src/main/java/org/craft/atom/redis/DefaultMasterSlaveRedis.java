@@ -1156,6 +1156,21 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 			master().unsubscribe(pubsub, channels);
 	}
 	
+	@Override
+	public List<String> pubsubchannels(String pattern) {
+		return readSlave ? firstSlave().pubsubchannels(pattern) : master().pubsubchannels(pattern); 
+	}
+
+	@Override
+	public Long pubsubnumpat() {
+		return readSlave ? firstSlave().pubsubnumpat() : master().pubsubnumpat();
+	}
+
+	@Override
+	public Map<String, String> pubsubnumsub(String... channels) {
+		return readSlave ? firstSlave().pubsubnumsub(channels) : master().pubsubnumsub(channels);
+	}
+	
 	
 	// ~ ------------------------------------------------------------------------------------------------ Transactions
 	
