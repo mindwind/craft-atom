@@ -108,7 +108,7 @@ public class TestMasterSlaveRedis extends AbstractRedisTests {
 		Assert.assertFalse(b);
 		
 		// wait a while for master-slave sync.
-		Thread.sleep(1000);
+		Thread.sleep(2000);
 		
 		// read from slave
 		b = masterSlaveRedis.exists(key);
