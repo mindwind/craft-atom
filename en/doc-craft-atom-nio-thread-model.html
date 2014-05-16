@@ -20,18 +20,19 @@
 		
 		<div id="center" class="center">
 			<div id="content" class="content">
-<h1>craft-atom-nio Thread Model Illustration</h1>
+<h1>craft-atom-nio: Thread Model Illustration</h1>
 <div class="date">May 16, 2014 by mindwind</div>
 
 <p>
-Before we illustrate the thread model of <a href="doc-craft-atom-nio" target="_blank">craft</a>, think about thread model itself. 
-How many thread model we can choose?
+Before we illustrate the thread model of <a href="doc-craft-atom-nio" target="_blank">craft-atom-nio</a>, think about thread model itself. 
+What thread model means? it means thread collaboration mechanism and thread numer.
 </p>
 
 <h3>Single Thread do Everything</h3>
+<a href="../img/doc-craft-atom-nio-thread-model-1.png" target="_blank"><img src="../img/doc-craft-atom-nio-thread-model-1.png"></a>
 <p>
 As shown in figure 1, only single thread to do everything include:<br>
-- Accept a connection or launch a connection<br>
+- Accept connection or launch connection<br>
 - Read or write data<br>
 - Execute business operation<br>
 </p>
@@ -41,9 +42,10 @@ at any time just only one task can be handle.
 </p>
 
 <h3>Thread Division by Responsibility</h3>
+<a href="../img/doc-craft-atom-nio-thread-model-2.png" target="_blank"><img src="../img/doc-craft-atom-nio-thread-model-2.png"></a>
 <p>
 As shown in figure 2, another thread model, we divide thread by the responsibility, for example:<br>
-- One thread be responsible for accept or launch a connection<br>
+- One thread be responsible for accept or launch connection<br>
 - A handful of threads be responsible for read and write data<br>
 - A group of threads be responsible for execute business operation<br>
 </p>
