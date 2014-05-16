@@ -40,9 +40,23 @@ This is the most simple thread model, but also it is too simple too naive. Becau
 at any time just only one task can be handle.
 </p>
 
-
-
-
+<h3>Thread Division by Responsibility</h3>
+<p>
+As shown in figure 2, another thread model, we divide thread by the responsibility, for example:<br>
+- One thread be responsible for accept or launch a connection<br>
+- A handful of threads be responsible for read and write data<br>
+- A group of threads be responsible for execute business operation<br>
+</p>
+<p>
+Yes this thread model is quite appropriate for <a href="doc-craft-atom-io.html" target="_blank">craft-atom-io</a> api model.
+<code>IoAcceptor</code> or <code>IoConnector</code> holds one thread to be responsible for accept or launch a connection, it is a easy work, so one thread is enough.
+<code>IoProcessor</code> holds a handful of threads to be responsible for read and write data, this kind of work is CPU intensive, so the default threads number is CPU core number.
+</p>
+<p>
+Last whether we need a group independent threads to be responsible for execute business operation. It depends on the workload of business operation.
+Because the inherent cost of thread hand over, if the workload of business operation is much larger than the cost, you should use a group of independent threads to execute, 
+then you can get higher throughput.
+</p>
 			</div>
 		</div>
 		
