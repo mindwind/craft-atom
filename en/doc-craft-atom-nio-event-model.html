@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
+		<title>Documentation: craft-atom-nio Event Model Illustration</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-nio: Event Model Illustration</h1>
+<div class="date">May 19, 2014 by mindwind</div>
+
+<p>
+<a href="doc-craft-atom-nio" target="_blank">craft-atom-nio</a> is base on event-driven and each event is related to a <code>Channel</code>, so how many type of event we have.
+All the events are illustrated in the table below:
+</p>
+<pre><code>
+1. <a>CHANNEL_OPENED</a>
+   When channel has been opened, fire this event.
+2. <a>CHANNEL_CLOSED</a>
+   When channel has been closed, fire this event.
+3. <a>CHANNEL_READ</a>
+   When channel has read some data, fire this event.
+4. <a>CHANNEL_FLUSH</a>
+   When channel would flush out data in it, fire this event.
+5. <a>CHANNEL_WRITTEN</a>
+   When channel has written some data, fire this event.
+6. <a>CHANNEL_IDLE</a>
+   When channel has no data transmit for a while, fire this event.
+7. <a>CHANNEL_THROWN</a>
+   When channel operation throw exception, fire this event.
+</code></pre>
+
+<h3>Dispatch Event</h3>
+<p>
+As mentioned above, an event would be fired when something occurs. It must be handle by the <code>IoHandler</code>,
+the <code>IoHandler</code> is a SPI interface which should be implemented by the component user. The action event dispatch 
+means hand over the event to <code>IoHandler</code>.  
+</p>
+<p>
+How to dispatch? A SPI interface <code>NioChannelEventDispatcher</code> provide this function, and by default we have two kinds of event dispatcher implementor.<br>
+</p>
+<pre><code>
+1. <a>NioOrderedDirectChannelEventDispatcher</a>
+   Dispatch event on current thread.
+
+2. <a>NioOrderedThreadPoolChannelEventDispatcher</a>
+   Dispatch event on a new thread pool.
+</code></pre>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
