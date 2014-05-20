@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft.js"></script>
+		<title>Benchmark and Comparison with Mina and Netty</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>Benchmark and Comparison with Mina and Netty</h1>
+<div class="date">May 20, 2014 by mindwind</div>
+
+<h3>Test Environment</h3>
+<pre><code>
+<a>Hardware</a> 
+model name: Intel(R) Core(TM) i5-2320 CPU @ 3.00GHz     
+cache size: 6144 KB     
+cpu cores : 4     
+jdk       : 1.6.0_30-b12
+network   : 1000Mb
+memory    : -Xms256m -Xmx256m
+Linux     : CentOS 5.7, kernel 2.6.18-274.el5
+
+<a>Software</a>
+JMeter        : 2.4    load generator
+craft-atom-nio: 2.0.0
+Mina          : 2.0.7
+Netty         : 3.6.2.Final          
+</code></pre>
+
+<h3>Test Method</h3>
+<p>
+Build an echo server independently using <a href="http://mina.apache.org" target="_blank">Mina</a>, <a href="http://netty.io" target="_blank">Netty</a> and <a href="doc-craft-atom-nio.html" target="_blank">craft-atom-nio</a>.
+</p>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
