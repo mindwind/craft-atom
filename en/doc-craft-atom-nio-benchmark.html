@@ -37,10 +37,31 @@ Mina          : 2.0.7
 Netty         : 3.6.2.Final          
 </code></pre>
 
-<h3>Test Method</h3>
+<h3>Test Way</h3>
 <p>
-Build an echo server independently using <a href="http://mina.apache.org" target="_blank">Mina</a>, <a href="http://netty.io" target="_blank">Netty</a> and <a href="doc-craft-atom-nio.html" target="_blank">craft-atom-nio</a>.
+Build an echo server independently using <a href="http://mina.apache.org" target="_blank">Mina</a>, 
+<a href="http://netty.io" target="_blank">Netty</a> and <a href="doc-craft-atom-nio.html" target="_blank">craft-atom-nio</a>.
+Thread and buffer config as follows:
 </p>
+<pre><code>
+<a>Netty</a>
+boss    : 1 thread
+worker  : 4 thread
+executor: 4 thread
+buffer  : 2k
+
+<a>Mina</a>
+acceptor : 1 thread
+processor: 4 thread
+executor : 4 thread
+buffer   : 2k
+
+<a>craft-atom-nio</a>
+acceptor : 1 thread
+processor: 4 thread
+executor : 4 thread
+buffer   : 2k
+</code></pre>
 			</div>
 		</div>
 		
