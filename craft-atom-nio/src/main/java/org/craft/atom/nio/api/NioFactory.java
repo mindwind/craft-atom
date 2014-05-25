@@ -18,7 +18,7 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 public class NioFactory {
 	
 	public static IoAcceptor newTcpAcceptor(IoHandler handler) {
-		return new NioTcpAcceptor(handler);
+		return newTcpAcceptorBuilder(handler).build();
 	}
 	
 	public static IoAcceptor newTcpAcceptor(IoHandler handler, NioAcceptorConfig config) {
@@ -34,7 +34,7 @@ public class NioFactory {
 	}
 	
 	public static IoConnector newTcpConnector(IoHandler handler) {
-		return new NioTcpConnector(handler);
+		return newTcpConnectorBuilder(handler).build();
 	}
 	
 	public static IoConnector newTcpConnector(IoHandler handler, NioConnectorConfig config) {
