@@ -22,8 +22,8 @@ public class NioTcpAcceptorBuilder extends NioBuilder<IoAcceptor> {
 	}
 	
 	
-	public NioTcpAcceptorBuilder backlog     (int backlog)   { this.backlog = backlog; return this; }
-    public NioTcpAcceptorBuilder reuseAddress(boolean reuse) { this.reuseAddress = reuse; return this; }
+	public NioTcpAcceptorBuilder backlog     (int backlog)   { this.backlog      = backlog; return this; }
+    public NioTcpAcceptorBuilder reuseAddress(boolean reuse) { this.reuseAddress = reuse  ; return this; }
 	
     
 	public IoAcceptor build() {
