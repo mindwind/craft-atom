@@ -64,7 +64,7 @@ public class Redis24DLock implements DLock {
 				success = false;
 			}
 		} catch (Exception e) {
-			LOG.error("[CRAFT-ATOM-LOCK] Try lock fail, lockKey={}, ttl={}, unit={}", lockKey, ttl, unit, e);
+			LOG.error("[CRAFT-ATOM-LOCK] Try lock fail, |lockKey={}, ttl={}, unit={}|", lockKey, ttl, unit, e);
 			success = false;
 		} finally {
 			redis.unwatch();
@@ -86,7 +86,7 @@ public class Redis24DLock implements DLock {
 		try {
 			redis.del(lockKey);
 		} catch (Exception e) {
-			LOG.error("[CRAFT-ATOM-LOCK] Unlock fail, lockKey={}", lockKey, e);
+			LOG.error("[CRAFT-ATOM-LOCK] Unlock fail, |lockKey={}|", lockKey, e);
 			success = false;
 		}
 		

@@ -64,7 +64,7 @@ public class ShardedRedis24DLock implements DLock {
 				success = false;
 			}
 		} catch (Exception e) {
-			LOG.error("[CRAFT-ATOM-LOCK] Try lock fail, lockKey={}, ttl={}, unit={}", lockKey, ttl, unit, e);
+			LOG.error("[CRAFT-ATOM-LOCK] Try lock fail, |lockKey={}, ttl={}, unit={}|", lockKey, ttl, unit, e);
 			success = false;
 		} finally {
 			shardedRedis.unwatch(lockKey);
@@ -86,7 +86,7 @@ public class ShardedRedis24DLock implements DLock {
 		try {
 			shardedRedis.del(lockKey, lockKey);
 		} catch (Exception e) {
-			LOG.error("Unlock fail, lockKey={}", lockKey, e);
+			LOG.error("Unlock fail, |lockKey={}|", lockKey, e);
 			success = false;
 		}
 		
