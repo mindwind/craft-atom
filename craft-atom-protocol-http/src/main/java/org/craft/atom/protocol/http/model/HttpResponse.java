@@ -77,7 +77,7 @@ public class HttpResponse extends HttpMessage {
 				List<Cookie> cl = SET_COOKIE_DECODER.decode(cookieValue.getBytes(SET_COOKIE_DECODER.getCharset()));
 				cookies.addAll(cl);
 			} catch (ProtocolException e) {
-				LOG.error("[CRAFT-ATOM-PROTOCOL-HTTP] Decode response cookie error", e);
+				LOG.warn("[CRAFT-ATOM-PROTOCOL-HTTP] Decode response cookie error", e);
 				return cookies;
 			}
 		}

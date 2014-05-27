@@ -159,7 +159,7 @@ public class HttpRequest extends HttpMessage {
 				map = paras.get(0);
 			}
 		} catch (ProtocolException e) {
-			LOG.error("[CRAFT-ATOM-PROTOCOL-HTTP] Decode request parameter error", e);
+			LOG.warn("[CRAFT-ATOM-PROTOCOL-HTTP] Decode request parameter error", e);
 			return map;
 		}
 		
@@ -207,7 +207,7 @@ public class HttpRequest extends HttpMessage {
 				List<Cookie> cl = COOKIE_DECODER.decode(cookieValue.getBytes(COOKIE_DECODER.getCharset()));
 				cookies.addAll(cl);
 			} catch (ProtocolException e) {
-				LOG.error("[CRAFT-ATOM-PROTOCOL-HTTP] Decode request cookie error", e);
+				LOG.warn("[CRAFT-ATOM-PROTOCOL-HTTP] Decode request cookie error", e);
 				return cookies;
 			}
 		}
