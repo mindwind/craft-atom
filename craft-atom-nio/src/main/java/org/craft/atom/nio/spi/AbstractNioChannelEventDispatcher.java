@@ -45,13 +45,13 @@ abstract public class AbstractNioChannelEventDispatcher implements NioChannelEve
 		boolean b = channel.tryAcquire();
 		if (!b) {
 			channel.pause();
-			LOG.warn("[CRAFT-ATOM-NIO]] Pause channel={}, availablePermits={}", channel, channel.availablePermits());
+			LOG.warn("[CRAFT-ATOM-NIO]] Pause |channel={}, availablePermits={}|", channel, channel.availablePermits());
 		}
 		
 		try {
 			semaphore.acquire();
 		} catch (InterruptedException e) {
-			LOG.warn(e.getMessage(), e);
+			LOG.warn("[CRAFT-ATOM-NIO] Semaphore acquire interrupt", e);
 		}
 	}
 	
@@ -59,7 +59,7 @@ abstract public class AbstractNioChannelEventDispatcher implements NioChannelEve
 		channel.release();
 		if (channel.isPaused()) {
 			channel.resume();
-			LOG.warn("[CRAFT-ATOM-NIO]] Resume channel={} availablePermits={}", channel, channel.availablePermits());
+			LOG.warn("[CRAFT-ATOM-NIO]] Resume |channel={} availablePermits={}|", channel, channel.availablePermits());
 		}
 		
 		semaphore.release();

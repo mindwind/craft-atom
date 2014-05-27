@@ -84,14 +84,14 @@ public class NioTcpConnector extends NioConnector {
 
             success = true;
         } catch (IOException e) {
-            LOG.error("[CRAFT-ATOM-NIO] Connect error", e);
+            LOG.warn("[CRAFT-ATOM-NIO] Connect exception", e);
             throw new RuntimeException(e);
         } finally {
             if (!success && sc != null) {
                 try {
                     close(sc);
                 } catch (IOException e) {
-                	LOG.warn("[CRAFT-ATOM-NIO] Unexpected exception caught", e);
+                	LOG.warn("[CRAFT-ATOM-NIO] Close exception", e);
                 }
             }
         }
@@ -283,7 +283,7 @@ public class NioTcpConnector extends NioConnector {
 						}
 					}
 				} catch (Exception e) {
-					LOG.error("[CRAFT-ATOM-NIO] Unexpected exception caught while connect", e);
+					LOG.error("[CRAFT-ATOM-NIO] Connect exception", e);
 				}
 			}
 
@@ -292,7 +292,7 @@ public class NioTcpConnector extends NioConnector {
 				try {
 					shutdown0();
 				} catch (Exception e) {
-					LOG.error("Unexpected exception caught while shutdown", e);
+					LOG.error("[CRAFT-ATOM-NIO] Shutdown exception", e);
 				}
 			}
 		}

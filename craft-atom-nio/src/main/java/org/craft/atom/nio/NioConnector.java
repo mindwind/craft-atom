@@ -101,7 +101,7 @@ abstract public class NioConnector extends NioReactor implements IoConnector {
 				try {
 					selector.close();
 				} catch (IOException e) {
-					LOG.warn("unexpected exception", e);
+					LOG.warn("[CRAFT-ATOM-NIO] Close selector exception", e);
 				}
 			}
 		}

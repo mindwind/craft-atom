@@ -157,13 +157,13 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		try {
 			bind(firstLocalAddress, otherLocalAddresses);
 		} catch (IOException e) {
-			throw new RuntimeException("Failed to construct.", e);
+			throw new RuntimeException("Failed to construct", e);
 		} finally {
 			if (!selectable && selector != null) {
 				try {
 					selector.close();
 				} catch (IOException e) {
-					LOG.warn("[CRAFT-ATOM-NIO] Unexpected exception caught", e);
+					LOG.warn("[CRAFT-ATOM-NIO] Selector close exception", e);
 				}
 			}
 		}
@@ -297,8 +297,8 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 				try {
 					bindByProtocol(address);
 					success = true;
-
-					LOG.debug("[CRAFT-ATOM-NIO] Bind address={}", address);
+					
+					LOG.debug("[CRAFT-ATOM-NIO] Bind |address={}|", address);
 				} catch (IOException e) {
 					exception = e;
 				} finally {
@@ -329,7 +329,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 			 try {
 				 close(entry.getValue());
 			 } catch (IOException e) {
-				 LOG.warn("[CRAFT-ATOM-NIO] Unexpected exception caught when rollback bind operation", e);
+				 LOG.warn("[CRAFT-ATOM-NIO] Rollback bind operation exception", e);
 			 } finally {
 				 it.remove();
 			 }
@@ -368,7 +368,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		// shutdown all the processor in the pool
 		pool.shutdown();
 
-		LOG.debug("[CRAFT-ATOM-NIO] Shutdown acceptor successful!");
+		LOG.debug("[CRAFT-ATOM-NIO] Shutdown acceptor successful");
 	}
 	
 	@Override
@@ -426,7 +426,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 						boundmap.remove(address);
 					}
 
-					LOG.debug("[CRAFT-ATOM-NIO] Unbind address={}" + address);
+					LOG.debug("[CRAFT-ATOM-NIO] Unbind |address={}|" + address);
 				} catch (IOException e) {
 					exception = e;
 				} 
@@ -492,10 +492,10 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 					// unbind canceled addresses
 					unbind0();
 				} catch (ClosedSelectorException e) {
-					LOG.error("[CRAFT-ATOM-NIO] Closed selector", e);
+					LOG.error("[CRAFT-ATOM-NIO] Closed selector exception", e);
 					break;
 				} catch (Throwable t) {
-					LOG.error("[CRAFT-ATOM-NIO] Unexpected error", t);
+					LOG.error("[CRAFT-ATOM-NIO] Unexpected exception", t);
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {}
@@ -506,7 +506,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 			try {
 				shutdown0();
 			} catch (Exception e) {
-				LOG.error("[CRAFT-ATOM-NIO] Unexpected exception caught while shutdown", e);
+				LOG.error("[CRAFT-ATOM-NIO] Shutdown exception", e);
 			}
 		}
 	}

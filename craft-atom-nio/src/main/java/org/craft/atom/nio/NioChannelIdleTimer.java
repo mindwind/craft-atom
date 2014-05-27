@@ -77,7 +77,7 @@ public class NioChannelIdleTimer {
 				timingWheel.add(channel);
 			}
 			
-			LOG.info("[CRAFT-ATOM-NIO] Nio active channel count is {}", timingWheel.size());
+			LOG.info("[CRAFT-ATOM-NIO] Nio active channel count is |{}|", timingWheel.size());
 		}
 		
 	}

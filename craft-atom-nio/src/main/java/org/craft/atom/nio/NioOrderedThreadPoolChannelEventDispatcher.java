@@ -120,7 +120,7 @@ public class NioOrderedThreadPoolChannelEventDispatcher extends AbstractNioChann
 					}
 				}
 			} catch (Throwable t) {
-				LOG.warn("[CRAFT-ATOM-NIO] Fire event error", t);
+				LOG.warn("[CRAFT-ATOM-NIO] Fire event exception", t);
 			}
 		}
 	}

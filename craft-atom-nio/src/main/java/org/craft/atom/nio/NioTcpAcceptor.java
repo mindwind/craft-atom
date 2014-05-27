@@ -117,7 +117,7 @@ public class NioTcpAcceptor extends NioAcceptor {
 				try {
 					sc.close();
 				} catch (IOException ex) {
-					LOG.error("[CRAFT-ATOM-NIO] Close error", ex);
+					LOG.error("[CRAFT-ATOM-NIO] Close exception", ex);
 				}
 			}
 			throw e;
