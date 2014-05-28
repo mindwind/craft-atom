@@ -11,6 +11,16 @@ CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
 
 
 
+craft-atom 2.2.0
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: LOW
+
+* craft-atom-redis
+  [IMPROVE]  - log format.
+
+
+
+
 craft-atom 2.1.0
 -----------------------------------------------------------------------------------------------------------------------
 UPGRADE URGENCY: LOW
