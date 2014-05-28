@@ -268,7 +268,7 @@ public class TimingWheel<E> {
 			for (;;) {
                 long currentTime = System.currentTimeMillis();
                 long sleepTime = tickDuration * tick - (currentTime - startTime);
-                LOG.debug("[CRAFT-ATOM-UTIL] Wait for next tick sleep time={}", sleepTime);
+                LOG.debug("[CRAFT-ATOM-UTIL] Wait for next tick sleep |sleepTime={}|", sleepTime);
                 
                 if (sleepTime <= 0) {
                     break;
