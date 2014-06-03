@@ -11,7 +11,7 @@ CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
 
 
 
-craft-atom 2.2.0
+craft-atom 2.1.1
 -----------------------------------------------------------------------------------------------------------------------
 UPGRADE URGENCY: LOW
 
