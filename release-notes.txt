@@ -18,6 +18,7 @@ UPGRADE URGENCY: LOW
 * craft-atom-redis
   [IMPROVE]  - log format.
   [IMPROVE]  - upgrade jedis to version 2.5.1.
+  [IMPROVE]  - use long replace int for PEXPIRE api.
 
 
 
