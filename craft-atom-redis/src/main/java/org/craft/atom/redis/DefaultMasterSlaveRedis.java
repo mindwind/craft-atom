@@ -237,7 +237,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 
 	@Override
-	public Long pexpire(String key, int milliseconds) {
+	public Long pexpire(String key, long milliseconds) {
 		return master().pexpire(key, milliseconds);
 	}
 

@@ -283,7 +283,7 @@ public interface RedisCommand {
 	 * @return 1 if the timeout was set.<br>
 	 *         0 if key does not exist or the timeout could not be set.<br>
 	 */
-	Long pexpire(String key, int milliseconds);
+	Long pexpire(String key, long milliseconds);
 	
 	/**
 	 * Available since 2.6.0<br>

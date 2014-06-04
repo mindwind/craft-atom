@@ -323,11 +323,11 @@ public class DefaultRedis implements Redis {
 	}
 
 	@Override
-	public Long pexpire(String key, int milliseconds) {
+	public Long pexpire(String key, long milliseconds) {
 		return (Long) executeCommand(CommandEnum.PEXPIRE, new Object[] { key, milliseconds });
 	}
 	
-	private Long pexpire0(Jedis j, String key, int milliseconds) {
+	private Long pexpire0(Jedis j, String key, long milliseconds) {
 		return j.pexpire(key, milliseconds);
 	}
 
@@ -2857,7 +2857,7 @@ public class DefaultRedis implements Redis {
 			case PERSIST:
 				return persist0(j, (String) args[0]);
 			case PEXPIRE: 
-				return pexpire0(j, (String) args[0], (Integer) args[1]);
+				return pexpire0(j, (String) args[0], (Long) args[1]);
 			case PEXPIREAT: 
 				return pexpireat0(j, (String) args[0], (Long) args[1]);
 			case PTTL: 
