@@ -197,11 +197,11 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 
 	@Override
-	public void pexpire(String key, int milliseconds) {
+	public void pexpire(String key, long milliseconds) {
 		executeCommand(CommandEnum.PEXPIRE, new Object[] { key, milliseconds });
 	}
 	
-	private void pexpire0(String key, int milliseconds) {
+	private void pexpire0(String key, long milliseconds) {
 		t.pexpire(key, milliseconds);
 	}
 
@@ -1781,7 +1781,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 			case PERSIST:
 				persist0((String) args[0]); break;
 			case PEXPIRE: 
-				pexpire0((String) args[0], (Integer) args[1]); break;
+				pexpire0((String) args[0], (Long) args[1]); break;
 			case PEXPIREAT: 
 				pexpireat0((String) args[0], (Long) args[1]); break;
 			case PTTL: 

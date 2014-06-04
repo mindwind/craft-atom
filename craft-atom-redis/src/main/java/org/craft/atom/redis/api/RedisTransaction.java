@@ -38,7 +38,7 @@ public interface RedisTransaction {
 	void objectencoding(String key);
 	void objectidletime(String key);
 	void persist(String key);
-	void pexpire(String key, int milliseconds);
+	void pexpire(String key, long milliseconds);
 	void pexpireat(String key, long millisecondstimestamp);
 	void pttl(String key);
 	void randomkey();
