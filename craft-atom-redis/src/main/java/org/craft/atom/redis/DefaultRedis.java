@@ -813,6 +813,18 @@ public class DefaultRedis implements Redis {
 	private Long bitxor0(Jedis j, String destkey, String... keys) {
 		return j.bitop(BitOP.XOR, destkey, keys);
 	}
+	
+	@Override
+	public Long bitpos(String key, String value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Long bitpos(String key, String value, long start, long end) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public Long decr(String key) {

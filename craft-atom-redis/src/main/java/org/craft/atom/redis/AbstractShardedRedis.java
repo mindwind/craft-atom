@@ -273,6 +273,18 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Long bitxor(String shardkey, String destkey, String... keys) {
 		return sharded.shard(shardkey).bitxor(destkey, keys);
 	}
+	
+	@Override
+	public Long bitpos(String shardkey, String key, String value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Long bitpos(String shardkey, String key, String value, long start, long end) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public Long decr(String shardkey, String key) {

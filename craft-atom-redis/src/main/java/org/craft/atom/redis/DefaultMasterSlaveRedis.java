@@ -439,6 +439,18 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public Long bitxor(String destkey, String... keys) {
 		return master().bitxor(destkey, keys);
 	}
+	
+	@Override
+	public Long bitpos(String key, String value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Long bitpos(String key, String value, long start, long end) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public Long decr(String key) {
