@@ -51,154 +51,7 @@ public class TestRedis extends AbstractRedisTests {
 	
 	
 	// ~ ---------------------------------------------------------------------------------------------------------- Keys
-	
-	
-	@Test
-	public void testZscan() {
-		int expect = 100;
-		for (int i = 0; i < expect; i++) {
-			redis1.zadd(key, i, key + i);
-		}
-		
-		// 1
-		int count = 0;
-		String cursor = "0";
-		do {
-			ScanResult<Map.Entry<String, Double>> sr = redis1.zscan(key, cursor);
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		count = 0;
-		
-		// 2
-		cursor = "0";
-		do {
-			ScanResult<Map.Entry<String, Double>> sr = redis1.zscan(key, cursor, 20);
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		count = 0;
-		
-		// 3
-		cursor = "0";
-		do {
-			ScanResult<Map.Entry<String, Double>> sr = redis1.zscan(key, cursor, key + "*");
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		count = 0;
-		
-		// 4
-		cursor = "0";
-		do {
-			ScanResult<Map.Entry<String, Double>> sr = redis1.zscan(key, cursor, key + "*", 20);
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test zscan. ", CaseCounter.incr(4)));
-	}
-	
-	@Test
-	public void testSscan() {
-		int expect = 100;
-		for (int i = 0; i < expect; i++) {
-			redis1.sadd(key, value + i);
-		}
-		
-		// 1
-		int count = 0;
-		String cursor = "0";
-		do {
-			ScanResult<String> sr = redis1.sscan(key, cursor);
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		count = 0;
-		
-		// 2
-		cursor = "0";
-		do {
-			ScanResult<String> sr = redis1.sscan(key, cursor, 20);
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		count = 0;
-		
-		// 3
-		cursor = "0";
-		do {
-			ScanResult<String> sr = redis1.sscan(key, cursor, value + "*");
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		count = 0;
-		
-		// 4
-		cursor = "0";
-		do {
-			ScanResult<String> sr = redis1.sscan(key, cursor, value + "*", 20);
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test sscan. ", CaseCounter.incr(4)));
-	}
-	
-	@Test
-	public void testHscan() {
-		int expect = 100;
-		for (int i = 0; i < expect; i++) {
-			redis1.hset(key, field + i, value + i);
-		}
-		
-		// 1
-		int count = 0;
-		String cursor = "0";
-		do {
-			ScanResult<Map.Entry<String, String>> sr = redis1.hscan(key, cursor);
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		count = 0;
-		
-		// 2
-		cursor = "0";
-		do {
-			ScanResult<Map.Entry<String, String>> sr = redis1.hscan(key, cursor, 20);
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		count = 0;
-		
-		// 3
-		cursor = "0";
-		do {
-			ScanResult<Map.Entry<String, String>> sr = redis1.hscan(key, cursor, field + "*");
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		count = 0;
-		
-		// 4
-		cursor = "0";
-		do {
-			ScanResult<Map.Entry<String, String>> sr = redis1.hscan(key, cursor, field + "*", 20);
-			count += sr.getElements().size();
-			cursor = sr.getCursor();
-		} while (!cursor.equals("0"));
-		Assert.assertEquals(expect, count);
-		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test hscan. ", CaseCounter.incr(4)));
-	}
+
 	
 	@Test
 	public void testScan() {
@@ -880,6 +733,55 @@ public class TestRedis extends AbstractRedisTests {
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test hvals. ", CaseCounter.incr(2)));
 	}
 	
+	@Test
+	public void testHscan() {
+		int expect = 100;
+		for (int i = 0; i < expect; i++) {
+			redis1.hset(key, field + i, value + i);
+		}
+		
+		// 1
+		int count = 0;
+		String cursor = "0";
+		do {
+			ScanResult<Map.Entry<String, String>> sr = redis1.hscan(key, cursor);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 2
+		cursor = "0";
+		do {
+			ScanResult<Map.Entry<String, String>> sr = redis1.hscan(key, cursor, 20);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 3
+		cursor = "0";
+		do {
+			ScanResult<Map.Entry<String, String>> sr = redis1.hscan(key, cursor, field + "*");
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 4
+		cursor = "0";
+		do {
+			ScanResult<Map.Entry<String, String>> sr = redis1.hscan(key, cursor, field + "*", 20);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test hscan. ", CaseCounter.incr(4)));
+	}
+	
 	
 	// ~ --------------------------------------------------------------------------------------------------------- Lists
 	
@@ -1170,6 +1072,55 @@ public class TestRedis extends AbstractRedisTests {
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test sunion & sunionstore. ", CaseCounter.incr(2)));
 	}
 	
+	@Test
+	public void testSscan() {
+		int expect = 100;
+		for (int i = 0; i < expect; i++) {
+			redis1.sadd(key, value + i);
+		}
+		
+		// 1
+		int count = 0;
+		String cursor = "0";
+		do {
+			ScanResult<String> sr = redis1.sscan(key, cursor);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 2
+		cursor = "0";
+		do {
+			ScanResult<String> sr = redis1.sscan(key, cursor, 20);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 3
+		cursor = "0";
+		do {
+			ScanResult<String> sr = redis1.sscan(key, cursor, value + "*");
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 4
+		cursor = "0";
+		do {
+			ScanResult<String> sr = redis1.sscan(key, cursor, value + "*", 20);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test sscan. ", CaseCounter.incr(4)));
+	}
+	
 	
 	// ~ --------------------------------------------------------------------------------------------------- Sorted Sets
 	
@@ -1449,6 +1400,55 @@ public class TestRedis extends AbstractRedisTests {
 		set = redis1.zrange(key, 0, -1);
 		Assert.assertEquals(set.iterator().next(), "c");
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test zremrangebyrank. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testZscan() {
+		int expect = 100;
+		for (int i = 0; i < expect; i++) {
+			redis1.zadd(key, i, key + i);
+		}
+		
+		// 1
+		int count = 0;
+		String cursor = "0";
+		do {
+			ScanResult<Map.Entry<String, Double>> sr = redis1.zscan(key, cursor);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 2
+		cursor = "0";
+		do {
+			ScanResult<Map.Entry<String, Double>> sr = redis1.zscan(key, cursor, 20);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 3
+		cursor = "0";
+		do {
+			ScanResult<Map.Entry<String, Double>> sr = redis1.zscan(key, cursor, key + "*");
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		count = 0;
+		
+		// 4
+		cursor = "0";
+		do {
+			ScanResult<Map.Entry<String, Double>> sr = redis1.zscan(key, cursor, key + "*", 20);
+			count += sr.getElements().size();
+			cursor = sr.getCursor();
+		} while (!cursor.equals("0"));
+		Assert.assertEquals(expect, count);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test zscan. ", CaseCounter.incr(4)));
 	}
 	
 	
