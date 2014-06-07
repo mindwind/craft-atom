@@ -833,8 +833,9 @@ public interface RedisCommand {
 	 * @param value
 	 * @return
 	 */
-	Long bitpos(String key, String value);
-	Long bitpos(String key, String value, long start, long end);
+	Long bitpos(String key, boolean value);
+	Long bitpos(String key, boolean value, long start);
+	Long bitpos(String key, boolean value, long start, long end);
 	
 	/**
 	 * Available since 1.0.0<br>

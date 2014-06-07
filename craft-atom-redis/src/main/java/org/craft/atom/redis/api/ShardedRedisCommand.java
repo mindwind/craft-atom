@@ -72,8 +72,9 @@ public interface ShardedRedisCommand {
 	Long bitand(String shardkey, String destkey, String... keys);
 	Long bitor(String shardkey, String destkey, String... keys);
 	Long bitxor(String shardkey, String destkey, String... keys);
-	Long bitpos(String shardkey, String key, String value);
-	Long bitpos(String shardkey, String key, String value, long start, long end);
+	Long bitpos(String shardkey, String key, boolean value);
+	Long bitpos(String shardkey, String key, boolean value, long start);
+	Long bitpos(String shardkey, String key, boolean value, long start, long end);
 	Long decr(String shardkey, String key);
 	Long decrby(String shardkey, String key, long decrement);
 	String get(String shardkey, String key);

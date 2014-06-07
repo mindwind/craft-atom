@@ -441,15 +441,18 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 	
 	@Override
-	public Long bitpos(String key, String value) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long bitpos(String key, boolean value) {
+		return readSlave ? firstSlave().bitpos(key, value) : master().bitpos(key, value);
+	}
+	
+	@Override
+	public Long bitpos(String key, boolean value, long start) {
+		return readSlave ? firstSlave().bitpos(key, value, start) : master().bitpos(key, value, start);
 	}
 
 	@Override
-	public Long bitpos(String key, String value, long start, long end) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long bitpos(String key, boolean value, long start, long end) {
+		return readSlave ? firstSlave().bitpos(key, value, start, end) : master().bitpos(key, value, start, end);
 	}
 
 	@Override

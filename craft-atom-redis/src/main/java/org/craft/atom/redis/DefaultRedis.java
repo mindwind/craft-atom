@@ -30,6 +30,7 @@ import org.craft.atom.redis.api.handler.RedisSubscribeHandler;
 
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.BitOP;
+import redis.clients.jedis.BitPosParams;
 import redis.clients.jedis.DebugParams;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisMonitor;
@@ -815,15 +816,30 @@ public class DefaultRedis implements Redis {
 	}
 	
 	@Override
-	public Long bitpos(String key, String value) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long bitpos(String key, boolean value) {
+		return (Long) executeCommand(CommandEnum.BITPOS, key, value);
+	}
+	
+	private Long bitpos0(Jedis j, String key, boolean value) {
+		return j.bitpos(key, value);
+	}
+	
+	@Override
+	public Long bitpos(String key, boolean value, long start) {
+		return (Long) executeCommand(CommandEnum.BITPOS_START, key, value, start);
+	}
+	
+	private Long bitpos0(Jedis j, String key, boolean value, long start) {
+		return j.bitpos(key, value, new BitPosParams(start));
 	}
 
 	@Override
-	public Long bitpos(String key, String value, long start, long end) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long bitpos(String key, boolean value, long start, long end) {
+		return (Long) executeCommand(CommandEnum.BITPOS_START_END, key, value, start, end);
+	}
+	
+	private Long bitpos0(Jedis j, String key, boolean value, long start, long end) {
+		return j.bitpos(key, value, new BitPosParams(start, end));
 	}
 
 	@Override
@@ -2951,6 +2967,12 @@ public class DefaultRedis implements Redis {
 				return bitor0(j, (String) args[0], (String[]) args[1]);
 			case BITXOR:
 				return bitxor0(j, (String) args[0], (String[]) args[1]);
+			case BITPOS:
+				return bitpos0(j, (String) args[0], (Boolean) args[1]);
+			case BITPOS_START:
+				return bitpos0(j, (String) args[0], (Boolean) args[1], (Long) args[2]);
+			case BITPOS_START_END:
+				return bitpos0(j, (String) args[0], (Boolean) args[1], (Long) args[2], (Long) args[3]); 
 			case DECR:
 				return decr0(j, (String) args[0]);
 			case DECRBY:

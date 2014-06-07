@@ -275,15 +275,18 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	}
 	
 	@Override
-	public Long bitpos(String shardkey, String key, String value) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long bitpos(String shardkey, String key, boolean value) {
+		return sharded.shard(shardkey).bitpos(key, value);
+	}
+	
+	@Override
+	public Long bitpos(String shardkey, String key, boolean value, long start) {
+		return sharded.shard(shardkey).bitpos(key, value, start);
 	}
 
 	@Override
-	public Long bitpos(String shardkey, String key, String value, long start, long end) {
-		// TODO Auto-generated method stub
-		return null;
+	public Long bitpos(String shardkey, String key, boolean value, long start, long end) {
+		return sharded.shard(shardkey).bitpos(key, value, start, end);
 	}
 
 	@Override
