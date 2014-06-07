@@ -1583,7 +1583,9 @@ public class TestRedis extends AbstractRedisTests {
 		
 		List<String> channels = redis.pubsubchannels(null);
 		Assert.assertEquals(2, channels.size());
-		Assert.assertArrayEquals(new String[] { "foo1", "foo2" }, channels.toArray(new String[] {}));
+		String[] array = channels.toArray(new String[] {});
+		Arrays.sort(array);
+		Assert.assertArrayEquals(new String[] { "foo1", "foo2" }, array);
 		
 		Map<String, String> map = redis.pubsubnumsub("foo1");
 		Assert.assertEquals("2", map.get("foo1"));
