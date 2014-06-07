@@ -475,6 +475,33 @@ public class TestRedis extends AbstractRedisTests {
 	}
 	
 	@Test
+	public void testBitpos() {
+		// \xff\xf0\x00
+		for (int i = 0; i < 12; i++) {
+			redis1.setbit(key, i, true);
+		}
+		long pos = redis1.bitpos(key, false);
+		Assert.assertEquals(12, pos);
+		
+		// \x00\xff\xf0
+		for (int i = 0; i < 8; i++) {
+			redis1.setbit(key, i, false);
+		}
+		for (int i = 8; i < 20; i++) {
+			redis1.setbit(key, i, true);
+		}
+		for (int i = 20; i < 24; i++) {
+			redis1.setbit(key, i, false);
+		}
+		pos = redis1.bitpos(key, true, 0);
+		Assert.assertEquals(8, pos);
+		pos = redis1.bitpos(key, false, 1, 2);
+		Assert.assertEquals(20, pos);
+		
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test bitpos. ", CaseCounter.incr(3)));
+	}
+	
+	@Test
 	public void testDecrIncrByFloat() {
 		long r = redis1.incr(key);
 		Assert.assertEquals(1, r);
