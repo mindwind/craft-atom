@@ -229,6 +229,12 @@ public interface ShardedRedisCommand {
 	ScanResult<Map.Entry<String, Double>> zscan(String shardkey, String key, String cursor, String pattern, int count);
 	
 	
+	// ~ -------------------------------------------------------------------------------------------------- HyperLogLog
+	
+	
+	Long pfadd(String shardkey, String key, String... elements);
+	
+	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
 	
 	
