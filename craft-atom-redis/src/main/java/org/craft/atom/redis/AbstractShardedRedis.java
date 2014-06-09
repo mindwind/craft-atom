@@ -966,6 +966,15 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	}
 	
 	
+	// ~ -------------------------------------------------------------------------------------------------- HyperLogLog
+	
+	
+	@Override
+	public Long pfadd(String shardkey, String key, String... elements) {
+		return sharded.shard(shardkey).pfadd(key, elements);
+	}
+	
+	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 
 	

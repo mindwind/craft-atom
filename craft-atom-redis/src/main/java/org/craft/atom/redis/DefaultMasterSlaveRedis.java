@@ -1137,6 +1137,15 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	}
 	
 	
+	// ~ -------------------------------------------------------------------------------------------------- HyperLogLog
+	
+	
+	@Override
+	public Long pfadd(String key, String... elements) {
+		return master().pfadd(key, elements);
+	}
+	
+	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 	
 

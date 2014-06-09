@@ -2157,6 +2157,19 @@ public class DefaultRedis implements Redis {
 	}
 	
 	
+	// ~ -------------------------------------------------------------------------------------------------- HyperLogLog
+	
+	
+	@Override
+	public Long pfadd(String key, String... elements) {
+		return (Long) executeCommand(CommandEnum.PFADD, new Object[] { key, elements });
+	}
+	
+	private Long pfadd0(Jedis j, String key, String... elements) {
+		return j.pfadd(key, elements);
+	}
+	
+	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 	
 	
@@ -3231,6 +3244,10 @@ public class DefaultRedis implements Redis {
 				return zscan_match(j, (String) args[0], (String) args[1], (String) args[2]);
 			case ZSCAN_MATCH_COUNT:
 				return zscan_match_count(j, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3]);
+				
+			// HyperLogLog
+			case PFADD:
+				return pfadd0(j, (String) args[0], (String[]) args[1]);
 			
 			// Pub/Sub
 			case PUBLISH:
