@@ -20,6 +20,7 @@ UPGRADE URGENCY: LOW
   [IMPROVE]  - upgrade jedis to version 2.5.1.
   [IMPROVE]  - use long replace int for PEXPIRE api.
   [NEW]      - BITPOS api.
+  [NEW]      - PFADD api.
 
 
 
