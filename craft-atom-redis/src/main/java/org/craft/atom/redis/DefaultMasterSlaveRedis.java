@@ -1145,6 +1145,11 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		return master().pfadd(key, elements);
 	}
 	
+	@Override
+	public Long pfcount(String... keys) {
+		return master().pfcount(keys);
+	}
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 	

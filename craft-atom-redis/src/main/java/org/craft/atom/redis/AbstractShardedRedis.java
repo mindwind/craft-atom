@@ -974,6 +974,11 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 		return sharded.shard(shardkey).pfadd(key, elements);
 	}
 	
+	@Override
+	public Long pfcount(String shardkey, String... keys) {
+		return sharded.shard(shardkey).pfcount(keys);
+	}
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 

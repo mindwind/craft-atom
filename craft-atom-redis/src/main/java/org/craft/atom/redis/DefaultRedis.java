@@ -2169,6 +2169,15 @@ public class DefaultRedis implements Redis {
 		return j.pfadd(key, elements);
 	}
 	
+	@Override
+	public Long pfcount(String... keys) {
+		return (Long) executeCommand(CommandEnum.PFCOUNT, new Object[] { keys });
+	}
+	
+	private Long pfcount0(Jedis j, String... keys) {
+		return j.pfcount(keys);
+	}
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 	
@@ -3248,6 +3257,8 @@ public class DefaultRedis implements Redis {
 			// HyperLogLog
 			case PFADD:
 				return pfadd0(j, (String) args[0], (String[]) args[1]);
+			case PFCOUNT:
+				return pfcount0(j, (String[]) args[0]);
 			
 			// Pub/Sub
 			case PUBLISH:
