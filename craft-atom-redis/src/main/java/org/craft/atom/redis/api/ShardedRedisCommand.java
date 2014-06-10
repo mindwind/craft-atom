@@ -233,6 +233,7 @@ public interface ShardedRedisCommand {
 	
 	
 	Long pfadd(String shardkey, String key, String... elements);
+	Long pfcount(String shardkey, String... keys);
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
