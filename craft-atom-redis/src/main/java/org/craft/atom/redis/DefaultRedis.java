@@ -2178,6 +2178,15 @@ public class DefaultRedis implements Redis {
 		return j.pfcount(keys);
 	}
 	
+	@Override
+	public String pfmerge(String destkey, String... sourcekeys) {
+		return (String) executeCommand(CommandEnum.PFMERGE, new Object[] { destkey, sourcekeys });
+	}
+	
+	private String pfmerge0(Jedis j, String destkey, String... sourcekeys) {
+		return j.pfmerge(destkey, sourcekeys);
+	}
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 	
@@ -3259,6 +3268,8 @@ public class DefaultRedis implements Redis {
 				return pfadd0(j, (String) args[0], (String[]) args[1]);
 			case PFCOUNT:
 				return pfcount0(j, (String[]) args[0]);
+			case PFMERGE:
+				return pfmerge0(j, (String) args[0], (String[]) args[1]);
 			
 			// Pub/Sub
 			case PUBLISH:

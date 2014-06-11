@@ -1150,6 +1150,11 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		return master().pfcount(keys);
 	}
 	
+	@Override
+	public String pfmerge(String destkey, String... sourcekeys) {
+		return master().pfmerge(destkey, sourcekeys);
+	}
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 	
