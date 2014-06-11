@@ -2517,6 +2517,36 @@ public interface RedisCommand {
 	 */
 	Long pfcount(String... keys);
 	
+	/**
+	 * Available since 2.8.9<br>
+     * Time complexity: O(N) to merge N HyperLogLogs, but with high constant times.
+     * 
+     * <p>
+     * Merge multiple HyperLogLog values into an unique value that will approximate the cardinality of the union of the observed Sets of the source HyperLogLog structures.
+     * The computed merged HyperLogLog is set to the destination variable, which is created if does not exist (defauling to an empty HyperLogLog).
+     * 
+     * <b>Return value</b><br>
+     * Simple string reply: The command just returns OK.
+     * 
+     * <b>Examples</b><br>
+     * <pre>
+     * redis> PFADD hll1 foo bar zap a
+     * (integer) 1
+     * redis> PFADD hll2 a b c foo
+     * (integer) 1
+     * redis> PFMERGE hll3 hll1 hll2
+     * OK
+     * redis> PFCOUNT hll3
+     * (integer) 6
+     * redis> 
+     * </pre>
+     * 
+	 * @param destkey
+	 * @param sourcekeys
+	 * @return
+	 */
+	String pfmerge(String destkey, String... sourcekeys);
+	
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------ Pub/Sub
