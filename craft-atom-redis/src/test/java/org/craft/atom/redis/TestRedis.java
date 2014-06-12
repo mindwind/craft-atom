@@ -1479,6 +1479,24 @@ public class TestRedis extends AbstractRedisTests {
 	}
 	
 	
+	// ~ -------------------------------------------------------------------------------------------------- HyperLogLog
+	
+	
+	@Test
+	public void testPfaddPfcount() {
+		redis1.pfadd(key, "foo", "bar", "zap");
+		redis1.pfadd(key, "zap", "zap", "zap");
+		redis1.pfadd(key, "bar");
+		long count = redis1.pfcount(key);
+		Assert.assertEquals(3, count);
+		
+		redis1.pfadd("hll", "1", "2", "3");
+		count = redis1.pfcount(key, "hll");
+		Assert.assertEquals(6, count);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test pfadd & pfcount. ", CaseCounter.incr(2)));
+	}
+	
+	
 	// ~ -------------------------------------------------------------------------------------------------- Pub/Sub
 	
 	
