@@ -1496,6 +1496,16 @@ public class TestRedis extends AbstractRedisTests {
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test pfadd & pfcount. ", CaseCounter.incr(2)));
 	}
 	
+	@Test
+	public void testPfmerge() {
+		redis1.pfadd("hll1", "foo", "bar", "zap", "a");
+		redis1.pfadd("hll2", "a", "b", "c", "foo");
+		redis1.pfmerge("hll3", "hll1", "hll2");
+		long count = redis1.pfcount("hll3");
+		Assert.assertEquals(6, count);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test pfmerge. ", CaseCounter.incr(1)));
+	}
+	
 	
 	// ~ -------------------------------------------------------------------------------------------------- Pub/Sub
 	
