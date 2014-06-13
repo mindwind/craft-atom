@@ -11,6 +11,16 @@ CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
 
 
 
+craft-atom 2.1.2
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: LOW
+
+* craft-atom-redis
+  [FIX]      - java doc warning
+
+
+
+
 craft-atom 2.1.1
 -----------------------------------------------------------------------------------------------------------------------
 UPGRADE URGENCY: LOW
