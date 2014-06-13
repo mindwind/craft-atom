@@ -5,7 +5,6 @@ package org.craft.atom.io;
  * 
  * @author mindwind
  * @version 1.0, Feb 8, 2014
- * @see NioProcessor
  */
 public interface IoProcessor extends IoReactor, IoProcessorMBean {
 

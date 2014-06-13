@@ -710,13 +710,7 @@ public interface RedisCommand {
      * The SCAN algorithm is guaranteed to terminate only if the size of the iterated collection remains bounded to a given maximum size, otherwise iterating a collection that always grows may result into SCAN to never terminate a full iteration.
      * This is easy to see intuitively: if the collection grows there is more and more work to do in order to visit all the possible elements, and the ability to terminate the iteration depends on the number of calls to SCAN and its COUNT option value compared with the rate at which the collection grows.
      * 
-     * <b>Return value</b><br>
-     * SCAN, SSCAN, HSCAN and ZSCAN return a two elements multi-bulk reply, where the first element is a string representing an unsigned 64 bit number (the cursor), and the second element is a multi-bulk with an array of elements.
-     * SCAN array of elements is a list of keys.
-     * SSCAN array of elements is a list of Set members.
-     * HSCAN array of elements contain two elements, a field and a value, for every returned element of the Hash.
-     * ZSCAN array of elements contain two elements, a member and its associated score, for every returned element of the sorted set.
-     * 
+     * <p>
      * <b>Additional examples</b><br>
      * Iteration of an Hash value.
      * <pre><code>
@@ -731,7 +725,12 @@ public interface RedisCommand {
      * </code></pre>
      * 
 	 * @param cursor
-	 * @return
+	 * @return 
+	 * SCAN, SSCAN, HSCAN and ZSCAN return a two elements multi-bulk reply, where the first element is a string representing an unsigned 64 bit number (the cursor), and the second element is a multi-bulk with an array of elements.
+     * SCAN array of elements is a list of keys.
+     * SSCAN array of elements is a list of Set members.
+     * HSCAN array of elements contain two elements, a field and a value, for every returned element of the Hash.
+     * ZSCAN array of elements contain two elements, a member and its associated score, for every returned element of the sorted set.
 	 */
 	ScanResult<String> scan(String cursor);
 	ScanResult<String> scan(String cursor, int count);
@@ -821,17 +820,14 @@ public interface RedisCommand {
      * Like for the GETRANGE command start and end can contain negative values in order to index bytes starting from the end of the string, where -1 is the last byte, -2 is the penultimate, and so forth.
      * Non-existent keys are treated as empty strings.
      * 
-     * <b>Return value</b><br>
-     * Integer reply
+	 * @param key
+	 * @param value
+	 * @return Integer reply
      * The command returns the position of the first bit set to 1 or 0 according to the request.
      * If we look for set bits (the bit argument is 1) and the string is empty or composed of just zero bytes, -1 is returned.
      * If we look for clear bits (the bit argument is 0) and the string only contains bit set to 1, the function returns the first bit not part of the string on the right. So if the string is tree bytes set to the value 0xff the command BITPOS key 0 will return 24, since up to bit 23 all the bits are 1.
      * Basically the function consider the right of the string as padded with zeros if you look for clear bits and specify no range or the start argument only.
      * However this behavior changes if you are looking for clear bits and specify a range with both start and end. If no clear bit is found in the specified range, the function returns -1 as the user specified a clear range and there are no 0 bits in that range.
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
 	 */
 	Long bitpos(String key, boolean value);
 	Long bitpos(String key, boolean value, long start);
@@ -2477,10 +2473,7 @@ public interface RedisCommand {
      * The returned cardinality of the observed set is not exact, but approximated with a standard error of 0.81%.
      * For example in order to take the count of all the unique search queries performed in a day, a program needs to call PFADD every time a query is processed. The estimated number of unique queries can be retrieved with PFCOUNT at any time.
      * Note: as a side effect of calling this function, it is possible that the HyperLogLog is modified, since the last 8 bytes encode the latest computed cardinality for caching purposes. So PFCOUNT is technically a write command.
-     * <p>
-     * <b>Return value</b><br>
-     * Integer reply, specifically:
-     * The approximated number of unique elements observed via PFADD.
+     * 
      * <p>
      * <b>Examples</b><br>
      * <pre>
@@ -2513,7 +2506,8 @@ public interface RedisCommand {
      * More details about the Redis HyperLogLog implementation can be found in this blog post. The source code of the implementation in the hyperloglog.c file is also easy to read and understand, and includes a full specification for the exact encoding used for the sparse and dense representations.
      * 
 	 * @param keys
-	 * @return
+	 * @return Integer reply, specifically:
+     * The approximated number of unique elements observed via PFADD.
 	 */
 	Long pfcount(String... keys);
 	
@@ -2523,11 +2517,9 @@ public interface RedisCommand {
      * 
      * <p>
      * Merge multiple HyperLogLog values into an unique value that will approximate the cardinality of the union of the observed Sets of the source HyperLogLog structures.
-     * The computed merged HyperLogLog is set to the destination variable, which is created if does not exist (defauling to an empty HyperLogLog).
+     * The computed merged HyperLogLog is set to the destination variable, which is created if does not exist (defauling to an empty HyperLogLog). 
      * 
-     * <b>Return value</b><br>
-     * Simple string reply: The command just returns OK.
-     * 
+     * <p>
      * <b>Examples</b><br>
      * <pre>
      * redis> PFADD hll1 foo bar zap a
@@ -2543,7 +2535,7 @@ public interface RedisCommand {
      * 
 	 * @param destkey
 	 * @param sourcekeys
-	 * @return
+	 * @return Simple string reply: The command just returns OK.
 	 */
 	String pfmerge(String destkey, String... sourcekeys);
 	
@@ -2653,11 +2645,9 @@ public interface RedisCommand {
       * <p>
       * PUBSUB NUMPAT
       * Returns the number of subscriptions to patterns (that are performed using the PSUBSCRIBE command). Note that this is not just the count of clients subscribed to patterns but the total number of patterns all the clients are subscribed to.
-      * Return value
-      * Integer reply: the number of patterns all the clients are subscribed to.
 	  * 
 	  * @param pattern
-	  * @return
+	  * @return Integer reply: the number of patterns all the clients are subscribed to.
 	  */
 	 List<String> pubsubchannels(String pattern);
 	 Long pubsubnumpat();
