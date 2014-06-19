@@ -16,7 +16,8 @@ craft-atom 2.1.2
 UPGRADE URGENCY: LOW
 
 * craft-atom-redis
-  [FIX]      - java doc warning
+  [FIX]      - java doc warning.
+  [NEW]      - api for shard redis, return specific shard by shard key.
 
 
 
