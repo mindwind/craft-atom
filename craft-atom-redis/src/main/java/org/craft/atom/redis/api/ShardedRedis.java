@@ -18,5 +18,11 @@ public interface ShardedRedis extends ShardedRedisCommand {
 	 */
 	List<Redis> shards();
 	
+	/**
+	 * @param shardkey
+	 * @return Redis instance by shardkey
+	 */
+	Redis shard(String shardkey);
+	
 	
 }

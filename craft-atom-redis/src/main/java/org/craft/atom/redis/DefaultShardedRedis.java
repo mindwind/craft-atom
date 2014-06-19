@@ -33,4 +33,9 @@ public class DefaultShardedRedis extends AbstractShardedRedis<Redis> implements 
 		return sharded.shards();
 	}
 
+	@Override
+	public Redis shard(String shardkey) {
+		return sharded.shard(shardkey);
+	}
+
 }

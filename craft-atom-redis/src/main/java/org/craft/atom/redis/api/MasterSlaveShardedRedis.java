@@ -16,6 +16,12 @@ public interface MasterSlaveShardedRedis extends ShardedRedisCommand {
 	List<MasterSlaveRedis> shards();
 	
 	/**
+	 * @param shardkey
+	 * @return MasterSlaveRedis instance by shardkey
+	 */
+	MasterSlaveRedis shard(String shardkey);
+	
+	/**
 	 * Enable all <code>MasterSlaveRedis</code> shards read from slave and write on master.
 	 */
 	void enableReadSlave();
