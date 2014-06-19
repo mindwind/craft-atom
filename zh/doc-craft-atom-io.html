@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft.js"></script>
+		<title>Documentation: craft-atom-io</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-io</h1>
+<div class="date">2014-06-19 mindwind</div>
+
+<h3>简介</h3>
+<p>一种 reactor io 模型 api 定义，其他组件例如 <a href="doc-craft-atom-nio.html" target="_blank">craft-atom-nio</a> 实现该 api。</p>
+
+<h3>Reactor io 模型</h3>
+<p>
+	Reactor io model architect as shown in the figure 1.<br>
+	Reactor io 模型架构如图1所示。
+	<code>Channel</code>  是 io 操作的枢纽。<br>
+	<code>IoHandler</code> 负责处理 io 事件。<br>
+	<code>IoAcceptor</code> 负责接入到达的 io 请求。<br>
+	<code>IoProcessor</code> 负责处理 io 读写。<br>
+	<code>IoConnector</code> 负责连接服务端<br>
+	<code>ChannelEvent</code> 是与某个 <code>Channel</code> 关联的事件。<br>
+	<br>
+	<a href="../img/doc-craft-atom-io-reactor-model.png" target="_blank"><img src="../img/doc-craft-atom-io-reactor-model.png"/></a>
+</p>
+
+
+<h3>实现者</h3>
+<p>
+目前只有一个实现者如下：<br>
+<a href="doc-craft-atom-nio.html" target="_blank">craft-atom-nio</a>
+</p>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
