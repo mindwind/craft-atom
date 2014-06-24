@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft_zh.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
+		<title>Documentation: craft-atom-lock</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-lock</h1>
+<div class="date">2014-06-24 mindwind</div>
+
+<h3>简介</h3>
+<p>基于 redis 实现的一种分布式锁。</p>
+
+<h3>入门</h3>
+<p>该组件的一种典型使用场景如下：</p>
+<pre><code data-language="java">
+DLock dlock = ...;
+if (dlock.tryLock("lockKey", 10, TimeUnit.SECONDS)) {
+    try {
+        // manipulate protected state
+    } finally {
+        dlock.unlock();
+    }
+}
+</code></pre>
+<p>如何获得一个 <code>DLock</code> 实例</p>
+<pre><code data-language="java">
+// base on redis 2.4+
+DLock dlock = DLockFactory.newRedis24DLock(...);
+
+// base on redis 2.6.12+
+DLock dlock = DLockFactory.newRedis26DLock(...);
+</code></pre>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
