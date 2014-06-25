@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft_zh.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
+		<title>文档: craft-atom-nio</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-nio</h1>
+<div class="date">2014-06-25 mindwind</div>
+
+<h3>简介</h3>
+<p>
+基于 java NIO 的异步事件驱动网络 io 组件，实现了 <a href="doc-craft-atom-io.html" target="_blank">craft-atom-io</a> api 模型定义。
+</p>
+
+<h3>入门</h3>
+<p>
+在开始之前，你应当理解在 <a href="doc-craft-atom-io.html" target="_blank">craft-atom-io</a> 中定义的 reactor io 模型。
+然后我们以一个简单的例子开始学习如何基于 <a href="#">craft-atom-nio</a> 写一个 client 和 server 程序。
+</p>
+
+<p>
+<b>编写一个 Echo Server</b><br>
+为了使用 <a href="#">craft-atom-nio</a> 唯一需要做的就是实现 <code>IoHandler</code> 接口来处理 I/O 事件。
+示例如下：
+</p>
+<pre><code data-language="java">
+public class NioEchoServerHandler extends AbstractIoHandler {
+	
+    @Override
+    public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
+        channel.write(bytes);
+    }
+}
+</code></pre>
+<p>
+So far so good. We have implemented the first part of the Echo Server. 
+What's left now is to write the main() method which starts the server with the <code>NioEchoServerHandler</code>.
+到目前为止一切顺利。
+我们已经实现了 Echo Server 第一部分。
+目前剩下的是写一个 main() 方法来启动 server，如下所示：
+</p>
+<pre><code data-language="java">
+public class NioEchoServer {
+
+    private int port;
+	
+    public NioEchoServer(int port) {
+        this.port = port;
+    }
+    
+    public void start() throws IOException {
+        IoAcceptor acceptor = NioFactory.newTcpAcceptorBuilder(new NioEchoServerHandler()).build();
+        acceptor.bind(port);
+    }
+    
+    public static void main(String[] args) throws IOException {
+        new NioEchoServer(1314).start();
+    }
+}
+</code></pre>
+<p>
+恭喜！我们的 Echo Server 完成了。
+</p>
+
+<p>
+<b>编写一个 Echo Client</b><br>
+这类似于 Echo Server，首先我们也需要实现一个 client 的 handler 接口，如下：
+</p>
+<pre><code data-language="java">
+public class NioEchoClientHandler extends AbstractIoHandler {
+	
+    private AtomicInteger counter = new AtomicInteger();
+	
+    @Override
+    public void channelOpened(Channel&lt;byte[]&gt; channel) {
+        send(channel);
+    }
+	
+    @Override
+    public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
+        System.out.println("ECHO-RECV: " + new String(bytes));
+        try { Thread.sleep(1000); } catch (InterruptedException e) {}
+        send(channel);
+    }
+    
+    private void send(Channel&lt;byte[]&gt; channel) {
+        String toSend = Integer.toString(counter.incrementAndGet());
+        channel.write(toSend.getBytes());
+        System.out.println("ECHO-SENT: " + toSend);
+    }
+}
+</code></pre>
+
+<p>
+一个包含 main() 方法的 client 如下所示：
+</p>
+<pre><code data-language="java">
+public class NioEchoClient {
+
+    private String ip;
+    private int port;	
+    
+    public NioEchoClient(String ip, int port) {
+        this.ip = ip;
+        this.port = port;
+    }
+    
+    public void start() throws IOException {
+        IoConnector connector = NioFactory.newTcpConnectorBuilder(new NioEchoClientHandler())
+                                             .connectTimeoutInMillis(3000).build();
+        connector.connect(ip, port);
+    }
+    
+    public static void main(String[] args) throws IOException {
+        new NioEchoClient("127.0.0.1", 1314).start();
+    }
+}
+</code></pre>
+
+<h3>进阶</h3>
+<p>
+实际上以上 Echo Server 和 Client 的示例还缺少一个在网络编程中重要的部分。
+那就是协议解析，因为以上例子中并不需要协议解析，但一个完整的 client 和 server 是必须处理协议解析的。
+</p>
+
+<p>
+<b>协议解析</b><br>
+处于简洁和原子化的设计考虑，<a href="#">craft-atom-nio</a> 并不负责协议解析。
+协议解析的职责属于 <a href="doc-craft-atom-protocol" target="_blank">craft-atom-protocol</a> 这一系列组件。
+</p>
+
+<p>
+<b>线程模型</b><br>
+<a href="doc-craft-atom-nio-thread-model.html" target="_blank">线程模型说明</a>：如何使用线程模型？
+</p>
+
+<p>
+<b>事件模型</b><br>
+<a href="doc-craft-atom-nio-event-model.html" target="_blank">事件模型说明</a>: 理解事件的定义与处理。
+</p>
+
+<p>
+<b>性能</b><br>
+<a href="doc-craft-atom-nio-benchmark.html" target="_blank">性能基准测试及与 mina 和 netty 的对比</a>: 有多快？
+</p>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
