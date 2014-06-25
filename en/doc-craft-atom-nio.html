@@ -50,7 +50,7 @@ public class NioEchoServerHandler extends AbstractIoHandler {
 </code></pre>
 <p>
 So far so good. We have implemented the first part of the Echo Server. 
-What's left now is to write the main() method which starts the server with the <code>NioEchoServerHandler</code>.
+What's left now is to write the main() method which starts the server with the <code>NioEchoServerHandler</code>, as follows:
 </p>
 <pre><code data-language="java">
 public class NioEchoServer {
@@ -77,7 +77,7 @@ Congratulations! Our Echo Server done.
 
 <p>
 <b>Writing an Echo Client</b><br>
-It is similar to Echo Server, first we need implement a client handler, as follows:
+It is similar to Echo Server, first we also need implement a client handler, as follows:
 </p>
 <pre><code data-language="java">
 public class NioEchoClientHandler extends AbstractIoHandler {
@@ -133,7 +133,7 @@ public class NioEchoClient {
 <h3>Advanced</h3>
 <p>
 Actually above Echo Server and Client example lack a important part in network programming. The missing part is protocol
-codec, because they don't need it, but a complete client and server must handle protocol codec.<br>
+codec, because they don't need it, but a complete client and server must handle protocol codec.
 </p>
 
 <p>
@@ -144,7 +144,7 @@ The responsibility of protocol codec belong to <a href="doc-craft-atom-protocol"
 
 <p>
 <b>Thread Model</b><br>
-<a href="doc-craft-atom-nio-thread-model.html" target="_blank">Thread Model Illustration</a>: How to choose thread model.
+<a href="doc-craft-atom-nio-thread-model.html" target="_blank">Thread Model Illustration</a>: How to choose thread model？
 </p>
 
 <p>
