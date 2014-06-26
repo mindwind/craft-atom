@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft_zh.js"></script>
+		<title>性能基准测试及与 mina 和 netty 的对比</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>性能基准测试及与 mina 和 netty 的对比</h1>
+<div class="date">2014-06-26 mindwind</div>
+
+<h3>测试环境</h3>
+<pre><code>
+<a>硬件</a> 
+model name: Intel(R) Core(TM) i5-2320 CPU @ 3.00GHz     
+cache size: 6144 KB     
+cpu cores : 4     
+jdk       : 1.6.0_30-b12
+network   : 1000 Mbps
+memory    : -Xms256m -Xmx256m
+Linux     : CentOS 5.7, kernel 2.6.18-274.el5
+
+<a>软件</a>
+JMeter        : 2.4    load generator
+craft-atom-nio: 2.0.0
+Mina          : 2.0.7
+Netty         : 3.6.2.Final          
+</code></pre>
+
+<h3>测试方法</h3>
+<p>
+使用 <a href="http://mina.apache.org" target="_blank">Mina</a>，<a href="http://netty.io" target="_blank">Netty</a> 和 <a href="doc-craft-atom-nio.html" target="_blank">craft-atom-nio</a> 各自独立实现一个 Echo Server。<br>
+线程与缓冲区配置如下：
+</p>
+<pre><code>
+<a>Netty</a>
+boss    : 1 thread
+worker  : 4 thread
+executor: 4 thread
+buffer  : 2k
+
+<a>Mina</a>
+acceptor : 1 thread
+processor: 4 thread
+executor : 4 thread
+buffer   : 2k
+
+<a>craft-atom-nio</a>
+acceptor : 1 thread
+processor: 4 thread
+executor : 4 thread
+buffer   : 2k
+</code></pre>
+
+<h3>测试指标</h3>
+<pre><code>
+<a>TPS</a>
+每秒事务数
+<a>CPU</a>
+CPU 利用率
+<a>ART</a>
+平均响应时间
+<a>90% RT</a>
+90% 响应时间
+</code></pre>
+
+<h3>测试结果</h3>
+<a href="../img/doc-craft-atom-nio-benchmark-1k.jpg" target="_blank"><img src="../img/doc-craft-atom-nio-benchmark-1k.jpg"></a>
+<a href="../img/doc-craft-atom-nio-benchmark-2k.jpg" target="_blank"><img src="../img/doc-craft-atom-nio-benchmark-2k.jpg"></a>
+<a href="../img/doc-craft-atom-nio-benchmark-5k.jpg" target="_blank"><img src="../img/doc-craft-atom-nio-benchmark-5k.jpg"></a>
+<a href="../img/doc-craft-atom-nio-benchmark-10k.jpg" target="_blank"><img src="../img/doc-craft-atom-nio-benchmark-10k.jpg"></a>
+<a href="../img/doc-craft-atom-nio-benchmark-50k.jpg" target="_blank"><img src="../img/doc-craft-atom-nio-benchmark-50k.jpg"></a>
+<a href="../img/doc-craft-atom-nio-benchmark-100k.jpg" target="_blank"><img src="../img/doc-craft-atom-nio-benchmark-100k.jpg"></a>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
