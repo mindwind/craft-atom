@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft_zh.js"></script>
+		<title>文档: craft-atom-nio 事件模型说明</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-nio: 事件模型说明</h1>
+<div class="date">2014-06-27 mindwind</div>
+
+<p>
+<a href="doc-craft-atom-nio" target="_blank">craft-atom-nio</a> 是基于事件驱动的并且每个事件关联到一个 <code>Channel</code>， 那么我们有多少种类型的事件呢？<br>
+下表种列出了所有的事件：
+</p>
+<pre><code>
+1. <a>CHANNEL_OPENED</a>
+   当 channel 被打开后，触发该事件。
+   <a href="../img/doc-craft-atom-nio-event-model-1.png" target="_blank"><img src="../img/doc-craft-atom-nio-event-model-1.png"></a>
+2. <a>CHANNEL_CLOSED</a>
+   当 channel 被关闭后，触发该事件。
+   <a href="../img/doc-craft-atom-nio-event-model-2.png" target="_blank"><img src="../img/doc-craft-atom-nio-event-model-2.png"></a>
+3. <a>CHANNEL_READ</a>
+   当从 channel 读取到一些数据时，触发该事件。
+   <a href="../img/doc-craft-atom-nio-event-model-3.png" target="_blank"><img src="../img/doc-craft-atom-nio-event-model-3.png"></a>
+4. <a>CHANNEL_FLUSH</a>
+   当将从 channel flush 出数据（数据被写入网络缓冲区之前），触发该事件。
+   <a href="../img/doc-craft-atom-nio-event-model-4.png" target="_blank"><img src="../img/doc-craft-atom-nio-event-model-4.png"></a>
+5. <a>CHANNEL_WRITTEN</a>
+   当数据已被写入网络缓冲区后，触发该事件。
+   <a href="../img/doc-craft-atom-nio-event-model-5.png" target="_blank"><img src="../img/doc-craft-atom-nio-event-model-5.png"></a>
+6. <a>CHANNEL_IDLE</a>
+   当一段时间内 channel 没有数据传输时，触发该事件。
+   <a href="../img/doc-craft-atom-nio-event-model-6.png" target="_blank"><img src="../img/doc-craft-atom-nio-event-model-6.png"></a>
+7. <a>CHANNEL_THROWN</a>
+   当读写 channel 发生异常时，触发该事件。
+   <a href="../img/doc-craft-atom-nio-event-model-7.png" target="_blank"><img src="../img/doc-craft-atom-nio-event-model-7.png"></a>
+</code></pre>
+
+<h3>事件分发</h3>
+<p>
+如上所述，当某些事情发生时就会触发一个事件。
+这些事件必须被 <code>IoHandler</code> 来处理，<code>IoHandler</code> 作为一个服务提供者（SPI）接口需要由组件使用者来实现。
+事件分发行为就是说将事件传递给 <code>IoHandler</code>。
+</p>
+<p>
+如何分发呢？
+SPI 接口 <code>NioChannelEventDispatcher</code> 提供了该功能，默认我们提供了 2 种事件分发器的实现。
+</p>
+<pre><code>
+1. <a>NioOrderedDirectChannelEventDispatcher</a>
+   直接在当前 I/O 线程分发事件。
+
+2. <a>NioOrderedThreadPoolChannelEventDispatcher</a>
+   使用一个新的线程池来分发事件。
+</code></pre>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
