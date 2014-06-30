@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft.js"></script>
+		<title>文档: craft-atom-nio 线程模型说明</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-nio: 线程模型说明</h1>
+<div class="date">2014-06-30 mindwind</div>
+
+<p>
+在我们开始说明 <a href="doc-craft-atom-nio" target="_blank">craft-atom-nio</a> 线程模型之前，想想线程模型自身到底意味着什么？
+它意味着线程协作机制和线程数量决策。
+</p>
+
+<h3>单一线程做所有事情</h3>
+<a href="../img/doc-craft-atom-nio-thread-model-1.png" target="_blank"><img src="../img/doc-craft-atom-nio-thread-model-1.png"></a>
+<p>
+如图1所示，仅有一个线程做所有事情，包括：<br>
+- 接受或发起连接请求<br>
+- 读写数据<br>
+- 执行业务操作<br>
+</p>
+<p>
+这是最简单的线程模型，同时也显得太简单太天真了。
+因为单线程十分低效，任意时刻只有一个任务能被处理。
+</p>
+
+<h3>按责任区分线程</h3>
+<a href="../img/doc-craft-atom-nio-thread-model-2.png" target="_blank"><img src="../img/doc-craft-atom-nio-thread-model-2.png"></a>
+<p>
+另一种线程模型如图2所示，我们按责任区分了线程，例如：<br>
+- 一个线程负责接受或发起连接请求 <br>
+- 少量线程负责读写数据 <br>
+- 一组线程负责执行业务操作 <br>
+</p>
+<p>
+是的，这个线程模型十分适合 <a href="doc-craft-atom-io.html" target="_blank">craft-atom-io</a> api 模型。
+<code>IoAcceptor</code> 或 <code>IoConnector</code> 持有一个线程负责接受或发起连接请求，这个任务很简单，所以一个线程足已。
+<code>IoProcessor</code> 保有少量线程负责数据的读写，这类任务通常是 CPU 密集型的，所以默认的线程数量是 CPU 核数。
+</p>
+<p>
+最后我们是否需要一组独立的线程来负责执行业务操作。它依赖于业务操作的负载。
+因为线程切换存在固有成本，加入业务操作的负载是远远大于线程切换的成本，那么你应当使用一组独立的线程来执行业务操作以获得更高的吞吐能力。
+</p>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
