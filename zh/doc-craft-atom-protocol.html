@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft_zh.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
+		<title>文档: craft-atom-protocol</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-protocol</h1>
+<div class="date">2014-07-01 mindwind</div>
+
+<h3>简介</h3>
+<p>
+一个基本协议解析 api 定义，其他组件例如 <a href="doc-craft-atom-protocol-textline.html" target="_blank">craft-atom-protocol-textline</a> 实现该 api 定义。
+协议解析包含两个部分：解码核编码。
+</p>
+
+<h3>协议解码</h3>
+<p>
+协议解码处理来自网络的二进制数据，将子节解码为高级的协议对象。
+协议解码 api 定义如下：
+</p>
+<pre><code data-language="java">
+public interface ProtocolDecoder&lt;P&gt; {
+	
+    /**
+     * Decodes binary data into higher-level protocol objects.
+     * 
+     * @param bytes
+     * @return higher-level protocol objects, an empty list returned if these bytes are incomplete for protocol definition.
+     * @throws ProtocolException
+     */
+    List&lt;P&gt; decode(byte[] bytes) throws ProtocolException;
+	
+}
+</code></pre>
+<p>来自网络的字节是基于流的，因此协议解码器实现一般会保存临时的解码中间状态。</p>
+
+<h3>协议编码</h3>
+<p>
+协议编码处理高级的协议对象，将其转变为二进制数据以便通过网络传输。
+协议编码 api 定义如下：
+</p>
+<pre><code data-language="java">
+public interface ProtocolEncoder&lt;P&gt; {
+	
+    /**
+     * Encodes higher-level protocol objects into binary data.
+     * 
+     * @param protocolObject
+     * @return byte array
+     * @throws ProtocolException
+     */
+    byte[] encode(P protocolObject) throws ProtocolException;
+	
+}
+</code></pre>
+
+<h3>实现者</h3>
+<p>
+协议解析实现者通常会配合组件 <a href="doc-craft-atom-nio" target="_blank">craft-atom-nio</a> 一起使用。
+现在我们拥有的实现如下：<br>
+<a href="doc-craft-atom-protocol-ssl.html" target="_blank">craft-atom-protocol-ssl</a><br>
+<a href="doc-craft-atom-protocol-http.html" target="_blank">craft-atom-protocol-http</a><br>
+<a href="doc-craft-atom-protocol-textline.html" target="_blank">craft-atom-protocol-textline</a>
+</p>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
