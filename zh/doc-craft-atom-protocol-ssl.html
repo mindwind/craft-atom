@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft_zh.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
+		<title>文档: craft-atom-protocol-ssl</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-protocol-ssl</h1>
+<div class="date">2014-07-03 mindwind</div>
+
+<h3>简介</h3>
+<p>
+一个简单的 ssl 协议实现，它通过封装来自 JDK 的 <code>SSLEngine</code> 类以让其更容易使用。
+</p>
+
+<h3>入门</h3>
+<p>
+首先，我们看一个 ssl 解码的示例如下：
+</p>
+<pre><code data-language="java">
+public class NioSslServerHandler extends AbstractIoHandler {
+	
+    @Override
+    public void channelOpened(Channel&lt;byte[]&gt; channel) {
+        SslCodec codec = new SslCodec(sslContext, new ChannelSslHandshakeHandler(channel));
+        codec.init();
+        channel.setAttribute("ssl_codec", codec);
+    }
+	
+    @Override
+    public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
+        SslCodec codec = (SslCodec) channel.getAttribute("ssl_codec");
+        byte[] decryptData = codec.decode(bytes);
+        if (decryptData != null) {
+            // here, ssl handshake complete and we got data after decrypt. 
+            // do something, then write back some encrypt data
+            byte[] encryptData = sslCodec.encode("some data...".getBytes());
+            channel.write(encryptData);
+        }
+    }
+}
+</code></pre>
+<p>
+<code>SslCodec</code> 需要一个 <code>SslHandshakeHandler</code> 实现来处理 ssl 握手过程。
+因为 ssl 握手与网络传输实现相关，下面 <code>ChannelSslHandshakeHandler</code> 是一个使用 I/O channel 作为传输通道的实现示例。
+</p>
+<pre><code data-language="java">
+public class ChannelSslHandshakeHandler implements SslHandshakeHandler {
+
+    private Channel&lt;byte[]&gt; channel;
+    
+    public ChannelSslHandshakeHandler(Channel&lt;byte[]&gt; channel) {
+        this.channel = channel;
+    }
+    
+    @Override
+    public void needWrite(byte[] bytes) {
+        channel.write(bytes);
+    }
+}
+</code></pre>
+<p>
+总结下，我们想要使用 <code>SslCodec</code> 这个类，遵循以下步骤：<br>
+1. 新建一个实例。<br>
+2. 初始化。<br>
+3. 完成握手。
+</p>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
