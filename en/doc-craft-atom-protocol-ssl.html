@@ -25,7 +25,7 @@
 
 <h3>Introduction</h3>
 <p>
-A simple ssl protocol implementor, it wraps <code>SSLEngine</code> to make it use easily.
+A simple ssl protocol implementor, it wraps <code>SSLEngine</code> class which from JDK to make it use easily.
 </p>
 
 <h3>Getting Started</h3>
@@ -57,7 +57,7 @@ public class NioSslServerHandler extends AbstractIoHandler {
 </code></pre>
 <p>
 <code>SslCodec</code> need a <code>SslHandshakeHandler</code> implementor to handle the ssl handshake.
-Because ssl handshake is related to transport implementation, herer <code>ChannelSslHandshakeHandler</code> is a example using I/O channel as the transport.
+Because ssl handshake is related to transport implementation, here <code>ChannelSslHandshakeHandler</code> is a example using I/O channel as the transport.
 </p>
 <pre><code data-language="java">
 public class ChannelSslHandshakeHandler implements SslHandshakeHandler {
