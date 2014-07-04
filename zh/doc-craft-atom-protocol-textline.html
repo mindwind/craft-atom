@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft_zh.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
+		<title>文档: craft-atom-protocol-textline</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-protocol-textline</h1>
+<div class="date">2014-07-04 mindwind</div>
+
+<h3>简介</h3>
+<p>
+一个简单文本换行协议实现，它实现了 <a href="doc-craft-atom-protocol" target="_blank">craft-atom-protocol</a> 定义的 api。
+</p>
+
+<h3>入门</h3>
+<p>
+First of all, we look at an example of text-line decode as follows:
+首先，我们看一个关于 text-line 请求解码的例子，如下：
+</p>
+<pre><code data-language="java">
+public class NioTextlineServerHandler extends AbstractIoHandler {
+	
+    @Override
+    public void channelOpened(Channel&lt;byte[]&gt; channel) {
+        TextLineDecoder decoder = new TextLineDecoder(Charset.forName("utf-8"), "\n", 2048, 10240);
+        channel.setAttribute("decoder", decoder);
+    }
+	
+    @Override
+    public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
+        TextLineDecoder decoder = (TextLineDecoder) channel.getAttribute("decoder");
+        List&lt;String&gt; lines = decoder.decode(bytes);
+        // do something others
+    }
+}
+</code></pre>
+<p>
+如上我们从网络读取了一些字节，并基于换行符 <code>\n</code> 解码。
+如此简单，对于 text-line 编码则更简单了，所以没必要再详细描述了，花上 10秒钟看看源码你就能完全理解它。
+</p>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
