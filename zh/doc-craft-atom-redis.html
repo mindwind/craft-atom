@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft_zh.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
+		<title>文档: craft-atom-redis</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-redis</h1>
+<div class="date">2014-07-07 mindwind</div>
+
+<h3>简介</h3>
+<p>
+基于 jedis 的易于使用的 java redis client
+</p>
+
+<h3>它支持与不支持的？</h3>
+<pre><code>
+1.  <a href="http://redis.io/commands" target="_blank">redis commands</a>
+    目前它完全兼容 redis 2.8.5 所支持的命令。
+2.  <a href="http://redis.io/topics/transactions" target="_blank">redis transactions</a>
+    一种简化且优雅的批量执行机制。
+3.  <a href="http://redis.io/topics/pubsub" target="_blank">redis pub/sub</a>
+    一种发布/订阅消息模式。
+4.  <a href="https://github.com/mindwind/craft-atom/blob/master/craft-atom-redis/src/main/java/org/craft/atom/redis/api/ShardedRedis.java" target="_blank">redis sharding</a>
+    默认的 murmur hash 策略，并且支持自定义 hash 策略扩展。
+5.  <a href="https://github.com/mindwind/craft-atom/blob/master/craft-atom-redis/src/main/java/org/craft/atom/redis/api/MasterSlaveRedis.java" target="_blank">redis master slave</a>
+    一种方便与主从 redis 架构交互的方式。 
+6.  <a href="http://redis.io/topics/pipelining" target="_blank"><s>redis pipelining</s></a>
+    做出一个艰难的决定放弃了对 redis pipelinling 的支持。
+</code></pre>
+
+<h3>入门</h3>
+<p>
+默认我们支持 4 种 redis 部署架构类型。
+</p>
+
+<p>
+<b>类型 1 - 单实例 redis</b><br>
+仅有一个单实例 redis 服务，部署架构如图1。<br>
+针对此类的典型用法如下：
+</p>
+<pre><code data-language="java">
+Redis redis = RedisFactory.newRedisBuilder(host, port).timeoutInMillis(1000).build();
+</code></pre>
+<a href="../img/doc-craft-atom-redis-singleton.png" target="_blank"><img src="../img/doc-craft-atom-redis-singleton.png"/></a>
+
+<p>
+<b>类型 2 - 分片 redis</b><br>
+分片多实例 redis 服务，部署架构如图2。<br>
+针对此类的典型用法如下：
+
+</p>
+<pre><code data-language="java">
+// shardstring format string e.g. localhost:6379,localhost:6380,localhost:6381
+ShardedRedis shardedRedis = RedisFactory.newShardedRedisBuilder(shardstring).timeoutInMillis(1000).build();
+</code></pre>
+<a href="../img/doc-craft-atom-redis-sharded.png" target="_blank"><img src="../img/doc-craft-atom-redis-sharded.png"/></a>
+
+<p>
+<b>类型 3 - 主从 redis</b><br>
+主从 redis 服务，一主多从，部署架构如图3。<br>
+针对此类的典型用法如下：
+</p>
+<pre><code data-language="java">
+// masterslavestring format string e.g. localhost:6379-localhost:6380-localhost:6381 the first is master, others are slaves.
+MasterSlaveRedis masterSlaveRedis = RedisFactory.newMasterSlaveRedisBuilder(masterslavestring).timeoutInMillis(1000).build();
+</code></pre>
+<a href="../img/doc-craft-atom-redis-master-slave.png" target="_blank"><img src="../img/doc-craft-atom-redis-master-slave.png"/></a>
+
+<p>
+<b>类型 4 - 主从分片式 redis</b><br>
+主从分片式 redis 服务，包含多个分片 redis 实例同时每个分片至少有 1 个或多个从节点，部署架构如图4。<br>
+针对此类的典型用法如下：
+</p>
+<pre><code data-language="java">
+// masterslaveshardstring format string e.g. localhost:6379-localhost:6380,localhost:6389-localhost:6390
+MasterSlaveShardedRedis masterSlaveShardedRedis = RedisFactory.newMasterSlaveShardedRedisBuilder(masterslaveshardstring).timeoutInMillis(1000).build();
+</code></pre>
+<a href="../img/doc-craft-atom-redis-master-slave-sharded.png" target="_blank"><img src="../img/doc-craft-atom-redis-master-slave-sharded.png"/></a>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
