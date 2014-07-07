@@ -29,7 +29,7 @@
 <h3>What it provides and doesn't provides?</h3>
 <pre><code>
 1.  <a href="http://redis.io/commands" target="_blank">redis commands</a>
-    Now it is fully compatible with all commands supported by redis 2.6.17.
+    Now it is fully compatible with all commands supported by redis 2.8.5.
 2.  <a href="http://redis.io/topics/transactions" target="_blank">redis transactions</a>
     A simple and elegant batch execution mechanism.
 3.  <a href="http://redis.io/topics/pubsub" target="_blank">redis pub/sub</a>
@@ -68,7 +68,7 @@ ShardedRedis shardedRedis = RedisFactory.newShardedRedisBuilder(shardstring).tim
 
 <p>
 <b>Type 3 - master slave redis</b><br>
-Master slave redis server instances, one master and multiple slaves, figure 3 is the deployment architect diagram.
+Master slave redis server instances, include one master and multiple slaves, figure 3 is the deployment architect diagram.
 A typical usage idiom for this type as follows:
 </p>
 <pre><code data-language="java">
@@ -79,7 +79,7 @@ MasterSlaveRedis masterSlaveRedis = RedisFactory.newMasterSlaveRedisBuilder(mast
 
 <p>
 <b>Type 4 - master slave sharded redis</b><br>
-Master slave sharded redis server instances, multiple sharded redis instance and each shard has one or more slaves , figure 4 is the deployment architect diagram.
+Master slave sharded redis server instances, include multiple sharded redis instance and each shard has one or more slaves, figure 4 is the deployment architect diagram.
 A typical usage idiom for this type as follows:
 </p>
 <pre><code data-language="java">
