@@ -41,6 +41,7 @@
 		<module>craft-atom-redis</module>
 		<module>craft-atom-test</module>
 		<module>craft-atom-protocol-ssl</module>
+		<module>craft-atom-protocol-rpc</module>
 	</modules>
 
 	<properties>
