@@ -18,6 +18,7 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>craft-atom-test</artifactId>
 			<version>${project.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
