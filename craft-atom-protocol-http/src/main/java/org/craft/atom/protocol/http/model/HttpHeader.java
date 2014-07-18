@@ -17,7 +17,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Represents an HTTP header field.
+ * Represents a HTTP header field.
  * 
  * <p>
  * The HTTP header fields follow the same generic format as that given in
