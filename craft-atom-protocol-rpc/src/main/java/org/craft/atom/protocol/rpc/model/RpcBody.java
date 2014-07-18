@@ -1,6 +1,11 @@
 package org.craft.atom.protocol.rpc.model;
 
 import java.io.Serializable;
+import java.util.Map;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Represents a RPC header field.
@@ -12,9 +17,16 @@ import java.io.Serializable;
  * @author mindwind
  * @version 1.0, Jul 18, 2014
  */
-public class RpcBody implements Serializable {
+@ToString
+public class RpcBody<T> implements Serializable {
 
 	
 	private static final long serialVersionUID = 5138100956693144357L;
+	
+	
+	@Getter @Setter private Class<T>               clazz      ;
+	@Getter @Setter private String                 method     ;
+	@Getter @Setter private Map<Class<?>, Object>  arguments  ;
+	@Getter @Setter private Map<String, Object>    attachments;
 
 }
