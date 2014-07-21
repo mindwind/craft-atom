@@ -45,9 +45,19 @@ public class TestByteUtil {
 	@Test
 	public void testMakeIntFromByte2() {
 		byte[] bytes = new byte[] {111, 127};
+		@SuppressWarnings("deprecation")
 		int num = ByteUtil.makeIntFromByte2(bytes);
 		Assert.assertEquals(28543, num);
 		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make int from byte2. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testBytesShort() {
+		short s = 28543;
+		Assert.assertEquals(s, ByteUtil.bytes2short(ByteUtil.short2bytes(s)));
+		s = -18120;
+		Assert.assertEquals(s, ByteUtil.bytes2short(ByteUtil.short2bytes(s)));
+		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> bytes-short. ", CaseCounter.incr(2)));
 	}
 	
 	@Test
