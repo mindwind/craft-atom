@@ -417,7 +417,7 @@ public class ByteUtil {
 	}
 	
 	/**
-	 * Get a short from 4 bytes of the given array at offset 0.
+	 * Get a int from 4 bytes of the given array at offset 0.
 	 * 
 	 * @param b byte array
 	 * @return a short
@@ -427,7 +427,7 @@ public class ByteUtil {
 	}
 	
 	/**
-	 * Get a short from 4 bytes of the given array at specific offset.
+	 * Get a int from 4 bytes of the given array at specific offset.
 	 * 
 	 * @param b byte array
 	 * @param off offset of the byte array
@@ -461,6 +461,57 @@ public class ByteUtil {
 		b[off + 2] = (byte) (i >>> 8);
 		b[off + 1] = (byte) (i >>> 16);
 		b[off + 0] = (byte) (i >>> 24);
+	}
+	
+	/**
+	 * Get a long from 8 bytes of the given array at offset 0.
+	 * 
+	 * @param b byte array
+	 * @return a short
+	 */
+	public static final long bytes2long(byte[] b) {
+		return bytes2long(b, 0);
+	}
+	
+	/**
+	 * Get a long from 8 bytes of the given array at specific offset.
+	 * 
+	 * @param b byte array
+	 * @param off offset of the byte array
+	 * @return a short
+	 */
+	public static final long bytes2long(byte[] b, int off) {
+		return (((long) b[off]) << 56 | ((long) (b[off + 1] & 0xff)) << 48 | ((long) (b[off + 2]) & 0xff) << 40 | ((long) (b[off + 3]) & 0xff) << 32 | (((long) b[off + 4]) & 0xff) << 24 | (((long) b[off + 5]) & 0xff) << 16 | (((long) b[off + 6]) & 0xff) << 8 | (((long) b[off + 7]) & 0xff));
+	}
+	
+	/**
+	 * Get a byte array from a long.
+	 * 
+	 * @param  l long
+	 * @return a byte array
+	 */
+	public static final byte[] long2bytes(long l) {
+		byte[] b = { 0, 0, 0, 0, 0, 0, 0, 0 };
+		long2bytes(l, b, 0);
+		return b;
+	}
+	
+	/**
+	 * Set a byte array at specific offset from a long.
+	 * 
+	 * @param l long
+	 * @param b byte array
+	 * @param off offset
+	 */
+	public static void long2bytes(long l, byte[] b, int off) {
+		b[off + 7] = (byte)  l;
+		b[off + 6] = (byte) (l >>> 8);
+		b[off + 5] = (byte) (l >>> 16);
+		b[off + 4] = (byte) (l >>> 24);
+		b[off + 3] = (byte) (l >>> 32);
+		b[off + 2] = (byte) (l >>> 40);
+		b[off + 1] = (byte) (l >>> 48);
+		b[off + 0] = (byte) (l >>> 56);
 	}
 	
 	

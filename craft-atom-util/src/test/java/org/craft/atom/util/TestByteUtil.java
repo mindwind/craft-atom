@@ -61,6 +61,15 @@ public class TestByteUtil {
 	}
 	
 	@Test
+	public void testBytesLong() {
+		long l = 12345678910L;
+		Assert.assertEquals(l, ByteUtil.bytes2long(ByteUtil.long2bytes(l)));
+		l = -12345678910L;
+		Assert.assertEquals(l, ByteUtil.bytes2long(ByteUtil.long2bytes(l)));
+		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> bytes-long. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
 	public void testNetworkByteOrderToInt() {
 		byte[] bytes = new byte[] {0, 0, 1, 1};
 		int num = ByteUtil.networkByteOrderToInt(bytes);
