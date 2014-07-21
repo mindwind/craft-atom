@@ -43,15 +43,6 @@ public class TestByteUtil {
 	}
 	
 	@Test
-	public void testMakeIntFromByte2() {
-		byte[] bytes = new byte[] {111, 127};
-		@SuppressWarnings("deprecation")
-		int num = ByteUtil.makeIntFromByte2(bytes);
-		Assert.assertEquals(28543, num);
-		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make int from byte2. ", CaseCounter.incr(1)));
-	}
-	
-	@Test
 	public void testBytesShort() {
 		short s = 28543;
 		Assert.assertEquals(s, ByteUtil.bytes2short(ByteUtil.short2bytes(s)));
@@ -61,11 +52,12 @@ public class TestByteUtil {
 	}
 	
 	@Test
-	public void testMakeIntFromByte4() {
-		byte[] bytes = new byte[] {1, 0, 0, 0};
-		int num = ByteUtil.makeIntFromByte4(bytes);
-		Assert.assertEquals(16777216, num);
-		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make int from byte4. ", CaseCounter.incr(1)));
+	public void testBytesInt() {
+		int i = 1234567;
+		Assert.assertEquals(i, ByteUtil.bytes2int(ByteUtil.int2bytes(i)));
+		i = -1234567;
+		Assert.assertEquals(i, ByteUtil.bytes2int(ByteUtil.int2bytes(i)));
+		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> bytes-int. ", CaseCounter.incr(2)));
 	}
 	
 	@Test
@@ -90,6 +82,24 @@ public class TestByteUtil {
 		byte[] out = ByteUtil.split(in, 2, 6);
 		Assert.assertArrayEquals(new byte[] {1, 1, 1, 1}, out);
 		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make split. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testMakeIntFromByte2() {
+		byte[] bytes = new byte[] {111, 127};
+		@SuppressWarnings("deprecation")
+		int num = ByteUtil.makeIntFromByte2(bytes);
+		Assert.assertEquals(28543, num);
+		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make int from byte2. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testMakeIntFromByte4() {
+		byte[] bytes = new byte[] {1, 0, 0, 0};
+		@SuppressWarnings("deprecation")
+		int num = ByteUtil.makeIntFromByte4(bytes);
+		Assert.assertEquals(16777216, num);
+		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make int from byte4. ", CaseCounter.incr(1)));
 	}
 	
 }

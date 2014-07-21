@@ -374,7 +374,7 @@ public class ByteUtil {
 	/**
 	 * Get a short from 2 bytes of the given array at offset 0.
 	 * 
-	 * @param b byte array
+	 * @param  b byte array
 	 * @return a short
 	 */
 	public static final short bytes2short(byte[] b) {
@@ -384,7 +384,7 @@ public class ByteUtil {
 	/**
 	 * Get a short from 2 bytes of the given array at specific offset.
 	 * 
-	 * @param b byte array
+	 * @param b   byte array
 	 * @param off offset of the byte array
 	 * @return a short
 	 */
@@ -395,7 +395,7 @@ public class ByteUtil {
 	/**
 	 * Get a byte array from a short.
 	 * 
-	 * @param s short
+	 * @param  s short
 	 * @return a byte array
 	 */
 	public static final byte[] short2bytes(short s) {
@@ -407,13 +407,60 @@ public class ByteUtil {
 	/**
 	 * Set a byte array at specific offset from a short.
 	 * 
-	 * @param s
-	 * @param b
-	 * @param off
+	 * @param s   short
+	 * @param b   byte array
+	 * @param off offset
 	 */
 	public static void short2bytes(short s, byte[] b, int off) {
 		b[off + 1] = (byte) s;
 		b[off + 0] = (byte) (s >>> 8);
+	}
+	
+	/**
+	 * Get a short from 4 bytes of the given array at offset 0.
+	 * 
+	 * @param b byte array
+	 * @return a short
+	 */
+	public static final int bytes2int(byte[] b) {
+		return bytes2int(b, 0);
+	}
+	
+	/**
+	 * Get a short from 4 bytes of the given array at specific offset.
+	 * 
+	 * @param b byte array
+	 * @param off offset of the byte array
+	 * @return a short
+	 */
+	public static final int bytes2int(byte[] b, int off) {
+		return b[off] << 24 | (b[off + 1] & 0xff) << 16 | (b[off + 2] & 0xff) << 8 | (b[off + 3] & 0xff);
+	}
+	
+	/**
+	 * Get a byte array from an int.
+	 * 
+	 * @param  i int
+	 * @return a byte array
+	 */
+	public static final byte[] int2bytes(int i) {
+		byte[] b = { 0, 0, 0, 0 };
+		int2bytes(i, b, 0);
+		return b;
+	}
+	
+	/**
+	 * Set a byte array at specific offset from an int.
+	 * 
+	 * @param i   int
+	 * @param b   byte array
+	 * @param off offset
+	 */
+	public static void int2bytes(int i, byte[] b, int off) {
+		b[off + 3] = (byte)  i;
+		b[off + 2] = (byte) (i >>> 8);
+		b[off + 1] = (byte) (i >>> 16);
+		b[off + 0] = (byte) (i >>> 24);
 	}
 	
 	
@@ -435,24 +482,14 @@ public class ByteUtil {
 	}
 
 	/**
-	 * Reads an int from 4 bytes of the given array at offset 0.
-	 * 
-	 * @param b
-	 *            the byte array to read
-	 * @return the int value
+	 * @deprecated replace by {@link #bytes2int(byte[])}
 	 */
 	public static final int makeIntFromByte4(byte[] b) {
 		return makeIntFromByte4(b, 0);
 	}
 
 	/**
-	 * Reads an int from 4 bytes of the given array at the given offset.
-	 * 
-	 * @param b
-	 *            the byte array to read
-	 * @param offset
-	 *            the offset at which to start
-	 * @return the int value
+	 * @deprecated replace by {@link #bytes2int(byte[], off)}
 	 */
 	public static final int makeIntFromByte4(byte[] b, int offset) {
 		return b[offset] << 24 | (b[offset + 1] & 0xff) << 16 | (b[offset + 2] & 0xff) << 8 | (b[offset + 3] & 0xff);
