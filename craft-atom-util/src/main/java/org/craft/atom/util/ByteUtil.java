@@ -203,7 +203,7 @@ public class ByteUtil {
 	 *            the start index, inclusive.
 	 * @param end
 	 *            the ending index, exclusive.
-	 * @return split byte array
+	 * @return splited byte array
 	 */
 	public static byte[] split(byte[] bytes, int start, int end) {
 		if (bytes == null) {

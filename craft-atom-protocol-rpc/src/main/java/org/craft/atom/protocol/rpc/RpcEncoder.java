@@ -31,11 +31,11 @@ public class RpcEncoder implements ProtocolEncoder<RpcMessage> {
 		Assert.notNull(rh);
 		Assert.notNull(rb);
 		
-		int headerSize = rh.getHeaderSize();
 		byte[] body = encodeBody(rb);
-		byte[] encoded = new byte[headerSize + body.length];
-		encodeHeader(encoded, rh, body.length);
-		System.arraycopy(body, 0, encoded, headerSize, body.length);
+		byte[] encoded = new byte[RpcHeader.HEADER_SIZE + body.length];
+		rh.setBodySize(body.length);
+		encodeHeader(encoded, rh);
+		System.arraycopy(body, 0, encoded, RpcHeader.HEADER_SIZE, body.length);
 		return encoded;
 	}
 	
@@ -49,21 +49,21 @@ public class RpcEncoder implements ProtocolEncoder<RpcMessage> {
 	    return baos.toByteArray();
 	}
 	
-	private void encodeHeader(byte[] b, RpcHeader rh, int bodySize) {
+	private void encodeHeader(byte[] b, RpcHeader rh) {
 		// magic
-		ByteUtil.short2bytes(rh.getMagic());
+		ByteUtil.short2bytes(RpcHeader.MAGIC, b, 0);
 		// header siez
-		ByteUtil.short2bytes(rh.getHeaderSize(), b, 2);
+		ByteUtil.short2bytes(RpcHeader.HEADER_SIZE, b, 2);
 		// version
-		b[4] = rh.getVersion();
+		b[4] = RpcHeader.VERSION;
 		// st | hb | tw | rr
-		b[5] = (byte) (rh.getSt() | rh.getHb() | rh.getTw() | rh.getRp());
+		b[5] = (byte) (rh.getSt() | rh.getHb() | rh.getOw() | rh.getRp());
 		// status code
 		b[6] = rh.getStatusCode();
 	    // message id
 		ByteUtil.long2bytes(rh.getId(), b, 8);
 		// body size
-		ByteUtil.int2bytes(bodySize, b, 16);
+		ByteUtil.int2bytes(rh.getBodySize(), b, 16);
 	}
 
 }
