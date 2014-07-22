@@ -18,13 +18,13 @@ import lombok.ToString;
  * @version 1.0, Jul 17, 2014
  */
 @ToString
-public class RpcMessage<T> implements Serializable {
+public class RpcMessage implements Serializable {
 
 	
 	private static final long serialVersionUID = 5138100956693144357L;
 	
 	
 	@Getter @Setter private RpcHeader  header;
-	@Getter @Setter private RpcBody<T> body  ;
+	@Getter @Setter private RpcBody    body  ;
 
 }
