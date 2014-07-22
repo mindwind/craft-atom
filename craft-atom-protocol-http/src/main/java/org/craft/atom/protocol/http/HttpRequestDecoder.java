@@ -22,7 +22,7 @@ import org.craft.atom.protocol.http.model.HttpVersion;
 /**
  * A {@link ProtocolDecoder} which decodes bytes into {@code HttpRequest} object, default charset is utf-8.
  * <br>
- * Not thread safe
+ * Not thread safe.
  * 
  * @author mindwind
  * @version 1.0, Feb 2, 2013
