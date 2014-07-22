@@ -514,6 +514,55 @@ public class ByteUtil {
 		b[off + 0] = (byte) (l >>> 56);
 	}
 	
+	/**
+	 * Get a float from 4 bytes of the given array.
+	 * 
+	 * @param b byte array.
+	 * @return a float.
+	 */
+	public static float bytes2float(byte[] b) {
+		return bytes2float(b, 0);
+	}
+
+	/**
+	 * Get a float from 4 bytes of the given array at specific offset.
+	 * 
+	 * @param b byte array.
+	 * @param off offset.
+	 * @return a float.
+	 */
+	public static float bytes2float(byte[] b, int off) {
+		int i = b[off] << 24 | (b[off + 1] & 0xff) << 16 | (b[off + 2] & 0xff) << 8 | (b[off + 3] & 0xff);
+		return Float.intBitsToFloat(i);
+	}
+	
+	/**
+	 * Get a byte array from a float.
+	 * 
+	 * @param f float
+	 * @return a byte array
+	 */
+	public static final byte[] float2bytes(float f) {
+		byte[] b = { 0, 0, 0, 0 };
+		float2bytes(f, b, 0);
+		return b;
+	}
+	
+	/**
+	 * Set a byte array at specific offset from a float.
+	 * 
+	 * @param f   float
+	 * @param b   byte array
+	 * @param off offset
+	 */
+	public static void float2bytes(float f, byte[] b, int off) {
+		int i = Float.floatToIntBits(f);
+		b[off + 3] = (byte)  i;
+		b[off + 2] = (byte) (i >>> 8);
+		b[off + 1] = (byte) (i >>> 16);
+		b[off + 0] = (byte) (i >>> 24);
+	}
+	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
@@ -542,8 +591,8 @@ public class ByteUtil {
 	/**
 	 * @deprecated replace by {@link #bytes2int(byte[], off)}
 	 */
-	public static final int makeIntFromByte4(byte[] b, int offset) {
-		return b[offset] << 24 | (b[offset + 1] & 0xff) << 16 | (b[offset + 2] & 0xff) << 8 | (b[offset + 3] & 0xff);
+	public static final int makeIntFromByte4(byte[] b, int off) {
+		return b[off] << 24 | (b[off + 1] & 0xff) << 16 | (b[off + 2] & 0xff) << 8 | (b[off + 3] & 0xff);
 	}
 
 	private ByteUtil() {

@@ -70,6 +70,15 @@ public class TestByteUtil {
 	}
 	
 	@Test
+	public void testBytesFloat() {
+		float f = 1234.5678f;
+		Assert.assertEquals(f, ByteUtil.bytes2float(ByteUtil.float2bytes(f)), 0.0001);
+		f = -1234.5678f;
+		Assert.assertEquals(f, ByteUtil.bytes2float(ByteUtil.float2bytes(f)), 0.0001);
+		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> bytes-float. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
 	public void testNetworkByteOrderToInt() {
 		byte[] bytes = new byte[] {0, 0, 1, 1};
 		int num = ByteUtil.networkByteOrderToInt(bytes);
