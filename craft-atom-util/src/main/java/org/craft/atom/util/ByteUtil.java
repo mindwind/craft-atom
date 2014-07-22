@@ -563,6 +563,59 @@ public class ByteUtil {
 		b[off + 0] = (byte) (i >>> 24);
 	}
 	
+	/**
+	 * Get a double from 8 bytes of the given array.
+	 * 
+	 * @param b byte array.
+	 * @return a double.
+	 */
+	public static double bytes2double(byte[] b) {
+		return bytes2double(b, 0);
+	}
+
+	/**
+	 * Get a double from 8 bytes of the given array at specific offset.
+	 * 
+	 * @param b byte array.
+	 * @param off offset.
+	 * @return a double.
+	 */
+	public static double bytes2double(byte[] b, int off) {
+		long l = (((long) b[off]) << 56 | ((long) (b[off + 1] & 0xff)) << 48 | ((long) (b[off + 2]) & 0xff) << 40 | ((long) (b[off + 3]) & 0xff) << 32 | (((long) b[off + 4]) & 0xff) << 24 | (((long) b[off + 5]) & 0xff) << 16 | (((long) b[off + 6]) & 0xff) << 8 | (((long) b[off + 7]) & 0xff));
+		return Double.longBitsToDouble(l);
+	}
+	
+	/**
+	 * Get a byte array from a double.
+	 * 
+	 * @param d double
+	 * @return a byte array
+	 */
+	public static final byte[] double2bytes(double d) {
+		byte[] b = { 0, 0, 0, 0, 0, 0, 0, 0 };
+		double2bytes(d, b, 0);
+		return b;
+	}
+	
+	/**
+	 * Set a byte array at specific offset from a double.
+	 * 
+	 * @param d   double
+	 * @param b   byte array
+	 * @param off offset
+	 */
+	public static void double2bytes(double d, byte[] b, int off) {
+		long l = Double.doubleToLongBits(d);
+		b[off + 7] = (byte)  l;
+		b[off + 6] = (byte) (l >>> 8);
+		b[off + 5] = (byte) (l >>> 16);
+		b[off + 4] = (byte) (l >>> 24);
+		b[off + 3] = (byte) (l >>> 32);
+		b[off + 2] = (byte) (l >>> 40);
+		b[off + 1] = (byte) (l >>> 48);
+		b[off + 0] = (byte) (l >>> 56);
+	}
+	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	

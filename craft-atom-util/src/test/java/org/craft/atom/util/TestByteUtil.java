@@ -79,6 +79,15 @@ public class TestByteUtil {
 	}
 	
 	@Test
+	public void testBytesDouble() {
+		double d = 12345678.12345678;
+		Assert.assertEquals(d, ByteUtil.bytes2double(ByteUtil.double2bytes(d)), 0.00000001);
+		d = -12345678.12345678;
+		Assert.assertEquals(d, ByteUtil.bytes2double(ByteUtil.double2bytes(d)), 0.00000001);
+		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> bytes-double. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
 	public void testNetworkByteOrderToInt() {
 		byte[] bytes = new byte[] {0, 0, 1, 1};
 		int num = ByteUtil.networkByteOrderToInt(bytes);
@@ -101,6 +110,10 @@ public class TestByteUtil {
 		Assert.assertArrayEquals(new byte[] {1, 1, 1, 1}, out);
 		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make split. ", CaseCounter.incr(1)));
 	}
+	
+	
+	// ~ -------------------------------------------------------------------------------------------------------------
+	
 	
 	@Test
 	public void testMakeIntFromByte2() {
