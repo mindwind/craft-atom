@@ -26,7 +26,17 @@ public class RpcBody implements Serializable {
 	
 	@Getter @Setter private Class<?>               clazz      ;
 	@Getter @Setter private String                 method     ;
-	@Getter @Setter private Map<Class<?>, Object>  arguments  ;
+	@Getter         private Class<?>[]             argsTypes  ;
+	@Getter         private Object[]               args       ;
 	@Getter @Setter private Map<String, Object>    attachments;
+	
+	
+	public void setArgsTypes(Class<?>... argsTypes) {
+		this.argsTypes = argsTypes;
+	}
+
+	public void setArgs(Object... args) {
+		this.args = args;
+	}
 
 }
