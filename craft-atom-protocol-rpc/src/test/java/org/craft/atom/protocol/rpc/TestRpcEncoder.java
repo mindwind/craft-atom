@@ -54,7 +54,6 @@ public class TestRpcEncoder {
 		Assert.assertEquals(0, b[7]);
 		Assert.assertEquals(ID, ByteUtil.bytes2long(b, 8));
 		Assert.assertTrue(ByteUtil.bytes2int(b, 16) > 0);
-		
 		System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test encode. ", CaseCounter.incr(8)));
 	}
 	
