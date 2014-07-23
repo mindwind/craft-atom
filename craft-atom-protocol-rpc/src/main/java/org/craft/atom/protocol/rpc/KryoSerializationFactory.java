@@ -11,14 +11,24 @@ import org.craft.atom.protocol.rpc.spi.SerializationFactory;
 public class KryoSerializationFactory implements SerializationFactory<RpcBody> {
 	
 	
+	// singleton
 	private static final KryoSerializationFactory INSTNACE = new KryoSerializationFactory();
 	private KryoSerializationFactory() {}
 	public static KryoSerializationFactory getInstance() { return INSTNACE; } 
-    
+	
+	
+	// thread local cache
+    private static final ThreadLocal<KryoSerialization> CACHE = new ThreadLocal<KryoSerialization>() {
+    	@Override
+    	protected KryoSerialization initialValue() {
+            return new KryoSerialization();
+        }
+    };
+	
 
 	@Override
 	public Serialization<RpcBody> newSerialization() {
-		return new KryoSerialization();
+		return CACHE.get();
 	}
 	
 }
