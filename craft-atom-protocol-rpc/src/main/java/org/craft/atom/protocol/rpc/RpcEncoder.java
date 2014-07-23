@@ -1,17 +1,17 @@
 package org.craft.atom.protocol.rpc;
 
-import java.io.ByteArrayOutputStream;
+import lombok.Getter;
+import lombok.Setter;
 
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.model.RpcHeader;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
+import org.craft.atom.protocol.rpc.spi.Serialization;
+import org.craft.atom.protocol.rpc.spi.SerializationFactory;
 import org.craft.atom.util.Assert;
 import org.craft.atom.util.ByteUtil;
-
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Output;
 
 /**
  * A {@link ProtocolEncoder} which encodes a {@code RpcMessage} object into bytes follow the generic RPC format.
@@ -22,7 +22,24 @@ import com.esotericsoftware.kryo.io.Output;
  * @version 1.0, Jul 17, 2014
  */
 public class RpcEncoder implements ProtocolEncoder<RpcMessage> {
+	
+	
+	@Getter @Setter private SerializationFactory<RpcBody> factory;
+	
+	
+	// ~ --------------------------------------------------------------------------------------------------------------
 
+	
+	public RpcEncoder() {}
+	
+	public RpcEncoder(SerializationFactory<RpcBody> factory) {
+		this.factory = factory;
+	}
+	
+	
+	// ~ --------------------------------------------------------------------------------------------------------------
+	
+	
 	@Override
 	public byte[] encode(RpcMessage rm) throws ProtocolException {
 		Assert.notNull(rm);
@@ -31,22 +48,20 @@ public class RpcEncoder implements ProtocolEncoder<RpcMessage> {
 		Assert.notNull(rh);
 		Assert.notNull(rb);
 		
-		byte[] body = encodeBody(rb);
+		Serialization<RpcBody> serializer = factory.newSerialization();
+		byte[] body = encodeBody(rb, serializer);
+		
 		byte[] encoded = new byte[RpcHeader.HEADER_SIZE + body.length];
 		rh.setBodySize(body.length);
+		rh.setSt(serializer.type());
+		
 		encodeHeader(encoded, rh);
 		System.arraycopy(body, 0, encoded, RpcHeader.HEADER_SIZE, body.length);
 		return encoded;
 	}
 	
-	private byte[] encodeBody(RpcBody rb) {
-		Kryo kryo = new Kryo();
-	    kryo.register(RpcBody.class);
-	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    Output output = new Output(baos);
-	    kryo.writeObject(output, rb);
-	    output.close();
-	    return baos.toByteArray();
+	private byte[] encodeBody(RpcBody rb, Serialization<RpcBody> serializer) {
+		return serializer.serialize(rb);
 	}
 	
 	private void encodeHeader(byte[] b, RpcHeader rh) {
