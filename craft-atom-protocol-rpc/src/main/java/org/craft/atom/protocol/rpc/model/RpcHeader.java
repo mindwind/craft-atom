@@ -46,7 +46,7 @@ public class RpcHeader implements Serializable {
 	public  static final byte   VERSION            = (byte)  1          ;
 	
 
-	@Getter		    private byte  st         = (byte)  1     ;
+	@Getter		    private byte  st         = (byte)  0     ;
 	@Getter		    private byte  hb         = (byte)  0     ;
 	@Getter		    private byte  ow         = (byte)  0     ;
 	@Getter		    private byte  rp         = (byte)  0     ;
