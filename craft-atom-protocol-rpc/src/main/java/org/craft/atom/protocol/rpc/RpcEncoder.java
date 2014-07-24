@@ -51,12 +51,12 @@ public class RpcEncoder implements ProtocolEncoder<RpcMessage> {
 		Serialization<RpcBody> serializer = factory.newSerialization();
 		byte[] body = encodeBody(rb, serializer);
 		
-		byte[] encoded = new byte[RpcHeader.HEADER_SIZE + body.length];
+		byte[] encoded = new byte[rh.getHeaderSize() + body.length];
 		rh.setBodySize(body.length);
 		rh.setSt(serializer.type());
 		
 		encodeHeader(encoded, rh);
-		System.arraycopy(body, 0, encoded, RpcHeader.HEADER_SIZE, body.length);
+		System.arraycopy(body, 0, encoded, rh.getHeaderSize(), body.length);
 		return encoded;
 	}
 	
@@ -66,11 +66,11 @@ public class RpcEncoder implements ProtocolEncoder<RpcMessage> {
 	
 	private void encodeHeader(byte[] b, RpcHeader rh) {
 		// magic
-		ByteUtil.short2bytes(RpcHeader.MAGIC, b, 0);
+		ByteUtil.short2bytes(rh.getMagic(), b, 0);
 		// header siez
-		ByteUtil.short2bytes(RpcHeader.HEADER_SIZE, b, 2);
+		ByteUtil.short2bytes(rh.getHeaderSize(), b, 2);
 		// version
-		b[4] = RpcHeader.VERSION;
+		b[4] = rh.getVersion();
 		// st | hb | tw | rr
 		b[5] = (byte) (rh.getSt() | rh.getHb() | rh.getOw() | rh.getRp());
 		// status code
