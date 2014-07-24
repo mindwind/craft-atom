@@ -29,7 +29,7 @@ import org.craft.atom.protocol.http.model.HttpVersion;
  */
 @ToString(callSuper = true)
 public class HttpRequestDecoder extends HttpDecoder<HttpRequest> implements ProtocolDecoder<HttpRequest> {
-
+	
 	public HttpRequestDecoder() {
 		super();
 	}
@@ -54,7 +54,9 @@ public class HttpRequestDecoder extends HttpDecoder<HttpRequest> implements Prot
 		this.maxSize = maxRequestSize;
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	@Override
 	public List<HttpRequest> decode(byte[] bytes) throws ProtocolException {
