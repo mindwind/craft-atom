@@ -45,7 +45,7 @@ import org.craft.atom.util.GzipUtil;
  * @see HttpRequestDecoder
  * @see HttpResponseDecoder
  */
-@ToString(callSuper = true, of = { "state", "maxLineLength" })
+@ToString(callSuper = true)
 abstract public class HttpDecoder<T extends HttpMessage> extends AbstractProtocolDecoder {
 	
 	
@@ -71,6 +71,7 @@ abstract public class HttpDecoder<T extends HttpMessage> extends AbstractProtoco
 	protected static final int END                            = -1;
 	
 	@Getter @Setter protected int             maxLineLength = defaultBufferSize;
+	@Getter @Setter protected int             stateIndex    = 0                ;
 	@Getter         protected int             state         = START            ;
 	@Getter         protected int             trailerSize                      ;
 	@Getter         protected HttpHeader      header                           ;

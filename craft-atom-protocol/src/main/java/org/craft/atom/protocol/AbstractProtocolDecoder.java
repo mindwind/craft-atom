@@ -18,13 +18,12 @@ import org.craft.atom.util.ByteArrayBuffer;
  * @author mindwind
  * @version 1.0, Feb 3, 2013
  */
-@ToString(callSuper = true, of = { "defaultBufferSize", "maxSize", "splitIndex", "searchIndex", "stateIndex", "buf" })
+@ToString(callSuper = true)
 abstract public class AbstractProtocolDecoder extends AbstractProtocolCodec {
 	
 
 	@Getter @Setter protected int             splitIndex        = 0                                     ;
 	@Getter @Setter protected int             searchIndex       = 0                                     ;
-	@Getter @Setter protected int             stateIndex        = 0                                     ;
 	@Getter @Setter protected int             defaultBufferSize = 2048                                  ;
 	@Getter @Setter protected int             maxSize           = defaultBufferSize * 1024              ;
 	@Getter @Setter protected ByteArrayBuffer buf               = new ByteArrayBuffer(defaultBufferSize);
