@@ -24,9 +24,18 @@ public interface Serialization<T> {
 	/**
 	 * Deserialize object from bytes.
 	 * 
-	 * @param bytes
+	 * @param bytes byte array
 	 * @return deserialized object.
 	 */
 	T deserialize(byte[] bytes);
+	
+	/**
+	 * Deserialize object from bytes at specific offset .
+	 * 
+	 * @param bytes byte array
+	 * @param off   offset
+	 * @return deserialized object.
+	 */
+	T deserialize(byte[] bytes, int off);
 	
 }

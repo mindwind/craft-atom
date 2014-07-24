@@ -46,8 +46,13 @@ public class KryoSerialization implements Serialization<RpcBody> {
 
 	@Override
 	public RpcBody deserialize(byte[] bytes) {
+		return deserialize(bytes, 0);
+	}
+
+	@Override
+	public RpcBody deserialize(byte[] bytes, int off) {
 		Assert.notNull(bytes);
-		ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+		ByteArrayInputStream bais = new ByteArrayInputStream(bytes, off, bytes.length - off);
 		Input input = new Input(bais);
 		RpcBody rb = kryo.readObject(input, RpcBody.class);
 	    input.close();

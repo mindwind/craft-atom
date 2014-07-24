@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import org.craft.atom.util.ByteUtil;
+
 /**
  * Represents a RPC header field.
  * <p>
@@ -36,24 +38,29 @@ import lombok.ToString;
 public class RpcHeader implements Serializable {
 
 	
-	private static final long   serialVersionUID   = -67119913240566784L;
-	private static final byte   ST_MASK            = (byte) 0x1f        ;
-	private static final byte   HB_MASK            = (byte) 0x20        ;
-	private static final byte   OW_MASK            = (byte) 0x40        ;
-	private static final byte   RP_MASK            = (byte) 0x80        ;
-	public  static final short  MAGIC              = (short) 0xcaf6     ;
-	public  static final short  HEADER_SIZE        = (short) 20         ;
-	public  static final byte   VERSION            = (byte)  1          ;
+	private static final long   serialVersionUID   = -67119913240566784L           ;
+	private static final byte   ST_MASK            = (byte) 0x1f                   ;
+	private static final byte   HB_MASK            = (byte) 0x20                   ;
+	private static final byte   OW_MASK            = (byte) 0x40                   ;
+	private static final byte   RP_MASK            = (byte) 0x80                   ;
+	public  static final short  MAGIC              = (short) 0xcaf6                ;	
+	public  static final short  HEADER_SIZE        = (short) 20                    ;
+	public  static final byte   MAGIC_0            = ByteUtil.short2bytes(MAGIC)[0];
+	public  static final byte   MAGIC_1            = ByteUtil.short2bytes(MAGIC)[1];
+	public  static final byte   VERSION            = (byte)  1                     ;
 	
-
-	@Getter		    private byte  st         = (byte)  0     ;
-	@Getter		    private byte  hb         = (byte)  0     ;
-	@Getter		    private byte  ow         = (byte)  0     ;
-	@Getter		    private byte  rp         = (byte)  0     ;
-	@Getter @Setter private byte  statusCode = (byte)  0     ;
-	@Getter @Setter private byte  reserved   = (byte)  0     ;
-	@Getter @Setter private long  id         = (long)  0     ;
-	@Getter @Setter private int   bodySize   = (int)   0     ;
+	
+	@Getter @Setter private short magic      = MAGIC      ;
+	@Getter @Setter private short headerSize = HEADER_SIZE;
+	@Getter @Setter private byte  version    = VERSION    ;
+	@Getter	        private byte  st         = (byte)  0  ;
+	@Getter	        private byte  hb         = (byte)  0  ;
+	@Getter	        private byte  ow         = (byte)  0  ;
+	@Getter	        private byte  rp         = (byte)  0  ;
+	@Getter @Setter private byte  statusCode = (byte)  0  ;
+	@Getter @Setter private byte  reserved   = (byte)  0  ;
+	@Getter @Setter private long  id         = (long)  0  ;
+	@Getter @Setter private int   bodySize   = (int)   0  ;
 	
 	
 	public void setSt(byte st) {
@@ -64,12 +71,24 @@ public class RpcHeader implements Serializable {
 		this.hb = HB_MASK;
 	}
 	
+	public void setHb(byte hb) {
+		this.hb = (byte) (hb & HB_MASK);
+	}
+	
 	public void setOw() {
 		this.ow = OW_MASK;
 	}
 	
+	public void setOw(byte ow) {
+		this.ow = (byte) (ow & OW_MASK);
+	}
+	
 	public void setRp() {
 		this.rp = RP_MASK;
+	}
+	
+	public void setRp(byte rp) {
+		this.rp = (byte) (rp & RP_MASK);
 	}
 
 }
