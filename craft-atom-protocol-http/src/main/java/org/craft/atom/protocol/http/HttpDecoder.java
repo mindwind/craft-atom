@@ -49,7 +49,7 @@ import org.craft.atom.util.GzipUtil;
 abstract public class HttpDecoder<T extends HttpMessage> extends AbstractProtocolDecoder {
 	
 	
-	protected static final int START                          = 0;
+	protected static final int START                          = 0 ;
 	protected static final int METHOD                         = 11;
 	protected static final int REQUEST_URI                    = 12;
 	protected static final int STATUS_CODE                    = 21;

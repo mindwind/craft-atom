@@ -143,7 +143,7 @@ public class HttpRequestDecoder extends HttpDecoder<HttpRequest> implements Prot
 				state4END(reqs);
 				break;
 			default:
-				throw new IllegalStateException("invalid decoder state!");
+				throw new IllegalStateException("Invalid decoder state!");
 			}
 		}
 		
