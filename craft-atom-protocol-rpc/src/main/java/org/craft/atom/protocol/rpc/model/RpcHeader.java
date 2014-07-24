@@ -53,7 +53,7 @@ public class RpcHeader implements Serializable {
 	@Getter @Setter private short magic      = MAGIC      ;
 	@Getter @Setter private short headerSize = HEADER_SIZE;
 	@Getter @Setter private byte  version    = VERSION    ;
-	@Getter	        private byte  st         = (byte)  0  ;
+	@Getter	        private byte  st         = (byte)  1  ;
 	@Getter	        private byte  hb         = (byte)  0  ;
 	@Getter	        private byte  ow         = (byte)  0  ;
 	@Getter	        private byte  rp         = (byte)  0  ;

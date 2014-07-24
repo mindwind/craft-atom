@@ -3,7 +3,6 @@ package org.craft.atom.protocol.rpc;
 import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.model.RpcHeader;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
-import org.craft.atom.protocol.rpc.spi.SerializationFactory;
 import org.craft.atom.test.CaseCounter;
 import org.craft.atom.util.ByteUtil;
 import org.junit.Assert;
@@ -23,13 +22,13 @@ public class TestRpcEncoder {
 	private static final byte ID          = 11;
 	
 	
-	private SerializationFactory<RpcBody> factory = KryoSerializationFactory.getInstance();
-	private RpcEncoder                    encoder = new RpcEncoder(factory);
+	private RpcEncoder                    encoder = new RpcEncoder();
 	
 	
 	@Test
 	public void testEncode() {
 		RpcHeader rh = new RpcHeader();
+		rh.setSt(KryoSerialization.getInstance().type());
 		rh.setHb();
 		rh.setOw();
 		rh.setRp();
@@ -49,7 +48,7 @@ public class TestRpcEncoder {
 		Assert.assertArrayEquals(ByteUtil.short2bytes(RpcHeader.MAGIC), ByteUtil.split(b, 0, 2));
 		Assert.assertArrayEquals(ByteUtil.short2bytes(RpcHeader.HEADER_SIZE), ByteUtil.split(b, 2, 4));
 		Assert.assertEquals(RpcHeader.VERSION, b[4]);
-		Assert.assertEquals( factory.newSerialization().type(), rh.getSt());
+		Assert.assertEquals(KryoSerialization.getInstance().type(), rh.getSt());
 		Assert.assertEquals(rh.getSt() | rh.getHb() | rh.getOw() | rh.getRp(), b[5]);
 		Assert.assertEquals(STATUS_CODE, b[6]);
 		Assert.assertEquals(0, b[7]);

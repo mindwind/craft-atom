@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import org.craft.atom.protocol.AbstractProtocolDecoder;
 import org.craft.atom.protocol.ProtocolDecoder;
@@ -13,7 +12,6 @@ import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.model.RpcHeader;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.protocol.rpc.spi.Serialization;
-import org.craft.atom.protocol.rpc.spi.SerializationFactory;
 import org.craft.atom.util.ByteUtil;
 
 /**
@@ -40,12 +38,18 @@ public class RpcDecoder extends AbstractProtocolDecoder implements ProtocolDecod
 	private static final int END         = -1;
 	
 	
-	@Getter @Setter private SerializationFactory<RpcBody> factory        ;
-	@Getter         private RpcMessage                    rm             ;
-	@Getter         private int                           state   = START;
+	        private SerializationRegistry registry = SerializationRegistry.getInstance();
+	@Getter private RpcMessage            rm                                            ;
+	@Getter private int                   state    = START                              ;
 	
 	
-	// ~ ------------------------------------------------------------------------------------------------------------
+	// ~ --------------------------------------------------------------------------------------------------------------
+
+	
+	public RpcDecoder() {}
+		
+		
+	// ~ --------------------------------------------------------------------------------------------------------------
 
 	
 	@Override
@@ -87,7 +91,8 @@ public class RpcDecoder extends AbstractProtocolDecoder implements ProtocolDecod
 		int bs = rm.getHeader().getBodySize();
 		if (buf.length() <  hs + bs) { return; }
 		
-		Serialization<RpcBody> deserializer = factory.newSerialization();
+		Serialization<RpcBody> deserializer = registry.lookup(rm.getHeader().getSt());
+		if (deserializer == null) throw new ProtocolException("No mapping `deserializer`!");
 		RpcBody rb = deserializer.deserialize(buf.buffer(), 20 + splitIndex);
 		rm.setBody(rb);
 		searchIndex += bs;

@@ -21,13 +21,21 @@ import com.esotericsoftware.kryo.io.Output;
  */
 public class KryoSerialization implements Serialization<RpcBody> {
 	
+	// singleton
+	private static final KryoSerialization INSTNACE = new KryoSerialization();
+	public static KryoSerialization getInstance() { return INSTNACE; } 
+	private KryoSerialization() {}
 	
-	private Kryo kryo = new Kryo();
-
 	
-	public KryoSerialization() {
-		kryo.register(RpcBody.class);
-	}
+	// thread local cache
+    private static final ThreadLocal<Kryo> CACHE = new ThreadLocal<Kryo>() {
+    	@Override
+    	protected Kryo initialValue() {
+            Kryo kryo = new Kryo();
+            kryo.register(RpcBody.class);
+            return kryo;
+        }
+    };
 	
 	@Override
 	public byte type() {
@@ -39,7 +47,7 @@ public class KryoSerialization implements Serialization<RpcBody> {
 		Assert.notNull(rb);
 	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    Output output = new Output(baos);
-	    kryo.writeObject(output, rb);
+	    CACHE.get().writeObject(output, rb);
 	    output.close();
 	    return baos.toByteArray();
 	}
@@ -54,7 +62,7 @@ public class KryoSerialization implements Serialization<RpcBody> {
 		Assert.notNull(bytes);
 		ByteArrayInputStream bais = new ByteArrayInputStream(bytes, off, bytes.length - off);
 		Input input = new Input(bais);
-		RpcBody rb = kryo.readObject(input, RpcBody.class);
+		RpcBody rb = CACHE.get().readObject(input, RpcBody.class);
 	    input.close();
 		return rb;
 	}
