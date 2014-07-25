@@ -2,6 +2,7 @@ package org.craft.atom.protocol.rpc;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.lang.ref.SoftReference;
 
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.rpc.model.RpcBody;
@@ -29,12 +30,12 @@ public class KryoSerialization implements Serialization<RpcBody> {
 	
 	
 	// thread local cache
-    private static final ThreadLocal<Kryo> CACHE = new ThreadLocal<Kryo>() {
+    private static final ThreadLocal<SoftReference<Kryo>> CACHE = new ThreadLocal<SoftReference<Kryo>>() {
     	@Override
-    	protected Kryo initialValue() {
+    	protected SoftReference<Kryo> initialValue() {
             Kryo kryo = new Kryo();
             kryo.register(RpcBody.class);
-            return kryo;
+            return new SoftReference<Kryo>(kryo);
         }
     };
 	
@@ -49,12 +50,21 @@ public class KryoSerialization implements Serialization<RpcBody> {
 			Assert.notNull(rb);
 		    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		    Output output = new Output(baos);
-		    CACHE.get().writeObject(output, rb);
+		    kryo().writeObject(output, rb);
 		    output.close();
 		    return baos.toByteArray();
 		} catch (Exception e) {
 			throw new ProtocolException(e);
 		}
+	}
+	
+	private Kryo kryo() {
+		Kryo kryo = CACHE.get().get();
+		if (kryo == null) {
+			kryo = new Kryo();
+			CACHE.set(new SoftReference<Kryo>(kryo));
+		}
+		return kryo;
 	}
 
 	@Override
@@ -68,7 +78,7 @@ public class KryoSerialization implements Serialization<RpcBody> {
 		    Assert.notNull(bytes);
 		    ByteArrayInputStream bais = new ByteArrayInputStream(bytes, off, bytes.length - off);
 		    Input input = new Input(bais);
-		    RpcBody rb = CACHE.get().readObject(input, RpcBody.class);
+		    RpcBody rb = kryo().readObject(input, RpcBody.class);
 	        input.close();
 		    return rb;
 		} catch (Exception e) {
