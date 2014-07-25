@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.model.RpcHeader;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.test.CaseCounter;
+import org.craft.atom.util.ByteArrayBuffer;
 import org.craft.atom.util.ByteUtil;
 import org.junit.Assert;
 import org.junit.Before;
@@ -81,7 +83,7 @@ public class TestRpcCodec {
 		
 		LOG.debug("[CRAFT-ATOM-PROTOCOL-RPC] |expected ={}|", rm);
 		LOG.debug("[CRAFT-ATOM-PROTOCOL-RPC] |actual   ={}|", drm);
-		System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test decode. ", CaseCounter.incr(2)));
+		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test decode. ", CaseCounter.incr(2));
 	}
 	
 	@Test 
@@ -90,6 +92,45 @@ public class TestRpcCodec {
 		testInRandomLoop(rm, bytes, 1, true);
 		testInRandomLoop(rm, bytes, 100, false);
 		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test streaming decode. ", CaseCounter.incr(2));
+	}
+	
+	@Test
+	public void testPipelineDecode() {
+		byte[] bytes = encoder.encode(rm);
+		ByteArrayBuffer buf = new ByteArrayBuffer();
+		buf.append(bytes).append(bytes).append(bytes, 0, 10);
+		byte[] b = buf.array();
+		List<RpcMessage> l = decoder.decode(b);
+		Assert.assertEquals(2, l.size());
+		Assert.assertEquals(rm, l.get(0));
+		Assert.assertEquals(rm, l.get(1));
+		l = decoder.decode(ByteUtil.split(bytes, 10, bytes.length));
+		Assert.assertEquals(1, l.size());
+		Assert.assertEquals(rm, l.get(0));
+		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test pipeline decode. ", CaseCounter.incr(5));
+	}
+	
+	@Test
+	public void testInvalidDecode() {
+		byte[] bytes = encoder.encode(rm);
+		bytes[0] = (byte) (bytes[0] + 1);
+		try {
+			decoder.decode(bytes);
+			Assert.fail();
+		} catch (ProtocolException e) {
+			Assert.assertTrue(true);
+		}
+		
+		bytes = encoder.encode(rm);
+		bytes[50] = (byte) (bytes[50] + 1);
+		try {
+			decoder.reset();
+			decoder.decode(bytes);
+			Assert.fail();
+		} catch (ProtocolException e) {
+			Assert.assertTrue(true);
+		}
+		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test invalid decode. ", CaseCounter.incr(2));
 	}
 	
 	private void testInRandomLoop(RpcMessage expected, byte[] bytes, int loop, boolean onebyte) {
