@@ -70,7 +70,7 @@ public class TestRpcCodec {
 		Assert.assertEquals(0, b[7]);
 		Assert.assertEquals(ID, ByteUtil.bytes2long(b, 8));
 		Assert.assertTrue(ByteUtil.bytes2int(b, 16) > 0);
-		System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test encode. ", CaseCounter.incr(9)));
+		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test encode.\n", CaseCounter.incr(9));
 	}
 	
 	@Test
@@ -83,7 +83,7 @@ public class TestRpcCodec {
 		
 		LOG.debug("[CRAFT-ATOM-PROTOCOL-RPC] |expected ={}|", rm);
 		LOG.debug("[CRAFT-ATOM-PROTOCOL-RPC] |actual   ={}|", drm);
-		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test decode. ", CaseCounter.incr(2));
+		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test decode.\n", CaseCounter.incr(2));
 	}
 	
 	@Test 
@@ -91,7 +91,7 @@ public class TestRpcCodec {
 		byte[] bytes = encoder.encode(rm);
 		testInRandomLoop(rm, bytes, 1, true);
 		testInRandomLoop(rm, bytes, 100, false);
-		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test streaming decode. ", CaseCounter.incr(2));
+		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test streaming decode.\n", CaseCounter.incr(2));
 	}
 	
 	@Test
@@ -107,7 +107,7 @@ public class TestRpcCodec {
 		l = decoder.decode(ByteUtil.split(bytes, 10, bytes.length));
 		Assert.assertEquals(1, l.size());
 		Assert.assertEquals(rm, l.get(0));
-		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test pipeline decode. ", CaseCounter.incr(5));
+		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test pipeline decode.\n", CaseCounter.incr(5));
 	}
 	
 	@Test
@@ -130,7 +130,7 @@ public class TestRpcCodec {
 		} catch (ProtocolException e) {
 			Assert.assertTrue(true);
 		}
-		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test invalid decode. ", CaseCounter.incr(2));
+		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test invalid decode.\n", CaseCounter.incr(2));
 	}
 	
 	private void testInRandomLoop(RpcMessage expected, byte[] bytes, int loop, boolean onebyte) {
