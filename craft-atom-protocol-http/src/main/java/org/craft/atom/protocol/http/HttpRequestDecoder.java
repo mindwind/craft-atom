@@ -83,7 +83,7 @@ public class HttpRequestDecoder extends HttpDecoder<HttpRequest> implements Prot
 
 	private List<HttpRequest> decode0(byte[] bytes) throws ProtocolException, IOException {
 		List<HttpRequest> reqs = new ArrayList<HttpRequest>();
-		reset();
+		adapt();
 		buf.append(bytes);
 		
 		while (searchIndex < buf.length()) {

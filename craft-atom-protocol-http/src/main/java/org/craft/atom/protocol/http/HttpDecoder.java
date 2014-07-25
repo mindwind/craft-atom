@@ -421,7 +421,7 @@ abstract public class HttpDecoder<T extends HttpMessage> extends AbstractProtoco
 		state = HEADER_VALUE_PREFIX;
 	}
 	
-	protected void reset() {
+	protected void adapt() {
 		if (splitIndex > 0 && splitIndex < buf.length()) {
 			byte[] tailBytes = buf.array(splitIndex, buf.length());
 			buf.clear();

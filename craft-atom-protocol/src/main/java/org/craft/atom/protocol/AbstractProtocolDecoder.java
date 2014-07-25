@@ -12,7 +12,7 @@ import org.craft.atom.util.ByteArrayBuffer;
  * It contains three index for concrete protocol decoder using:
  * - splitIndex : The separator index position according to specific protocol, indicates next byte nearby last complete protocol object.<br>
  * - searchIndex: The cursor index position for protocol process, indicates next byte would be process by protocol codec.<br>
- * - stateIndex : The index position for protocol state machine process .
+ * - stateIndex : The index position for protocol state machine process.
  * 
  * 
  * @author mindwind
@@ -32,7 +32,7 @@ abstract public class AbstractProtocolDecoder extends AbstractProtocolCodec {
 	// ~ ----------------------------------------------------------------------------------------------------------
 
 	
-	protected void reset() {
+	protected void adapt() {
 		if (splitIndex > 0 && splitIndex < buf.length()) {
 			byte[] tailBytes = buf.array(splitIndex, buf.length());
 			buf.clear();

@@ -66,7 +66,7 @@ public class TextLineDecoder extends AbstractProtocolDecoder implements Protocol
 	@Override
 	public List<String> decode(byte[] bytes) throws ProtocolException {
 		List<String> strs = new ArrayList<String>();
-		reset();
+		adapt();
 		buf.append(bytes);
 		
 		while (searchIndex < buf.length()) {

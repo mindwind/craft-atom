@@ -55,7 +55,7 @@ public class RpcDecoder extends AbstractProtocolDecoder implements ProtocolDecod
 	@Override
 	public List<RpcMessage> decode(byte[] bytes) throws ProtocolException {
 		List<RpcMessage> msgs = new ArrayList<RpcMessage>();
-		reset();
+		adapt();
 		buf.append(bytes);
 		
 		while (searchIndex < buf.length() || state == END) {
