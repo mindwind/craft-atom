@@ -1,5 +1,7 @@
 package org.craft.atom.protocol.rpc.spi;
 
+import org.craft.atom.protocol.ProtocolException;
+
 /**
  * Serialize object to bytes or deserialize object from bytes.
  * 
@@ -19,7 +21,7 @@ public interface Serialization<T> {
 	 * @param object
 	 * @return serialized bytes
 	 */
-	byte[] serialize(T object);
+	byte[] serialize(T object) throws ProtocolException;
 	
 	/**
 	 * Deserialize object from bytes.
@@ -27,7 +29,7 @@ public interface Serialization<T> {
 	 * @param bytes byte array
 	 * @return deserialized object.
 	 */
-	T deserialize(byte[] bytes);
+	T deserialize(byte[] bytes) throws ProtocolException;
 	
 	/**
 	 * Deserialize object from bytes at specific offset .
@@ -36,6 +38,6 @@ public interface Serialization<T> {
 	 * @param off   offset
 	 * @return deserialized object.
 	 */
-	T deserialize(byte[] bytes, int off);
+	T deserialize(byte[] bytes, int off) throws ProtocolException;
 	
 }

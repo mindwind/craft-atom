@@ -37,7 +37,10 @@ public class HttpParameterDecoder extends AbstractProtocolCodec implements Proto
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
-
+	
+	
+	@Override
+	public void reset() {}
 	
 	@Override
 	public List<Map<String, List<String>>> decode(byte[] bytes) throws ProtocolException {

@@ -3,6 +3,7 @@ package org.craft.atom.protocol.rpc;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.spi.Serialization;
 import org.craft.atom.util.Assert;
@@ -44,12 +45,16 @@ public class KryoSerialization implements Serialization<RpcBody> {
 
 	@Override
 	public byte[] serialize(RpcBody rb) {
-		Assert.notNull(rb);
-	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	    Output output = new Output(baos);
-	    CACHE.get().writeObject(output, rb);
-	    output.close();
-	    return baos.toByteArray();
+		try {
+			Assert.notNull(rb);
+		    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		    Output output = new Output(baos);
+		    CACHE.get().writeObject(output, rb);
+		    output.close();
+		    return baos.toByteArray();
+		} catch (Exception e) {
+			throw new ProtocolException(e);
+		}
 	}
 
 	@Override
@@ -59,12 +64,16 @@ public class KryoSerialization implements Serialization<RpcBody> {
 
 	@Override
 	public RpcBody deserialize(byte[] bytes, int off) {
-		Assert.notNull(bytes);
-		ByteArrayInputStream bais = new ByteArrayInputStream(bytes, off, bytes.length - off);
-		Input input = new Input(bais);
-		RpcBody rb = CACHE.get().readObject(input, RpcBody.class);
-	    input.close();
-		return rb;
+		try {
+		    Assert.notNull(bytes);
+		    ByteArrayInputStream bais = new ByteArrayInputStream(bytes, off, bytes.length - off);
+		    Input input = new Input(bais);
+		    RpcBody rb = CACHE.get().readObject(input, RpcBody.class);
+	        input.close();
+		    return rb;
+		} catch (Exception e) {
+			throw new ProtocolException(e);
+		}
 	}
 
 }

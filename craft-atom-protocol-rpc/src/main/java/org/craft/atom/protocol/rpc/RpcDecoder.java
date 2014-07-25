@@ -25,7 +25,6 @@ import org.craft.atom.util.ByteUtil;
 public class RpcDecoder extends AbstractProtocolDecoder implements ProtocolDecoder<RpcMessage> {
 	
 	
-	private static final int START       = 0;
 	private static final int MAGIC       = 11;
 	private static final int HEADER_SIZE = 12;
 	private static final int VERSION     = 13;
@@ -35,12 +34,10 @@ public class RpcDecoder extends AbstractProtocolDecoder implements ProtocolDecod
 	private static final int MESSAGE_ID  = 17;
 	private static final int BODY_SIZE   = 18;
 	private static final int BODY        = 20;
-	private static final int END         = -1;
 	
 	
 	        private SerializationRegistry registry = SerializationRegistry.getInstance();
 	@Getter private RpcMessage            rm                                            ;
-	@Getter private int                   state    = START                              ;
 	
 	
 	// ~ --------------------------------------------------------------------------------------------------------------
@@ -51,6 +48,12 @@ public class RpcDecoder extends AbstractProtocolDecoder implements ProtocolDecod
 		
 	// ~ --------------------------------------------------------------------------------------------------------------
 
+	
+	@Override
+	public void reset() {
+		super.reset();
+		rm = null;
+	}
 	
 	@Override
 	public List<RpcMessage> decode(byte[] bytes) throws ProtocolException {

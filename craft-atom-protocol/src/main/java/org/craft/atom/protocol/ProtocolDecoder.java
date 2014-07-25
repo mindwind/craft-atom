@@ -19,4 +19,9 @@ public interface ProtocolDecoder<P> {
 	 */
 	List<P> decode(byte[] bytes) throws ProtocolException;
 	
+	/**
+	 * Reset decoder internal state.
+	 */
+	void reset();
+	
 }

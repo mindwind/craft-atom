@@ -39,6 +39,7 @@ public class HttpCookieDecoder extends AbstractProtocolCodec implements Protocol
 	private static final int EXTENSION_ATTRIBUTE_VALUE =  9;
 	private static final int END                       = -1;
 	
+	
 	private boolean setCookie = false;
 	
 	
@@ -54,6 +55,9 @@ public class HttpCookieDecoder extends AbstractProtocolCodec implements Protocol
 	
 	// ~ ----------------------------------------------------------------------------------------------------------
 	
+	
+	@Override
+	public void reset() {}
 	
 	@Override
 	public List<Cookie> decode(byte[] bytes) throws ProtocolException {
