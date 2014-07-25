@@ -2,6 +2,7 @@ package org.craft.atom.protocol.rpc.model;
 
 import java.io.Serializable;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -35,6 +36,7 @@ import org.craft.atom.util.ByteUtil;
  * @version 1.0, Jul 18, 2014
  */
 @ToString
+@EqualsAndHashCode(of = { "magic", "headerSize", "version", "st", "hb", "ow", "rp", "statusCode", "reserved", "id", "bodySize" })
 public class RpcHeader implements Serializable {
 
 	

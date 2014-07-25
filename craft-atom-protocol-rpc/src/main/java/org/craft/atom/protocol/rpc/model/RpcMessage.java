@@ -2,6 +2,7 @@ package org.craft.atom.protocol.rpc.model;
 
 import java.io.Serializable;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,6 +19,7 @@ import lombok.ToString;
  * @version 1.0, Jul 17, 2014
  */
 @ToString
+@EqualsAndHashCode(of = { "header", "body" })
 public class RpcMessage implements Serializable {
 
 	
