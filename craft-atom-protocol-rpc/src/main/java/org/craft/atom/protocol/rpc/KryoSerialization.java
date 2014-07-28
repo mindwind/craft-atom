@@ -12,6 +12,7 @@ import org.craft.atom.util.Assert;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.esotericsoftware.kryo.serializers.CompatibleFieldSerializer;
 
 /**
  * The implementor using <a href="https://github.com/EsotericSoftware/kryo">kryo</a>.
@@ -35,6 +36,7 @@ public class KryoSerialization implements Serialization<RpcBody> {
     	protected SoftReference<Kryo> initialValue() {
             Kryo kryo = new Kryo();
             kryo.register(RpcBody.class);
+            kryo.setDefaultSerializer(CompatibleFieldSerializer.class);
             return new SoftReference<Kryo>(kryo);
         }
     };

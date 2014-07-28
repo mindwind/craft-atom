@@ -26,7 +26,6 @@ public class SerialA {
 	@Getter @Setter private double  d   ;
 	@Getter @Setter private boolean bool;
 	
-	
 	// object
 	@Getter @Setter private String                    s                                           ;
 	@Getter @Setter private Date                      date   = new Date()                         ;
@@ -37,10 +36,14 @@ public class SerialA {
 	@Getter @Setter private SerialEnum                senum                                       ;
 	@Getter @Setter private SerialB                   seb                                         ;
 	
-	
 	// transient
 	@Getter @Setter transient private String t;
-
+	
+	
+	// volatile
+	@Getter @Setter volatile private String v;
+//	@Getter @Setter volatile private String v2 = "vvvvvv";
+	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
