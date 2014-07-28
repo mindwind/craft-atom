@@ -12,4 +12,5 @@ public class SerialB {
 	
 	@Getter @Setter private SerialA sea  ;
 	@Getter @Setter private byte[]  bytes;
+	
 }

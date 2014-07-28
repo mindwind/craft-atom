@@ -36,7 +36,14 @@ public class SerialA {
 	@Getter @Setter private Map<String, List<String>> nested = new HashMap<String, List<String>>();
 	@Getter @Setter private SerialEnum                senum                                       ;
 	@Getter @Setter private SerialB                   seb                                         ;
+	
+	
+	// transient
+	@Getter @Setter transient private String t;
 
+	
+	// ~ -------------------------------------------------------------------------------------------------------------
+	
 
 	public SerialA addList(String e) {
 		list.add(e);

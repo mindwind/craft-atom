@@ -24,6 +24,7 @@ public class TestKryoSerialization {
 	
 	@Before
 	public void before() {
+		sa.setT("transient");
 		sa.setB((byte) 1);
 		sa.setI(2);
 		sa.setL(1000L);
@@ -77,6 +78,17 @@ public class TestKryoSerialization {
 		Assert.assertEquals(aa.getSeb(), ab);
 		Assert.assertEquals(ab.getSea(), aa);
 		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test kryo serialization basic.\n", CaseCounter.incr(21));
+	}
+	
+	@Test
+	public void testTransient() {
+		byte[] bytes = ks.serialize(rb);
+		RpcBody body = ks.deserialize(bytes);
+		Object[] args = body.getArgs();
+		SerialA aa = (SerialA) args[0];
+		
+		Assert.assertEquals(null, aa.getT());
+		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test kryo serialization transient.\n", CaseCounter.incr(1));
 	}
 	
 	
