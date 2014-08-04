@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 
 import org.craft.atom.protocol.AbstractProtocolDecoder;
@@ -25,9 +24,9 @@ import org.craft.atom.protocol.ProtocolExceptionType;
 public class TextLineDecoder extends AbstractProtocolDecoder implements ProtocolDecoder<String> {
 	
 	
-	@Getter @Setter private String delimiter      = "\n"                       ;
-	                private byte[] delimiterBytes = delimiter.getBytes(charset);
-	                private int    delimiterLen   = delimiterBytes.length      ;
+	@Getter private String delimiter      = "\n"                       ;
+	        private byte[] delimiterBytes = delimiter.getBytes(charset);
+	        private int    delimiterLen   = delimiterBytes.length      ;
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -89,6 +88,12 @@ public class TextLineDecoder extends AbstractProtocolDecoder implements Protocol
 		}
 		
 		return strs;
+	}
+
+	public void setDelimiter(String delimiter) {
+		this.delimiter      = delimiter;
+		this.delimiterBytes = delimiter.getBytes(charset);
+		this.delimiterLen   = delimiterBytes.length;
 	}
 
 }
