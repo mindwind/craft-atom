@@ -43,6 +43,7 @@
 		<module>craft-atom-test</module>
 		<module>craft-atom-protocol-ssl</module>
 		<module>craft-atom-protocol-rpc</module>
+		<module>craft-atom-rpc</module>
 	</modules>
 
 	<properties>
