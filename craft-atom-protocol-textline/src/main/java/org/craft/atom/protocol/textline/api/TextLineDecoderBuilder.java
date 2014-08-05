@@ -11,10 +11,10 @@ import org.craft.atom.protocol.textline.TextLineDecoder;
 public class TextLineDecoderBuilder {
 
 	
-	private String  delimiter        ;
-	private Charset charset          ;
-	private int     defaultBufferSize;
-	private int     maxSize          ;
+	private String  delimiter         = "\n"                    ;
+	private Charset charset           = Charset.forName("utf-8");
+	private int     defaultBufferSize = 2048                    ;
+	private int     maxSize           = defaultBufferSize * 1024;
 	
 	
 	public TextLineDecoderBuilder(Charset charset, String delimiter) {
