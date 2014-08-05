@@ -4,6 +4,7 @@ import static org.craft.atom.protocol.http.HttpConstants.EQUAL_SIGN;
 import static org.craft.atom.protocol.http.HttpConstants.SEMICOLON;
 import static org.craft.atom.protocol.http.HttpConstants.SP;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +49,12 @@ public class HttpCookieDecoder extends AbstractProtocolCodec implements Protocol
 	
 	public HttpCookieDecoder() {}
 	
-	public HttpCookieDecoder(boolean setCookie) {
+	public HttpCookieDecoder(Charset charset) {
+		this.charset = charset;
+	}
+	
+	public HttpCookieDecoder(Charset charset, boolean setCookie) {
+		this.charset   = charset;
 		this.setCookie = setCookie;
 	}
 	

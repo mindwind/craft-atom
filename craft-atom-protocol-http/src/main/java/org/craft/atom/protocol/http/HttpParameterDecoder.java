@@ -7,6 +7,7 @@ import static org.craft.atom.protocol.http.HttpConstants.PLUS_SIGN;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,16 @@ public class HttpParameterDecoder extends AbstractProtocolCodec implements Proto
 	private static final int NAME  =  1;
 	private static final int VALUE =  2;
 	private static final int END   = -1;
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
+	
+	public HttpParameterDecoder() {};
+	
+	public HttpParameterDecoder(Charset charset) {
+		this.charset = charset;
+	}
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------

@@ -11,6 +11,7 @@ import lombok.ToString;
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.http.HttpCookieDecoder;
 import org.craft.atom.protocol.http.HttpHeaders;
+import org.craft.atom.protocol.http.api.HttpCodecFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +33,9 @@ import org.slf4j.LoggerFactory;
 public class HttpResponse extends HttpMessage {
 
 	
-	private static final Logger            LOG                = LoggerFactory.getLogger(HttpResponse.class);
-	private static final long              serialVersionUID   = 1532809882773093282L                       ;
-	private static final HttpCookieDecoder SET_COOKIE_DECODER = new HttpCookieDecoder(true)                ;
+	private static final Logger            LOG                = LoggerFactory.getLogger(HttpResponse.class)                          ;
+	private static final long              serialVersionUID   = 1532809882773093282L                                                 ;
+	private static final HttpCookieDecoder SET_COOKIE_DECODER = HttpCodecFactory.newHttpCookieDecoder(Charset.forName("utf-8"), true);
 	
 	
 	@Getter @Setter private HttpStatusLine statusLine;

@@ -6,6 +6,7 @@ import java.util.Map;
 import junit.framework.Assert;
 
 import org.craft.atom.protocol.ProtocolException;
+import org.craft.atom.protocol.http.api.HttpCodecFactory;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -21,8 +22,8 @@ public class TestHttpParameterDecoder {
 	private static final Logger LOG = LoggerFactory.getLogger(TestHttpParameterDecoder.class);
 	
 	
-	private HttpParameterDecoder decoder = new HttpParameterDecoder();
-	private HttpParameterEncoder encoder = new HttpParameterEncoder();
+	private HttpParameterDecoder decoder = HttpCodecFactory.newHttpParameterDecoder();
+	private HttpParameterEncoder encoder = HttpCodecFactory.newHttpParameterEncoder();
 
 	
 	@Test

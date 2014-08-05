@@ -7,6 +7,7 @@ import java.util.Random;
 import junit.framework.Assert;
 
 import org.craft.atom.protocol.ProtocolException;
+import org.craft.atom.protocol.http.api.HttpCodecFactory;
 import org.craft.atom.protocol.http.model.Cookie;
 import org.craft.atom.protocol.http.model.HttpRequest;
 import org.craft.atom.test.CaseCounter;
@@ -36,8 +37,8 @@ public class TestHttpRequestDecoder {
 	
 	@Before
 	public void before() {
-		encoder = new HttpRequestEncoder();
-		decoder = new HttpRequestDecoder();
+		encoder = HttpCodecFactory.newHttpRequestEncoder();
+		decoder = HttpCodecFactory.newHttpRequestDecoder();
 	}
 	
 	@Test 

@@ -1,5 +1,7 @@
 package org.craft.atom.protocol.http;
 
+import java.nio.charset.Charset;
+
 import lombok.ToString;
 
 import org.craft.atom.protocol.ProtocolEncoder;
@@ -16,6 +18,14 @@ import org.craft.atom.protocol.http.model.HttpRequest;
  */
 @ToString(callSuper = true)
 public class HttpRequestEncoder extends HttpEncoder implements ProtocolEncoder<HttpRequest> {
+	
+	
+	public HttpRequestEncoder() {}
+	
+	public HttpRequestEncoder(Charset charset) {
+		this.charset = charset;
+	}
+	
 
 	@Override
 	public byte[] encode(HttpRequest request) throws ProtocolException {

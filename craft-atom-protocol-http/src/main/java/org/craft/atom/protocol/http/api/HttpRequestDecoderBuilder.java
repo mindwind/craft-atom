@@ -17,11 +17,6 @@ public class HttpRequestDecoderBuilder {
 	private int     maxRequestSize    = defaultBufferSize * 1024;
 	
 	
-	public HttpRequestDecoderBuilder(Charset charset) {
-		this.charset = charset;
-	}
-	
-	
 	public HttpRequestDecoderBuilder charset          (Charset charset)       { this.charset           = charset          ; return this; }
 	public HttpRequestDecoderBuilder defaultBufferSize(int defaultBufferSize) { this.defaultBufferSize = defaultBufferSize; return this; }
 	public HttpRequestDecoderBuilder maxLineLength    (int maxLineLength)     { this.maxLineLength     = maxLineLength    ; return this; }

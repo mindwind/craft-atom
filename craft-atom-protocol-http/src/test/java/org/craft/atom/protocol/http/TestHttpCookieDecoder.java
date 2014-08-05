@@ -1,10 +1,12 @@
 package org.craft.atom.protocol.http;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 import junit.framework.Assert;
 
 import org.craft.atom.protocol.ProtocolException;
+import org.craft.atom.protocol.http.api.HttpCodecFactory;
 import org.craft.atom.protocol.http.model.Cookie;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
@@ -21,9 +23,9 @@ public class TestHttpCookieDecoder {
 	private static final Logger LOG = LoggerFactory.getLogger(TestHttpCookieDecoder.class);
 	
 	
-	private HttpCookieDecoder cookieDecoder    = new HttpCookieDecoder()    ;
-	private HttpCookieEncoder encoder          = new HttpCookieEncoder()    ;
-	private HttpCookieDecoder setCookieDecoder = new HttpCookieDecoder(true);
+	private HttpCookieDecoder cookieDecoder    = HttpCodecFactory.newHttpCookieDecoder();
+	private HttpCookieEncoder encoder          = HttpCodecFactory.newHttpCookieEncoder();
+	private HttpCookieDecoder setCookieDecoder = HttpCodecFactory.newHttpCookieDecoder(Charset.forName("utf-8"), true);
 	
 
 	@Test
