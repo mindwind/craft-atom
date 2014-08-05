@@ -48,7 +48,7 @@ public abstract class HttpMessage implements Serializable {
 	
 	@Getter @Setter protected List<HttpHeader> headers = new ArrayList<HttpHeader>();
 	@Getter @Setter protected HttpEntity       entity                               ;
-	@Setter         protected List<Cookie>     cookies                              ;
+	@Setter         protected List<HttpCookie>     cookies                              ;
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -168,7 +168,7 @@ public abstract class HttpMessage implements Serializable {
 	 * 
 	 * @return all cookies
 	 */
-	public List<Cookie> getCookies() {
+	public List<HttpCookie> getCookies() {
 		if (this.cookies != null) {
 			return Collections.unmodifiableList(this.cookies);
 		}
@@ -187,14 +187,14 @@ public abstract class HttpMessage implements Serializable {
 	 * @param name
 	 * @return cookies with the name
 	 */
-	public List<Cookie> getCookies(String name) {
-		List<Cookie> cookies = new ArrayList<Cookie>();
+	public List<HttpCookie> getCookies(String name) {
+		List<HttpCookie> cookies = new ArrayList<HttpCookie>();
 		if (name == null) {
 			return cookies;
 		}
 		
-		List<Cookie> allCookies = getCookies();
-		for (Cookie cookie : allCookies) {
+		List<HttpCookie> allCookies = getCookies();
+		for (HttpCookie cookie : allCookies) {
 			if (name.equalsIgnoreCase(cookie.getName())) {
 				cookies.add(cookie);
 			}
@@ -212,8 +212,8 @@ public abstract class HttpMessage implements Serializable {
 	 * @param name
 	 * @return a cookie with the name
 	 */
-	public Cookie getCookie(String name) {
-		List<Cookie> cookies = getCookies(name);
+	public HttpCookie getCookie(String name) {
+		List<HttpCookie> cookies = getCookies(name);
 		if (cookies.isEmpty()) {
 			return null;
 		}
@@ -227,9 +227,9 @@ public abstract class HttpMessage implements Serializable {
      * @param cookie
      *            the Cookie to return to the client
      */
-    abstract public void addCookie(Cookie cookie);
+    abstract public void addCookie(HttpCookie cookie);
 	
-	abstract protected List<Cookie> parseCookies();
+	abstract protected List<HttpCookie> parseCookies();
 	
 	/**
 	 * Returns the content type of the http message, or <code>null</code> if message has no entity.

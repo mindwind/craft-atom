@@ -7,7 +7,7 @@ import lombok.ToString;
 import org.craft.atom.protocol.AbstractProtocolCodec;
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
-import org.craft.atom.protocol.http.model.Cookie;
+import org.craft.atom.protocol.http.model.HttpCookie;
 
 /**
  * A {@link ProtocolEncoder} which encodes a {@code Cookie} object into bytes follow the HTTP specification, default charset is utf-8.
@@ -18,7 +18,7 @@ import org.craft.atom.protocol.http.model.Cookie;
  * @version 1.0, Mar 25, 2013
  */
 @ToString(callSuper = true)
-public class HttpCookieEncoder extends AbstractProtocolCodec implements ProtocolEncoder<Cookie> {
+public class HttpCookieEncoder extends AbstractProtocolCodec implements ProtocolEncoder<HttpCookie> {
 
 	
 	public HttpCookieEncoder() {}
@@ -28,7 +28,7 @@ public class HttpCookieEncoder extends AbstractProtocolCodec implements Protocol
 	}
 	
 	@Override
-	public byte[] encode(Cookie cookie) throws ProtocolException {
+	public byte[] encode(HttpCookie cookie) throws ProtocolException {
 		String httpString = cookie.toHttpString();
 		return httpString.getBytes(charset);
 	}

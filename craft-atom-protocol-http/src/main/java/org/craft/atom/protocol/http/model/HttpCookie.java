@@ -74,7 +74,7 @@ import org.craft.atom.protocol.http.HttpDates;
  * @version 1.0, Mar 22, 2013
  */
 @ToString(of = { "name", "value", "domain", "path", "httpOnly", "secure", "expires", "maxAge", "extension" })
-public class Cookie implements Serializable {
+public class HttpCookie implements Serializable {
 
 	
 	private static final long serialVersionUID = 5584804359930330729L;
@@ -103,11 +103,11 @@ public class Cookie implements Serializable {
 	// ~ ----------------------------------------------------------------------------------------------------------
 	
 	
-	public Cookie() {
+	public HttpCookie() {
 		super();
 	}
 
-	public Cookie(String name, String value) {
+	public HttpCookie(String name, String value) {
 		if (name == null) {
             throw new IllegalArgumentException("Name should not be null");
         }
@@ -115,21 +115,21 @@ public class Cookie implements Serializable {
 		this.value = value;
 	}
 
-	public Cookie(String name, String value, String domain) {
+	public HttpCookie(String name, String value, String domain) {
 		this(name, value);
 		this.domain = domain;
 	}
 
-	public Cookie(String name, String value, String domain, String path) {
+	public HttpCookie(String name, String value, String domain, String path) {
 		this(name, value, domain);
 		this.path = path;
 	}
 
-	public Cookie(String name, String value, String domain, String path, boolean httpOnly) {
+	public HttpCookie(String name, String value, String domain, String path, boolean httpOnly) {
 		this(name, value, domain, path);
 	}
 	
-	public Cookie(String name, String value, String domain, String path, boolean httpOnly, int maxAge) {
+	public HttpCookie(String name, String value, String domain, String path, boolean httpOnly, int maxAge) {
 		this(name, value, domain, path, httpOnly);
 		this.maxAge = maxAge;
 	}

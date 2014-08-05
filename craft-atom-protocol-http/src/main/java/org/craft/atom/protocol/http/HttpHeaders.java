@@ -1,6 +1,6 @@
 package org.craft.atom.protocol.http;
 
-import org.craft.atom.protocol.http.model.Cookie;
+import org.craft.atom.protocol.http.model.HttpCookie;
 import org.craft.atom.protocol.http.model.HttpContentType;
 import org.craft.atom.protocol.http.model.HttpHeader;
 import org.craft.atom.protocol.http.model.HttpHeaderType;
@@ -85,7 +85,7 @@ public class HttpHeaders {
 	 * @param cookie
 	 * @return the newly created header
 	 */
-	public static HttpHeader newCookieHeader(Cookie cookie) {
+	public static HttpHeader newCookieHeader(HttpCookie cookie) {
 		if (cookie == null) {
 			return null;
 		}
@@ -98,7 +98,7 @@ public class HttpHeaders {
 	 * @param cookie
 	 * @return the newly created header
 	 */
-	public static HttpHeader newSetCookieHeader(Cookie cookie) {
+	public static HttpHeader newSetCookieHeader(HttpCookie cookie) {
 		if (cookie == null) {
 			return null;
 		}

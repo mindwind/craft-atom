@@ -13,19 +13,19 @@ import lombok.ToString;
 import org.craft.atom.protocol.AbstractProtocolCodec;
 import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.ProtocolException;
-import org.craft.atom.protocol.http.model.Cookie;
+import org.craft.atom.protocol.http.model.HttpCookie;
 
 /**
  * A {@link ProtocolDecoder} which decodes cookie string bytes into {@code Cookie} object, default charset is utf-8.
  * <br>
  * Only accept complete cookie bytes to decode, because this implementation is stateless and thread safe.
  * 
- * @see Cookie
+ * @see HttpCookie
  * @author mindwind
  * @version 1.0, Mar 25, 2013
  */
 @ToString(callSuper = true)
-public class HttpCookieDecoder extends AbstractProtocolCodec implements ProtocolDecoder<Cookie> {
+public class HttpCookieDecoder extends AbstractProtocolCodec implements ProtocolDecoder<HttpCookie> {
 	
 	
 	private static final int START                     =  0;
@@ -66,7 +66,7 @@ public class HttpCookieDecoder extends AbstractProtocolCodec implements Protocol
 	public void reset() {}
 	
 	@Override
-	public List<Cookie> decode(byte[] bytes) throws ProtocolException {
+	public List<HttpCookie> decode(byte[] bytes) throws ProtocolException {
 		try {
 			if (setCookie) {
 				return decode4setCookie(bytes);
@@ -83,10 +83,10 @@ public class HttpCookieDecoder extends AbstractProtocolCodec implements Protocol
 	
 	// Cookie: SID=31d4d96e407aad42; lang=en-US
 	// Cookie: test=test123
-	private List<Cookie> decode4cookie(byte[] bytes) throws ProtocolException {
-		List<Cookie> cookies = new ArrayList<Cookie>();
+	private List<HttpCookie> decode4cookie(byte[] bytes) throws ProtocolException {
+		List<HttpCookie> cookies = new ArrayList<HttpCookie>();
 		
-		Cookie cookie = null;
+		HttpCookie cookie = null;
 		int searchIndex = 0;
 		int stateIndex = 0;
 		int state = START;
@@ -99,7 +99,7 @@ public class HttpCookieDecoder extends AbstractProtocolCodec implements Protocol
 				for (; searchIndex < len && bytes[searchIndex] == SP; searchIndex++);
 				stateIndex = searchIndex;
 				state = NAME;
-				cookie = new Cookie();
+				cookie = new HttpCookie();
 				break;
 			case NAME:
 				for (; searchIndex < len && bytes[searchIndex] != EQUAL_SIGN; searchIndex++, i++);
@@ -133,10 +133,10 @@ public class HttpCookieDecoder extends AbstractProtocolCodec implements Protocol
 	
 	// Set-Cookie: SID=31d4d96e407aad42; Domain=example.com; Path=/; HttpOnly; Secure; Expires=Wed, 09 Jun 2021 10:18:14 GMT; Max-Age=86400
 	// Set-Cookie: SID=31d4d96e407aad42; Domain=example.com; Path=/; HttpOnly; Secure; Expires=Wed, 09 Jun 2021 10:18:14 GMT; Max-Age=86400; test=extensionTest
-	private List<Cookie> decode4setCookie(byte[] bytes) throws ProtocolException {
-		List<Cookie> cookies = new ArrayList<Cookie>();
+	private List<HttpCookie> decode4setCookie(byte[] bytes) throws ProtocolException {
+		List<HttpCookie> cookies = new ArrayList<HttpCookie>();
 		
-		Cookie cookie = null;
+		HttpCookie cookie = null;
 		int searchIndex = 0;
 		int stateIndex = 0;
 		int state = START;
@@ -151,7 +151,7 @@ public class HttpCookieDecoder extends AbstractProtocolCodec implements Protocol
 				for (; searchIndex < len && bytes[searchIndex] == SP; searchIndex++);
 				stateIndex = searchIndex;
 				state = NAME;
-				cookie = new Cookie();
+				cookie = new HttpCookie();
 				break;
 			case NAME:
 				for (; searchIndex < len && bytes[searchIndex] != EQUAL_SIGN; searchIndex++, i++);
@@ -182,27 +182,27 @@ public class HttpCookieDecoder extends AbstractProtocolCodec implements Protocol
 			case ATTRIBUTE_NAME:
 				for (; searchIndex < len && bytes[searchIndex] != EQUAL_SIGN && bytes[searchIndex] != SEMICOLON; searchIndex++, i++);
 				String an = new String(bytes, stateIndex, i, charset);
-				if (Cookie.DOMAIN.equalsIgnoreCase(an)) {
+				if (HttpCookie.DOMAIN.equalsIgnoreCase(an)) {
 					state = DOMAIN_ATTRIBUTE_VALUE;
-				} else if (Cookie.PATH.equalsIgnoreCase(an)) {
+				} else if (HttpCookie.PATH.equalsIgnoreCase(an)) {
 					state = PATH_ATTRIBUTE_VALUE;
-				} else if (Cookie.HTTP_ONLY.equalsIgnoreCase(an)) {
+				} else if (HttpCookie.HTTP_ONLY.equalsIgnoreCase(an)) {
 					cookie.setHttpOnly(true);
 					if (searchIndex >= len) {
 						state = END;
 					} else {
 						state = ATTRIBUTE_START;
 					}
-				} else if (Cookie.SECURE.equalsIgnoreCase(an)) {
+				} else if (HttpCookie.SECURE.equalsIgnoreCase(an)) {
 					cookie.setSecure(true);
 					if (searchIndex >= len) {
 						state = END;
 					} else {
 						state = ATTRIBUTE_START;
 					}
-				} else if (Cookie.EXPIRES.equalsIgnoreCase(an)) {
+				} else if (HttpCookie.EXPIRES.equalsIgnoreCase(an)) {
 					state = EXPIRES_ATTRIBUTE_VALUE;
-				} else if (Cookie.MAX_AGE.equalsIgnoreCase(an)) {
+				} else if (HttpCookie.MAX_AGE.equalsIgnoreCase(an)) {
 					state = MAX_AGE_ATTRIBUTE_VALUE;
 				} else {
 					extentionName = an;

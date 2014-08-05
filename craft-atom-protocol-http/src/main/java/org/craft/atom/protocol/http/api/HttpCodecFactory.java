@@ -1,14 +1,20 @@
 package org.craft.atom.protocol.http.api;
 
 import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Map;
 
+import org.craft.atom.protocol.ProtocolDecoder;
+import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.http.HttpCookieDecoder;
 import org.craft.atom.protocol.http.HttpCookieEncoder;
 import org.craft.atom.protocol.http.HttpParameterDecoder;
 import org.craft.atom.protocol.http.HttpParameterEncoder;
-import org.craft.atom.protocol.http.HttpRequestDecoder;
 import org.craft.atom.protocol.http.HttpRequestEncoder;
 import org.craft.atom.protocol.http.HttpResponseEncoder;
+import org.craft.atom.protocol.http.model.HttpCookie;
+import org.craft.atom.protocol.http.model.HttpRequest;
+import org.craft.atom.protocol.http.model.HttpResponse;
 
 /**
  * HTTP codec factory.
@@ -20,15 +26,15 @@ public class HttpCodecFactory {
 	
 	
 	// http request
-	public static HttpRequestEncoder newHttpRequestEncoder() {
+	public static ProtocolEncoder<HttpRequest> newHttpRequestEncoder() {
 		return new HttpRequestEncoder();
 	}
 	
-	public static HttpRequestEncoder newHttpRequestEncoder(Charset charset) {
+	public static ProtocolEncoder<HttpRequest> newHttpRequestEncoder(Charset charset) {
 		return new HttpRequestEncoder(charset);
 	}
 	
-	public static HttpRequestDecoder newHttpRequestDecoder() {
+	public static ProtocolDecoder<HttpRequest> newHttpRequestDecoder() {
 		return newHttpRequestDecoderBuilder().build();
 	}
 	
@@ -38,29 +44,29 @@ public class HttpCodecFactory {
 	
 	
 	// http response
-	public static HttpResponseEncoder newHttpResponseEncoder() {
+	public static ProtocolEncoder<HttpResponse> newHttpResponseEncoder() {
 		return new HttpResponseEncoder();
 	}
 	
-	public static HttpResponseEncoder newHttpResponseEncoder(Charset charset) {
+	public static ProtocolEncoder<HttpResponse> newHttpResponseEncoder(Charset charset) {
 		return new HttpResponseEncoder(charset);
 	}
 	
 	
 	// http cookie
-	public static HttpCookieEncoder newHttpCookieEncoder() {
+	public static ProtocolEncoder<HttpCookie> newHttpCookieEncoder() {
 		return new HttpCookieEncoder();
 	}
 	
-	public static HttpCookieEncoder newHttpCookieEncoder(Charset charset) {
+	public static ProtocolEncoder<HttpCookie> newHttpCookieEncoder(Charset charset) {
 		return new HttpCookieEncoder(charset);
 	}
 	
-	public static HttpCookieDecoder newHttpCookieDecoder() {
+	public static ProtocolDecoder<HttpCookie> newHttpCookieDecoder() {
 		return new HttpCookieDecoder();
 	}
 	
-	public static HttpCookieDecoder newHttpCookieDecoder(Charset charset) {
+	public static ProtocolDecoder<HttpCookie> newHttpCookieDecoder(Charset charset) {
 		return new HttpCookieDecoder(charset);
 	}
 	
@@ -70,19 +76,19 @@ public class HttpCodecFactory {
 	
 	
 	// http parameter
-	public static HttpParameterEncoder newHttpParameterEncoder() {
+	public static ProtocolEncoder<Map<String, List<String>>> newHttpParameterEncoder() {
 		return new HttpParameterEncoder();
 	}
 	
-	public static HttpParameterEncoder newHttpParameterEncoder(Charset charset) {
+	public static ProtocolEncoder<Map<String, List<String>>> newHttpParameterEncoder(Charset charset) {
 		return new HttpParameterEncoder(charset);
 	}
 	
-	public static HttpParameterDecoder newHttpParameterDecoder() {
+	public static ProtocolDecoder<Map<String, List<String>>> newHttpParameterDecoder() {
 		return new HttpParameterDecoder();
 	}
 	
-	public static HttpParameterDecoder newHttpParameterDecoder(Charset charset) {
+	public static ProtocolDecoder<Map<String, List<String>>> newHttpParameterDecoder(Charset charset) {
 		return new HttpParameterDecoder(charset);
 	}
 	
