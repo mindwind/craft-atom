@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.craft.atom.protocol.ProtocolDecoder;
+import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
+import org.craft.atom.protocol.rpc.api.RpcCodecFactory;
 import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.model.RpcHeader;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
@@ -31,10 +34,10 @@ public class TestRpcCodec {
 	private static final byte   ID          = 11                                         ;
 	
 	
-	private RpcMessage rm      = new RpcMessage();
-	private RpcHeader  rh      = new RpcHeader() ;
-	private RpcEncoder encoder = new RpcEncoder();
-	private RpcDecoder decoder = new RpcDecoder();
+	private RpcMessage                  rm      = new RpcMessage()               ;
+	private RpcHeader                   rh      = new RpcHeader()                ;
+	private ProtocolEncoder<RpcMessage> encoder = RpcCodecFactory.newRpcEncoder();
+	private ProtocolDecoder<RpcMessage> decoder = RpcCodecFactory.newRpcDecoder();
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
