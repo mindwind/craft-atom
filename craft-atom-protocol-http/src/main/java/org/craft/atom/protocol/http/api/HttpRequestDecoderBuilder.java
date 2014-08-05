@@ -2,7 +2,9 @@ package org.craft.atom.protocol.http.api;
 
 import java.nio.charset.Charset;
 
+import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.http.HttpRequestDecoder;
+import org.craft.atom.protocol.http.model.HttpRequest;
 
 /**
  * @author mindwind
@@ -23,7 +25,7 @@ public class HttpRequestDecoderBuilder {
 	public HttpRequestDecoderBuilder maxRequestSize   (int maxRequestSize)    { this.maxRequestSize    = maxRequestSize   ; return this; }
 	
 	
-	public HttpRequestDecoder build() {
+	public ProtocolDecoder<HttpRequest> build() {
 		return new HttpRequestDecoder(charset, defaultBufferSize, maxLineLength, maxRequestSize);
 	}
 	

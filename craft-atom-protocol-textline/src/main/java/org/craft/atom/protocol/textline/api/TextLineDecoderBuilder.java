@@ -2,6 +2,7 @@ package org.craft.atom.protocol.textline.api;
 
 import java.nio.charset.Charset;
 
+import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.textline.TextLineDecoder;
 
 /**
@@ -27,7 +28,7 @@ public class TextLineDecoderBuilder {
 	public TextLineDecoderBuilder maxSize          (int maxSize)           { this.maxSize           = maxSize          ; return this; }
 	
 	
-	public TextLineDecoder build() {
+	public ProtocolDecoder<String> build() {
 		return new TextLineDecoder(charset, delimiter, defaultBufferSize, maxSize);
 	}
 	
