@@ -53,9 +53,9 @@ public class TextLineDecoder extends AbstractProtocolDecoder implements Protocol
 		buf.reset(defaultBufferSize);
 	}
 
-	public TextLineDecoder(Charset charset, String delimiter, int defaultBufferSize, int maxLineLength) {
+	public TextLineDecoder(Charset charset, String delimiter, int defaultBufferSize, int maxSize) {
 		this(charset, delimiter, defaultBufferSize);
-		this.maxSize = maxLineLength;
+		this.maxSize = maxSize;
 	}
 	
 	
