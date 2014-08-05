@@ -15,6 +15,7 @@ import javax.xml.ws.ProtocolException;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.craft.atom.protocol.ssl.api.SslCodec;
 import org.craft.atom.util.buffer.AdaptiveByteBuffer;
 
 
@@ -23,9 +24,8 @@ import org.craft.atom.util.buffer.AdaptiveByteBuffer;
  * 
  * @author mindwind
  * @version 1.0, Oct 17, 2013
- * @deprecated replaced by {@code org.craft.atom.protocol.ssl.api.SslCodec}
  */
-public class SslCodec {
+public class DefaultSslCodec implements SslCodec {
 	
 	
 	/** 
@@ -35,13 +35,16 @@ public class SslCodec {
 	 * wantClientAuth     : Set true if the engine will <em>request</em> client authentication.This option is only useful to engines in the server mode. 
 	 * needClientAuth     : Set true if the engine will <em>require</em> client authentication.This option is only useful to engines in the server mode. 
 	 * clientMode         : Set true if the engine is set to use client mode when handshaking. 
+	 * handshakeComplete  : A flag set to true when a SSL Handshake has been completed. 
 	 * enabledCipherSuites: The cipher suites to be enabled when {@link SSLEngine} is initialized. <tt>null</tt> means use {@link SSLEngine}'s default.
 	 * enabledProtocols   : The protocols to be enabled when {@link SSLEngine} is initialized.<tt>null</tt> means use {@link SSLEngine}'s default. 
 	 * inNetBuffer        : Encrypted data from the net. 
 	 * outNetBuffer       : Encrypted data to be written to the net. 
-	 * appBuffer          : Application cleartext data to be read by application 
+	 * appBuffer          : Application cleartext data to be read by application.
+	 * peer               : peer address.
+	 * handshakeStatus    : internal handshake status.
 	 * emptyBuffer        : Empty buffer used during initial handshake and close operations. 
-	 * handshakeComplete  : A flag set to true when a SSL Handshake has been completed. 
+	 * 
 	 * </pre>
 	 */
 	@Getter @Setter private       boolean                         wantClientAuth                                      ;   
@@ -53,23 +56,26 @@ public class SslCodec {
                     private       AdaptiveByteBuffer              inNetBuffer                                         ;
                     private       AdaptiveByteBuffer              outNetBuffer                                        ;
                     private       AdaptiveByteBuffer              appBuffer                                           ;
-                    private       SslHandshakeHandler             handshakeHandler                                    ;
 	@Getter @Setter private       InetSocketAddress               peer                                                ;
-	@Getter @Setter private       SSLContext                      sslContext                                          ;
 	@Getter @Setter private       SSLEngine                       sslEngine                                           ;
 	@Getter         private       SSLEngineResult.HandshakeStatus handshakeStatus                                     ;
 	                private final AdaptiveByteBuffer              emptyBuffer         = AdaptiveByteBuffer.allocate(0);
+	                
+	            
+	                private SSLContext                                          sslContext         ;
+	                private org.craft.atom.protocol.ssl.spi.SslHandshakeHandler sslHandshakeHandler;
 
 	
 	// ~ -----------------------------------------------------------------------------------------------------------
 	
 	
-	public SslCodec(SSLContext sslContext, SslHandshakeHandler sslHandler) {
-		this.sslContext       = sslContext;
-		this.handshakeHandler = sslHandler;
+	public DefaultSslCodec(SSLContext sslContext, org.craft.atom.protocol.ssl.spi.SslHandshakeHandler sslHandshakeHandler) {
+		this.sslContext          = sslContext;
+		this.sslHandshakeHandler = sslHandshakeHandler;
+		init();
 	}
 	
-	public void init() {
+	private void init() {
 		if (peer == null) {
             sslEngine = sslContext.createSSLEngine();
         } else {
@@ -104,12 +110,7 @@ public class SslCodec {
 	// ~ -----------------------------------------------------------------------------------------------------------
 
 	
-	/**
-	 * Decode for ssl encrypt data
-	 * 
-	 * @param data
-	 * @return Only decrypt app data, the handshake data will write back to remote by {@link SslHandshakeHandler}
-	 */
+	@Override
 	synchronized public byte[] decode(byte[] data) {
 		if (data == null) {
 			return null;
@@ -209,7 +210,7 @@ public class SslCodec {
         }
         
         AdaptiveByteBuffer writeBuffer = fetchOutNetBuffer();
-        handshakeHandler.needWrite(getBytes(writeBuffer));
+        sslHandshakeHandler.needWrite(getBytes(writeBuffer));
        
         // loop while more writes required to complete handshake
         while (needToCompleteHandshake()) {
@@ -223,7 +224,7 @@ public class SslCodec {
 
             AdaptiveByteBuffer outNetBuffer = fetchOutNetBuffer();
             if (outNetBuffer != null && outNetBuffer.hasRemaining()) {
-            	handshakeHandler.needWrite(getBytes(writeBuffer));
+            	sslHandshakeHandler.needWrite(getBytes(writeBuffer));
             }
         }
     }
@@ -396,24 +397,7 @@ public class SslCodec {
 		return sslEngine.getHandshakeStatus();
 	}
 	
-	/**
-	 * Initiate ssl handshake
-	 */
-	public void handshake() {
-		try {
-			handshake0();
-		} catch (Exception e) {
-			throw new ProtocolException(e);
-		}
-	}
-	
-
-	/**
-	 * Encode data to ssl encrypt data, must invoke this after handshake complete.
-	 * 
-	 * @param data
-	 * @return Encrypt app data
-	 */
+	@Override
 	synchronized public byte[] encode(byte[] data) {
 		if (data == null) {
 			return null;

@@ -20,6 +20,7 @@ import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoAcceptor;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.api.NioFactory;
+import org.craft.atom.protocol.ssl.api.SslCodecFactory;
 import org.craft.atom.test.AvailablePortFinder;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
@@ -146,15 +147,13 @@ public class TestSslCodec {
 		@Override
 		public void channelOpened(Channel<byte[]> channel) {
 			SSLContext ctx   = createSSLContext();
-			SslCodec   codec = new SslCodec(ctx, new NioSslHandshakeHandler(channel));
-			
-			codec.init();
+			org.craft.atom.protocol.ssl.api.SslCodec codec = SslCodecFactory.newSslCodec(ctx, new NioSslHandshakeHandler(channel));
 			channel.setAttribute(SSL_CODEC, codec);
 		}
 
 		@Override
 		public void channelRead(Channel<byte[]> channel, byte[] bytes) {
-			SslCodec codec = (SslCodec) channel.getAttribute(SSL_CODEC);
+			org.craft.atom.protocol.ssl.api.SslCodec codec = (org.craft.atom.protocol.ssl.api.SslCodec) channel.getAttribute(SSL_CODEC);
 			byte[] ddata = codec.decode(bytes);
 			if (ddata != null) { LOG.debug("[CRAFT-ATOM-PROTOCOL-SSL] Receive data={}", new String(ddata)); }
 			
@@ -166,7 +165,7 @@ public class TestSslCodec {
  		}
 	}
 	
-	private static class NioSslHandshakeHandler implements SslHandshakeHandler {
+	private static class NioSslHandshakeHandler implements org.craft.atom.protocol.ssl.spi.SslHandshakeHandler {
 		
 		private Channel<byte[]> channel;
 		
