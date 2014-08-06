@@ -13,5 +13,13 @@ public interface RpcServer {
 	 * Starts the rpc server and gets things going.
 	 */
 	void serve();
+	
+	/**
+	 * Register rpc interface class with the implementor object.
+	 * 
+	 * @param rpcInterface 
+	 * @param rpcObject
+	 */
+	void register(Class<?> rpcInterface, Object rpcObject);
 
 }
