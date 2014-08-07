@@ -40,9 +40,9 @@ public class SerialA {
 	@Getter @Setter transient private String t;
 	
 	
-	// volatile
-	@Getter @Setter volatile private String v;
-//	@Getter @Setter volatile private String v2 = "vvvvvv";
+	// temp
+	@Getter @Setter private String v;
+	@Getter @Setter private String v2 = "vvvvvv";
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------

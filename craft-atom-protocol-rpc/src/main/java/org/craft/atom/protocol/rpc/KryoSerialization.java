@@ -34,12 +34,17 @@ public class KryoSerialization implements Serialization<RpcBody> {
     private static final ThreadLocal<SoftReference<Kryo>> CACHE = new ThreadLocal<SoftReference<Kryo>>() {
     	@Override
     	protected SoftReference<Kryo> initialValue() {
-            Kryo kryo = new Kryo();
-            kryo.register(RpcBody.class);
-            kryo.setDefaultSerializer(CompatibleFieldSerializer.class);
+            Kryo kryo = newKryo();
             return new SoftReference<Kryo>(kryo);
         }
     };
+    
+    private static Kryo newKryo() {
+    	Kryo kryo = new Kryo();
+        kryo.register(RpcBody.class);
+        kryo.setDefaultSerializer(CompatibleFieldSerializer.class);
+        return kryo;
+    }
 	
 	@Override
 	public byte type() {
@@ -63,7 +68,7 @@ public class KryoSerialization implements Serialization<RpcBody> {
 	private Kryo kryo() {
 		Kryo kryo = CACHE.get().get();
 		if (kryo == null) {
-			kryo = new Kryo();
+			kryo = newKryo();
 			CACHE.set(new SoftReference<Kryo>(kryo));
 		}
 		return kryo;
