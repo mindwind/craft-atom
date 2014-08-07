@@ -9,7 +9,7 @@ import java.io.IOException;
  * @author mindwind
  * @version 1.0, Aug 6, 2014
  */
-public interface RpcServerTransporter {
+public interface RpcAcceptor {
 	
 	
 	/**
@@ -21,5 +21,19 @@ public interface RpcServerTransporter {
 	 * @throws IOException, thrown while bind failed.
 	 */
 	void bind(String host, int port, int ioTimeoutInMillis) throws IOException;
+	
+	/**
+	 * Set rpc processor
+	 * 
+	 * @param processor
+	 */
+	void setProcessor(RpcProcessor processor);
+	
+	/**
+	 * Set rpc protocol
+	 * 
+	 * @param protocol
+	 */
+	void setProtocol(RpcProtocol protocol);
 	
 }

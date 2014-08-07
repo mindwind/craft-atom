@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.craft.atom.rpc.api.RpcServer;
-import org.craft.atom.rpc.spi.RpcServerTransporter;
+import org.craft.atom.rpc.spi.RpcAcceptor;
+import org.craft.atom.rpc.spi.RpcInvoker;
+import org.craft.atom.rpc.spi.RpcProcessor;
+import org.craft.atom.rpc.spi.RpcProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,16 +25,32 @@ public class DefaultRpcServer implements RpcServer {
 	@Getter @Setter private int                  port                       ;
 	@Getter @Setter private int                  rpcTimeoutInMillis = 10000 ;
 	@Getter @Setter private int                  ioTimeoutInMillis  = 300000;
-	@Getter @Setter private RpcServerTransporter transporter                ;
+	@Getter @Setter private RpcAcceptor          acceptor                   ;
+	@Getter @Setter private RpcProcessor         processor                  ;
+	@Getter @Setter private RpcProtocol          protocol                   ;
+	@Getter @Setter private RpcInvoker           invoker                    ;
 
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
 	
+	public DefaultRpcServer() {
+		invoker   = new DefaultRpcInvoker();
+		protocol  = new DefaultRpcProtocol();
+		processor = new DefaultRpcProcessor();
+		acceptor  = new DefaultRpcAcceptor();
+		acceptor .setProcessor(processor);
+		acceptor .setProtocol(protocol);
+		processor.setInvoker(invoker);
+	}
+	
+	
+	// ~ -------------------------------------------------------------------------------------------------------------
+	
 	@Override
 	public void serve() {
 		try {
-			transporter.bind(host, port, ioTimeoutInMillis);
+			acceptor.bind(host, port, ioTimeoutInMillis);
 		} catch (Exception e) {
 			LOG.error("[CRAFT-ATOM-RPC] Rpc server start fail, exit!", e);
 			System.exit(0);

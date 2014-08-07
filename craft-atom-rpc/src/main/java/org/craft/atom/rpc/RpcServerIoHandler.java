@@ -1,11 +1,10 @@
 package org.craft.atom.rpc;
 
-import java.util.List;
-
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
+import org.craft.atom.rpc.spi.RpcProcessor;
 import org.craft.atom.rpc.spi.RpcProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,14 +20,16 @@ public class RpcServerIoHandler implements IoHandler {
 	private static final String RPC_DECODER = "rpc.decoder"                                    ;
 	
 	
-	private RpcProtocol protocol;
+	private RpcProtocol  protocol ;
+	private RpcProcessor processor;
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
 	
-	public RpcServerIoHandler(RpcProtocol protocol) {
-		this.protocol = protocol;
+	public RpcServerIoHandler(RpcProtocol protocol, RpcProcessor processor) {
+		this.protocol  = protocol;
+		this.processor = processor;
 	}
 	
 	
@@ -45,10 +46,8 @@ public class RpcServerIoHandler implements IoHandler {
 	public void channelRead(Channel<byte[]> channel, byte[] bytes) {
 		@SuppressWarnings("unchecked")
 		ProtocolDecoder<RpcMessage> decoder = (ProtocolDecoder<RpcMessage>) channel.getAttribute(RPC_DECODER);
-		List<RpcMessage> msgs = decoder.decode(bytes);
-		for (RpcMessage msg : msgs) {
-			
-		}
+		byte[] rsp = processor.process(bytes, decoder);
+		channel.write(rsp);
 	}
 	
 	@Override
