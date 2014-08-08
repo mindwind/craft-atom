@@ -1,5 +1,7 @@
 package org.craft.atom.rpc;
 
+import java.lang.reflect.Method;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -56,10 +58,18 @@ public class DefaultRpcServer implements RpcServer {
 		}
 	}
 
-	@Override
-	public void register(Class<?> rpcInterface, Object rpcObject) {
-		// TODO Auto-generated method stub
 
+	@Override
+	public void expose(Class<?> rpcInterface, Object rpcObject, int rpcTimeoutInMillis) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void expose(Class<?> rpcInterface, Method rpcMethod, Object rpcObject, int rpcTimeoutInMillis) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
