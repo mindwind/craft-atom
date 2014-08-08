@@ -29,9 +29,10 @@ public class RpcBody implements Serializable {
 	
 	@Getter @Setter private Class<?>            rpcInterface;
 	@Getter @Setter private RpcMethod           rpcMethod   ;
+	@Getter @Setter private RpcOption           rpcOption   ;
+	@Getter @Setter private Map<String, Object> attachments ;
 	@Getter @Setter private Object              returnObject;
 	@Getter @Setter private Throwable           thrownObject;
-	@Getter @Setter private Map<String, Object> attachments ;
 	
 	
 	public void addAttachment(String key, String value) {
