@@ -12,7 +12,7 @@ public interface RpcClient {
 	 * Refer the rpc api proxy class.
 	 * 
 	 * @param clazz interface class
-	 * @return  a proxy.
+	 * @return a proxy.
 	 */
 	<T> T refer(Class<T> clazz);
 	
