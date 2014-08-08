@@ -11,6 +11,7 @@ import org.craft.atom.protocol.rpc.api.RpcCodecFactory;
 import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.model.RpcHeader;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
+import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.test.CaseCounter;
 import org.craft.atom.util.ByteArrayBuffer;
 import org.craft.atom.util.ByteUtil;
@@ -52,10 +53,12 @@ public class TestRpcCodec {
 		rh.setId(ID);
 		rh.setStatusCode(STATUS_CODE);
 		RpcBody rb = new RpcBody();
-		rb.setClazz(RpcService.class);
-		rb.setMethod("rpc");
-		rb.setArgTypes(String.class, Integer.class);
-		rb.setArgs("hello", 1);
+		rb.setRpcInterface(RpcService.class);
+		RpcMethod method = new RpcMethod();
+		method.setName("rpc");
+		method.setParameterTypes(String.class, Integer.class);
+		method.setParameters("hello", 1);
+		rb.setRpcMethod(method);
 		rm.setHeader(rh);
 		rm.setBody(rb);
 	}

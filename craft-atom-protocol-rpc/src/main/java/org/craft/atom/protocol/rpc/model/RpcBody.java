@@ -20,21 +20,18 @@ import lombok.ToString;
  * @version 1.0, Jul 18, 2014
  */
 @ToString
-@EqualsAndHashCode(of = { "clazz", "method", "argTypes", "args", "returnObject", "thrownObject", "attachments" })
+@EqualsAndHashCode(of = { "rpcInterface", "rpcMethod", "returnObject", "thrownObject", "attachments" })
 public class RpcBody implements Serializable {
 
 	
 	private static final long serialVersionUID = 5138100956693144357L;
 	
 	
-	@Getter @Setter private Class<?>            clazz       ;
-	@Getter @Setter private String              method      ;
-	@Getter         private Class<?>[]          argTypes    ;
-	@Getter         private Object[]            args        ;
+	@Getter @Setter private Class<?>            rpcInterface;
+	@Getter @Setter private RpcMethod           rpcMethod   ;
 	@Getter @Setter private Object              returnObject;
 	@Getter @Setter private Throwable           thrownObject;
 	@Getter @Setter private Map<String, Object> attachments ;
-	private int test;
 	
 	
 	public void addAttachment(String key, String value) {
@@ -42,15 +39,6 @@ public class RpcBody implements Serializable {
 			attachments = new HashMap<String, Object>();
 		}
 		attachments.put(key, value);
-	}
-	
-	
-	public void setArgTypes(Class<?>... argTypes) {
-		this.argTypes = argTypes;
-	}
-
-	public void setArgs(Object... args) {
-		this.args = args;
 	}
 
 }
