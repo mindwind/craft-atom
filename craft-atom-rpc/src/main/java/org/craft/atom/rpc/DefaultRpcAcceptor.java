@@ -9,10 +9,11 @@ import lombok.Setter;
 
 import org.craft.atom.io.IoAcceptor;
 import org.craft.atom.io.IoHandler;
+import org.craft.atom.nio.NioOrderedDirectChannelEventDispatcher;
 import org.craft.atom.nio.api.NioFactory;
+import org.craft.atom.rpc.spi.RpcAcceptor;
 import org.craft.atom.rpc.spi.RpcProcessor;
 import org.craft.atom.rpc.spi.RpcProtocol;
-import org.craft.atom.rpc.spi.RpcAcceptor;
 
 /**
  * @author mindwind
@@ -28,7 +29,10 @@ public class DefaultRpcAcceptor implements RpcAcceptor {
 	@Override
 	public void bind(String host, int port, int ioTimeoutInMillis) throws IOException {
 		IoHandler  handler  = new RpcServerIoHandler(protocol, processor);
-		IoAcceptor acceptor = NioFactory.newTcpAcceptorBuilder(handler).ioTimeoutInMillis(ioTimeoutInMillis).build();
+		IoAcceptor acceptor = NioFactory.newTcpAcceptorBuilder(handler)
+										.ioTimeoutInMillis(ioTimeoutInMillis)
+										.dispatcher(new NioOrderedDirectChannelEventDispatcher())
+										.build();
 		if (host != null) {
 			acceptor.bind(new InetSocketAddress(host, port));
 		} else {
