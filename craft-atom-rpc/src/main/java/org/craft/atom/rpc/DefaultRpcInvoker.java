@@ -10,7 +10,7 @@ import org.craft.atom.rpc.spi.RpcInvoker;
 public class DefaultRpcInvoker implements RpcInvoker {
 
 	@Override
-	public RpcMessage invoke(RpcMessage req) {
+	public RpcMessage invoke(RpcMessage req) throws RpcException {
 		// TODO Auto-generated method stub
 		return null;
 	}

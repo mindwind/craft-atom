@@ -1,6 +1,7 @@
 package org.craft.atom.rpc.spi;
 
 import org.craft.atom.protocol.rpc.model.RpcMessage;
+import org.craft.atom.rpc.RpcException;
 
 /**
  * RPC invoker
@@ -16,8 +17,9 @@ public interface RpcInvoker {
 	 * 
 	 * @param rpcmsg
 	 * @return response message.
+	 * @throws RpcException
 	 */
-	RpcMessage invoke(RpcMessage req);
+	RpcMessage invoke(RpcMessage req) throws RpcException;
 	
 	
 }
