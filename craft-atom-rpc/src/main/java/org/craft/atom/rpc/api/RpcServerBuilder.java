@@ -11,13 +11,11 @@ public class RpcServerBuilder {
 	
 	private String host                       ;
 	private int    port                       ;
-	private int    rpcTimeoutInMillis = 10000 ;
 	private int    ioTimeoutInMillis  = 300000;
 	
 	
 	public RpcServerBuilder host      (String host           ) { this.host               = host              ; return this; }
 	public RpcServerBuilder port      (int port              ) { this.port               = port              ; return this; }
-	public RpcServerBuilder rpcTimeout(int rpcTimeoutInMillis) { this.rpcTimeoutInMillis = rpcTimeoutInMillis; return this; }
 	public RpcServerBuilder ioTimeout (int ioTimeoutInMillis ) { this.ioTimeoutInMillis  = ioTimeoutInMillis ; return this; }
 	
 	
@@ -26,7 +24,6 @@ public class RpcServerBuilder {
 		rs.setHost(host);
 		rs.setPort(port);
 		rs.setIoTimeoutInMillis(ioTimeoutInMillis);
-		rs.setRpcTimeoutInMillis(rpcTimeoutInMillis);
 		return rs;
 	}
 	

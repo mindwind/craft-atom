@@ -23,7 +23,6 @@ public class DefaultRpcServer implements RpcServer {
 	
 	@Getter @Setter private String               host                       ;
 	@Getter @Setter private int                  port                       ;
-	@Getter @Setter private int                  rpcTimeoutInMillis = 10000 ;
 	@Getter @Setter private int                  ioTimeoutInMillis  = 300000;
 	@Getter @Setter private RpcAcceptor          acceptor                   ;
 	@Getter @Setter private RpcProcessor         processor                  ;
