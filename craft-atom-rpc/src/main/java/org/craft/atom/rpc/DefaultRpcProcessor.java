@@ -1,15 +1,11 @@
 package org.craft.atom.rpc;
 
-import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 
-import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.rpc.spi.RpcInvoker;
 import org.craft.atom.rpc.spi.RpcProcessor;
-import org.craft.atom.rpc.spi.RpcProtocol;
 
 /**
  * @author mindwind
@@ -18,17 +14,19 @@ import org.craft.atom.rpc.spi.RpcProtocol;
 public class DefaultRpcProcessor implements RpcProcessor {
 		
 	
-	@Getter @Setter private RpcProtocol protocol;
 	@Getter @Setter private RpcInvoker  invoker ;
 	
 	
 	@Override
-	public byte[] process(byte[] bytes, ProtocolDecoder<RpcMessage> decoder) {
-		List<RpcMessage> reqs = decoder.decode(bytes);
-		for (RpcMessage req : reqs) {
-			invoker.invoke(req);
+	public RpcMessage process(RpcMessage req) {
+		RpcMessage rsp;
+		try {
+			rsp = invoker.invoke(req);
+		} catch (RpcException e) {
+			rsp = null; // TODO
 		}
-		return null;
+		
+		return rsp;
 	}
 	
 

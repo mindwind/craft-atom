@@ -1,5 +1,7 @@
 package org.craft.atom.rpc;
 
+import java.util.List;
+
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.protocol.ProtocolDecoder;
@@ -43,11 +45,15 @@ public class RpcServerIoHandler implements IoHandler {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void channelRead(Channel<byte[]> channel, byte[] bytes) {
-		@SuppressWarnings("unchecked")
 		ProtocolDecoder<RpcMessage> decoder = (ProtocolDecoder<RpcMessage>) channel.getAttribute(RPC_DECODER);
-		byte[] rsp = processor.process(bytes, decoder);
-		channel.write(rsp);
+		List<RpcMessage> reqs = decoder.decode(bytes);
+		for (RpcMessage req : reqs) {
+			RpcMessage rsp = processor.process(req);
+			byte[] rspBytes = protocol.getRpcEncoder().encode(rsp);
+			channel.write(rspBytes);
+		}
 	}
 	
 	@Override

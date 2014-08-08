@@ -1,6 +1,5 @@
 package org.craft.atom.rpc.spi;
 
-import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 
 /**
@@ -15,11 +14,10 @@ public interface RpcProcessor {
 	/**
 	 * Process rpc request.
 	 * 
-	 * @param req     rpc request bytes
-	 * @param decoder rpc protocol decoder
-	 * @return rpc response bytes
+	 * @param req  rpc request
+	 * @return rpc response can not be null, any request must has response.
 	 */
-	byte[] process(byte[] bytes, ProtocolDecoder<RpcMessage> decoder);
+	RpcMessage process(RpcMessage req);
 	
 	/**
 	 * Set rpc invoker.
@@ -27,12 +25,5 @@ public interface RpcProcessor {
 	 * @param invoker
 	 */
 	void setInvoker(RpcInvoker invoker);
-	
-	/**
-	 * Set rpc protocol.
-	 * 
-	 * @param protocol
-	 */
-	void setProtocol(RpcProtocol protocol);
 	
 }
