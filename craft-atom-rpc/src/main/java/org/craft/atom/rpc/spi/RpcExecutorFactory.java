@@ -1,6 +1,6 @@
 package org.craft.atom.rpc.spi;
 
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import org.craft.atom.protocol.rpc.model.RpcMethod;
 
@@ -19,6 +19,6 @@ public interface RpcExecutorFactory {
 	 * @param rpcMethod
 	 * @return executor
 	 */
-	Executor getExecutor(Class<?> rpcInterface, RpcMethod rpcMethod);
+	ExecutorService getExecutor(Class<?> rpcInterface, RpcMethod rpcMethod);
 	
 }
