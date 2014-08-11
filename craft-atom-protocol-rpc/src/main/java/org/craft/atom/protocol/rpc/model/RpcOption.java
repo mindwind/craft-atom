@@ -16,8 +16,8 @@ import lombok.ToString;
 public class RpcOption {
 	
 	
-	@Getter @Setter private int               rpcTimeoutInMillis = -1;
-	@Getter @Setter private InetSocketAddress localAddress           ;
-	@Getter @Setter private InetSocketAddress remoteAddress          ;
+	@Getter @Setter private long              rpcTimeoutInMillis;
+	@Getter @Setter private InetSocketAddress localAddress      ;
+	@Getter @Setter private InetSocketAddress remoteAddress     ;
 	
 }
