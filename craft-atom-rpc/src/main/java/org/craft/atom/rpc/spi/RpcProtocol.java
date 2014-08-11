@@ -5,7 +5,7 @@ import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 
 /**
- * RPC protocol 
+ * RPC protocol object, provide protocol encoder and decoder.
  * 
  * @author mindwind
  * @version 1.0, Aug 7, 2014
