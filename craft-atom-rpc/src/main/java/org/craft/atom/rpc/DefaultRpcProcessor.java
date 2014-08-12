@@ -31,23 +31,20 @@ public class DefaultRpcProcessor implements RpcProcessor {
 	public RpcMessage process(final RpcMessage req) {
 		ExecutorService executor = executor(req);
 		Future<RpcMessage> future = executor.submit(new Callable<RpcMessage>() {
-
 			@Override
 			public RpcMessage call() throws Exception {
 				return process0(req);
 			}
 		});
+		
 		try {
 			return future.get(rpcTimeoutInMillis(req), TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
-			// TODO
-			return null;
+			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.UNKNOWN_EXCEPTION, e));
 		} catch (ExecutionException e) {
-			// TODO
-			return null;
+			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.BIZ_EXCEPTION, e));
 		} catch (TimeoutException e) {
-			// TODO
-			return null;
+			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.TIMEOUT_EXCEPTION, e));
 		}
 	}
 	
@@ -56,7 +53,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 		try {
 			rsp = invoker.invoke(req);
 		} catch (RpcException e) {
-			rsp = null; // TODO
+			rsp = RpcMessages.newRsponseRpcMessage(e);
 		}
 		return rsp;
 	}
