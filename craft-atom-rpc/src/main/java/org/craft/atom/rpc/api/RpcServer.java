@@ -1,6 +1,7 @@
 package org.craft.atom.rpc.api;
 
-import java.lang.reflect.Method;
+import org.craft.atom.protocol.rpc.model.RpcMethod;
+import org.craft.atom.protocol.rpc.model.RpcOption;
 
 /**
  * RPC server
@@ -22,9 +23,9 @@ public interface RpcServer {
 	 * 
 	 * @param rpcInterface 
 	 * @param rpcObject
-	 * @param rpcTimeoutInMillis
+	 * @param rpcOption
 	 */
-	void expose(Class<?> rpcInterface, Object rpcObject, int rpcTimeoutInMillis);
+	void expose(Class<?> rpcInterface, Object rpcObject, RpcOption rpcOption);
 	
 	/**
 	 * Expose rpc interface class with the implementor object.
@@ -33,8 +34,8 @@ public interface RpcServer {
 	 * @param rpcInterface
 	 * @param rpcMethod
 	 * @param rpcObject
-	 * @param rpcTimeoutInMillis
+	 * @param rpcOption
 	 */
-	void expose(Class<?> rpcInterface, Method rpcMethod, Object rpcObject, int rpcTimeoutInMillis);
+	void expose(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcOption rpcOption);
 
 }
