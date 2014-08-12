@@ -12,7 +12,7 @@ import lombok.ToString;
  * @version 1.0, Aug 8, 2014
  */
 @ToString
-@EqualsAndHashCode(of = { "name", "parameterTypes", "parameters", "returnType" })
+@EqualsAndHashCode(of = { "name", "parameterTypes", "returnType" })
 public class RpcMethod {
 	
 	

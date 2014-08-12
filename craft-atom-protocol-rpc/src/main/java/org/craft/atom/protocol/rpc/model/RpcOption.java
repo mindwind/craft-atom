@@ -17,6 +17,8 @@ public class RpcOption {
 	
 	
 	@Getter @Setter private long              rpcTimeoutInMillis;
+	@Getter @Setter private int               rpcThreads        ;
+	@Getter @Setter private int               rpcQueues         ;
 	@Getter @Setter private InetSocketAddress localAddress      ;
 	@Getter @Setter private InetSocketAddress remoteAddress     ;
 	
