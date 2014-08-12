@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.craft.atom.protocol.rpc.model.RpcMessage;
-import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.rpc.spi.RpcExecutorFactory;
 import org.craft.atom.rpc.spi.RpcInvoker;
 import org.craft.atom.rpc.spi.RpcProcessor;
@@ -65,9 +64,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 	}
 	
 	private ExecutorService executor(RpcMessage rm) {
-		Class<?> rpcInterface = rm.getBody().getRpcInterface();
-		RpcMethod rpcMethod = rm.getBody().getRpcMethod();
-		return executorFactory.getExecutor(rpcInterface, rpcMethod);
+		return executorFactory.getExecutor(rm);
 	}
 
 }
