@@ -23,13 +23,13 @@ public class DefaultRpcServer implements RpcServer {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultRpcServer.class);
 	
 	
-	@Getter @Setter private String               host                       ;
-	@Getter @Setter private int                  port                       ;
-	@Getter @Setter private int                  ioTimeoutInMillis  = 300000;
-	@Getter @Setter private RpcAcceptor          acceptor                   ;
-	@Getter @Setter private RpcProcessor         processor                  ;
-	@Getter @Setter private RpcProtocol          protocol                   ;
-	@Getter @Setter private RpcInvoker           invoker                    ;
+	@Getter @Setter private String               host                      ;
+	@Getter @Setter private int                  port                      ;
+	@Getter @Setter private int                  ioTimeoutInMillis = 300000;
+	@Getter @Setter private RpcAcceptor          acceptor                  ;
+	@Getter @Setter private RpcProcessor         processor                 ;
+	@Getter @Setter private RpcProtocol          protocol                  ;
+	@Getter @Setter private RpcInvoker           invoker                   ;
 
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
@@ -47,6 +47,7 @@ public class DefaultRpcServer implements RpcServer {
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
+	
 	
 	@Override
 	public void serve() {
