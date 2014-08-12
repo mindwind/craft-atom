@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * A <code>RpcOption</code> provides optional information about Rpc invocation.
+ * A <code>RpcOption</code> provides optional information about rpc invocation.
  * 
  * @author mindwind
  * @version 1.0, Aug 8, 2014
