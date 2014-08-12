@@ -12,9 +12,10 @@ public final class RpcException extends RuntimeException {
 	private static final long serialVersionUID  = -4168884981656035910L;
 	
 	
-	public  static final byte UNKNOWN_EXCEPTION = 0;
-    public  static final byte TIMEOUT_EXCEPTION = 1;
-    public  static final byte BIZ_EXCEPTION     = 2;
+	public static final byte UNKNOWN  = 0;
+    public static final byte TIMEOUT  = 1;
+    public static final byte BUSINESS = 2;
+    public static final byte OVERLOAD = 3;
 	
 	
 	@Getter private byte code;

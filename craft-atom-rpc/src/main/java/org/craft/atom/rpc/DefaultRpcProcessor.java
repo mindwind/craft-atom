@@ -4,6 +4,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -29,21 +30,23 @@ public class DefaultRpcProcessor implements RpcProcessor {
 	@Override
 	public RpcMessage process(final RpcMessage req) {
 		ExecutorService executor = executor(req);
-		Future<RpcMessage> future = executor.submit(new Callable<RpcMessage>() {
-			@Override
-			public RpcMessage call() throws Exception {
-				return process0(req);
-			}
-		});
 		
 		try {
+			Future<RpcMessage> future = executor.submit(new Callable<RpcMessage>() {
+				@Override
+				public RpcMessage call() throws Exception {
+					return process0(req);
+				}
+			});
 			return future.get(rpcTimeoutInMillis(req), TimeUnit.MILLISECONDS);
-		} catch (InterruptedException e) {
-			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.UNKNOWN_EXCEPTION, e));
 		} catch (ExecutionException e) {
-			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.BIZ_EXCEPTION, e));
+			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.BUSINESS, e));
 		} catch (TimeoutException e) {
-			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.TIMEOUT_EXCEPTION, e));
+			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.TIMEOUT, e));
+		} catch (RejectedExecutionException e) {
+			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.OVERLOAD, e));
+		} catch (Exception e) {
+			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.UNKNOWN, e));
 		}
 	}
 	
