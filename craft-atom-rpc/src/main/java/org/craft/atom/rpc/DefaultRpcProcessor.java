@@ -29,9 +29,9 @@ public class DefaultRpcProcessor implements RpcProcessor {
 	
 	@Override
 	public RpcMessage process(final RpcMessage req) {
-		ExecutorService executor = executor(req);
-		
 		try {
+			check(req);
+			ExecutorService executor = executor(req);
 			Future<RpcMessage> future = executor.submit(new Callable<RpcMessage>() {
 				@Override
 				public RpcMessage call() throws Exception {
@@ -49,6 +49,12 @@ public class DefaultRpcProcessor implements RpcProcessor {
 			return RpcMessages.newRsponseRpcMessage(e);
 		} catch (Exception e) {
 			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.UNKNOWN, e));
+		}
+	}
+	
+	private void check(RpcMessage rm) {
+		if (rm == null || rm.getBody() == null) {
+			throw new RpcException(RpcException.CLIENT_BAD_REQ);
 		}
 	}
 	
