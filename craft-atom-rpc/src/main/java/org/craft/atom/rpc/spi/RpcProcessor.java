@@ -26,4 +26,11 @@ public interface RpcProcessor {
 	 */
 	void setInvoker(RpcInvoker invoker);
 	
+	/**
+	 * set rpc executor factory.
+	 * 
+	 * @param executorFactory
+	 */
+	void setExecutorFactory(RpcExecutorFactory executorFactory);
+	
 }

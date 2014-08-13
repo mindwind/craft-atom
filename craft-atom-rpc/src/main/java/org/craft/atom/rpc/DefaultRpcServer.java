@@ -9,6 +9,7 @@ import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.protocol.rpc.model.RpcOption;
 import org.craft.atom.rpc.api.RpcServer;
 import org.craft.atom.rpc.spi.RpcAcceptor;
+import org.craft.atom.rpc.spi.RpcExecutorFactory;
 import org.craft.atom.rpc.spi.RpcInvoker;
 import org.craft.atom.rpc.spi.RpcProcessor;
 import org.craft.atom.rpc.spi.RpcProtocol;
@@ -32,6 +33,7 @@ public class DefaultRpcServer implements RpcServer {
 	@Getter @Setter private RpcProcessor         processor        ;
 	@Getter @Setter private RpcProtocol          protocol         ;
 	@Getter @Setter private RpcInvoker           invoker          ;
+	@Getter @Setter private RpcExecutorFactory   executorFactory  ;
 	@Getter @Setter private RpcRegistry          registry         ;
 
 	
@@ -39,16 +41,21 @@ public class DefaultRpcServer implements RpcServer {
 	
 	
 	public DefaultRpcServer() {
-		ioTimeoutInMillis = 5 * 60 * 1000            ;
-		invoker           = new DefaultRpcInvoker()  ;
-		protocol          = new DefaultRpcProtocol() ;
-		processor         = new DefaultRpcProcessor();
-		acceptor          = new DefaultRpcAcceptor() ;
-		registry          = RpcRegistry.getInstance();
-		
+		ioTimeoutInMillis = 5 * 60 * 1000                  ;
+		acceptor          = new DefaultRpcAcceptor()       ;
+		protocol          = new DefaultRpcProtocol()       ;
+		processor         = new DefaultRpcProcessor()      ;
+		invoker           = new DefaultRpcInvoker()        ;
+		executorFactory   = new DefaultRpcExecutorFactory();
+		registry          = RpcRegistry.getInstance()      ;
+		init();
+	}
+	
+	public void init() {
 		acceptor .setProcessor(processor);
-		acceptor .setProtocol(protocol)  ;
-		processor.setInvoker(invoker)    ;
+		acceptor .setProtocol(protocol);
+		processor.setInvoker(invoker);
+		processor.setExecutorFactory(executorFactory);
 	}
 	
 	
