@@ -26,7 +26,7 @@ public class DefaultRpcExecutorFactory implements RpcExecutorFactory {
 	
 	@Override
 	public ExecutorService getExecutor(RpcMessage rm) {
-		Class<?>  rpcInterface = rm.getBody().getRpcInterface();
+		Class<?> rpcInterface = rm.getBody().getRpcInterface();
 		RpcMethod rpcMethod = rm.getBody().getRpcMethod();
 		String key = registry.key(rpcInterface, rpcMethod);
 		return getExecutor(key);
