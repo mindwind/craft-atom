@@ -39,15 +39,16 @@ public class DefaultRpcServer implements RpcServer {
 	
 	
 	public DefaultRpcServer() {
-		ioTimeoutInMillis = 5 * 60 * 1000;
-		invoker   = new DefaultRpcInvoker();
-		protocol  = new DefaultRpcProtocol();
-		processor = new DefaultRpcProcessor();
-		acceptor  = new DefaultRpcAcceptor();
-		registry  = RpcRegistry.getInstance();
+		ioTimeoutInMillis = 5 * 60 * 1000            ;
+		invoker           = new DefaultRpcInvoker()  ;
+		protocol          = new DefaultRpcProtocol() ;
+		processor         = new DefaultRpcProcessor();
+		acceptor          = new DefaultRpcAcceptor() ;
+		registry          = RpcRegistry.getInstance();
+		
 		acceptor .setProcessor(processor);
-		acceptor .setProtocol(protocol);
-		processor.setInvoker(invoker);
+		acceptor .setProtocol(protocol)  ;
+		processor.setInvoker(invoker)    ;
 	}
 	
 	
@@ -74,7 +75,6 @@ public class DefaultRpcServer implements RpcServer {
 			rpcMethod.setReturnType(method.getReturnType());
 			expose(rpcInterface, rpcMethod, rpcObject, rpcOption);
 		}
-		
 	}
 
 	@Override
