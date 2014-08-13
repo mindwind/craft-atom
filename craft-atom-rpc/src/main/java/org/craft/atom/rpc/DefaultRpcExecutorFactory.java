@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.protocol.rpc.model.RpcMethod;
+import org.craft.atom.protocol.rpc.model.RpcOption;
 import org.craft.atom.rpc.spi.RpcExecutorFactory;
 import org.craft.atom.util.NamedThreadFactory;
 
@@ -19,14 +20,15 @@ import org.craft.atom.util.NamedThreadFactory;
 public class DefaultRpcExecutorFactory implements RpcExecutorFactory {
 
 	
-	private Map<String, ExecutorService> pool = new ConcurrentHashMap<String, ExecutorService>();
+	private Map<String, ExecutorService> pool     = new ConcurrentHashMap<String, ExecutorService>();
+	private RpcRegistry                  registry = RpcRegistry.getInstance()                       ;
 	
 	
 	@Override
 	public ExecutorService getExecutor(RpcMessage rm) {
-		Class<?> rpcInterface = rm.getBody().getRpcInterface();
+		Class<?>  rpcInterface = rm.getBody().getRpcInterface();
 		RpcMethod rpcMethod = rm.getBody().getRpcMethod();
-		String key = Integer.toString(rpcInterface.hashCode()) + Integer.toString(rpcMethod.hashCode());
+		String key = registry.key(rpcInterface, rpcMethod);
 		return getExecutor(key);
 	}
 	
@@ -35,8 +37,11 @@ public class DefaultRpcExecutorFactory implements RpcExecutorFactory {
 		if (es == null) {
 			synchronized (this) {
 				if (es == null) {
-					// TODO thread parameter config
-					ThreadPoolExecutor tpe = new ThreadPoolExecutor(10, 10, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new NamedThreadFactory("craft-atom-rpc"));
+					RpcEntry  entry   = registry.lookup(key)  ;
+					RpcOption option  = entry.getRpcOption()  ;
+					int       threads = option.getRpcThreads();
+					int       queues  = option.getRpcQueues() ;
+					ThreadPoolExecutor tpe = new ThreadPoolExecutor(threads, threads, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(queues), new NamedThreadFactory("craft-atom-rpc"));
 					tpe.allowCoreThreadTimeOut(true);
 					es = tpe;
 					pool.put(key, tpe);
