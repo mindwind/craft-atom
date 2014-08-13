@@ -14,13 +14,23 @@ public class RpcMessages {
 	
 	
 	public static RpcMessage newRsponseRpcMessage(RpcException e) {
+		RpcMessage rm = newRpcMessage();
+		rm.getHeader().setRp();
+		rm.getBody().setThrownObject(e);
+		return rm;
+	}
+	
+	public static RpcMessage newRsponseRpcMessage(Object returnObject) {
+		RpcMessage rm = newRpcMessage();
+		rm.getHeader().setRp();
+		rm.getBody().setReturnObject(returnObject);
+		return rm;
+	}
+	
+	private static RpcMessage newRpcMessage() {
 		RpcMessage rm = new RpcMessage();
 		RpcHeader  rh = new RpcHeader();
 		RpcBody    rb = new RpcBody();
-		
-		rh.setRp();
-		rb.setThrownObject(e);
-		
 		rm.setHeader(rh);
 		rm.setBody(rb);
 		return rm;
