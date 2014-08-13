@@ -40,11 +40,13 @@ public class DefaultRpcProcessor implements RpcProcessor {
 			});
 			return future.get(rpcTimeoutInMillis(req), TimeUnit.MILLISECONDS);
 		} catch (ExecutionException e) {
-			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.BUSINESS, e));
+			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.SERVER_ERROR, e));
 		} catch (TimeoutException e) {
-			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.TIMEOUT, e));
+			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.SERVER_TIMEOUT, e));
 		} catch (RejectedExecutionException e) {
-			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.OVERLOAD, e));
+			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.SERVER_OVERLOAD, e));
+		} catch (RpcException e) {
+			return RpcMessages.newRsponseRpcMessage(e);
 		} catch (Exception e) {
 			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.UNKNOWN, e));
 		}
