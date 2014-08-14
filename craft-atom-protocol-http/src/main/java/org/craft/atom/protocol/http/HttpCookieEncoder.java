@@ -29,6 +29,7 @@ public class HttpCookieEncoder extends AbstractProtocolCodec implements Protocol
 	
 	@Override
 	public byte[] encode(HttpCookie cookie) throws ProtocolException {
+		if (cookie == null) return null;
 		String httpString = cookie.toHttpString();
 		return httpString.getBytes(charset);
 	}

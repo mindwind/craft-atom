@@ -34,7 +34,7 @@ public class RpcEncoder implements ProtocolEncoder<RpcMessage> {
 	
 	@Override
 	public byte[] encode(RpcMessage rm) throws ProtocolException {
-		Assert.notNull(rm);
+		if (rm == null) return null;
 		RpcHeader rh = rm.getHeader();
 		RpcBody rb = rm.getBody();
 		Assert.notNull(rh);

@@ -38,6 +38,7 @@ public class HttpParameterEncoder extends AbstractProtocolCodec implements Proto
 
 	@Override
 	public byte[] encode(Map<String, List<String>> paras) throws ProtocolException {
+		if (paras == null) return null;
 		StringBuilder buf = new StringBuilder();
 		Set<Entry<String, List<String>>> entrys = paras.entrySet();
 		for (Entry<String, List<String>> entry : entrys) {
