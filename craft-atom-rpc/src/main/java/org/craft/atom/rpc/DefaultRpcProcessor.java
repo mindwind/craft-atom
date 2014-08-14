@@ -40,15 +40,15 @@ public class DefaultRpcProcessor implements RpcProcessor {
 			});
 			return future.get(rpcTimeoutInMillis(req), TimeUnit.MILLISECONDS);
 		} catch (ExecutionException e) {
-			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.SERVER_ERROR, e));
+			return RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), new RpcException(RpcException.SERVER_ERROR, e));
 		} catch (TimeoutException e) {
-			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.SERVER_TIMEOUT, e));
+			return RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), new RpcException(RpcException.SERVER_TIMEOUT, e));
 		} catch (RejectedExecutionException e) {
-			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.SERVER_OVERLOAD, e));
+			return RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), new RpcException(RpcException.SERVER_OVERLOAD, e));
 		} catch (RpcException e) {
-			return RpcMessages.newRsponseRpcMessage(e);
+			return RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), e);
 		} catch (Exception e) {
-			return RpcMessages.newRsponseRpcMessage(new RpcException(RpcException.UNKNOWN, e));
+			return RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), new RpcException(RpcException.UNKNOWN, e));
 		}
 	}
 	
@@ -63,7 +63,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 		try {
 			rsp = invoker.invoke(req);
 		} catch (RpcException e) {
-			rsp = RpcMessages.newRsponseRpcMessage(e);
+			rsp = RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), e);
 		}
 		return rsp;
 	}

@@ -13,14 +13,14 @@ import org.craft.atom.protocol.rpc.model.RpcMessage;
 public class RpcMessages {
 	
 	
-	public static RpcMessage newRsponseRpcMessage(RpcException e) {
+	public static RpcMessage newRsponseRpcMessage(long id, RpcException e) {
 		RpcMessage rm = newRpcMessage();
 		rm.getHeader().setRp();
 		rm.getBody().setThrownObject(e);
 		return rm;
 	}
 	
-	public static RpcMessage newRsponseRpcMessage(Object returnObject) {
+	public static RpcMessage newRsponseRpcMessage(long id, Object returnObject) {
 		RpcMessage rm = newRpcMessage();
 		rm.getHeader().setRp();
 		rm.getBody().setReturnObject(returnObject);

@@ -32,7 +32,7 @@ public class DefaultRpcInvoker implements RpcInvoker {
 			MethodAccess ma = MethodAccess.get(rpcInterface);
 			int methodIndex = ma.getIndex(methodName, paramTypes);
 			Object returnObject = ma.invoke(rpcObject, methodIndex, params);
-			return RpcMessages.newRsponseRpcMessage(returnObject);
+			return RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), returnObject);
 		} catch (Exception e) {
 			throw new RpcException(RpcException.SERVER_ERROR, e);
 		}
