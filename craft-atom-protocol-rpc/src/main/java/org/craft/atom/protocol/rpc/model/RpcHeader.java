@@ -77,6 +77,10 @@ public class RpcHeader implements Serializable {
 		this.hb = (byte) (hb & HB_MASK);
 	}
 	
+	public boolean isHb() {
+		return hb == HB_MASK;
+	}
+	
 	public void setOw() {
 		this.ow = OW_MASK;
 	}
@@ -85,12 +89,20 @@ public class RpcHeader implements Serializable {
 		this.ow = (byte) (ow & OW_MASK);
 	}
 	
+	public boolean isOw() {
+		return ow == OW_MASK;
+	}
+	
 	public void setRp() {
 		this.rp = RP_MASK;
 	}
 	
 	public void setRp(byte rp) {
 		this.rp = (byte) (rp & RP_MASK);
+	}
+	
+	public boolean isRp() {
+		return rp == RP_MASK;
 	}
 
 }
