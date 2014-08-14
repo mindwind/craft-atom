@@ -3,7 +3,7 @@ package org.craft.atom.rpc.spi;
 import java.io.IOException;
 
 /**
- * RPC transporter.
+ * RPC acceptor.
  * 
  * 
  * @author mindwind
@@ -13,7 +13,7 @@ public interface RpcAcceptor {
 	
 	
 	/**
-	 * Bind transporter to specific host and port.
+	 * Bind to specific host and port.
 	 * 
 	 * @param host
 	 * @param port
