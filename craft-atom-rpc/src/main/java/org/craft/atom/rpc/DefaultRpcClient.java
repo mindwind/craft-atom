@@ -1,5 +1,6 @@
 package org.craft.atom.rpc;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import lombok.Getter;
@@ -28,7 +29,7 @@ public class DefaultRpcClient implements RpcClient {
 	}
 	
 	public void init() {
-		connector.setServerAddress(new InetSocketAddress(host, port));
+		connector.setAddress(new InetSocketAddress(host, port));
 	}
 	
 	
@@ -43,13 +44,13 @@ public class DefaultRpcClient implements RpcClient {
 
 
 	@Override
-	public long connect() {
+	public long connect() throws IOException {
 		return connector.connect();
 	}
 
 
 	@Override
-	public void disconnect(long connectionId) {
+	public void disconnect(long connectionId) throws IOException {
 		disconnect(connectionId);
 	}
 
