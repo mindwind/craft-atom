@@ -2,7 +2,7 @@ package org.craft.atom.rpc;
 
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,22 +22,42 @@ import org.craft.atom.rpc.spi.RpcProtocol;
 public class DefaultRpcAcceptor implements RpcAcceptor {
 	
 	
-	@Getter @Setter private RpcProcessor processor;
-	@Getter @Setter private RpcProtocol  protocol ;
+	@Getter         private int           ioTimeoutInMillis;
+	@Getter         private SocketAddress address          ;
+	@Getter @Setter private RpcProcessor  processor        ;
+	@Getter @Setter private RpcProtocol   protocol         ;
+	@Getter @Setter private IoHandler     ioHandler        ;
+	@Getter @Setter private IoAcceptor    ioAcceptor       ;
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 
+	
+	public DefaultRpcAcceptor() {
+		ioHandler  = new RpcServerIoHandler(protocol, processor);
+		ioAcceptor = NioFactory.newTcpAcceptorBuilder(ioHandler)
+				               .ioTimeoutInMillis(ioTimeoutInMillis)
+				               .dispatcher(new NioOrderedDirectChannelEventDispatcher())
+				               .build();
+	}
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
 
 	@Override
-	public void bind(String host, int port, int ioTimeoutInMillis) throws IOException {
-		IoHandler  handler  = new RpcServerIoHandler(protocol, processor);
-		IoAcceptor acceptor = NioFactory.newTcpAcceptorBuilder(handler)
-										.ioTimeoutInMillis(ioTimeoutInMillis)
-										.dispatcher(new NioOrderedDirectChannelEventDispatcher())
-										.build();
-		if (host != null) {
-			acceptor.bind(new InetSocketAddress(host, port));
-		} else {
-			acceptor.bind(port);
-		}
+	public void bind() throws IOException {
+		ioAcceptor.bind(address);
+	}
+
+	@Override
+	public void setAddress(SocketAddress address) {
+		this.address = address;
+	}
+
+	@Override
+	public void setIoTimeoutInMillis(int ioTimeoutInMillis) {
+		this.ioTimeoutInMillis = ioTimeoutInMillis;
 	}
 
 }

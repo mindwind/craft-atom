@@ -1,6 +1,8 @@
 package org.craft.atom.rpc;
 
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -52,8 +54,11 @@ public class DefaultRpcServer implements RpcServer {
 	}
 	
 	public void init() {
+		SocketAddress address = (host == null ? new InetSocketAddress(port) : new InetSocketAddress(host, port));
 		acceptor .setProcessor(processor);
 		acceptor .setProtocol(protocol);
+		acceptor .setIoTimeoutInMillis(ioTimeoutInMillis);
+		acceptor .setAddress(address);
 		processor.setInvoker(invoker);
 		processor.setExecutorFactory(executorFactory);
 	}
@@ -65,7 +70,7 @@ public class DefaultRpcServer implements RpcServer {
 	@Override
 	public void serve() {
 		try {
-			acceptor.bind(host, port, ioTimeoutInMillis);
+			acceptor.bind();
 		} catch (Exception e) {
 			LOG.error("[CRAFT-ATOM-RPC] Rpc server start fail, exit!", e);
 			System.exit(0);

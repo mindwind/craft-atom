@@ -1,6 +1,7 @@
 package org.craft.atom.rpc.spi;
 
 import java.io.IOException;
+import java.net.SocketAddress;
 
 /**
  * RPC acceptor.
@@ -13,14 +14,11 @@ public interface RpcAcceptor {
 	
 	
 	/**
-	 * Bind to specific host and port.
+	 * Bind to settled local address.
 	 * 
-	 * @param host
-	 * @param port
-	 * @param ioTimeoutInMillis in millis
 	 * @throws IOException, thrown while bind failed.
 	 */
-	void bind(String host, int port, int ioTimeoutInMillis) throws IOException;
+	void bind() throws IOException;
 	
 	/**
 	 * Set rpc processor
@@ -35,5 +33,19 @@ public interface RpcAcceptor {
 	 * @param protocol
 	 */
 	void setProtocol(RpcProtocol protocol);
+	
+	/**
+	 * Set address to bind.
+	 * 
+	 * @param address
+	 */
+	void setAddress(SocketAddress address);
+	
+	/**
+	 * Set io timeout in millisecond
+	 * 
+	 * @param ioTimeoutInMillis
+	 */
+	void setIoTimeoutInMillis(int ioTimeoutInMillis);
 	
 }
