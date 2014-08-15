@@ -182,7 +182,7 @@ public class NioTcpConnector extends NioConnector {
 				success = true;
 			} finally {
 				if (!success) {
-					// The connection failed, we have to cancel it.
+					// Connect failed, we have to cancel it.
 					cancelQueue.offer(cc);
 				}
 			}
