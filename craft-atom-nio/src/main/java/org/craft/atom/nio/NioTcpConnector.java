@@ -68,7 +68,7 @@ public class NioTcpConnector extends NioConnector {
 	
 	
 	@Override
-	protected Future<Channel<byte[]>> connectByProtocol(SocketAddress remoteAddress, SocketAddress localAddress) {
+	protected Future<Channel<byte[]>> connectByProtocol(SocketAddress remoteAddress, SocketAddress localAddress) throws IOException {
 		SocketChannel sc = null;
 		boolean success = false;
 		try {
@@ -83,9 +83,6 @@ public class NioTcpConnector extends NioConnector {
             }
 
             success = true;
-        } catch (IOException e) {
-            LOG.warn("[CRAFT-ATOM-NIO] Connect exception", e);
-            throw new RuntimeException(e);
         } finally {
             if (!success && sc != null) {
                 try {

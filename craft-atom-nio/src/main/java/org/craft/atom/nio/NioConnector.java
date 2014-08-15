@@ -116,36 +116,16 @@ abstract public class NioConnector extends NioReactor implements IoConnector {
 		selectable = true;
 	}
 	
-	/**
-	 * Asynchronous connects to the specified ip and port.
-	 * 
-	 * @param ip
-	 * @param port
-	 * @return <code>Future</code> instance which is completed when the channel initiated by this call succeeds or fails.
-	 */
-	public Future<Channel<byte[]>> connect(String ip, int port) {
+	public Future<Channel<byte[]>> connect(String ip, int port) throws IOException {
 		SocketAddress remoteAddress = new InetSocketAddress(ip, port);
 		return connect(remoteAddress);
 	}
-	
-	/**
-	 * Asynchronous connects to the specified remote address.
-	 * 
-	 * @param remoteAddress
-	 * @return <code>Future</code> instance which is completed when the channel initiated by this call succeeds or fails.
-	 */
-	public Future<Channel<byte[]>> connect(SocketAddress remoteAddress) {
+
+	public Future<Channel<byte[]>> connect(SocketAddress remoteAddress) throws IOException {
         return connect(remoteAddress, null);
     }
 	
-	/**
-	 * Asynchronous connects to the specified remote address and binds to the specified local address.
-	 * 
-	 * @param remoteAddress
-	 * @param localAddress
-	 * @return <code>Future</code> instance which is completed when the channel initiated by this call succeeds or fails.
-	 */
-	public Future<Channel<byte[]>> connect(SocketAddress remoteAddress, SocketAddress localAddress) {
+	public Future<Channel<byte[]>> connect(SocketAddress remoteAddress, SocketAddress localAddress) throws IOException {
 		if (!this.selectable) {
 			throw new IllegalStateException("The connector is already shutdown.");
 		}
@@ -167,6 +147,6 @@ abstract public class NioConnector extends NioReactor implements IoConnector {
 		this.selector.wakeup();
 	}
 	
-	abstract protected Future<Channel<byte[]>> connectByProtocol(SocketAddress remoteAddress, SocketAddress localAddress);
+	abstract protected Future<Channel<byte[]>> connectByProtocol(SocketAddress remoteAddress, SocketAddress localAddress) throws IOException;
 	
 }
