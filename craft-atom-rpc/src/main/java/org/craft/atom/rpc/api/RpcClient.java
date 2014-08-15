@@ -16,4 +16,17 @@ public interface RpcClient {
 	 */
 	<T> T refer(Class<T> clazz);
 	
+	/**
+	 * Connects to rpc server
+	 *
+	 * @return connection id
+	 */
+	long connect();
+	
+	/**
+	 * Disconnects the connection with specified id.
+	 *  
+	 * @param connectionId
+	 */
+	void disconnect(long connectionId);
 }
