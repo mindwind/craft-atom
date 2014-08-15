@@ -16,7 +16,7 @@ public interface RpcAcceptor {
 	/**
 	 * Bind to settled local address.
 	 * 
-	 * @throws IOException, thrown while bind failed.
+	 * @throws IOException If some other I/O error occurs
 	 */
 	void bind() throws IOException;
 	
