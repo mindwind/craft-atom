@@ -25,7 +25,8 @@ public class DefaultRpcClient implements RpcClient {
 	
 	
 	public DefaultRpcClient() {
-		
+		connector = new DefaultRpcConnector();
+		init();
 	}
 	
 	public void init() {
