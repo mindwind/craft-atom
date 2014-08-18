@@ -1,5 +1,7 @@
 package org.craft.atom.rpc;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.model.RpcHeader;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
@@ -13,19 +15,8 @@ import org.craft.atom.protocol.rpc.model.RpcMessage;
 public class RpcMessages {
 	
 	
-	public static RpcMessage newRsponseRpcMessage(long id, RpcException e) {
-		RpcMessage rm = newRpcMessage();
-		rm.getHeader().setRp();
-		rm.getBody().setThrownObject(e);
-		return rm;
-	}
+	private static final AtomicLong ID_GENERATOR = new AtomicLong(0);
 	
-	public static RpcMessage newRsponseRpcMessage(long id, Object returnObject) {
-		RpcMessage rm = newRpcMessage();
-		rm.getHeader().setRp();
-		rm.getBody().setReturnObject(returnObject);
-		return rm;
-	}
 	
 	private static RpcMessage newRpcMessage() {
 		RpcMessage rm = new RpcMessage();
@@ -34,6 +25,36 @@ public class RpcMessages {
 		rm.setHeader(rh);
 		rm.setBody(rb);
 		return rm;
+	}
+	
+	
+	// ~ ---------------------------------------------------------------------------------------------- rpc req message
+	
+	
+	public static RpcMessage newHbRequestRpcMessage() {
+		RpcMessage req = newRpcMessage();
+		req.getHeader().setId(ID_GENERATOR.incrementAndGet());
+		req.getHeader().setHb();
+		return req;
+		
+	}
+	
+	
+	// ~ ---------------------------------------------------------------------------------------------- rpc rsp message
+	
+	
+	public static RpcMessage newRsponseRpcMessage(long id, RpcException e) {
+		RpcMessage rsp = newRpcMessage();
+		rsp.getHeader().setRp();
+		rsp.getBody().setThrownObject(e);
+		return rsp;
+	}
+	
+	public static RpcMessage newRsponseRpcMessage(long id, Object returnObject) {
+		RpcMessage rsp = newRpcMessage();
+		rsp.getHeader().setRp();
+		rsp.getBody().setReturnObject(returnObject);
+		return rsp;
 	}
 	
 }

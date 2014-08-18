@@ -35,4 +35,12 @@ public interface RpcConnector {
 	 */
 	void setAddress(SocketAddress address);
 	
+	
+	/**
+	 * Set heartbeat in millisecond
+	 * 
+	 * @param heartbeatInMillis
+	 */
+	void setHeartbeatInMillis(int heartbeatInMillis);
+	
 }
