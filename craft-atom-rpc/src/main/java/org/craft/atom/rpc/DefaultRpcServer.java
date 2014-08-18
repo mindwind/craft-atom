@@ -43,7 +43,7 @@ public class DefaultRpcServer implements RpcServer {
 	
 	
 	public DefaultRpcServer() {
-		ioTimeoutInMillis = 5 * 60 * 1000                  ;
+		ioTimeoutInMillis = Integer.MAX_VALUE              ;
 		acceptor          = new DefaultRpcAcceptor()       ;
 		protocol          = new DefaultRpcProtocol()       ;
 		processor         = new DefaultRpcProcessor()      ;

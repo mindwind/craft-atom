@@ -21,7 +21,7 @@ public class RpcServerBuilder {
 	
 	private String             host                                                ;
 	private int                port                                                ;
-	private int                ioTimeoutInMillis  = 300000                         ;
+	private int                ioTimeoutInMillis  = Integer.MAX_VALUE              ;
 	private RpcAcceptor        acceptor           = new DefaultRpcAcceptor()       ;
 	private RpcInvoker         invoker            = new DefaultRpcInvoker()        ;
 	private RpcProtocol        protocol           = new DefaultRpcProtocol()       ;
