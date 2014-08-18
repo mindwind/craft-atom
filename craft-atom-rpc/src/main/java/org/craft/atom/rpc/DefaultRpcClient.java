@@ -16,10 +16,11 @@ import org.craft.atom.rpc.spi.RpcConnector;
 public class DefaultRpcClient implements RpcClient {
 
 	
-	@Getter @Setter private String       host             ;
-	@Getter @Setter private int          port             ;
-	@Getter @Setter private int          heartbeatInMillis;
-	@Getter @Setter private RpcConnector connector        ; 
+	@Getter @Setter private String       host                  ;
+	@Getter @Setter private int          port                  ;
+	@Getter @Setter private int          heartbeatInMillis     ;
+	@Getter @Setter private int          connectTimeoutInMillis;
+	@Getter @Setter private RpcConnector connector             ; 
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
@@ -33,6 +34,7 @@ public class DefaultRpcClient implements RpcClient {
 	public void init() {
 		connector.setAddress(new InetSocketAddress(host, port));
 		connector.setHeartbeatInMillis(heartbeatInMillis);
+		connector.setConnectTimeoutInMillis(connectTimeoutInMillis);
 	}
 	
 	

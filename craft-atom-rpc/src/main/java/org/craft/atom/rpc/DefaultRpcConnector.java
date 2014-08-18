@@ -33,7 +33,7 @@ public class DefaultRpcConnector implements RpcConnector {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultRpcConnector.class);
 	
 	
-	@Getter         private int                        connectTimeoutInMillis;
+	@Getter @Setter private int                        connectTimeoutInMillis;
 	@Getter         private int                        heartbeatInMillis     ;
 	@Getter         private SocketAddress              address               ;
 	@Getter @Setter private Map<Long, Channel<byte[]>> channels              ;
