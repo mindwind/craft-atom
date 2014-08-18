@@ -27,6 +27,7 @@ public class DefaultRpcClient implements RpcClient {
 	
 	
 	public DefaultRpcClient() {
+		connectTimeoutInMillis = Integer.MAX_VALUE;
 		connector = new DefaultRpcConnector();
 		init();
 	}

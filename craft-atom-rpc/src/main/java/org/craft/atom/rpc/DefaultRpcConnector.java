@@ -47,11 +47,12 @@ public class DefaultRpcConnector implements RpcConnector {
 	
 	
 	public DefaultRpcConnector() {
-		channels    = new ConcurrentHashMap<Long, Channel<byte[]>>();
-		ioHandler   = new RpcClientIoHandler();
-		ioConnector = NioFactory.newTcpConnectorBuilder(ioHandler)
-				                .connectTimeoutInMillis(connectTimeoutInMillis)
-				                .build();
+		connectTimeoutInMillis = Integer.MAX_VALUE;
+		channels               = new ConcurrentHashMap<Long, Channel<byte[]>>();
+		ioHandler              = new RpcClientIoHandler();
+		ioConnector            = NioFactory.newTcpConnectorBuilder(ioHandler)
+				                           .connectTimeoutInMillis(connectTimeoutInMillis)
+				                           .build();
 	}
 	
 	
