@@ -93,7 +93,7 @@ public class DefaultRpcConnector implements RpcConnector {
 			throw new IOException(e);
 		}
 		
-		// one way request, client does not expect response, don't wait return null
+		// one way request, client does not expect response
 		if (req.isOneWay()) {
 			return null;
 		}
@@ -139,7 +139,6 @@ public class DefaultRpcConnector implements RpcConnector {
 				public void run() {
 					for (Channel<byte[]> channel : channels.values()) {
 						try {
-							channel.write(data);
 							write(channel, RpcMessages.newHbRequestRpcMessage());
 						} catch (Throwable t) {
 							LOG.warn("[CRAFT-ATOM-RPC] Rpc connector heartbeat error", t);
