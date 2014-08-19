@@ -37,4 +37,12 @@ public class RpcMessage implements Serializable {
 	public boolean isHeartBeat() {
 		return header.isHb();
 	}
+	
+	public long getId() {
+		return header.getId();
+	}
+	
+	public long getRpcTimeoutInMillis() {
+		return body.getRpcOption().getRpcTimeoutInMillis();
+	}
 }
