@@ -79,6 +79,12 @@ public class DefaultRpcConnector implements RpcConnector {
 			channel.close();
 		}
 	}
+	
+	@Override
+	public RpcMessage send(RpcMessage msg) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public void setAddress(SocketAddress address) {
