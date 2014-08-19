@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.SocketAddress;
 
 import org.craft.atom.protocol.rpc.model.RpcMessage;
+import org.craft.atom.rpc.RpcException;
 
 
 /**
@@ -18,9 +19,9 @@ public interface RpcConnector {
 	 * Connect to rpc server.
 	 *
 	 * @return connection id
-	 * @throws IOException If some other I/O error occurs
+	 * @throws RpcException If some other rpc error occurs
 	 */
-	long connect() throws IOException;
+	long connect() throws RpcException;
 	
 	/**
 	 * Disconnect the connection with specified id.
@@ -34,9 +35,16 @@ public interface RpcConnector {
 	 * 
 	 * @param req  rpc req msg
 	 * @return     rpc rsp msg
-	 * @throws IOException If some other I/O error occurs
+	 * @throws IOException If some other rpc error occurs
 	 */
-	RpcMessage send(RpcMessage req) throws IOException;
+	RpcMessage send(RpcMessage req) throws RpcException;
+	
+	/**
+	 * Set rpc protocol
+	 * 
+	 * @param protocol
+	 */
+	void setProtocol(RpcProtocol protocol);
 	
 	/**
 	 * Set address to connect.

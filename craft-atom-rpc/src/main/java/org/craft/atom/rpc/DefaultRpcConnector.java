@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.rpc.spi.RpcConnector;
+import org.craft.atom.rpc.spi.RpcFuture;
 import org.craft.atom.rpc.spi.RpcProtocol;
 import org.craft.atom.util.NamedThreadFactory;
 import org.slf4j.Logger;
@@ -50,7 +52,7 @@ public class DefaultRpcConnector implements RpcConnector {
 	public DefaultRpcConnector() {
 		connectTimeoutInMillis = Integer.MAX_VALUE;
 		channels               = new ConcurrentHashMap<Long, Channel<byte[]>>();
-		ioHandler              = new RpcClientIoHandler();
+		ioHandler              = new RpcClientIoHandler(protocol);
 		ioConnector            = NioFactory.newTcpConnectorBuilder(ioHandler)
 				                           .connectTimeoutInMillis(connectTimeoutInMillis)
 				                           .build();
@@ -61,15 +63,19 @@ public class DefaultRpcConnector implements RpcConnector {
 
 	
 	@Override
-	public long connect() throws IOException {
-		Future<Channel<byte[]>> future = ioConnector.connect(address);
+	public long connect() throws RpcException {
 		try {
+			Future<Channel<byte[]>> future = ioConnector.connect(address);
 			Channel<byte[]> channel = future.get(connectTimeoutInMillis, TimeUnit.MILLISECONDS);
 			long id = channel.getId();
 			channels.put(id, channel);
 			return id;
+		} catch (TimeoutException e) {
+			throw new RpcException(RpcException.CLIENT_TIMEOUT, e);
+		} catch (IOException e) {
+			throw new RpcException(RpcException.NET_IO, e);
 		} catch (Exception e) {
-			throw new IOException(e);
+			throw new RpcException(RpcException.UNKNOWN, e);
 		}
 	}
 
@@ -82,24 +88,32 @@ public class DefaultRpcConnector implements RpcConnector {
 	}
 	
 	@Override
-	public RpcMessage send(RpcMessage req) throws IOException {
-		long id = req.getId();
-		
+	@SuppressWarnings("unchecked")
+	public RpcMessage send(RpcMessage req) throws RpcException {
 		try {
+			long id = req.getId();
 			Channel<byte[]> ch = select(id);
 			boolean succ = write(ch, req);
 			if (!succ) throw new IOException("Unknown I/O error!");
+			
+			// one way request, client does not expect response
+			if (req.isOneWay()) {
+				return null;
+			}
+			
+			// wait response
+			RpcFuture future = new DefaultRpcFuture();
+			Map<Long, RpcFuture> map = (Map<Long, RpcFuture>) ch.getAttribute(RpcClientIoHandler.RPC_FUTURE_CHANNEL);
+			map.put(id, future);
+			future.await(req.getRpcTimeoutInMillis(), TimeUnit.MILLISECONDS);
+			return future.getResponse();
+		} catch (IOException e) {
+			throw new RpcException(RpcException.NET_IO, e);
+		} catch (InterruptedException e) {
+			throw new RpcException(RpcException.CLIENT_TIMEOUT, e);
 		} catch (Exception e) {
-			throw new IOException(e);
+			throw new RpcException(RpcException.UNKNOWN, e);
 		}
-		
-		// one way request, client does not expect response
-		if (req.isOneWay()) {
-			return null;
-		}
-		
-		// wait response TODO
-		return null;
 	}
 	
 	private boolean write(Channel<byte[]> channel, RpcMessage msg) {

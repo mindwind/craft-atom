@@ -33,7 +33,24 @@ public interface RpcFuture {
      * Returns the rpc response message, it returns <tt>null</tt> if this future is not ready.
      * @return rpc response message.
      */
-    RpcMessage getRpcMessage();
-
+    RpcMessage getResponse();
     
+	/**
+	 * Set the cause of the rpc failure, and notifies all threads waiting for
+	 * this future. This method is invoked internally. Please do not call this
+	 * method directly.
+	 * 
+	 * @param cause
+	 */
+	void setThrowable(Throwable cause);
+
+	/**
+	 * Set the rpc response message, and notifies all threads waiting for this
+	 * future. This method is invoked internally. Please do not call this method
+	 * directly.
+	 * 
+	 * @param rsp rpc response message.
+	 */
+	void setResponse(RpcMessage rsp);
+	
 }
