@@ -29,4 +29,12 @@ public class RpcMessage implements Serializable {
 	@Getter @Setter private RpcHeader  header;
 	@Getter @Setter private RpcBody    body  ;
 
+	
+	public boolean isOneWay() {
+		return header.isOw();
+	}
+	
+	public boolean isHeartBeat() {
+		return header.isHb();
+	}
 }

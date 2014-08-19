@@ -31,7 +31,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 	public RpcMessage process(final RpcMessage req) {
 		try {
 			check(req);
-			if (isOneway(req)) return null;
+			if (req.isOneWay()) return null;
 			
 			ExecutorService executor = executor(req);
 			Future<RpcMessage> future = executor.submit(new Callable<RpcMessage>() {
@@ -58,10 +58,6 @@ public class DefaultRpcProcessor implements RpcProcessor {
 		if (req == null || req.getBody() == null) {
 			throw new RpcException(RpcException.CLIENT_BAD_REQ);
 		}
-	}
-	
-	private boolean isOneway(RpcMessage req) {
-		return req.getHeader().isOw();
 	}
 	
 	private RpcMessage process0(RpcMessage req) {
