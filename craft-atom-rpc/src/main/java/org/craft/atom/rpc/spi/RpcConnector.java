@@ -24,9 +24,8 @@ public interface RpcConnector {
 	 * Disconnects the connection with specified id.
 	 *  
 	 * @param connectionId
-	 * @throws IOException If some other I/O error occurs
 	 */
-	void disconnect(long connectionId) throws IOException;
+	void disconnect(long connectionId);
 	
 	/**
 	 * Set address to connect.

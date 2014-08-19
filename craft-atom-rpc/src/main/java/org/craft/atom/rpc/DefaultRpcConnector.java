@@ -73,7 +73,7 @@ public class DefaultRpcConnector implements RpcConnector {
 	}
 
 	@Override
-	public void disconnect(long connectionId) throws IOException {
+	public void disconnect(long connectionId) {
 		Channel<byte[]> channel = channels.remove(connectionId);
 		if (channel != null) {
 			channel.close();
@@ -84,7 +84,6 @@ public class DefaultRpcConnector implements RpcConnector {
 	public void setAddress(SocketAddress address) {
 		this.address = address;
 	}
-
 
 	@Override
 	public void setHeartbeatInMillis(int heartbeatInMillis) {
