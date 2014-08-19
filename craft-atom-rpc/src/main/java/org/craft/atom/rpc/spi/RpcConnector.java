@@ -34,6 +34,7 @@ public interface RpcConnector {
 	 * 
 	 * @param req  rpc req msg
 	 * @return     rpc rsp msg
+	 * @throws IOException If some other I/O error occurs
 	 */
 	RpcMessage send(RpcMessage req) throws IOException;
 	

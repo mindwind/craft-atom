@@ -1,6 +1,7 @@
 package org.craft.atom.rpc;
 import java.io.IOException;
 import java.net.SocketAddress;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -40,7 +41,7 @@ public class DefaultRpcConnector implements RpcConnector {
 	@Getter @Setter private IoHandler                  ioHandler             ;
 	@Getter @Setter private IoConnector                ioConnector           ;
 	@Getter @Setter private ScheduledExecutorService   hbScheduler           ;
-	@Getter @Setter private RpcProtocol                protocol              ;
+	@Getter @Setter private RpcProtocol                protocol              ;            
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -81,9 +82,38 @@ public class DefaultRpcConnector implements RpcConnector {
 	}
 	
 	@Override
-	public RpcMessage send(RpcMessage msg) throws IOException {
-		// TODO Auto-generated method stub
+	public RpcMessage send(RpcMessage req) throws IOException {
+		long id = req.getId();
+		
+		try {
+			Channel<byte[]> ch = select(id);
+			boolean succ = write(ch, req);
+			if (!succ) throw new IOException("Unknown I/O error!");
+		} catch (Exception e) {
+			throw new IOException(e);
+		}
+		
+		// one way request, client does not expect response, don't wait return null
+		if (req.isOneWay()) {
+			return null;
+		}
+		
+		// wait response TODO
 		return null;
+	}
+	
+	private boolean write(Channel<byte[]> channel, RpcMessage msg) {
+		ProtocolEncoder<RpcMessage> encoder = protocol.getRpcEncoder();
+		byte[] data = encoder.encode(msg);
+		return channel.write(data);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Channel<byte[]> select(long id) {
+		Collection<Channel<byte[]>> collection = channels.values();
+		Object[] chs = collection.toArray();
+		int i = (int) (Math.abs(id) % chs.length);
+		return (Channel<byte[]>) chs[i];
 	}
 
 	@Override
@@ -109,9 +139,8 @@ public class DefaultRpcConnector implements RpcConnector {
 				public void run() {
 					for (Channel<byte[]> channel : channels.values()) {
 						try {
-							ProtocolEncoder<RpcMessage> encoder = protocol.getRpcEncoder();
-							byte[] data = encoder.encode(RpcMessages.newHbRequestRpcMessage());
 							channel.write(data);
+							write(channel, RpcMessages.newHbRequestRpcMessage());
 						} catch (Throwable t) {
 							LOG.warn("[CRAFT-ATOM-RPC] Rpc connector heartbeat error", t);
 						}
