@@ -11,6 +11,21 @@ CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
 
 
 
+
+craft-atom 2.2.0
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: LOW
+
+* craft-atom-rpc
+* craft-atom-protocol-rpc
+  [NEW]      - rpc support
+  
+* craft-atom-nio
+  [FIX]      - just handle `Exception` not `Throwable`, so `IoHandler` broke backwards compatibility.
+
+
+
+
 craft-atom 2.1.2
 -----------------------------------------------------------------------------------------------------------------------
 UPGRADE URGENCY: LOW
