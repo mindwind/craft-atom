@@ -20,7 +20,6 @@ import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.rpc.spi.RpcConnector;
-import org.craft.atom.rpc.spi.RpcFuture;
 import org.craft.atom.rpc.spi.RpcProtocol;
 import org.craft.atom.util.NamedThreadFactory;
 import org.slf4j.Logger;
@@ -109,7 +108,7 @@ public class DefaultRpcConnector implements RpcConnector {
 			return future.getResponse();
 		} catch (IOException e) {
 			throw new RpcException(RpcException.NET_IO, e);
-		} catch (InterruptedException e) {
+		} catch (TimeoutException e) {
 			throw new RpcException(RpcException.CLIENT_TIMEOUT, e);
 		} catch (Exception e) {
 			throw new RpcException(RpcException.UNKNOWN, e);

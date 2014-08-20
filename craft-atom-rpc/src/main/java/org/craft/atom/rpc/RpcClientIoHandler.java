@@ -9,7 +9,6 @@ import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
-import org.craft.atom.rpc.spi.RpcFuture;
 import org.craft.atom.rpc.spi.RpcProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,8 @@
-package org.craft.atom.rpc.spi;
+package org.craft.atom.rpc;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 
@@ -19,7 +21,7 @@ public interface RpcFuture {
 	 * @param timeout
 	 * @param unit
 	 * @return <tt>true</tt> if the operation is completed.
-	 * @throws InterruptedException
+	 * @throws InterruptedException if the current thread was interrupted while waiting
 	 */
 	boolean await(long timeout, TimeUnit unit) throws InterruptedException;
 	
@@ -32,25 +34,27 @@ public interface RpcFuture {
     /**
      * Returns the rpc response message, it returns <tt>null</tt> if this future is not ready.
      * @return rpc response message.
+     * @throws TimeoutException if the wait timed out
+     * @throws IOException if some other I/O error occurs
      */
-    RpcMessage getResponse();
+    RpcMessage getResponse() throws IOException, TimeoutException;
     
 	/**
 	 * Set the cause of the rpc failure, and notifies all threads waiting for
 	 * this future. This method is invoked internally. Please do not call this
 	 * method directly.
 	 * 
-	 * @param cause
+	 * @param throwable
 	 */
-	void setThrowable(Throwable cause);
+	void setThrowable(Throwable throwable);
 
 	/**
 	 * Set the rpc response message, and notifies all threads waiting for this
 	 * future. This method is invoked internally. Please do not call this method
 	 * directly.
 	 * 
-	 * @param rsp rpc response message.
+	 * @param response rpc response message.
 	 */
-	void setResponse(RpcMessage rsp);
+	void setResponse(RpcMessage response);
 	
 }
