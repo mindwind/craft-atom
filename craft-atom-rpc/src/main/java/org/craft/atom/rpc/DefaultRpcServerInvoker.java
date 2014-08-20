@@ -10,7 +10,7 @@ import com.esotericsoftware.reflectasm.MethodAccess;
  * @author mindwind
  * @version 1.0, Aug 7, 2014
  */
-public class DefaultRpcInvoker implements RpcInvoker {
+public class DefaultRpcServerInvoker implements RpcInvoker {
 	
 	
 	private RpcRegistry registry = RpcRegistry.getInstance();

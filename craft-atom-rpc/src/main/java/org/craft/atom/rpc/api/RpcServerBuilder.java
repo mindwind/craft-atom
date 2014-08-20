@@ -2,7 +2,7 @@ package org.craft.atom.rpc.api;
 
 import org.craft.atom.rpc.DefaultRpcAcceptor;
 import org.craft.atom.rpc.DefaultRpcExecutorFactory;
-import org.craft.atom.rpc.DefaultRpcInvoker;
+import org.craft.atom.rpc.DefaultRpcServerInvoker;
 import org.craft.atom.rpc.DefaultRpcProcessor;
 import org.craft.atom.rpc.DefaultRpcProtocol;
 import org.craft.atom.rpc.DefaultRpcServer;
@@ -23,7 +23,7 @@ public class RpcServerBuilder {
 	private int                port                                                ;
 	private int                ioTimeoutInMillis  = Integer.MAX_VALUE              ;
 	private RpcAcceptor        acceptor           = new DefaultRpcAcceptor()       ;
-	private RpcInvoker         invoker            = new DefaultRpcInvoker()        ;
+	private RpcInvoker         invoker            = new DefaultRpcServerInvoker()  ;
 	private RpcProtocol        protocol           = new DefaultRpcProtocol()       ;
 	private RpcProcessor       processor          = new DefaultRpcProcessor()      ;
 	private RpcExecutorFactory executorFactory    = new DefaultRpcExecutorFactory();

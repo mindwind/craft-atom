@@ -47,7 +47,7 @@ public class DefaultRpcServer implements RpcServer {
 		acceptor          = new DefaultRpcAcceptor()       ;
 		protocol          = new DefaultRpcProtocol()       ;
 		processor         = new DefaultRpcProcessor()      ;
-		invoker           = new DefaultRpcInvoker()        ;
+		invoker           = new DefaultRpcServerInvoker()  ;
 		executorFactory   = new DefaultRpcExecutorFactory();
 		registry          = RpcRegistry.getInstance()      ;
 		init();
