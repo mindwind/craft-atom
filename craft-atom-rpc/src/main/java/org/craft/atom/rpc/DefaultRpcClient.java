@@ -47,7 +47,7 @@ public class DefaultRpcClient implements RpcClient {
 	
 	
 	@Override
-	public <T> T refer(Class<T> clazz) {
+	public <T> T refer(Class<T> interfaceClass) {
 		// TODO
 		return null;
 	}
