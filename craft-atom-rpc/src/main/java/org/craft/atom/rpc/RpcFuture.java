@@ -29,7 +29,7 @@ public interface RpcFuture {
      * Returns the cause of the rpc failure if and only if the rpc operation has failed due to an {@link Exception}.  
      * Otherwise, <tt>null</tt> is returned.
      */
-    Throwable getThrowable();
+    Exception getException();
     
     /**
      * Returns the rpc response message, it returns <tt>null</tt> if this future is not ready.
@@ -44,9 +44,9 @@ public interface RpcFuture {
 	 * this future. This method is invoked internally. Please do not call this
 	 * method directly.
 	 * 
-	 * @param throwable
+	 * @param exception
 	 */
-	void setThrowable(Throwable throwable);
+	void setException(Exception exception);
 
 	/**
 	 * Set the rpc response message, and notifies all threads waiting for this

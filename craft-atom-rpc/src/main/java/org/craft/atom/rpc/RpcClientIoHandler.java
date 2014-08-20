@@ -77,7 +77,7 @@ public class RpcClientIoHandler implements IoHandler {
 	private void channelThrown0(Channel<byte[]> channel, Throwable cause) {
 		Map<Long, RpcFuture> map = (Map<Long, RpcFuture>) channel.getAttribute(RPC_FUTURE_CHANNEL);
 		for (RpcFuture future : map.values()) {
-			future.setThrowable(cause);
+			future.setException(cause);
 		}
 	}
 

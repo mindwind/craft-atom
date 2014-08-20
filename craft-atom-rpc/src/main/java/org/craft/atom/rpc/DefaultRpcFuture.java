@@ -14,7 +14,7 @@ public class DefaultRpcFuture implements RpcFuture {
 	
 	
 	private RpcMessage response ;
-	private Throwable  throwable;
+	private Exception  exception;
 	private boolean    ready    ;
 	private int        waiters  ;
 	
@@ -34,7 +34,7 @@ public class DefaultRpcFuture implements RpcFuture {
 				while (!ready) {
 					wait(timeoutMillis);
 					if (endTime < System.currentTimeMillis() && !ready) {
-						throwable = new TimeoutException();
+						exception = new TimeoutException();
 					}
 				}
 			} finally {
@@ -45,15 +45,15 @@ public class DefaultRpcFuture implements RpcFuture {
 	}
 
 	@Override
-	public Throwable getThrowable() {
+	public Exception getException() {
 		synchronized (this) {
-			return throwable;
+			return exception;
 		}
 	}
 
 	@Override
 	public RpcMessage getResponse() throws IOException, TimeoutException {
-		Throwable t = getThrowable();
+		Throwable t = getException();
 		if (t != null) {
 			if (t instanceof IOException     ) throw (IOException)      t;
 			if (t instanceof TimeoutException) throw (TimeoutException) t;
@@ -66,10 +66,10 @@ public class DefaultRpcFuture implements RpcFuture {
 	}
 
 	@Override
-	public void setThrowable(Throwable throwable) {
+	public void setException(Exception exception) {
 		synchronized (this) {
 			if (ready) return;
-			this.throwable = throwable;
+			this.exception = exception;
 			ready = true;
 			if (waiters > 0) {
                 notifyAll();
