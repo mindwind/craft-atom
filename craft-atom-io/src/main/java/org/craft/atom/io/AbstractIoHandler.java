@@ -49,7 +49,7 @@ abstract public class AbstractIoHandler implements IoHandler {
 	}
 
 	@Override
-	public void channelThrown(Channel<byte[]> channel, Throwable cause) {
+	public void channelThrown(Channel<byte[]> channel, Exception cause) {
 		LOG.warn("[CRAFT-ATOM-IO] Thrown |channel={}|", channel, cause);
 	}
 	

@@ -63,7 +63,7 @@ public class RpcServerIoHandler implements IoHandler {
 	}
 	
 	@Override
-	public void channelThrown(Channel<byte[]> channel, Throwable cause) {
+	public void channelThrown(Channel<byte[]> channel, Exception cause) {
 		LOG.info("[CRAFT-ATOM-RPC] Rpc server handler thrown, |Channel={}, thrown={}|", channel, cause);
 		channel.close();
 	}

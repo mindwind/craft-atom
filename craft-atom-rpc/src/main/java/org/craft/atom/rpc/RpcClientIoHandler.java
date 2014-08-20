@@ -67,14 +67,14 @@ public class RpcClientIoHandler implements IoHandler {
 	}
 	
 	@Override
-	public void channelThrown(Channel<byte[]> channel, Throwable cause) {
+	public void channelThrown(Channel<byte[]> channel, Exception cause) {
 		LOG.info("[CRAFT-ATOM-RPC] Rpc client handler thrown, |Channel={}, thrown={}|", channel, cause);
 		channelThrown0(channel, cause);
 		channel.close();
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void channelThrown0(Channel<byte[]> channel, Throwable cause) {
+	private void channelThrown0(Channel<byte[]> channel, Exception cause) {
 		Map<Long, RpcFuture> map = (Map<Long, RpcFuture>) channel.getAttribute(RPC_FUTURE_CHANNEL);
 		for (RpcFuture future : map.values()) {
 			future.setException(cause);

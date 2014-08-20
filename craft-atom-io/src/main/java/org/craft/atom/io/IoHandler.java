@@ -58,10 +58,10 @@ public interface IoHandler {
 	
 	/**
 	 * Invoked when any exception is thrown. 
-	 * If <code>cause</code> is an instance of {@link IOException} channel should be close.
+	 * If <code>cause</code> is an instance of {@link IOException} channel should be closed.
 	 * 
 	 * @param channel
 	 * @param cause
 	 */
-	void channelThrown(Channel<byte[]> channel, Throwable cause);
+	void channelThrown(Channel<byte[]> channel, Exception cause);
 }

@@ -172,9 +172,9 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 				String key = udpChannelKey(channel.getLocalAddress(), channel.getRemoteAddress());
 				udpChannels.remove(key);
 			}
-		} catch (Throwable t) {
-			LOG.warn("[CRAFT-ATOM-NIO] Catch close exception and fire it, |channel={}|", channel, t);
-			fireChannelThrown(channel, t);
+		} catch (Exception e) {
+			LOG.warn("[CRAFT-ATOM-NIO] Catch close exception and fire it, |channel={}|", channel, e);
+			fireChannelThrown(channel, e);
 		}
 	}
 	
@@ -296,14 +296,14 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 			} else if (protocol.equals(IoProtocol.UDP)) {
 				readBytes = readUdp(channel, buf);
 			}
-		} catch (Throwable t) {
-			LOG.debug("[CRAFT-ATOM-NIO] Catch read exception and fire it, |channel={}|", channel, t);
+		} catch (Exception e) {
+			LOG.debug("[CRAFT-ATOM-NIO] Catch read exception and fire it, |channel={}|", channel, e);
 
 			// fire exception caught event
-			fireChannelThrown(channel, t);
+			fireChannelThrown(channel, e);
 			
 			// if it is IO exception close channel avoid infinite loop.
-			if (t instanceof IOException) {
+			if (e instanceof IOException) {
 				scheduleClose(channel);
 			}
 		} finally {
@@ -413,14 +413,14 @@ public class NioProcessor extends NioReactor implements IoProcessor {
                     c++;
             		flush0(channel);
             	}
-			} catch (Throwable t) {
-				LOG.debug("[CRAFT-ATOM-NIO] Catch flush exception and fire it", t);
+			} catch (Exception e) {
+				LOG.debug("[CRAFT-ATOM-NIO] Catch flush exception and fire it", e);
 				
 				// fire channel thrown event 
-				fireChannelThrown(channel, t);
+				fireChannelThrown(channel, e);
 				
 				// if it is IO exception close channel avoid infinite loop.
-				if (t instanceof IOException) {
+				if (e instanceof IOException) {
 					scheduleClose(channel);
 				}
 			}
@@ -645,8 +645,8 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_WRITTEN, channel, handler, buf.array()));
 	}
 	
-	private void fireChannelThrown(NioByteChannel channel, Throwable t) {
-		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_THROWN, channel, handler, t));
+	private void fireChannelThrown(NioByteChannel channel, Exception e) {
+		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_THROWN, channel, handler, e));
 	}
 	
 	private void fireChannelClosed(NioByteChannel channel) {
