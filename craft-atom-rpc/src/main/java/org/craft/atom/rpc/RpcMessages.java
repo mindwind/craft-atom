@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.model.RpcHeader;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
+import org.craft.atom.protocol.rpc.model.RpcMethod;
 
 /**
  * Factory and utility methods for {@link RpcMessage}
@@ -35,6 +36,19 @@ public class RpcMessages {
 		RpcMessage req = newRpcMessage();
 		req.getHeader().setId(ID_GENERATOR.incrementAndGet());
 		req.getHeader().setHb();
+		return req;
+	}
+	
+	public static RpcMessage newRequestRpcMessage(Class<?> rpcInterface, String methodName, Class<?>[] parameterTypes, Object[] parameters) {
+		RpcMessage req = newRpcMessage();
+		req.getHeader().setId(ID_GENERATOR.incrementAndGet());
+		RpcBody body = req.getBody();
+		body.setRpcInterface(rpcInterface);
+		RpcMethod method = new RpcMethod();
+		method.setName(methodName);
+		method.setParameterTypes(parameterTypes);
+		method.setParameters(parameters);
+		body.setRpcMethod(method);
 		return req;
 	}
 	

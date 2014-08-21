@@ -45,4 +45,8 @@ public class RpcMessage implements Serializable {
 	public long getRpcTimeoutInMillis() {
 		return body.getRpcOption().getRpcTimeoutInMillis();
 	}
+	
+	public Object getReturnObject() {
+		return body.getReturnObject();
+	}
 }
