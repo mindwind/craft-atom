@@ -28,5 +28,10 @@ public interface RpcInvoker {
 	 */
 	RpcMessage invoke(RpcMessage req) throws RpcException;
 	
-	
+	/**
+	 * Set rpc connector. Only client side invoker need implement this method.
+	 * 
+	 * @param connector
+	 */
+	void setConnector(RpcConnector connector);
 }

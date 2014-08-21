@@ -42,10 +42,11 @@ public class DefaultRpcClient implements RpcClient {
 	}
 	
 	public void init() {
-		connector.setProtocol(protocol);
-		connector.setAddress(new InetSocketAddress(host, port));
-		connector.setHeartbeatInMillis(heartbeatInMillis);
-		connector.setConnectTimeoutInMillis(connectTimeoutInMillis);
+		connector   .setProtocol(protocol);
+		connector   .setAddress(new InetSocketAddress(host, port));
+		connector   .setHeartbeatInMillis(heartbeatInMillis);
+		connector   .setConnectTimeoutInMillis(connectTimeoutInMillis);
+		invoker     .setConnector(connector);
 		proxyFactory.setInvoker(invoker);
 	}
 	

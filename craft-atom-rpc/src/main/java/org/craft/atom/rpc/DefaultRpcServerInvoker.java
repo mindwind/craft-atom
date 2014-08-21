@@ -2,6 +2,7 @@ package org.craft.atom.rpc;
 
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.protocol.rpc.model.RpcMethod;
+import org.craft.atom.rpc.spi.RpcConnector;
 import org.craft.atom.rpc.spi.RpcInvoker;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
@@ -37,5 +38,8 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 			throw new RpcException(RpcException.SERVER_ERROR, e);
 		}
 	}
+
+	@Override
+	public void setConnector(RpcConnector connector) {}
 	
 }
