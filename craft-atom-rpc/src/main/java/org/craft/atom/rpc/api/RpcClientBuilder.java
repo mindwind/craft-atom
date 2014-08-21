@@ -19,7 +19,8 @@ public class RpcClientBuilder {
 	
 	private String             host                                                  ;
 	private int                port                                                  ;
-	private int                heartbeatInMillis                                     ;
+	private int                connections            = 1                            ;
+	private int                heartbeatInMillis      = 0                            ;
 	private int                connectTimeoutInMillis = Integer.MAX_VALUE            ;
 	private int                rpcTimeoutInMillis     = Integer.MAX_VALUE            ;
 	private RpcConnector       connector              = new DefaultRpcConnector()    ;
@@ -30,6 +31,7 @@ public class RpcClientBuilder {
 	
 	public RpcClientBuilder host                  (String          host                  ) { this.host                   = host                  ; return this; }
 	public RpcClientBuilder port                  (int             port                  ) { this.port                   = port                  ; return this; }
+	public RpcClientBuilder connections           (int             connections           ) { this.connections            = connections           ; return this; }
 	public RpcClientBuilder heartbeatInMillis     (int             heartbeatInMillis     ) { this.heartbeatInMillis      = heartbeatInMillis     ; return this; }
 	public RpcClientBuilder connectTimeoutInMillis(int             connectTimeoutInMillis) { this.connectTimeoutInMillis = connectTimeoutInMillis; return this; }
 	public RpcClientBuilder rpcTimeoutInMillis    (int             rpcTimeoutInMillis    ) { this.rpcTimeoutInMillis     = rpcTimeoutInMillis    ; return this; }
@@ -43,6 +45,7 @@ public class RpcClientBuilder {
 		DefaultRpcClient rc = new DefaultRpcClient();
 		rc.setHost(host);
 		rc.setPort(port);
+		rc.setConnections(connections);
 		rc.setHeartbeatInMillis(heartbeatInMillis);
 		rc.setConnectTimeoutInMillis(connectTimeoutInMillis);
 		rc.setRpcTimeoutInMillis(rpcTimeoutInMillis);
