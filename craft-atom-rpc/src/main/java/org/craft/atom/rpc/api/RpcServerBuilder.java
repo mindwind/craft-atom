@@ -40,7 +40,7 @@ public class RpcServerBuilder {
 	
 	
 	public RpcServer build() {
-		DefaultRpcServer rs =  new DefaultRpcServer();
+		DefaultRpcServer rs = new DefaultRpcServer();
 		rs.setHost(host);
 		rs.setPort(port);
 		rs.setIoTimeoutInMillis(ioTimeoutInMillis);
