@@ -1,6 +1,6 @@
 package org.craft.atom.rpc.api;
 
-import java.io.IOException;
+import org.craft.atom.rpc.RpcException;
 
 /**
  * RPC client
@@ -19,18 +19,14 @@ public interface RpcClient {
 	<T> T refer(Class<T> rpcInterface);
 	
 	/**
-	 * Connects to rpc server
+	 * Open the client, connect to rpc server for communicating.
 	 *
-	 * @return connection id
-	 * @throws IOException If some other I/O error occurs
+	 * @throws RpcException If some other rpc error occurs
 	 */
-	long connect() throws IOException;
+	void open() throws RpcException;
 	
 	/**
-	 * Disconnects the connection with specified id.
-	 *  
-	 * @param connectionId
-	 * @throws IOException If some other I/O error occurs
+	 * Close the client, disconnect all the connections.
 	 */
-	void disconnect(long connectionId) throws IOException;
+	void close();
 }

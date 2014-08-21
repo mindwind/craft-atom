@@ -32,6 +32,11 @@ public interface RpcConnector {
 	void disconnect(long connectionId);
 	
 	/**
+	 * Close itsself and release all the connecitons.
+	 */
+	void close();
+	
+	/**
 	 * Send rpc request message and return rpc response message.
 	 * 
 	 * @param req  rpc req msg

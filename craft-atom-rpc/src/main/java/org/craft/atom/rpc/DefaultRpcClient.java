@@ -1,6 +1,5 @@
 package org.craft.atom.rpc;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import lombok.Getter;
@@ -21,6 +20,7 @@ public class DefaultRpcClient implements RpcClient {
 	
 	@Getter @Setter private String          host                  ;
 	@Getter @Setter private int             port                  ;
+	@Getter @Setter private int             connections           ;
 	@Getter @Setter private int             heartbeatInMillis     ;
 	@Getter @Setter private int             connectTimeoutInMillis;
 	@Getter @Setter private int             rpcTimeoutInMillis    ;
@@ -39,7 +39,8 @@ public class DefaultRpcClient implements RpcClient {
 		proxyFactory           = new DefaultRpcProxyFactory() ;
 		invoker                = new DefaultRpcClientInvoker();
 		connectTimeoutInMillis = Integer.MAX_VALUE            ;
-		rpcTimeoutInMillis     = Integer.MAX_VALUE            ;          
+		rpcTimeoutInMillis     = Integer.MAX_VALUE            ;
+		connections            = 1                            ;
 		init();
 	}
 	
@@ -61,16 +62,17 @@ public class DefaultRpcClient implements RpcClient {
 		return proxyFactory.getProxy(rpcInterface);
 	}
 
-
 	@Override
-	public long connect() throws IOException {
-		return connector.connect();
+	public void open() throws RpcException {
+		if (connections < 1) throw new IllegalStateException("Client connections configuration should >= 1");
+		for (int i = 0; i < connections; i++) {
+			connector.connect();
+		}
 	}
 
-
 	@Override
-	public void disconnect(long connectionId) throws IOException {
-		disconnect(connectionId);
+	public void close() {
+		connector.close();
 	}
 
 }

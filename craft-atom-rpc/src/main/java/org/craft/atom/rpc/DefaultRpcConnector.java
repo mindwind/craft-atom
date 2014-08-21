@@ -87,6 +87,14 @@ public class DefaultRpcConnector implements RpcConnector {
 	}
 	
 	@Override
+	public void close() {
+		for (Channel<byte[]> channel : channels.values()) {
+			channel.close();
+		}
+		channels.clear();
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
 	public RpcMessage send(RpcMessage req) throws RpcException {
 		try {
