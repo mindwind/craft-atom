@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import org.craft.atom.rpc.api.RpcClient;
 import org.craft.atom.rpc.spi.RpcConnector;
+import org.craft.atom.rpc.spi.RpcInvoker;
 import org.craft.atom.rpc.spi.RpcProtocol;
 import org.craft.atom.rpc.spi.RpcProxyFactory;
 
@@ -25,15 +26,18 @@ public class DefaultRpcClient implements RpcClient {
 	@Getter @Setter private RpcConnector    connector             ; 
 	@Getter @Setter private RpcProtocol     protocol              ;
 	@Getter @Setter private RpcProxyFactory proxyFactory          ;
+	@Getter @Setter private RpcInvoker      invoker               ;
+	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
 	
 	public DefaultRpcClient() {
-		connector              = new DefaultRpcConnector()   ;
-		protocol               = new DefaultRpcProtocol()    ;
-		proxyFactory           = new DefaultRpcProxyFactory();
-		connectTimeoutInMillis = Integer.MAX_VALUE           ;
+		connector              = new DefaultRpcConnector()    ;
+		protocol               = new DefaultRpcProtocol()     ;
+		proxyFactory           = new DefaultRpcProxyFactory() ;
+		invoker                = new DefaultRpcClientInvoker();
+		connectTimeoutInMillis = Integer.MAX_VALUE            ;
 		init();
 	}
 	
@@ -42,6 +46,7 @@ public class DefaultRpcClient implements RpcClient {
 		connector.setAddress(new InetSocketAddress(host, port));
 		connector.setHeartbeatInMillis(heartbeatInMillis);
 		connector.setConnectTimeoutInMillis(connectTimeoutInMillis);
+		proxyFactory.setInvoker(invoker);
 	}
 	
 	
