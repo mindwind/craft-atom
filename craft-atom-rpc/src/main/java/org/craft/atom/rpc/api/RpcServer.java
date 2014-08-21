@@ -13,7 +13,7 @@ public interface RpcServer {
 	
 	
 	/**
-	 * Starts the rpc server and gets things going.
+	 * Start the rpc server and get things going.
 	 * Just invoke this once.
 	 */
 	void serve();
