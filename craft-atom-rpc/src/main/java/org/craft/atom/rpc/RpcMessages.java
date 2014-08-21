@@ -36,7 +36,6 @@ public class RpcMessages {
 		req.getHeader().setId(ID_GENERATOR.incrementAndGet());
 		req.getHeader().setHb();
 		return req;
-		
 	}
 	
 	

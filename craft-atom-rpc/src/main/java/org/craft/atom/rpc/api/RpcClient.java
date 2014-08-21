@@ -13,10 +13,10 @@ public interface RpcClient {
 	/**
 	 * Refer the rpc api proxy class.
 	 * 
-	 * @param  interfaceClass
+	 * @param  rpcInterface
 	 * @return a proxy.
 	 */
-	<T> T refer(Class<T> interfaceClass);
+	<T> T refer(Class<T> rpcInterface);
 	
 	/**
 	 * Connects to rpc server

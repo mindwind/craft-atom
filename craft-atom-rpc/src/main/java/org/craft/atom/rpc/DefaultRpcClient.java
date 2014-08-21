@@ -54,8 +54,8 @@ public class DefaultRpcClient implements RpcClient {
 	
 	
 	@Override
-	public <T> T refer(Class<T> interfaceClass) {
-		return proxyFactory.getProxy(interfaceClass);
+	public <T> T refer(Class<T> rpcInterface) {
+		return proxyFactory.getProxy(rpcInterface);
 	}
 
 

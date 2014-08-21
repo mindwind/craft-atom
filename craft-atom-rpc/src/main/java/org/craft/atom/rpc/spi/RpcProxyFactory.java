@@ -12,10 +12,10 @@ public interface RpcProxyFactory {
 	/**
 	 * Get an instance of a proxy class for the specified interface.
 	 * 
-	 * @param  interfaceClass
+	 * @param  rpcInterface
 	 * @return a proxy instance that implements the specified interface.
 	 */
-	<T> T getProxy(Class<T> interfaceClass);
+	<T> T getProxy(Class<T> rpcInterface);
 	
 	/**
 	 * Set rpc invoker. Proxy instance created by factory would use invoker to launch a rpc invocation.

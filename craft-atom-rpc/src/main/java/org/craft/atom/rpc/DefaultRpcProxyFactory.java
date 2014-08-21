@@ -20,8 +20,8 @@ public class DefaultRpcProxyFactory implements RpcProxyFactory {
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T getProxy(Class<T> interfaceClass) {
-		return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] { interfaceClass }, new RpcInvocationHandler(invoker));
+	public <T> T getProxy(Class<T> rpcInterface) {
+		return (T) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), new Class<?>[] { rpcInterface }, new RpcInvocationHandler(invoker));
 	}
 
 }
