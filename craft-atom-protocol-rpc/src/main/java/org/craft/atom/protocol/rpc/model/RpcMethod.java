@@ -12,14 +12,13 @@ import lombok.ToString;
  * @version 1.0, Aug 8, 2014
  */
 @ToString
-@EqualsAndHashCode(of = { "name", "parameterTypes", "returnType" })
+@EqualsAndHashCode(of = { "name", "parameterTypes" })
 public class RpcMethod {
 	
 	
 	@Getter @Setter private String              name          ;
 	@Getter         private Class<?>[]          parameterTypes;
 	@Getter         private Object[]            parameters    ;
-	@Getter @Setter private Class<?>		    returnType    ;
 	
 	
 	public void setParameterTypes(Class<?>... parameterTypes) {

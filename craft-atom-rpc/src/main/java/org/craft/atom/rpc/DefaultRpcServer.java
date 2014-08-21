@@ -84,7 +84,6 @@ public class DefaultRpcServer implements RpcServer {
 			RpcMethod rpcMethod = new RpcMethod();
 			rpcMethod.setName(method.getName());
 			rpcMethod.setParameterTypes(method.getParameterTypes());
-			rpcMethod.setReturnType(method.getReturnType());
 			expose(rpcInterface, rpcMethod, rpcObject, rpcOption);
 		}
 	}
