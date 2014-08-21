@@ -70,9 +70,9 @@ public class DefaultRpcProcessor implements RpcProcessor {
 		return rsp;
 	}
 	
-	private long rpcTimeoutInMillis(RpcMessage req) {
-		long timeout = req.getBody().getRpcOption().getRpcTimeoutInMillis();
-		if (timeout == 0) { timeout = Long.MAX_VALUE; }
+	private int rpcTimeoutInMillis(RpcMessage req) {
+		int timeout = req.getBody().getRpcOption().getRpcTimeoutInMillis();
+		if (timeout == 0) { timeout = Integer.MAX_VALUE; }
 		return timeout;
 	}
 	
