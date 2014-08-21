@@ -23,6 +23,7 @@ public class DefaultRpcClient implements RpcClient {
 	@Getter @Setter private int             port                  ;
 	@Getter @Setter private int             heartbeatInMillis     ;
 	@Getter @Setter private int             connectTimeoutInMillis;
+	@Getter @Setter private int             rpcTimeoutInMillis    ;
 	@Getter @Setter private RpcConnector    connector             ; 
 	@Getter @Setter private RpcProtocol     protocol              ;
 	@Getter @Setter private RpcProxyFactory proxyFactory          ;
@@ -38,6 +39,7 @@ public class DefaultRpcClient implements RpcClient {
 		proxyFactory           = new DefaultRpcProxyFactory() ;
 		invoker                = new DefaultRpcClientInvoker();
 		connectTimeoutInMillis = Integer.MAX_VALUE            ;
+		rpcTimeoutInMillis     = Integer.MAX_VALUE            ;          
 		init();
 	}
 	
