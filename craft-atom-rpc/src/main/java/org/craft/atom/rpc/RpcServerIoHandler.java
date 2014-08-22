@@ -50,9 +50,7 @@ public class RpcServerIoHandler implements IoHandler {
 		ProtocolDecoder<RpcMessage> decoder = (ProtocolDecoder<RpcMessage>) channel.getAttribute(RPC_DECODER);
 		List<RpcMessage> reqs = decoder.decode(bytes);
 		for (RpcMessage req : reqs) {
-			RpcMessage rsp = processor.process(req);
-			byte[] rspBytes = protocol.getRpcEncoder().encode(rsp);
-			channel.write(rspBytes);
+			processor.process(req, new DefaultRpcChannel(channel, protocol.getRpcEncoder()));
 		}
 	}
 	
