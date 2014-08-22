@@ -82,8 +82,9 @@ public interface Channel<D> {
 	 * 
 	 * @param data
 	 * @return <tt>true</tt> once data write successful.
+	 * @throws IllegalChannelStateException If channel state is not open.
 	 */
-	boolean write(D data);
+	boolean write(D data) throws IllegalChannelStateException;
 	
 	/**
      * Tells whether or not this channel is open. 
