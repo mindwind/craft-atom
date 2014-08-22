@@ -28,8 +28,9 @@ public interface RpcConnector {
 	 * Disconnect the connection with specified id.
 	 *  
 	 * @param connectionId
+	 * @return <code>false</code> if connection id is not exist, otherwise <code>true</code>
 	 */
-	void disconnect(long connectionId);
+	boolean disconnect(long connectionId);
 	
 	/**
 	 * Close itsself and release all the connecitons.
