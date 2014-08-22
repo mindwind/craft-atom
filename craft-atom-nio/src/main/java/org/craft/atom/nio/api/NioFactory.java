@@ -9,8 +9,8 @@ import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
 /**
- * Nio Factory<br>
- * Use factory to create {@link NioTcpAcceptor} and {@link NioTcpConnector} instance.
+ * Nio Factory,
+ * which provides static factory method and builder to creating {@link IoAcceptor} and {@link IoConnector} instance.
  * 
  * @author mindwind
  * @version 1.0, Dec 17, 2013

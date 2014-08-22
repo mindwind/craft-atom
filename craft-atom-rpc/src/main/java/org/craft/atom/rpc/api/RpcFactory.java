@@ -1,7 +1,7 @@
 package org.craft.atom.rpc.api;
 
 /**
- * RPC factory.
+ * RPC factory, which provides static factory method and builder to creating {@link RpcServer} and {@link RpcClient} instance.
  * 
  * @author mindwind
  * @version 1.0, Aug 7, 2014
