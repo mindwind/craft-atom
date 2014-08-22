@@ -14,10 +14,11 @@ public interface RpcProcessor {
 	/**
 	 * Process rpc request.
 	 * 
-	 * @param req  rpc request
+	 * @param req     rpc request
+	 * @param channel used to send back rpc response message.
 	 * @return rpc response can not be null, any request must has response.
 	 */
-	RpcMessage process(RpcMessage req);
+	void process(RpcMessage req, RpcChannel channel);
 	
 	/**
 	 * Set rpc invoker.

@@ -56,8 +56,17 @@ public class RpcMessages {
 	// ~ ---------------------------------------------------------------------------------------------- rpc rsp message
 	
 	
+	public static RpcMessage newHbResponseRpcMessage(long id) {
+		RpcMessage rsp = newRpcMessage();
+		rsp.getHeader().setId(id);
+		rsp.getHeader().setHb();
+		rsp.getHeader().setRp();
+		return rsp;
+	}
+	
 	public static RpcMessage newRsponseRpcMessage(long id, RpcException e) {
 		RpcMessage rsp = newRpcMessage();
+		rsp.getHeader().setId(id);
 		rsp.getHeader().setRp();
 		rsp.getBody().setThrownObject(e);
 		return rsp;
@@ -65,6 +74,7 @@ public class RpcMessages {
 	
 	public static RpcMessage newRsponseRpcMessage(long id, Object returnObject) {
 		RpcMessage rsp = newRpcMessage();
+		rsp.getHeader().setId(id);
 		rsp.getHeader().setRp();
 		rsp.getBody().setReturnObject(returnObject);
 		return rsp;
