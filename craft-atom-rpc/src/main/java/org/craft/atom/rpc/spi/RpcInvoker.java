@@ -20,8 +20,7 @@ public interface RpcInvoker {
 	 * <p>
 	 * <b>Server Side</b><br>
 	 * Decode the rpc request and invoke the right method of rpc api implementor.
-	 * 
-	 * 
+	 *  
 	 * @param  req request  message
 	 * @return rpc response message
 	 * @throws RpcException if any rpc error occurs.
