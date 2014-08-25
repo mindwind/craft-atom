@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>craft-atom</artifactId>
 		<groupId>me.mindwind</groupId>
-		<version>2.1.2-SNAPSHOT</version>
+		<version>2.2.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>craft-atom-rpc</artifactId>
 	<name>craft-atom-rpc</name>
