@@ -1,6 +1,8 @@
 package org.craft.atom.protocol.rpc.model;
 
 import java.io.Serializable;
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -44,6 +46,18 @@ public class RpcMessage implements Serializable {
 	
 	public long getRpcTimeoutInMillis() {
 		return body.getRpcOption().getRpcTimeoutInMillis();
+	}
+	
+	public void setRpcTimeoutInMillis(int rpcTimeoutInMillis) {
+		body.getRpcOption().setRpcTimeoutInMillis(rpcTimeoutInMillis);
+	}
+	
+	public void setLocalAddress(SocketAddress localAddress) {
+		body.getRpcOption().setLocalAddress(localAddress);
+	}
+	
+	public void setRemoteAddress(SocketAddress remoteAddress) {
+		body.getRpcOption().setRemoteAddress(remoteAddress);
 	}
 	
 	public Object getReturnObject() {
