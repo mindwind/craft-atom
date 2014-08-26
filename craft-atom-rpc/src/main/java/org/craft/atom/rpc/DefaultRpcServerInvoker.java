@@ -2,6 +2,7 @@ package org.craft.atom.rpc;
 
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.protocol.rpc.model.RpcMethod;
+import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.spi.RpcConnector;
 import org.craft.atom.rpc.spi.RpcInvoker;
 
@@ -30,6 +31,13 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 		
 		
 		try {
+			// Set rpc context
+			RpcContext ctx = RpcContext.getContext();
+			ctx.setClientAddress(req.getClientAddress());
+			ctx.setServerAddress(req.getServerAddress());
+			ctx.setAttachments(req.getAttachments());
+			
+			// Reflect invoke
 			MethodAccess ma = MethodAccess.get(rpcInterface);
 			int methodIndex = ma.getIndex(methodName, paramTypes);
 			try {
@@ -38,9 +46,10 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 			} catch (Exception e) {
 				return RpcMessages.newRsponseRpcMessage(req.getId(), e);
 			}
-			
 		} catch (Exception e) {
 			throw new RpcException(RpcException.SERVER_ERROR, e);
+		} finally {
+			RpcContext.removeContext();
 		}
 	}
 

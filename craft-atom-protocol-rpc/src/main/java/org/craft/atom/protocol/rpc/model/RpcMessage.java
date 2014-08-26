@@ -111,4 +111,8 @@ public class RpcMessage implements Serializable {
 		body.setAttachments(attachments);
 	}
 	
+	public Map<String, String> getAttachments() {
+		return body.getAttachments();
+	}
+	
 }
