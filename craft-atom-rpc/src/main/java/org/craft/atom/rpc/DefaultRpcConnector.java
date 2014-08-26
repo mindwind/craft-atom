@@ -54,6 +54,8 @@ public class DefaultRpcConnector implements RpcConnector {
 	
 	public DefaultRpcConnector() {
 		connectTimeoutInMillis = Integer.MAX_VALUE;
+		rpcTimeoutInMillis     = Integer.MAX_VALUE;
+		heartbeatInMillis      = 0;
 		reconnectExecutor      = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("craft-atom-rpc-connector-reconnect"));
 		channels               = new ConcurrentHashMap<Long, Channel<byte[]>>();
 		ioHandler              = new RpcClientIoHandler(protocol);
