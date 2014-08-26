@@ -16,11 +16,11 @@ import lombok.ToString;
 public class RpcOption {
 	
 	
-	@Getter @Setter private int               rpcTimeoutInMillis = Integer.MAX_VALUE;
-	@Getter @Setter private int               rpcThreads         = 1                ;
-	@Getter @Setter private int               rpcQueues          = 10               ;
-	@Getter @Setter private InetSocketAddress serverAddress                         ;
-	@Getter @Setter private InetSocketAddress clientAddress                         ;
+	@Getter @Setter transient private int               rpcThreads         = 1                ;
+	@Getter @Setter transient private int               rpcQueues          = 10               ;
+	@Getter @Setter transient private InetSocketAddress serverAddress                         ;
+	@Getter @Setter transient private InetSocketAddress clientAddress                         ;
+	@Getter @Setter           private int               rpcTimeoutInMillis = Integer.MAX_VALUE;
 	
 	
 }

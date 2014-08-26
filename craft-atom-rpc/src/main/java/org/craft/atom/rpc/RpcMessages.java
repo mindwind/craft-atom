@@ -6,6 +6,7 @@ import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.model.RpcHeader;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.protocol.rpc.model.RpcMethod;
+import org.craft.atom.protocol.rpc.model.RpcOption;
 
 /**
  * Factory and utility methods for {@link RpcMessage}
@@ -44,6 +45,7 @@ public class RpcMessages {
 		req.getHeader().setId(ID_GENERATOR.incrementAndGet());
 		RpcBody body = req.getBody();
 		body.setRpcInterface(rpcInterface);
+		body.setRpcOption(new RpcOption());
 		RpcMethod method = new RpcMethod();
 		method.setName(methodName);
 		method.setParameterTypes(parameterTypes);
