@@ -50,7 +50,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 	@Override
 	public void process(RpcMessage req, RpcChannel channel) {
 		if (req == null)       return;
-		if (req.isHeartBeat()) channel.write(RpcMessages.newHbResponseRpcMessage(req.getId()));
+		if (req.isHeartbeat()) channel.write(RpcMessages.newHbResponseRpcMessage(req.getId()));
 		
 		ExecutorService executor = executor(req);
 		executor.execute(new ProcessTask(req, channel));
@@ -67,7 +67,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 	}
 	
 	private int rpcTimeoutInMillis(RpcMessage req) {
-		int timeout = req.getBody().getRpcOption().getRpcTimeoutInMillis();
+		int timeout = req.getRpcTimeoutInMillis();
 		if (timeout == 0) { timeout = Integer.MAX_VALUE; }
 		return timeout;
 	}
@@ -104,7 +104,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 					}
 				});
 				// One way request
-				if (req.isOneWay()) return;
+				if (req.isOneway()) return;
 				
 				// Wait response
 				rsp = future.get(rpcTimeoutInMillis(req), TimeUnit.MILLISECONDS);

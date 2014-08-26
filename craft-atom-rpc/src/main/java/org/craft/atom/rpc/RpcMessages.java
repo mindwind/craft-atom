@@ -35,14 +35,14 @@ public class RpcMessages {
 	
 	public static RpcMessage newHbRequestRpcMessage() {
 		RpcMessage req = newRpcMessage();
-		req.getHeader().setId(ID_GENERATOR.incrementAndGet());
-		req.getHeader().setHb();
+		req.setId(ID_GENERATOR.incrementAndGet());
+		req.setHeartbeat(true);
 		return req;
 	}
 	
 	public static RpcMessage newRequestRpcMessage(Class<?> rpcInterface, String methodName, Class<?>[] parameterTypes, Object[] parameters) {
 		RpcMessage req = newRpcMessage();
-		req.getHeader().setId(ID_GENERATOR.incrementAndGet());
+		req.setId(ID_GENERATOR.incrementAndGet());
 		RpcBody body = req.getBody();
 		body.setRpcInterface(rpcInterface);
 		body.setRpcOption(new RpcOption());
@@ -60,25 +60,25 @@ public class RpcMessages {
 	
 	public static RpcMessage newHbResponseRpcMessage(long id) {
 		RpcMessage rsp = newRpcMessage();
-		rsp.getHeader().setId(id);
-		rsp.getHeader().setHb();
-		rsp.getHeader().setRp();
+		rsp.setId(id);
+		rsp.setHeartbeat(true);
+		rsp.setResponse(true);
 		return rsp;
 	}
 	
 	public static RpcMessage newRsponseRpcMessage(long id, Exception e) {
 		RpcMessage rsp = newRpcMessage();
-		rsp.getHeader().setId(id);
-		rsp.getHeader().setRp();
-		rsp.getBody().setException(e);
+		rsp.setId(id);
+		rsp.setResponse(true);
+		rsp.setException(e);
 		return rsp;
 	}
 	
 	public static RpcMessage newRsponseRpcMessage(long id, Object returnObject) {
 		RpcMessage rsp = newRpcMessage();
-		rsp.getHeader().setId(id);
-		rsp.getHeader().setRp();
-		rsp.getBody().setReturnObject(returnObject);
+		rsp.setId(id);
+		rsp.setResponse(true);
+		rsp.setReturnObject(returnObject);
 		return rsp;
 	}
 	

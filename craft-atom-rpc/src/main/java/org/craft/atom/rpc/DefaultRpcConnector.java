@@ -115,7 +115,7 @@ public class DefaultRpcConnector implements RpcConnector {
 			if (!succ) throw new IOException("Unknown I/O error!");
 			
 			// One way request, client does not expect response
-			if (req.isOneWay()) return null;
+			if (req.isOneway()) return null;
 			
 			// Wait response
 			RpcFuture future = new DefaultRpcFuture();
