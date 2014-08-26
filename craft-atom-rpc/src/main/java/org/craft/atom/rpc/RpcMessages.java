@@ -66,7 +66,7 @@ public class RpcMessages {
 		return rsp;
 	}
 	
-	public static RpcMessage newRsponseRpcMessage(long id, RpcException e) {
+	public static RpcMessage newRsponseRpcMessage(long id, Exception e) {
 		RpcMessage rsp = newRpcMessage();
 		rsp.getHeader().setId(id);
 		rsp.getHeader().setRp();

@@ -29,10 +29,17 @@ public class RpcMessage implements Serializable {
 	
 	@Getter @Setter private RpcHeader  header;
 	@Getter @Setter private RpcBody    body  ;
+	
+	
+	// ~ ---------------------------------------------------------------------------------------------------------
 
 	
 	public boolean isOneWay() {
 		return header.isOw();
+	}
+	
+	public boolean isResponse() {
+		return header.isRp();
 	}
 	
 	public boolean isHeartBeat() {
@@ -41,6 +48,10 @@ public class RpcMessage implements Serializable {
 	
 	public long getId() {
 		return header.getId();
+	}
+	
+	public Exception getException() {
+		return body.getException();
 	}
 	
 	public long getRpcTimeoutInMillis() {
@@ -62,4 +73,5 @@ public class RpcMessage implements Serializable {
 	public Object getReturnObject() {
 		return body.getReturnObject();
 	}
+	
 }

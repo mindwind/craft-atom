@@ -32,7 +32,15 @@ public class RpcInvocationHandler implements InvocationHandler {
 		Object[]   parameters     = args;
 		RpcMessage req = RpcMessages.newRequestRpcMessage(rpcInterface, methodName, parameterTypes, parameters);
 		RpcMessage rsp = invoker.invoke(req);
+		
+		// void
 		if (rsp == null) return null;
+		
+		// exception
+		Exception e = rsp.getException();
+		if (e != null) throw e;
+		
+		// return object
 		return rsp.getReturnObject();
 	}
 

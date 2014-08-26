@@ -105,15 +105,15 @@ public class DefaultRpcProcessor implements RpcProcessor {
 				});
 				rsp = future.get(rpcTimeoutInMillis(req), TimeUnit.MILLISECONDS);
 			} catch (ExecutionException e) {
-				rsp = RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), new RpcException(RpcException.SERVER_ERROR, e));
+				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_ERROR, e));
 			} catch (TimeoutException e) {
-				rsp =  RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), new RpcException(RpcException.SERVER_TIMEOUT, e));
+				rsp =  RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_TIMEOUT, e));
 			} catch (RejectedExecutionException e) {
-				rsp =  RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), new RpcException(RpcException.SERVER_OVERLOAD, e));
+				rsp =  RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_OVERLOAD, e));
 			} catch (RpcException e) {
-				rsp =  RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), e);
+				rsp =  RpcMessages.newRsponseRpcMessage(req.getId(), e);
 			} catch (Exception e) {
-				rsp =  RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), new RpcException(RpcException.UNKNOWN, e));
+				rsp =  RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.UNKNOWN, e));
 			}
 			
 			try {
