@@ -19,14 +19,21 @@ public class DefaultRpcClientInvoker implements RpcInvoker {
 
 	
 	@Override
-	public RpcMessage invoke(RpcMessage req) throws RpcException {		
-		req.setRpcTimeoutInMillis(rpcTimeoutInMillis());
-		return connector.send(req);
+	public RpcMessage invoke(RpcMessage req) throws RpcException {
+		try {
+			RpcContext ctx = RpcContext.getContext();
+			req.setRpcTimeoutInMillis(rpcTimeoutInMillis(ctx));
+			req.setOneway(ctx.isOneway());
+			return connector.send(req);
+		} finally {
+			RpcContext.removeContext();
+		}
+		
 	}
 	
-	private int rpcTimeoutInMillis() {
+	private int rpcTimeoutInMillis(RpcContext ctx) {
 		// Get timeout with this invocation from RpcContext
-		int timeout = RpcContext.getContext().getRpcTimeoutInMillis();
+		int timeout = ctx.getRpcTimeoutInMillis();
 		if (timeout > 0) return timeout;
 		
 		// if not set timeout for this invocation, get global setting.

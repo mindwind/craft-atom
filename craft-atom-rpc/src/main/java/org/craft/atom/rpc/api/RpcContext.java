@@ -32,6 +32,7 @@ public final class RpcContext {
 	@Getter @Setter private InetSocketAddress   clientAddress     ;
 	@Getter @Setter private Map<String, Object> attachments       ;
 	@Getter @Setter private int                 rpcTimeoutInMillis;
+	@Getter @Setter private boolean             oneway            ;
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
