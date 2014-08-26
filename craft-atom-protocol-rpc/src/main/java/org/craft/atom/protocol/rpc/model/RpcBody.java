@@ -20,7 +20,7 @@ import lombok.ToString;
  * @version 1.0, Jul 18, 2014
  */
 @ToString
-@EqualsAndHashCode(of = { "rpcInterface", "rpcMethod", "returnObject", "thrownObject", "attachments" })
+@EqualsAndHashCode(of = { "rpcInterface", "rpcMethod", "returnObject", "exception", "attachments" })
 public class RpcBody implements Serializable {
 
 	
@@ -32,7 +32,7 @@ public class RpcBody implements Serializable {
 	@Getter @Setter private RpcOption           rpcOption   ;
 	@Getter @Setter private Map<String, Object> attachments ;
 	@Getter @Setter private Object              returnObject;
-	@Getter @Setter private Throwable           thrownObject;
+	@Getter @Setter private Exception           exception   ;
 	
 	
 	public void addAttachment(String key, String value) {

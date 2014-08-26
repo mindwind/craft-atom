@@ -68,7 +68,7 @@ public class RpcMessages {
 		RpcMessage rsp = newRpcMessage();
 		rsp.getHeader().setId(id);
 		rsp.getHeader().setRp();
-		rsp.getBody().setThrownObject(e);
+		rsp.getBody().setException(e);
 		return rsp;
 	}
 	
