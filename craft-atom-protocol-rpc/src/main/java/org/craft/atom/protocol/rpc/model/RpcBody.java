@@ -1,7 +1,6 @@
 package org.craft.atom.protocol.rpc.model;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 import lombok.EqualsAndHashCode;
@@ -30,16 +29,9 @@ public class RpcBody implements Serializable {
 	@Getter @Setter private Class<?>            rpcInterface;
 	@Getter @Setter private RpcMethod           rpcMethod   ;
 	@Getter @Setter private RpcOption           rpcOption   ;
-	@Getter @Setter private Map<String, Object> attachments ;
+	@Getter @Setter private Map<String, String> attachments ;
 	@Getter @Setter private Object              returnObject;
 	@Getter @Setter private Exception           exception   ;
 	
-	
-	public void addAttachment(String key, String value) {
-		if (attachments == null) {
-			attachments = new HashMap<String, Object>();
-		}
-		attachments.put(key, value);
-	}
 
 }

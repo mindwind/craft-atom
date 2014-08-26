@@ -30,7 +30,7 @@ public final class RpcContext {
 	
 	@Getter @Setter private InetSocketAddress   serverAddress     ;
 	@Getter @Setter private InetSocketAddress   clientAddress     ;
-	@Getter @Setter private Map<String, Object> attachments       ;
+	@Getter @Setter private Map<String, String> attachments       ;
 	@Getter @Setter private int                 rpcTimeoutInMillis;
 	@Getter @Setter private boolean             oneway            ;
 	
@@ -53,5 +53,42 @@ public final class RpcContext {
 	public static void removeContext() {
 	    THREAD_LOCAL.remove();
 	}
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
+	
+	/**
+     * Set attachment.
+     * 
+     * @param key
+     * @param value
+     * @return context
+     */
+    public RpcContext setAttachment(String key, String value) {
+    	attachments.put(key, value);
+        return this;
+    }
+
+    /**
+     * Remove attachment.
+     * 
+     * @param key
+     * @return context
+     */
+    public RpcContext removeAttachment(String key) {
+        attachments.remove(key);
+        return this;
+    }
+    
+    /**
+     * Get attachment.
+     * 
+     * @param key
+     * @return attachment
+     */
+    public String getAttachment(String key) {
+    	return attachments.get(key);
+    }
 
 }

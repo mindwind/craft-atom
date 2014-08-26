@@ -24,6 +24,7 @@ public class DefaultRpcClientInvoker implements RpcInvoker {
 			RpcContext ctx = RpcContext.getContext();
 			req.setRpcTimeoutInMillis(rpcTimeoutInMillis(ctx));
 			req.setOneway(ctx.isOneway());
+			req.setAttachments(ctx.getAttachments());
 			return connector.send(req);
 		} finally {
 			RpcContext.removeContext();
@@ -36,7 +37,7 @@ public class DefaultRpcClientInvoker implements RpcInvoker {
 		int timeout = ctx.getRpcTimeoutInMillis();
 		if (timeout > 0) return timeout;
 		
-		// if not set timeout for this invocation, get global setting.
+		// if does not set timeout for this invocation, get global setting.
 		timeout = connector.getRpcTimeoutInMillis();
 		if (timeout > 0) return timeout;
 		

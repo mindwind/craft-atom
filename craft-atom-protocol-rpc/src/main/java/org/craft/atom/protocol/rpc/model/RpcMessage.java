@@ -2,6 +2,7 @@ package org.craft.atom.protocol.rpc.model;
 
 import java.io.Serializable;
 import java.net.InetSocketAddress;
+import java.util.Map;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -104,6 +105,10 @@ public class RpcMessage implements Serializable {
 	
 	public void setReturnObject(Object returnObject) {
 		body.setReturnObject(returnObject);
+	}
+	
+	public void setAttachments(Map<String, String> attachments) {
+		body.setAttachments(attachments);
 	}
 	
 }
