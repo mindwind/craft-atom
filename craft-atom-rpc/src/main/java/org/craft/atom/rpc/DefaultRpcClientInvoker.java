@@ -19,11 +19,7 @@ public class DefaultRpcClientInvoker implements RpcInvoker {
 
 	
 	@Override
-	public RpcMessage invoke(RpcMessage req) throws RpcException {
-		// one way request, client does not expect response
-		if (req.isOneWay()) return null;
-		
-		
+	public RpcMessage invoke(RpcMessage req) throws RpcException {		
 		req.setRpcTimeoutInMillis(rpcTimeoutInMillis());
 		return connector.send(req);
 	}

@@ -103,6 +103,10 @@ public class DefaultRpcProcessor implements RpcProcessor {
 						return process0(req);
 					}
 				});
+				// One way request
+				if (req.isOneWay()) return;
+				
+				// Wait response
 				rsp = future.get(rpcTimeoutInMillis(req), TimeUnit.MILLISECONDS);
 			} catch (ExecutionException e) {
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_ERROR, e));

@@ -114,7 +114,10 @@ public class DefaultRpcConnector implements RpcConnector {
 			boolean succ = write(channel, req);
 			if (!succ) throw new IOException("Unknown I/O error!");
 			
-			// wait response
+			// One way request, client does not expect response
+			if (req.isOneWay()) return null;
+			
+			// Wait response
 			RpcFuture future = new DefaultRpcFuture();
 			Map<Long, RpcFuture> map = (Map<Long, RpcFuture>) channel.getAttribute(RpcClientIoHandler.RPC_FUTURE_CHANNEL);
 			map.put(reqId, future);
