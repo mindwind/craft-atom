@@ -49,6 +49,7 @@ public class DefaultRpcClient implements RpcClient {
 		connector   .setAddress(new InetSocketAddress(host, port));
 		connector   .setHeartbeatInMillis(heartbeatInMillis);
 		connector   .setConnectTimeoutInMillis(connectTimeoutInMillis);
+		connector   .setRpcTimeoutInMillis(rpcTimeoutInMillis);
 		invoker     .setConnector(connector);
 		proxyFactory.setInvoker(invoker);
 	}

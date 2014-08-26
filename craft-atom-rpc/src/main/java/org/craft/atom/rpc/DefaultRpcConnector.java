@@ -38,6 +38,7 @@ public class DefaultRpcConnector implements RpcConnector {
 	
 	
 	@Getter @Setter private int                        connectTimeoutInMillis;
+	@Getter @Setter private int                        rpcTimeoutInMillis    ;
 	@Getter         private int                        heartbeatInMillis     ;
 	@Getter         private SocketAddress              address               ;
 	@Getter @Setter private Map<Long, Channel<byte[]>> channels              ;

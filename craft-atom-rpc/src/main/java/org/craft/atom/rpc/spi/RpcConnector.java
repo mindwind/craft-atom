@@ -74,4 +74,16 @@ public interface RpcConnector {
 	 */
 	void setConnectTimeoutInMillis(int connectTimeoutInMillis);
 	
+	/**
+	 * Set global rpc timeout in millisecond
+	 * 
+	 * @param rpcTimeoutInMillis
+	 */
+	void setRpcTimeoutInMillis(int rpcTimeoutInMillis);
+	
+	/**
+	 * @return global rpc timeout in millisecond
+	 */
+	int getRpcTimeoutInMillis();
+	
 }
