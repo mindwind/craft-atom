@@ -1,7 +1,7 @@
 package org.craft.atom.protocol.rpc.model;
 
 import java.io.Serializable;
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -51,11 +51,11 @@ public class RpcMessage implements Serializable {
 		body.getRpcOption().setRpcTimeoutInMillis(rpcTimeoutInMillis);
 	}
 	
-	public void setServerAddress(SocketAddress serverAddress) {
+	public void setServerAddress(InetSocketAddress serverAddress) {
 		body.getRpcOption().setServerAddress(serverAddress);
 	}
 	
-	public void setClientAddress(SocketAddress clientAddress) {
+	public void setClientAddress(InetSocketAddress clientAddress) {
 		body.getRpcOption().setClientAddress(clientAddress);
 	}
 	

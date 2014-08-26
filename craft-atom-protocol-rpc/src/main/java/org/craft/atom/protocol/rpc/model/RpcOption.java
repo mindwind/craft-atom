@@ -1,6 +1,6 @@
 package org.craft.atom.protocol.rpc.model;
 
-import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,8 +19,8 @@ public class RpcOption {
 	@Getter @Setter private int               rpcTimeoutInMillis = Integer.MAX_VALUE;
 	@Getter @Setter private int               rpcThreads         = 1                ;
 	@Getter @Setter private int               rpcQueues          = 10               ;
-	@Getter @Setter private SocketAddress     serverAddress                         ;
-	@Getter @Setter private SocketAddress     clientAddress                         ;
+	@Getter @Setter private InetSocketAddress serverAddress                         ;
+	@Getter @Setter private InetSocketAddress clientAddress                         ;
 	
 	
 }

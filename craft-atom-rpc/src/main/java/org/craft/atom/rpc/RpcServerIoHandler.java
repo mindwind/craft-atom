@@ -1,5 +1,6 @@
 package org.craft.atom.rpc;
 
+import java.net.InetSocketAddress;
 import java.util.List;
 
 import org.craft.atom.io.Channel;
@@ -50,8 +51,8 @@ public class RpcServerIoHandler implements IoHandler {
 		ProtocolDecoder<RpcMessage> decoder = (ProtocolDecoder<RpcMessage>) channel.getAttribute(RPC_DECODER);
 		List<RpcMessage> reqs = decoder.decode(bytes);
 		for (RpcMessage req : reqs) {
-			req.setServerAddress(channel.getLocalAddress());
-			req.setClientAddress(channel.getRemoteAddress());
+			req.setServerAddress((InetSocketAddress) channel.getLocalAddress());
+			req.setClientAddress((InetSocketAddress) channel.getRemoteAddress());
 			processor.process(req, new DefaultRpcChannel(channel, protocol.getRpcEncoder()));
 		}
 	}
