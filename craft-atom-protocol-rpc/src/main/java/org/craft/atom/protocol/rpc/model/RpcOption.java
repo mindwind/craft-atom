@@ -19,8 +19,8 @@ public class RpcOption {
 	@Getter @Setter private int               rpcTimeoutInMillis = Integer.MAX_VALUE;
 	@Getter @Setter private int               rpcThreads         = 1                ;
 	@Getter @Setter private int               rpcQueues          = 10               ;
-	@Getter @Setter private SocketAddress     localAddress                          ;
-	@Getter @Setter private SocketAddress     remoteAddress                         ;
+	@Getter @Setter private SocketAddress     serverAddress                         ;
+	@Getter @Setter private SocketAddress     clientAddress                         ;
 	
 	
 }

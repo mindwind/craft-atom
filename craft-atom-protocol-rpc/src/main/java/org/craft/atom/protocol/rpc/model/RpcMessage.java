@@ -52,12 +52,12 @@ public class RpcMessage implements Serializable {
 		body.getRpcOption().setRpcTimeoutInMillis(rpcTimeoutInMillis);
 	}
 	
-	public void setLocalAddress(SocketAddress localAddress) {
-		body.getRpcOption().setLocalAddress(localAddress);
+	public void setServerAddress(SocketAddress serverAddress) {
+		body.getRpcOption().setServerAddress(serverAddress);
 	}
 	
-	public void setRemoteAddress(SocketAddress remoteAddress) {
-		body.getRpcOption().setRemoteAddress(remoteAddress);
+	public void setClientAddress(SocketAddress clientAddress) {
+		body.getRpcOption().setClientAddress(clientAddress);
 	}
 	
 	public Object getReturnObject() {
