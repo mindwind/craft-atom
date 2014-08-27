@@ -7,7 +7,7 @@ import org.craft.atom.protocol.rpc.RpcEncoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 
 /**
- * RPC codec factory
+ * RPC codec factory, which provides static factory method to create {@link ProtocolEncoder<RpcMessage>} and {@link ProtocolDecoder<RpcMessage>}
  * 
  * @author mindwind
  * @version 1.0, Aug 5, 2014
