@@ -13,6 +13,8 @@ import org.craft.atom.rpc.spi.RpcProcessor;
 import org.craft.atom.rpc.spi.RpcProtocol;
 
 /**
+ * Builder for {@link RpcServer}
+ * 
  * @author mindwind
  * @version 1.0, Aug 7, 2014
  */

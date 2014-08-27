@@ -3,7 +3,10 @@ package org.craft.atom.rpc.api;
 import org.craft.atom.rpc.RpcException;
 
 /**
- * RPC client
+ * RPC client.
+ * <p>
+ * Use {@link RpcFactory} creates a rpc client and invoke remote method by refer a remote api proxy instance.
+ * Open the client before launch any remote invocation.
  * 
  * @author mindwind
  * @version 1.0, Aug 4, 2014
@@ -11,10 +14,10 @@ import org.craft.atom.rpc.RpcException;
 public interface RpcClient {
 
 	/**
-	 * Refer the rpc api proxy class.
+	 * Refer the rpc api proxy instance which implements the specific rpc interface.
 	 * 
 	 * @param  rpcInterface
-	 * @return a proxy.
+	 * @return a proxy instance.
 	 */
 	<T> T refer(Class<T> rpcInterface);
 	
@@ -29,4 +32,5 @@ public interface RpcClient {
 	 * Close the client, disconnect all the connections.
 	 */
 	void close();
+	
 }

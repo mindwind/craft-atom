@@ -11,6 +11,8 @@ import org.craft.atom.rpc.spi.RpcProtocol;
 import org.craft.atom.rpc.spi.RpcProxyFactory;
 
 /**
+ * Builder for {@link RpcServer}
+ * 
  * @author mindwind
  * @version 1.0, Aug 21, 2014
  */
