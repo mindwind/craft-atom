@@ -8,7 +8,7 @@ import org.craft.atom.protocol.textline.TextLineDecoder;
 import org.craft.atom.protocol.textline.TextLineEncoder;
 
 /**
- * TextLine codec factory
+ * TextLine codec factory, which provides static factory method to create {@link ProtocolEncoder<String>} and {@link ProtocolDecoder<String>}.
  * 
  * @author mindwind
  * @version 1.0, Aug 4, 2014
