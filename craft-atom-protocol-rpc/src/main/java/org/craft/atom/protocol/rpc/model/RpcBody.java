@@ -32,6 +32,5 @@ public class RpcBody implements Serializable {
 	@Getter @Setter private Map<String, String> attachments ;
 	@Getter @Setter private Object              returnObject;
 	@Getter @Setter private Exception           exception   ;
-	
 
 }

@@ -6,6 +6,7 @@ import java.lang.ref.SoftReference;
 
 import org.craft.atom.protocol.ProtocolException;
 import org.craft.atom.protocol.rpc.model.RpcBody;
+import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.protocol.rpc.spi.Serialization;
 import org.craft.atom.util.Assert;
 
@@ -42,6 +43,7 @@ public class KryoSerialization implements Serialization<RpcBody> {
     private static Kryo newKryo() {
     	Kryo kryo = new Kryo();
         kryo.register(RpcBody.class);
+        kryo.register(RpcMethod.class);
         kryo.setDefaultSerializer(CompatibleFieldSerializer.class);
         return kryo;
     }
