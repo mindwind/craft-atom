@@ -5,7 +5,7 @@ import javax.net.ssl.SSLContext;
 import org.craft.atom.protocol.ssl.DefaultSslCodec;
 
 /**
- * SSL codec factory.
+ * SSL codec factory, which provides static factory method to create {@code SslCodec} instance.
  * 
  * @author mindwind
  * @version 1.0, Aug 5, 2014

@@ -4,7 +4,7 @@ import org.craft.atom.protocol.ssl.spi.SslHandshakeHandler;
 
 
 /**
- * SSL codec.
+ * SSL codec, it is a combination of ssl encoder and decoder.
  * 
  * @author mindwind
  * @version 1.0, Aug 5, 2014
