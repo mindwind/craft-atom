@@ -7,6 +7,8 @@ import org.craft.atom.protocol.http.HttpRequestDecoder;
 import org.craft.atom.protocol.http.model.HttpRequest;
 
 /**
+ * Builder for {@link HttpRequestDecoder}
+ * 
  * @author mindwind
  * @version 1.0, Aug 5, 2014
  */

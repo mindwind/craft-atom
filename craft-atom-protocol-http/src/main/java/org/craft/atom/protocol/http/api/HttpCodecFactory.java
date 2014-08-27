@@ -17,7 +17,7 @@ import org.craft.atom.protocol.http.model.HttpRequest;
 import org.craft.atom.protocol.http.model.HttpResponse;
 
 /**
- * HTTP codec factory.
+ * HTTP codec factory, which provides static factory method and builder to create {@link ProtocolEncoder<HttpRequest>} instance
  * 
  * @author mindwind
  * @version 1.0, Aug 5, 2014
