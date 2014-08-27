@@ -6,6 +6,7 @@ import org.craft.atom.rpc.RpcException;
 /**
  * RPC channel, provides ability to write <code>RpcMessage</code> to remote peer.
  * 
+ * @see RpcAcceptor
  * @author mindwind
  * @version 1.0, Aug 22, 2014
  */

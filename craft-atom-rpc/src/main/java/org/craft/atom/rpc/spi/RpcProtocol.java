@@ -12,7 +12,6 @@ import org.craft.atom.protocol.rpc.model.RpcMessage;
  */
 public interface RpcProtocol {
 	
-	
 	/**
 	 * @return a new (or reusable) instance of {@link ProtocolEncoder}
 	 */

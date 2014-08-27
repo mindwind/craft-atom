@@ -5,13 +5,14 @@ import java.net.SocketAddress;
 
 /**
  * RPC acceptor.
+ * <p>
+ * Accepts incoming rpc requests, use {@link RpcChannel} communicates with remote another peer.
  * 
- * 
+ * @see RpcChannel
  * @author mindwind
  * @version 1.0, Aug 6, 2014
  */
 public interface RpcAcceptor {
-	
 	
 	/**
 	 * Bind to settled local address.

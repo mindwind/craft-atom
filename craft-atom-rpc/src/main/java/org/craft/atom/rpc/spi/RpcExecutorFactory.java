@@ -7,6 +7,7 @@ import org.craft.atom.protocol.rpc.model.RpcMessage;
 /**
  * RPC executor factory provides method for getting or creating <code>ExecutorService</code> instance.
  * 
+ * @see RpcProcessor
  * @author mindwind
  * @version 1.0, Aug 11, 2014
  */

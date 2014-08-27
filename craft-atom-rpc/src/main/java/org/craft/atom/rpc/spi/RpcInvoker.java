@@ -11,7 +11,6 @@ import org.craft.atom.rpc.RpcException;
  */
 public interface RpcInvoker {
 	
-	
 	/**
 	 * Invoke on the client or server side.
 	 * <p>

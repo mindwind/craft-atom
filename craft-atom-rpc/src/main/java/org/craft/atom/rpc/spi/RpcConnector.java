@@ -8,8 +8,10 @@ import org.craft.atom.rpc.RpcException;
 
 
 /**
- * RPC connector connects to RPC server, communicates with the server.
- * Hold and keep the heartbeat for all connections.
+ * RPC connector.
+ * <p>
+ * Connects to rpc server, communicates with the server.
+ * Hold and keep long-lived connections.
  * 
  * @author mindwind
  * @version 1.0, Aug 14, 2014
