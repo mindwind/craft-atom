@@ -2,6 +2,7 @@ package org.craft.atom.protocol.rpc;
 
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
+import org.craft.atom.protocol.rpc.api.SerializationRegistry;
 import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.model.RpcHeader;
 import org.craft.atom.protocol.rpc.model.RpcMessage;

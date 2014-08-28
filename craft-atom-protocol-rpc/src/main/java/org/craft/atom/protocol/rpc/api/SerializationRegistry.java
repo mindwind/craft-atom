@@ -1,8 +1,9 @@
-package org.craft.atom.protocol.rpc;
+package org.craft.atom.protocol.rpc.api;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.craft.atom.protocol.rpc.KryoSerialization;
 import org.craft.atom.protocol.rpc.model.RpcBody;
 import org.craft.atom.protocol.rpc.spi.Serialization;
 
