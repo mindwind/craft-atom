@@ -20,7 +20,6 @@ public interface RpcProcessor {
 	 * 
 	 * @param req     rpc request
 	 * @param channel used to send back rpc response message.
-	 * @return rpc response can not be null, any request must has response.
 	 */
 	void process(RpcMessage req, RpcChannel channel);
 	
