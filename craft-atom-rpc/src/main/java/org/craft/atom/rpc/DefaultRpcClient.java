@@ -41,7 +41,6 @@ public class DefaultRpcClient implements RpcClient {
 		connectTimeoutInMillis = Integer.MAX_VALUE            ;
 		rpcTimeoutInMillis     = Integer.MAX_VALUE            ;
 		connections            = 1                            ;
-		init();
 	}
 	
 	public void init() {
