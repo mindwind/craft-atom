@@ -1,0 +1,22 @@
+package org.craft.atom.rpc.api;
+
+import lombok.Getter;
+import lombok.Setter;
+
+/**
+ * RPC behavior parameter.
+ * 
+ * @author mindwind
+ * @version 1.0, Sep 5, 2014
+ */
+public class RpcParameter {
+	
+	
+	/** RPC thread number for each rpc method. */
+	@Getter @Setter private int rpcThreads = 1;
+	
+	/** RPC queue size for each rpc method. */
+	@Getter @Setter private int rpcQueues  = 10;
+
+	
+}

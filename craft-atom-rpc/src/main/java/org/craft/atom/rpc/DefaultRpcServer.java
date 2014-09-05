@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.craft.atom.protocol.rpc.model.RpcMethod;
-import org.craft.atom.protocol.rpc.model.RpcOption;
+import org.craft.atom.rpc.api.RpcParameter;
 import org.craft.atom.rpc.api.RpcServer;
 import org.craft.atom.rpc.spi.RpcAcceptor;
 import org.craft.atom.rpc.spi.RpcExecutorFactory;
@@ -78,23 +78,23 @@ public class DefaultRpcServer implements RpcServer {
 	}
 
 	@Override
-	public void expose(Class<?> rpcInterface, Object rpcObject, RpcOption rpcOption) {
+	public void expose(Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter) {
 		Method[] methods = rpcInterface.getMethods();
 		for (Method method : methods) {
 			RpcMethod rpcMethod = new RpcMethod();
 			rpcMethod.setName(method.getName());
 			rpcMethod.setParameterTypes(method.getParameterTypes());
-			expose(rpcInterface, rpcMethod, rpcObject, rpcOption);
+			expose(rpcInterface, rpcMethod, rpcObject, rpcParameter);
 		}
 	}
 
 	@Override
-	public void expose(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcOption rpcOption) {
+	public void expose(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
 		RpcEntry entry = new RpcEntry();
 		entry.setRpcInterface(rpcInterface);
 		entry.setRpcMethod(rpcMethod);
 		entry.setRpcObject(rpcObject);
-		entry.setRpcOption(rpcOption);
+		entry.setRpcParameter(rpcParameter);
 		String key = registry.key(rpcInterface, rpcMethod);
 		registry.register(key, entry);	
 	}

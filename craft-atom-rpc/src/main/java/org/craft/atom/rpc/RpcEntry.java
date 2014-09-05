@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.craft.atom.protocol.rpc.model.RpcMethod;
-import org.craft.atom.protocol.rpc.model.RpcOption;
+import org.craft.atom.rpc.api.RpcParameter;
 
 /**
  * @author mindwind
@@ -13,10 +13,10 @@ import org.craft.atom.protocol.rpc.model.RpcOption;
 public class RpcEntry {
 	
 	
-	@Getter @Setter private Class<?>  rpcInterface;
-	@Getter @Setter private RpcMethod rpcMethod   ;
-	@Getter @Setter private Object    rpcObject   ;
-	@Getter @Setter private RpcOption rpcOption   ;
+	@Getter @Setter private Class<?>     rpcInterface;
+	@Getter @Setter private RpcMethod    rpcMethod   ;
+	@Getter @Setter private Object       rpcObject   ;
+	@Getter @Setter private RpcParameter rpcParameter;
 
 	
 }

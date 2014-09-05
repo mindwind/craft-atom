@@ -1,7 +1,6 @@
 package org.craft.atom.rpc.api;
 
 import org.craft.atom.protocol.rpc.model.RpcMethod;
-import org.craft.atom.protocol.rpc.model.RpcOption;
 
 /**
  * RPC server.
@@ -27,9 +26,9 @@ public interface RpcServer {
 	 * 
 	 * @param rpcInterface 
 	 * @param rpcObject
-	 * @param rpcOption
+	 * @param rpcParameter
 	 */
-	void expose(Class<?> rpcInterface, Object rpcObject, RpcOption rpcOption);
+	void expose(Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter);
 	
 	/**
 	 * Expose rpc interface class with the implementor object.
@@ -38,8 +37,8 @@ public interface RpcServer {
 	 * @param rpcInterface
 	 * @param rpcMethod
 	 * @param rpcObject
-	 * @param rpcOption
+	 * @param rpcParameter
 	 */
-	void expose(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcOption rpcOption);
+	void expose(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter);
 
 }
