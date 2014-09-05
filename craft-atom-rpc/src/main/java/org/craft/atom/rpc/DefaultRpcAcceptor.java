@@ -33,13 +33,7 @@ public class DefaultRpcAcceptor implements RpcAcceptor {
 	// ~ ------------------------------------------------------------------------------------------------------------
 
 	
-	public DefaultRpcAcceptor() {
-		ioHandler  = new RpcServerIoHandler(protocol, processor);
-		ioAcceptor = NioFactory.newTcpAcceptorBuilder(ioHandler)
-				               .ioTimeoutInMillis(ioTimeoutInMillis)
-				               .dispatcher(new NioOrderedDirectChannelEventDispatcher())
-				               .build();
-	}
+	public DefaultRpcAcceptor() {}
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -47,6 +41,11 @@ public class DefaultRpcAcceptor implements RpcAcceptor {
 
 	@Override
 	public void bind() throws IOException {
+		ioHandler  = new RpcServerIoHandler(protocol, processor);
+		ioAcceptor = NioFactory.newTcpAcceptorBuilder(ioHandler)
+				               .ioTimeoutInMillis(ioTimeoutInMillis)
+				               .dispatcher(new NioOrderedDirectChannelEventDispatcher())
+				               .build();
 		ioAcceptor.bind(address);
 	}
 
