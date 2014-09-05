@@ -39,9 +39,12 @@ public class NioChannelIdleTimer {
 		this.dispatcher      = dispatcher;
 		this.handler         = handler;
 		this.timeoutInMillis = timeoutInMillis;
-		this.timingWheel     = new TimingWheel<NioByteChannel>(1000, timeoutInMillis / 1000, TimeUnit.MILLISECONDS);
-		this.timingWheel.addExpirationListener(new NioChannelIdleListener());
-		this.timingWheel.start();
+		if (timeoutInMillis > 0) {
+			int tickDuration = (timeoutInMillis / 100 == 0 ? 10 : timeoutInMillis / 100 );
+			this.timingWheel = new TimingWheel<NioByteChannel>(tickDuration, 100, TimeUnit.MILLISECONDS);
+			this.timingWheel.addExpirationListener(new NioChannelIdleListener());
+			this.timingWheel.start();
+		}
 	}
 	
 	void add(NioByteChannel channel) {
