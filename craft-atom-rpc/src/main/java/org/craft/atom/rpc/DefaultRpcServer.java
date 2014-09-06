@@ -59,6 +59,7 @@ public class DefaultRpcServer implements RpcServer {
 		acceptor .setAddress(address);
 		processor.setInvoker(invoker);
 		processor.setExecutorFactory(executorFactory);
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc server init.");
 	}
 	
 	
@@ -73,6 +74,7 @@ public class DefaultRpcServer implements RpcServer {
 			LOG.error("[CRAFT-ATOM-RPC] Rpc server start fail, exit!", e);
 			System.exit(0);
 		}
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc server is serving, |host={}, port={}|.", host, port);
 	}
 
 	@Override
@@ -95,6 +97,7 @@ public class DefaultRpcServer implements RpcServer {
 		entry.setRpcParameter(rpcParameter);
 		String key = registry.key(rpcInterface, rpcMethod);
 		registry.register(key, entry);	
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc server expose, |key={}, entry={}|", key, entry);
 	}
 
 }

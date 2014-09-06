@@ -7,12 +7,17 @@ import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.spi.RpcConnector;
 import org.craft.atom.rpc.spi.RpcInvoker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
  * @version 1.0, Aug 21, 2014
  */
 public class DefaultRpcClientInvoker implements RpcInvoker {
+	
+	
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultRpcClientInvoker.class);
 	
 	
 	@Getter @Setter private RpcConnector connector;
@@ -25,6 +30,8 @@ public class DefaultRpcClientInvoker implements RpcInvoker {
 			req.setRpcTimeoutInMillis(rpcTimeoutInMillis(ctx));
 			req.setOneway(ctx.isOneway());
 			req.setAttachments(ctx.getAttachments());
+			LOG.debug("[CRAFT-ATOM-RPC] Rpc client invoker is invoking, |rpcContext={}|", ctx);
+			
 			return connector.send(req);
 		} finally {
 			RpcContext.removeContext();

@@ -2,6 +2,7 @@ package org.craft.atom.rpc;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.rpc.api.RpcParameter;
@@ -10,6 +11,7 @@ import org.craft.atom.rpc.api.RpcParameter;
  * @author mindwind
  * @version 1.0, Aug 12, 2014
  */
+@ToString
 public class RpcEntry {
 	
 	

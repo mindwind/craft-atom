@@ -72,7 +72,7 @@ public class DefaultRpcConnector implements RpcConnector {
 			Channel<byte[]> channel = future.get(connectTimeoutInMillis, TimeUnit.MILLISECONDS);
 			long id = channel.getId();
 			channels.put(id, channel);
-			LOG.debug("[CRAFT-ATOM-RPC] Connector established connection, |channel={}|.", channel);
+			LOG.debug("[CRAFT-ATOM-RPC] Rpc connector established connection, |channel={}|.", channel);
 			return id;
 		} catch (TimeoutException e) {
 			throw new RpcException(RpcException.CLIENT_TIMEOUT, e);
@@ -138,7 +138,7 @@ public class DefaultRpcConnector implements RpcConnector {
 		ProtocolEncoder<RpcMessage> encoder = protocol.getRpcEncoder();
 		byte[] data = encoder.encode(msg);
 		boolean succ = channel.write(data);
-		LOG.debug("[CRAFT-ATOM-RPC] Send rpc request bytes, |length={}, bytes={}, channel={}|", data.length, data, channel);
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc connector send request bytes, |length={}, bytes={}, channel={}|", data.length, data, channel);
 		return succ;
 	}
 	

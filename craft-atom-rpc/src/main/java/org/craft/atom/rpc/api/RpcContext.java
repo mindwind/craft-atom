@@ -5,6 +5,7 @@ import java.util.Map;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 
 /**
@@ -14,6 +15,7 @@ import lombok.Setter;
  * @author mindwind
  * @version 1.0, Aug 26, 2014
  */
+@ToString
 public final class RpcContext {
 	
 	

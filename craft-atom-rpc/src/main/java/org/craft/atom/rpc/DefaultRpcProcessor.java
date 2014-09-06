@@ -54,6 +54,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 		
 		ExecutorService executor = executor(req);
 		executor.execute(new ProcessTask(req, channel));
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc process, |req={}, channel={}, executor={}|", req, channel, executor);
 	}
 
 	private RpcMessage process0(RpcMessage req) {
@@ -61,7 +62,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 		try {
 			rsp = invoker.invoke(req);
 		} catch (RpcException e) {
-			rsp = RpcMessages.newRsponseRpcMessage(req.getHeader().getId(), e);
+			rsp = RpcMessages.newRsponseRpcMessage(req.getId(), e);
 		}
 		return rsp;
 	}
@@ -111,13 +112,13 @@ public class DefaultRpcProcessor implements RpcProcessor {
 			} catch (ExecutionException e) {
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_ERROR, e));
 			} catch (TimeoutException e) {
-				rsp =  RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_TIMEOUT, e));
+				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_TIMEOUT, e));
 			} catch (RejectedExecutionException e) {
-				rsp =  RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_OVERLOAD, e));
+				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_OVERLOAD, e));
 			} catch (RpcException e) {
-				rsp =  RpcMessages.newRsponseRpcMessage(req.getId(), e);
+				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), e);
 			} catch (Exception e) {
-				rsp =  RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.UNKNOWN, e));
+				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.UNKNOWN, e));
 			}
 			
 			try {

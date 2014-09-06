@@ -1,5 +1,7 @@
 package org.craft.atom.rpc;
 
+import lombok.ToString;
+
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IllegalChannelStateException;
 import org.craft.atom.protocol.ProtocolEncoder;
@@ -10,6 +12,7 @@ import org.craft.atom.rpc.spi.RpcChannel;
  * @author mindwind
  * @version 1.0, Aug 22, 2014
  */
+@ToString(of = "channel")
 public class DefaultRpcChannel implements RpcChannel {
 	
 	

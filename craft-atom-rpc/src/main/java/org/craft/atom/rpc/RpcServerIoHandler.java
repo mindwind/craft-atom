@@ -59,7 +59,6 @@ public class RpcServerIoHandler implements IoHandler {
 	
 	@Override
 	public void channelIdle(Channel<byte[]> channel) {
-		LOG.debug("[CRAFT-ATOM-RPC] Channel idle, |Channel={}|", channel);
 		channel.close();
 	}
 	
@@ -75,13 +74,9 @@ public class RpcServerIoHandler implements IoHandler {
 	}
 
 	@Override
-	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {
-		LOG.debug("[CRAFT-ATOM-RPC] Channel flush, |Channel={}|", channel);
-	}
+	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {}
 
 	@Override
-	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {
-		LOG.debug("[CRAFT-ATOM-RPC] Channel written, |Channel={}|", channel);
-	}
+	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {}
 	
 }

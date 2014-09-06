@@ -37,9 +37,9 @@ public class RpcInvocationHandler implements InvocationHandler {
 		Object[]   parameters     = args;
 		RpcMessage req = RpcMessages.newRequestRpcMessage(rpcInterface, methodName, parameterTypes, parameters);
 		
-		LOG.debug("[CRAFT-ATOM-RPC] Before invocation, |req={}|", req);
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc client proxy before invocation, |req={}|", req);
 		RpcMessage rsp = invoker.invoke(req);
-		LOG.debug("[CRAFT-ATOM-RPC] After  invocation, |rsp={}|", rsp);
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc client proxy after  invocation, |rsp={}|", rsp);
 		
 		// void
 		if (rsp == null) return null;

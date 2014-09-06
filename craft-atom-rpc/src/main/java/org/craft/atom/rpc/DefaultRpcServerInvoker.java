@@ -5,6 +5,8 @@ import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.spi.RpcConnector;
 import org.craft.atom.rpc.spi.RpcInvoker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.esotericsoftware.reflectasm.MethodAccess;
 
@@ -13,6 +15,9 @@ import com.esotericsoftware.reflectasm.MethodAccess;
  * @version 1.0, Aug 7, 2014
  */
 public class DefaultRpcServerInvoker implements RpcInvoker {
+	
+	
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultRpcServerInvoker.class);
 	
 	
 	private RpcRegistry registry = RpcRegistry.getInstance();
@@ -36,6 +41,7 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 			ctx.setClientAddress(req.getClientAddress());
 			ctx.setServerAddress(req.getServerAddress());
 			ctx.setAttachments(req.getAttachments());
+			LOG.debug("[CRAFT-ATOM-RPC] Rpc server invoker is invoking, |rpcContext={}|", ctx);
 			
 			// Reflect invoke
 			MethodAccess ma = MethodAccess.get(rpcInterface);
