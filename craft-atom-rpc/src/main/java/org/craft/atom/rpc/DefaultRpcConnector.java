@@ -18,6 +18,7 @@ import org.craft.atom.io.Channel;
 import org.craft.atom.io.IllegalChannelStateException;
 import org.craft.atom.io.IoConnector;
 import org.craft.atom.io.IoHandler;
+import org.craft.atom.nio.NioOrderedDirectChannelEventDispatcher;
 import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
@@ -46,7 +47,7 @@ public class DefaultRpcConnector implements RpcConnector {
 	@Getter @Setter private IoConnector                ioConnector           ;
 	@Getter @Setter private ScheduledExecutorService   hbScheduler           ;
 	@Getter @Setter private ExecutorService            reconnectExecutor     ;
-	@Getter @Setter private RpcProtocol                protocol              ;            
+	@Getter         private RpcProtocol                protocol              ;            
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -58,10 +59,6 @@ public class DefaultRpcConnector implements RpcConnector {
 		heartbeatInMillis      = 0;
 		reconnectExecutor      = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("craft-atom-rpc-connector-reconnect"));
 		channels               = new ConcurrentHashMap<Long, Channel<byte[]>>();
-		ioHandler              = new RpcClientIoHandler(protocol);
-		ioConnector            = NioFactory.newTcpConnectorBuilder(ioHandler)
-				                           .connectTimeoutInMillis(connectTimeoutInMillis)
-				                           .build();
 	}
 	
 	
@@ -205,6 +202,16 @@ public class DefaultRpcConnector implements RpcConnector {
 				}
 			}, 0, heartbeatInMillis, TimeUnit.MILLISECONDS);
 		}
+	}
+
+	@Override
+	public void setProtocol(RpcProtocol protocol) {
+		this.protocol    = protocol;
+		this.ioHandler   = new RpcClientIoHandler(protocol);
+		this.ioConnector = NioFactory.newTcpConnectorBuilder(ioHandler)
+						             .connectTimeoutInMillis(connectTimeoutInMillis)
+						             .dispatcher(new NioOrderedDirectChannelEventDispatcher())
+						             .build();
 	}
 	
 }

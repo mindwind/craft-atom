@@ -78,10 +78,8 @@ public class NioTcpConnector extends NioConnector {
             	Future<Channel<byte[]>> future = executorService.submit(new ConnectionCall(sc));
             	success = true;
             	LOG.debug("[CRAFT-ATOM-NIO] Established local connection");
-
                 return future;
             }
-
             success = true;
         } finally {
             if (!success && sc != null) {
@@ -316,6 +314,9 @@ public class NioTcpConnector extends NioConnector {
 			processor.setProtocol(IoProtocol.TCP);
 			channel.setProcessor(processor);
 			processor.add(channel);
+			
+			// finish connect, fire channel opened event
+//			processor.fireChannelOpened(channel);
 			return channel;
 		}
 

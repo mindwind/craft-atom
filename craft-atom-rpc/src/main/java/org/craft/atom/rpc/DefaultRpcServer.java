@@ -49,7 +49,6 @@ public class DefaultRpcServer implements RpcServer {
 		invoker           = new DefaultRpcServerInvoker()  ;
 		executorFactory   = new DefaultRpcExecutorFactory();
 		registry          = RpcRegistry.getInstance()      ;
-		init();
 	}
 	
 	public void init() {

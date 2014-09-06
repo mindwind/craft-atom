@@ -21,8 +21,8 @@ public class RpcClientIoHandler implements IoHandler {
 	
 	
 	private static final Logger LOG                = LoggerFactory.getLogger(RpcClientIoHandler.class);
-	public  static final String RPC_FUTURE_CHANNEL = "rpc.future.channel"                             ;
 	private static final String RPC_DECODER        = "rpc.decoder"                                    ;
+	public  static final String RPC_FUTURE_CHANNEL = "rpc.future.channel"                             ;
 	
 	
 	private RpcProtocol  protocol;
@@ -41,6 +41,7 @@ public class RpcClientIoHandler implements IoHandler {
 
 	@Override
 	public void channelOpened(Channel<byte[]> channel) {
+		LOG.debug("[CRAFT-ATOM-RPC] Channel opened, |Channel={}|", channel);
 		ProtocolDecoder<RpcMessage> decoder = protocol.getRpcDecoder();
 		channel.setAttribute(RPC_DECODER, decoder);
 		channel.setAttribute(RPC_FUTURE_CHANNEL, new ConcurrentHashMap<Long, RpcFuture>());
@@ -62,13 +63,13 @@ public class RpcClientIoHandler implements IoHandler {
 
 	@Override
 	public void channelClosed(Channel<byte[]> channel) {
-		LOG.info("[CRAFT-ATOM-RPC] Rpc client handler closed, |Channel={}, thrown={}|", channel);
+		LOG.debug("[CRAFT-ATOM-RPC] Channel closed, |Channel={}|", channel);
 		channelThrown0(channel, new ClosedChannelException());
 	}
 	
 	@Override
 	public void channelThrown(Channel<byte[]> channel, Exception cause) {
-		LOG.info("[CRAFT-ATOM-RPC] Rpc client handler thrown, |Channel={}, thrown={}|", channel, cause);
+		LOG.warn("[CRAFT-ATOM-RPC] Channel thrown, |Channel={}|", channel, cause);
 		channelThrown0(channel, cause);
 		channel.close();
 	}
@@ -82,13 +83,19 @@ public class RpcClientIoHandler implements IoHandler {
 	}
 
 	@Override
-	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {}
+	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {
+		LOG.debug("[CRAFT-ATOM-RPC] Channel flush, |Channel={}|", channel);
+	}
 
 	@Override
-	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {}
+	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {
+		LOG.debug("[CRAFT-ATOM-RPC] Channel written, |Channel={}|", channel);
+	}
 	
 	@Override
-	public void channelIdle(Channel<byte[]> channel) {}
+	public void channelIdle(Channel<byte[]> channel) {
+		LOG.debug("[CRAFT-ATOM-RPC] Channel idle, |Channel={}|", channel);
+	}
 
 	
 }

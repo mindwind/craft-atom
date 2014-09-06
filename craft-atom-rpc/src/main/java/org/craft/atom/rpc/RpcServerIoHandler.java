@@ -59,23 +59,29 @@ public class RpcServerIoHandler implements IoHandler {
 	
 	@Override
 	public void channelIdle(Channel<byte[]> channel) {
-		LOG.info("[CRAFT-ATOM-RPC] Rpc server handler idle, |Channel={}|", channel);
+		LOG.debug("[CRAFT-ATOM-RPC] Channel idle, |Channel={}|", channel);
 		channel.close();
 	}
 	
 	@Override
 	public void channelThrown(Channel<byte[]> channel, Exception cause) {
-		LOG.info("[CRAFT-ATOM-RPC] Rpc server handler thrown, |Channel={}, thrown={}|", channel, cause);
+		LOG.warn("[CRAFT-ATOM-RPC] Channel thrown, |Channel={}|", channel, cause);
 		channel.close();
 	}
 	
 	@Override
-	public void channelClosed(Channel<byte[]> channel) {}
+	public void channelClosed(Channel<byte[]> channel) {
+		LOG.debug("[CRAFT-ATOM-RPC] Channel closed, |Channel={}|", channel);
+	}
 
 	@Override
-	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {}
+	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {
+		LOG.debug("[CRAFT-ATOM-RPC] Channel flush, |Channel={}|", channel);
+	}
 
 	@Override
-	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {}
+	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {
+		LOG.debug("[CRAFT-ATOM-RPC] Channel written, |Channel={}|", channel);
+	}
 	
 }
