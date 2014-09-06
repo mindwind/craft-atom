@@ -19,21 +19,40 @@ import org.junit.Test;
 public class TestRpc {
 	
 	
-	private static final int PORT = AvailablePortFinder.getNextAvailable();
-	
-	
 	@Test
 	public void testBasic() {
-		RpcServer server = RpcFactory.newRpcServer(PORT);
+		int port = AvailablePortFinder.getNextAvailable();
+		RpcServer server = RpcFactory.newRpcServer(port);
 		server.expose(DemoService.class, new DefaultDemoService(), new RpcParameter());
 		server.serve();
-		
-		RpcClient client = RpcFactory.newRpcClient("localhost", PORT);
+		RpcClient client = RpcFactory.newRpcClient("localhost", port);
 		client.open();
+		
 		DemoService ds = client.refer(DemoService.class);
 		String hi = ds.echo("hi");
 		Assert.assertEquals("hi", hi);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test basic. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testRt() {
+		int port = AvailablePortFinder.getNextAvailable();
+		RpcServer server = RpcFactory.newRpcServer(port);
+		server.expose(DemoService.class, new DefaultDemoService(), new RpcParameter());
+		server.serve();
+		RpcClient client = RpcFactory.newRpcClient("localhost", port);
+		client.open();
+		
+		DemoService ds = client.refer(DemoService.class);
+		ds.echo("hi");
+		long s = System.currentTimeMillis();
+		for (int i = 0; i < 1000; i++) {
+			ds.echo("hi");
+		}
+		long e = System.currentTimeMillis();
+		long rt = e - s;
+		Assert.assertTrue(rt < 1000);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test rt <%s> ms. ", CaseCounter.incr(1), rt));
 	}
 	
 }
