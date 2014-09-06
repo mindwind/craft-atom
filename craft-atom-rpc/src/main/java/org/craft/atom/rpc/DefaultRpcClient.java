@@ -10,12 +10,17 @@ import org.craft.atom.rpc.spi.RpcConnector;
 import org.craft.atom.rpc.spi.RpcInvoker;
 import org.craft.atom.rpc.spi.RpcProtocol;
 import org.craft.atom.rpc.spi.RpcProxyFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
  * @version 1.0, Aug 14, 2014
  */
 public class DefaultRpcClient implements RpcClient {
+	
+	
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultRpcClient.class);
 
 	
 	@Getter @Setter private String          host                  ;
@@ -51,6 +56,7 @@ public class DefaultRpcClient implements RpcClient {
 		connector   .setRpcTimeoutInMillis(rpcTimeoutInMillis);
 		invoker     .setConnector(connector);
 		proxyFactory.setInvoker(invoker);
+		LOG.debug("[CRAFT-ATOM-RPC] Client init.");
 	}
 	
 	
@@ -68,6 +74,7 @@ public class DefaultRpcClient implements RpcClient {
 		for (int i = 0; i < connections; i++) {
 			connector.connect();
 		}
+		LOG.debug("[CRAFT-ATOM-RPC] Client open.");
 	}
 
 	@Override

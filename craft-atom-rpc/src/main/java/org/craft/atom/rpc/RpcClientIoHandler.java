@@ -41,7 +41,6 @@ public class RpcClientIoHandler implements IoHandler {
 
 	@Override
 	public void channelOpened(Channel<byte[]> channel) {
-		LOG.debug("[CRAFT-ATOM-RPC] Channel opened, |Channel={}|", channel);
 		ProtocolDecoder<RpcMessage> decoder = protocol.getRpcDecoder();
 		channel.setAttribute(RPC_DECODER, decoder);
 		channel.setAttribute(RPC_FUTURE_CHANNEL, new ConcurrentHashMap<Long, RpcFuture>());
@@ -83,19 +82,13 @@ public class RpcClientIoHandler implements IoHandler {
 	}
 
 	@Override
-	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {
-		LOG.debug("[CRAFT-ATOM-RPC] Channel flush, |Channel={}|", channel);
-	}
+	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {}
 
 	@Override
-	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {
-		LOG.debug("[CRAFT-ATOM-RPC] Channel written, |Channel={}|", channel);
-	}
+	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {}
 	
 	@Override
-	public void channelIdle(Channel<byte[]> channel) {
-		LOG.debug("[CRAFT-ATOM-RPC] Channel idle, |Channel={}|", channel);
-	}
+	public void channelIdle(Channel<byte[]> channel) {}
 
 	
 }

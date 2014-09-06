@@ -5,6 +5,7 @@ import org.craft.atom.rpc.api.RpcFactory;
 import org.craft.atom.rpc.api.RpcParameter;
 import org.craft.atom.rpc.api.RpcServer;
 import org.craft.atom.test.AvailablePortFinder;
+import org.craft.atom.test.CaseCounter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,6 +33,7 @@ public class TestRpc {
 		DemoService ds = client.refer(DemoService.class);
 		String hi = ds.echo("hi");
 		Assert.assertEquals("hi", hi);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test basic. ", CaseCounter.incr(1)));
 	}
 	
 }
