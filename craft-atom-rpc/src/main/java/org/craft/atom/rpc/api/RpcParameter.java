@@ -19,4 +19,11 @@ public class RpcParameter {
 	@Getter @Setter private int rpcQueues  = 10;
 
 	
+	public RpcParameter() {}
+	
+	public RpcParameter(int rpcThreads, int rpcQueues) {
+		this.rpcThreads = rpcThreads;
+		this.rpcQueues = rpcQueues;
+	}
+	
 }
