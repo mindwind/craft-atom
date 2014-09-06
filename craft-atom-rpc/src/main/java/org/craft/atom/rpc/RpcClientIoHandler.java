@@ -3,7 +3,6 @@ package org.craft.atom.rpc;
 import java.nio.channels.ClosedChannelException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoHandler;
@@ -43,7 +42,6 @@ public class RpcClientIoHandler implements IoHandler {
 	public void channelOpened(Channel<byte[]> channel) {
 		ProtocolDecoder<RpcMessage> decoder = protocol.getRpcDecoder();
 		channel.setAttribute(RPC_DECODER, decoder);
-		channel.setAttribute(RPC_FUTURE_CHANNEL, new ConcurrentHashMap<Long, RpcFuture>());
 	}
 	
 	@Override
@@ -62,13 +60,13 @@ public class RpcClientIoHandler implements IoHandler {
 
 	@Override
 	public void channelClosed(Channel<byte[]> channel) {
-		LOG.debug("[CRAFT-ATOM-RPC] Channel closed, |Channel={}|", channel);
+		LOG.debug("[CRAFT-ATOM-RPC] Channel closed, |channel={}|", channel);
 		channelThrown0(channel, new ClosedChannelException());
 	}
 	
 	@Override
 	public void channelThrown(Channel<byte[]> channel, Exception cause) {
-		LOG.warn("[CRAFT-ATOM-RPC] Channel thrown, |Channel={}|", channel, cause);
+		LOG.warn("[CRAFT-ATOM-RPC] Channel thrown, |channel={}|", channel, cause);
 		channelThrown0(channel, cause);
 		channel.close();
 	}

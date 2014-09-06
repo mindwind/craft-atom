@@ -1,6 +1,7 @@
 package org.craft.atom.rpc;
 
 import org.craft.atom.rpc.api.RpcClient;
+import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.api.RpcFactory;
 import org.craft.atom.rpc.api.RpcParameter;
 import org.craft.atom.rpc.api.RpcServer;
@@ -44,6 +45,7 @@ public class TestRpc {
 		client.open();
 		
 		DemoService ds = client.refer(DemoService.class);
+		RpcContext.getContext().setRpcTimeoutInMillis(5000);
 		ds.echo("hi");
 		long s = System.currentTimeMillis();
 		for (int i = 0; i < 1000; i++) {
@@ -51,7 +53,7 @@ public class TestRpc {
 		}
 		long e = System.currentTimeMillis();
 		long rt = e - s;
-		Assert.assertTrue(rt < 1000);
+		Assert.assertTrue(rt < 2000);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test rt <%s> ms. ", CaseCounter.incr(1), rt));
 	}
 	

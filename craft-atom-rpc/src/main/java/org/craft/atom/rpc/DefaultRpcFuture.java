@@ -35,6 +35,7 @@ public class DefaultRpcFuture implements RpcFuture {
 					wait(timeoutMillis);
 					if (endTime < System.currentTimeMillis() && !ready) {
 						exception = new TimeoutException();
+						break;
 					}
 				}
 			} finally {

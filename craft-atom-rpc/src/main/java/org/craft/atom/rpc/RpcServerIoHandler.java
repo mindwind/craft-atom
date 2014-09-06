@@ -64,13 +64,13 @@ public class RpcServerIoHandler implements IoHandler {
 	
 	@Override
 	public void channelThrown(Channel<byte[]> channel, Exception cause) {
-		LOG.warn("[CRAFT-ATOM-RPC] Channel thrown, |Channel={}|", channel, cause);
+		LOG.warn("[CRAFT-ATOM-RPC] Channel thrown, |channel={}|", channel, cause);
 		channel.close();
 	}
 	
 	@Override
 	public void channelClosed(Channel<byte[]> channel) {
-		LOG.debug("[CRAFT-ATOM-RPC] Channel closed, |Channel={}|", channel);
+		LOG.debug("[CRAFT-ATOM-RPC] Channel closed, |channel={}|", channel);
 	}
 
 	@Override

@@ -70,6 +70,7 @@ public class DefaultRpcConnector implements RpcConnector {
 		try {
 			Future<Channel<byte[]>> future = ioConnector.connect(address);
 			Channel<byte[]> channel = future.get(connectTimeoutInMillis, TimeUnit.MILLISECONDS);
+			channel.setAttribute(RpcClientIoHandler.RPC_FUTURE_CHANNEL, new ConcurrentHashMap<Long, RpcFuture>());
 			long id = channel.getId();
 			channels.put(id, channel);
 			LOG.debug("[CRAFT-ATOM-RPC] Rpc connector established connection, |channel={}|.", channel);
@@ -109,6 +110,9 @@ public class DefaultRpcConnector implements RpcConnector {
 		if (channel == null) throw new RpcException(RpcException.CLIENT_CONNECT);
 		
 		try {
+			RpcFuture future = new DefaultRpcFuture();
+			Map<Long, RpcFuture> map = (Map<Long, RpcFuture>) channel.getAttribute(RpcClientIoHandler.RPC_FUTURE_CHANNEL);
+			map.put(reqId, future);
 			boolean succ = write(channel, req);
 			if (!succ) throw new IOException("Unknown I/O error!");
 			
@@ -116,9 +120,6 @@ public class DefaultRpcConnector implements RpcConnector {
 			if (req.isOneway()) return null;
 			
 			// Wait response
-			RpcFuture future = new DefaultRpcFuture();
-			Map<Long, RpcFuture> map = (Map<Long, RpcFuture>) channel.getAttribute(RpcClientIoHandler.RPC_FUTURE_CHANNEL);
-			map.put(reqId, future);
 			future.await(req.getRpcTimeoutInMillis(), TimeUnit.MILLISECONDS);
 			return future.getResponse();
 		} catch (IllegalChannelStateException e) {
