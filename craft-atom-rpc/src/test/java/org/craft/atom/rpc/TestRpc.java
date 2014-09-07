@@ -62,6 +62,14 @@ public class TestRpc {
 	}
 	
 	@Test
+	public void testAttachment() {
+		RpcContext.getContext().setAttachment("demo", "demo");
+		String atta = ds.attachment();
+		Assert.assertEquals("demo", atta);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test attachment. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
 	public void testRt() {
 		// remote
 		RpcContext.getContext().setRpcTimeoutInMillis(5000);

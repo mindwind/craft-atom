@@ -1,6 +1,7 @@
 package org.craft.atom.rpc.api;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Getter;
@@ -35,6 +36,11 @@ public final class RpcContext {
 	@Getter @Setter private Map<String, String> attachments       ;
 	@Getter @Setter private int                 rpcTimeoutInMillis;
 	@Getter @Setter private boolean             oneway            ;
+	
+	
+	public RpcContext() {
+		attachments = new HashMap<String, String>();
+	}
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
