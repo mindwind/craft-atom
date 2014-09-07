@@ -11,7 +11,7 @@
 	</appender>
 	
 	<category name="org.craft.atom.rpc" additivity="false">
-		<priority value="warn" />
+		<priority value="debug" />
 		<appender-ref ref="console" />
 	</category>
 
