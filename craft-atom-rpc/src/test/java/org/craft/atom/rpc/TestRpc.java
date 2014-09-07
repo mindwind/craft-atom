@@ -21,7 +21,7 @@ import org.junit.Test;
 public class TestRpc {
 	
 	
-	private RpcClient client; 
+	private DemoService ds; 
 	
 	
 	@Before
@@ -30,26 +30,32 @@ public class TestRpc {
 		RpcServer server = RpcFactory.newRpcServer(port);
 		server.expose(DemoService.class, new DefaultDemoService(), new RpcParameter());
 		server.serve();
-		client = RpcFactory.newRpcClient("localhost", port);
+		RpcClient client = RpcFactory.newRpcClient("localhost", port);
 		client.open();
+		ds = client.refer(DemoService.class);
 	}
 	
 	@Test
 	public void testBasic() {
-		DemoService ds = client.refer(DemoService.class);
 		String hi = ds.echo("hi");
 		Assert.assertEquals("hi", hi);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test basic. ", CaseCounter.incr(1)));
 	}
 	
 	@Test
-	public void testTimeout() {
-		
+	public void testTimeout() throws InterruptedException {
+		RpcContext.getContext().setRpcTimeoutInMillis(100);
+		try {
+			ds.timeout("hi");
+			Assert.fail();
+		} catch (RpcException e) {
+			Assert.assertEquals(RpcException.CLIENT_TIMEOUT, e.getCode());
+		}
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test timeout. ", CaseCounter.incr(1)));
 	}
 	
 	@Test
 	public void testRt() {
-		DemoService ds = client.refer(DemoService.class);
 		RpcContext.getContext().setRpcTimeoutInMillis(5000);
 		ds.echo("hi");
 		long s = System.currentTimeMillis();

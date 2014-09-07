@@ -6,6 +6,7 @@ package org.craft.atom.rpc;
  */
 public class DefaultDemoService implements DemoService {
 
+	
 	@Override
 	public String echo(String in) {
 		return in;
@@ -14,6 +15,11 @@ public class DefaultDemoService implements DemoService {
 	@Override
 	public void give(String in) {
 		System.out.println("Invoked give() in=" + in);
+	}
+
+	@Override
+	public void timeout(String in) throws InterruptedException {
+		Thread.sleep(200);
 	}
 
 }
