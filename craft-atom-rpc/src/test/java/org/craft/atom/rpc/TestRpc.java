@@ -8,6 +8,7 @@ import org.craft.atom.rpc.api.RpcServer;
 import org.craft.atom.test.AvailablePortFinder;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 
@@ -20,15 +21,21 @@ import org.junit.Test;
 public class TestRpc {
 	
 	
-	@Test
-	public void testBasic() {
+	private RpcClient client; 
+	
+	
+	@Before
+	public void before() {
 		int port = AvailablePortFinder.getNextAvailable();
 		RpcServer server = RpcFactory.newRpcServer(port);
 		server.expose(DemoService.class, new DefaultDemoService(), new RpcParameter());
 		server.serve();
-		RpcClient client = RpcFactory.newRpcClient("localhost", port);
+		client = RpcFactory.newRpcClient("localhost", port);
 		client.open();
-		
+	}
+	
+	@Test
+	public void testBasic() {
 		DemoService ds = client.refer(DemoService.class);
 		String hi = ds.echo("hi");
 		Assert.assertEquals("hi", hi);
@@ -36,14 +43,12 @@ public class TestRpc {
 	}
 	
 	@Test
-	public void testRt() {
-		int port = AvailablePortFinder.getNextAvailable();
-		RpcServer server = RpcFactory.newRpcServer(port);
-		server.expose(DemoService.class, new DefaultDemoService(), new RpcParameter());
-		server.serve();
-		RpcClient client = RpcFactory.newRpcClient("localhost", port);
-		client.open();
+	public void testTimeout() {
 		
+	}
+	
+	@Test
+	public void testRt() {
 		DemoService ds = client.refer(DemoService.class);
 		RpcContext.getContext().setRpcTimeoutInMillis(5000);
 		ds.echo("hi");
