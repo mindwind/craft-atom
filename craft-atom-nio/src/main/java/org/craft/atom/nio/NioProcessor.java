@@ -626,7 +626,7 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 	// ~ -------------------------------------------------------------------------------------------------------------
     
     
-    void fireChannelOpened(NioByteChannel channel) {
+    private void fireChannelOpened(NioByteChannel channel) {
     	dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_OPENED, channel, handler));
     }
 	
