@@ -8,7 +8,7 @@ public interface DemoService {
 
 	
 	String echo(String in);
-	void give(String in);
+	void noreturn(String in);
 	void timeout(String in) throws InterruptedException;
 	
 }

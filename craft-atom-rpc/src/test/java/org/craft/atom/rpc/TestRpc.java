@@ -49,9 +49,16 @@ public class TestRpc {
 			ds.timeout("hi");
 			Assert.fail();
 		} catch (RpcException e) {
-			Assert.assertEquals(RpcException.CLIENT_TIMEOUT, e.getCode());
+			Assert.assertTrue(RpcException.CLIENT_TIMEOUT == e.getCode() || RpcException.SERVER_TIMEOUT == e.getCode());
 		}
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test timeout. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testVoid() {
+		ds.noreturn("hi");
+		Assert.assertTrue(true);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test void. ", CaseCounter.incr(1)));
 	}
 	
 	@Test

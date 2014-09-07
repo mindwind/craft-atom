@@ -13,8 +13,8 @@ public class DefaultDemoService implements DemoService {
 	}
 
 	@Override
-	public void give(String in) {
-		System.out.println("Invoked give() in=" + in);
+	public void noreturn(String in) {
+		System.out.println("Invoked noreturn() in=" + in);
 	}
 
 	@Override
