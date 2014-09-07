@@ -70,10 +70,11 @@ public class TestRpc {
 	}
 	
 	@Test
-	public void testOneway() {
+	public void testOneway() throws InterruptedException {
 		RpcContext.getContext().setOneway(true);
 		String r = ds.oneway();
 		Assert.assertNull(r);
+		Thread.sleep(100);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test oneway. ", CaseCounter.incr(1)));
 	}
 	
