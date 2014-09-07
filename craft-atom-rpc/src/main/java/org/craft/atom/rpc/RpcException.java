@@ -25,6 +25,8 @@ public final class RpcException extends RuntimeException {
 	@Getter private byte code;
 	
 	
+	public RpcException() {}
+	
 	public RpcException(byte code) {
         this.code = code;
     }
