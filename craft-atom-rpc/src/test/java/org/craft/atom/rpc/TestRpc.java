@@ -63,16 +63,27 @@ public class TestRpc {
 	
 	@Test
 	public void testRt() {
+		// remote
 		RpcContext.getContext().setRpcTimeoutInMillis(5000);
 		ds.echo("hi");
-		long s = System.currentTimeMillis();
+		long s = System.nanoTime();
 		for (int i = 0; i < 1000; i++) {
 			ds.echo("hi");
 		}
-		long e = System.currentTimeMillis();
-		long rt = e - s;
-		Assert.assertTrue(rt < 2000);
-		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test rt <%s> ms. ", CaseCounter.incr(1), rt));
+		long e = System.nanoTime();
+		long rrt = e - s;
+		
+		// local
+		ds = new DefaultDemoService();
+		s = System.nanoTime();
+		for (int i = 0; i < 1000; i++) {
+			ds.echo("hi");
+		}
+		e = System.nanoTime();
+		long lrt = e - s;
+		
+		Assert.assertTrue(rrt > lrt);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test rt |local=%s, remote=%s| ns. ", CaseCounter.incr(1), lrt, rrt));
 	}
 	
 }
