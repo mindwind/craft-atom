@@ -30,7 +30,7 @@ public class DefaultRpcClientInvoker implements RpcInvoker {
 			req.setRpcTimeoutInMillis(rpcTimeoutInMillis(ctx));
 			req.setOneway(ctx.isOneway());
 			req.setAttachments(ctx.getAttachments());
-			LOG.debug("[CRAFT-ATOM-RPC] Rpc client invoker is invoking, |rpcContext={}|", ctx);
+			LOG.debug("[CRAFT-ATOM-RPC] Rpc client invoker is invoking, |req={}|", req);
 			
 			return connector.send(req);
 		} finally {

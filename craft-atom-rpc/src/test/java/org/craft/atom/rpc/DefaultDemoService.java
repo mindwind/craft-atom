@@ -33,6 +33,7 @@ public class DefaultDemoService implements DemoService {
 
 	@Override
 	public String oneway() {
+		System.out.println("Invoked oneway()");
 		return "oneway";
 	}
 
