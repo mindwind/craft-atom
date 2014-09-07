@@ -70,6 +70,14 @@ public class TestRpc {
 	}
 	
 	@Test
+	public void testOneway() {
+		RpcContext.getContext().setOneway(true);
+		String r = ds.oneway();
+		Assert.assertNull(r);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test oneway. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
 	public void testRt() {
 		// remote
 		RpcContext.getContext().setRpcTimeoutInMillis(5000);

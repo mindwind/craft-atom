@@ -9,6 +9,7 @@ public interface DemoService {
 	
 	String echo(String in);
 	String attachment();
+	String oneway();
 	void noreturn(String in);
 	void timeout(String in) throws InterruptedException;
 	

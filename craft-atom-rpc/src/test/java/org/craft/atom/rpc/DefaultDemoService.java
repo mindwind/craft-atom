@@ -31,4 +31,9 @@ public class DefaultDemoService implements DemoService {
 		return r;
 	}
 
+	@Override
+	public String oneway() {
+		return "oneway";
+	}
+
 }
