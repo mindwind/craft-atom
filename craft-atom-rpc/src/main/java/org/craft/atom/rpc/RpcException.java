@@ -15,8 +15,7 @@ public final class RpcException extends RuntimeException {
 	public static final byte UNKNOWN         = 0 ;
 	public static final byte NET_IO          = 10;
 	public static final byte CLIENT_BAD_REQ  = 40;
-	public static final byte CLIENT_CONNECT  = 41;
-	public static final byte CLIENT_TIMEOUT  = 42;
+	public static final byte CLIENT_TIMEOUT  = 41;
     public static final byte SERVER_ERROR    = 50;
     public static final byte SERVER_TIMEOUT  = 51;
     public static final byte SERVER_OVERLOAD = 52;

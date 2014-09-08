@@ -96,6 +96,30 @@ public class TestRpc {
 	}
 	
 	@Test
+	public void testBrokenConnectionAndReconnect() throws InterruptedException {
+		int conns = 10;
+		client = RpcFactory.newRpcClientBuilder(host, port).connections(conns).build();
+		client.open();
+		ds = client.refer(DemoService.class);
+		DefaultRpcConnector connector = (DefaultRpcConnector) ((DefaultRpcClient) client).getConnector();
+		connector.setAllowReconnect(false);
+		connector.setReconnectDelay(10);
+		connector.brokeAll();
+		try {
+			ds.echo("hi");
+		} catch (RpcException e) {
+			Assert.assertEquals(RpcException.NET_IO, e.getCode());
+		}
+		connector.setAllowReconnect(true);
+		Thread.sleep(100);
+		int ac = connector.aliveConnectionNum();
+		Assert.assertEquals(conns, ac);
+		String hello = ds.echo("hello");
+		Assert.assertEquals("hello", hello);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test broken connection and reconnect. ", CaseCounter.incr(3)));
+	}
+	
+	@Test
 	public void testRt() {
 		// remote
 		RpcContext.getContext().setRpcTimeoutInMillis(5000);

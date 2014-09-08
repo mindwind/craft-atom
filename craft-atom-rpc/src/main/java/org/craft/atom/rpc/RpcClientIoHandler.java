@@ -24,14 +24,16 @@ public class RpcClientIoHandler implements IoHandler {
 	public  static final String RPC_FUTURE_CHANNEL = "rpc.future.channel"                             ;
 	
 	
-	private RpcProtocol  protocol;
+	private RpcProtocol         protocol ;
+	private DefaultRpcConnector connector;
 	
 
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
 	
-	public RpcClientIoHandler(RpcProtocol protocol) {
-		this.protocol = protocol;
+	public RpcClientIoHandler(RpcProtocol protocol, DefaultRpcConnector connector) {
+		this.protocol  = protocol;
+		this.connector = connector;
 	}
 	
 	
@@ -62,6 +64,7 @@ public class RpcClientIoHandler implements IoHandler {
 	public void channelClosed(Channel<byte[]> channel) {
 		LOG.debug("[CRAFT-ATOM-RPC] Channel closed, |channel={}|", channel);
 		channelThrown0(channel, new ClosedChannelException());
+		connector.reconnect(channel.getId());
 	}
 	
 	@Override

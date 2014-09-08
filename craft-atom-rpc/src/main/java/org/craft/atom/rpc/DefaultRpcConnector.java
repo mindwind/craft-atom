@@ -41,6 +41,8 @@ public class DefaultRpcConnector implements RpcConnector {
 	@Getter @Setter private int                        connectTimeoutInMillis;
 	@Getter @Setter private int                        rpcTimeoutInMillis    ;
 	@Getter         private int                        heartbeatInMillis     ;
+	@Getter @Setter private int                        reconnectDelay        ;
+	@Getter @Setter private boolean                    allowReconnect        ;
 	@Getter         private SocketAddress              address               ;
 	@Getter @Setter private Map<Long, Channel<byte[]>> channels              ;
 	@Getter @Setter private IoHandler                  ioHandler             ;
@@ -54,6 +56,8 @@ public class DefaultRpcConnector implements RpcConnector {
 	
 	
 	public DefaultRpcConnector() {
+		reconnectDelay         = 6000;
+		allowReconnect         = true;
 		connectTimeoutInMillis = Integer.MAX_VALUE;
 		rpcTimeoutInMillis     = Integer.MAX_VALUE;
 		heartbeatInMillis      = 0;
@@ -96,9 +100,7 @@ public class DefaultRpcConnector implements RpcConnector {
 	
 	@Override
 	public void close() {
-		for (Channel<byte[]> channel : channels.values()) {
-			channel.close();
-		}
+		brokeAll();
 		channels.clear();
 	}
 	
@@ -107,7 +109,7 @@ public class DefaultRpcConnector implements RpcConnector {
 	public RpcMessage send(RpcMessage req) throws RpcException {
 		long reqId = req.getId();
 		Channel<byte[]> channel = select(reqId);
-		if (channel == null) throw new RpcException(RpcException.CLIENT_CONNECT);
+		if (channel == null) throw new RpcException(RpcException.NET_IO);
 		
 		try {
 			RpcFuture future = new DefaultRpcFuture();
@@ -143,7 +145,7 @@ public class DefaultRpcConnector implements RpcConnector {
 		return succ;
 	}
 	
-	private void reconnect(final long connectionId) {
+	void reconnect(final long connectionId) {
 		if (!disconnect(connectionId)) return;
 		
 		reconnectExecutor.execute(new Runnable() {
@@ -151,14 +153,21 @@ public class DefaultRpcConnector implements RpcConnector {
 			@Override
 			public void run() {
 				while (!retryConnect()) {
-					try { Thread.sleep(6000); } catch (InterruptedException e) {}
+					try { Thread.sleep(reconnectDelay); } catch (InterruptedException e) {}
 				}
 			}
 			
 			private boolean retryConnect() {
 				try {
-					if (connect() > 0) return true;
-					return false;
+					if (!allowReconnect) return false;
+					long connId = connect();
+					if (connId > 0) {
+						LOG.debug("[CRAFT-ATOM-RPC] Rpc connector reconnect success, |connectionId={}|", connId);
+						return true;
+					} else {
+						LOG.debug("[CRAFT-ATOM-RPC] Rpc connector reconnect fail");
+						return false;
+					}
 				} catch (Exception e) {
 					return false;
 				}
@@ -211,11 +220,35 @@ public class DefaultRpcConnector implements RpcConnector {
 	@Override
 	public void setProtocol(RpcProtocol protocol) {
 		this.protocol    = protocol;
-		this.ioHandler   = new RpcClientIoHandler(protocol);
+		this.ioHandler   = new RpcClientIoHandler(protocol, this);
 		this.ioConnector = NioFactory.newTcpConnectorBuilder(ioHandler)
 						             .connectTimeoutInMillis(connectTimeoutInMillis)
 						             .dispatcher(new NioOrderedDirectChannelEventDispatcher())
 						             .build();
+	}
+	
+	
+	// ~ ----------------------------------------------------------------------------------------------------- for test
+	
+	
+	/**
+	 * Broke all connections
+	 */
+	public void brokeAll() {
+		for (Channel<byte[]> channel : channels.values()) {
+			channel.close();
+		}
+	}
+	
+	/**
+	 * @return all alive connection number at the moment.
+	 */
+	public int aliveConnectionNum() {
+		int num = 0;
+		for (Channel<byte[]> ch : channels.values()) {
+			if (ch.isOpen()) num++;
+		}
+		return num;
 	}
 	
 }
