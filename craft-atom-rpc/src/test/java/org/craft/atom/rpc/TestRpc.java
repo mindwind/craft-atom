@@ -21,16 +21,21 @@ import org.junit.Test;
 public class TestRpc {
 	
 	
-	private DemoService ds; 
+	private DemoService ds    ; 
+	private RpcServer   server;
+	private RpcClient   client;
+	private String      host  ;
+	private int         port  ;
 	
 	
 	@Before
 	public void before() {
-		int port = AvailablePortFinder.getNextAvailable();
-		RpcServer server = RpcFactory.newRpcServer(port);
+		host = "localhost";
+		port = AvailablePortFinder.getNextAvailable();
+		server = RpcFactory.newRpcServer(port);
 		server.expose(DemoService.class, new DefaultDemoService(), new RpcParameter());
 		server.serve();
-		RpcClient client = RpcFactory.newRpcClient("localhost", port);
+		client = RpcFactory.newRpcClient(host, port);
 		client.open();
 		ds = client.refer(DemoService.class);
 	}
@@ -76,6 +81,18 @@ public class TestRpc {
 		Assert.assertNull(r);
 		Thread.sleep(100);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test oneway. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testMultiConnections() {
+		client = RpcFactory.newRpcClientBuilder(host, port).connections(10).build();
+		client.open();
+		ds = client.refer(DemoService.class);
+		for (int i = 0; i < 20; i++) {
+			String hi = ds.echo("hi-" + i);
+			Assert.assertEquals("hi-" + i, hi);
+		}
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test multi connections. ", CaseCounter.incr(1)));
 	}
 	
 	@Test
