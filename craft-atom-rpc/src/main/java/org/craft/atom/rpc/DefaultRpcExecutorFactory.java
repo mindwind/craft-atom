@@ -41,7 +41,7 @@ public class DefaultRpcExecutorFactory implements RpcExecutorFactory {
 					RpcParameter parameter = entry.getRpcParameter();
 					int          threads   = parameter.getRpcThreads() == 0 ? 1 : parameter.getRpcThreads();
 					int          queues    = parameter.getRpcQueues()  == 0 ? 1 : parameter.getRpcQueues() ;
-					ThreadPoolExecutor tpe = new ThreadPoolExecutor(threads, threads, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(queues), new NamedThreadFactory("craft-atom-rpc"));
+					ThreadPoolExecutor tpe = new RpcThreadPoolExecutor(threads, threads, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(queues), new NamedThreadFactory("craft-atom-rpc"));
 					tpe.allowCoreThreadTimeOut(true);
 					es = tpe;
 					pool.put(key, tpe);
