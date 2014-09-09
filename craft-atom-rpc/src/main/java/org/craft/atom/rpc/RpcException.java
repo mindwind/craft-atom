@@ -1,11 +1,13 @@
 package org.craft.atom.rpc;
 
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * @author mindwind
  * @version 1.0, Aug 8, 2014
  */
+@ToString
 public final class RpcException extends RuntimeException {
 
 	

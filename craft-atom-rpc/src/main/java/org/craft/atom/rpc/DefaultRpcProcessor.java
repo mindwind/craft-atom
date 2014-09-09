@@ -120,7 +120,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 				// Wait response
 				rsp = future.get(rpcTimeoutInMillis(req), TimeUnit.MILLISECONDS);
 			} catch (ExecutionException e) {
-				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_ERROR, e));
+				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_ERROR));
 			} catch (TimeoutException e) {
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_TIMEOUT, e));
 			} catch (Exception e) {

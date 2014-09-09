@@ -47,4 +47,9 @@ public class DefaultDemoService implements DemoService {
 		throw new IllegalAccessException("biz error");
 	}
 
+	@Override
+	public void error() {
+		throw new OutOfMemoryError();
+	}
+
 }

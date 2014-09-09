@@ -186,6 +186,16 @@ public class TestRpc {
 	}
 	
 	@Test
+	public void testError() {
+		try {
+			ds.error();
+		} catch (RpcException e) {
+			Assert.assertTrue(RpcException.SERVER_ERROR == e.getCode());
+		}
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test error. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
 	public void testRt() {
 		// remote
 		RpcContext.getContext().setRpcTimeoutInMillis(5000);
