@@ -62,7 +62,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 			executor.execute(new ProcessTask(req, channel));
 		} catch (RejectedExecutionException e) {
 			LOG.warn("[CRAFT-ATOM-RPC] Rpc process overload, |executor={}|", executor);
-			channel.write(RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_OVERLOAD)));
+			channel.write(RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_OVERLOAD, "server overload")));
 		}
 		LOG.debug("[CRAFT-ATOM-RPC] Rpc process request, |req={}, channel={}, executor={}|", req, channel, executor);
 	}
@@ -120,11 +120,11 @@ public class DefaultRpcProcessor implements RpcProcessor {
 				// Wait response
 				rsp = future.get(rpcTimeoutInMillis(req), TimeUnit.MILLISECONDS);
 			} catch (ExecutionException e) {
-				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_ERROR));
+				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_ERROR, "server error"));
 			} catch (TimeoutException e) {
-				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_TIMEOUT));
+				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_TIMEOUT, "server timeout"));
 			} catch (Exception e) {
-				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.UNKNOWN));
+				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.UNKNOWN, "unknown error"));
 			}
 			
 			try {

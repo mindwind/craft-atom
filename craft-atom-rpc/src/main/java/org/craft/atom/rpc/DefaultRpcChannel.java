@@ -32,7 +32,7 @@ public class DefaultRpcChannel implements RpcChannel {
 			byte[] bytes = encoder.encode(msg);
 			channel.write(bytes);
 		} catch (IllegalChannelStateException e) {
-			throw new RpcException(RpcException.NET_IO, "broken connection");
+			throw new RpcException(RpcException.NETWORK, "broken connection");
 		}
 	}
 

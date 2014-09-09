@@ -80,11 +80,11 @@ public class DefaultRpcConnector implements RpcConnector {
 			LOG.debug("[CRAFT-ATOM-RPC] Rpc connector established connection, |channel={}|.", channel);
 			return id;
 		} catch (TimeoutException e) {
-			throw new RpcException(RpcException.CLIENT_TIMEOUT, e);
+			throw new RpcException(RpcException.CLIENT_TIMEOUT, "client timeout", e);
 		} catch (IOException e) {
-			throw new RpcException(RpcException.NET_IO, e);
+			throw new RpcException(RpcException.NETWORK, "network error", e);
 		} catch (Exception e) {
-			throw new RpcException(RpcException.UNKNOWN, e);
+			throw new RpcException(RpcException.UNKNOWN, "unknown error", e);
 		}
 	}
 
@@ -109,7 +109,7 @@ public class DefaultRpcConnector implements RpcConnector {
 	public RpcMessage send(RpcMessage req) throws RpcException {
 		long reqId = req.getId();
 		Channel<byte[]> channel = select(reqId);
-		if (channel == null) throw new RpcException(RpcException.NET_IO);
+		if (channel == null) throw new RpcException(RpcException.NETWORK, "network error");
 		
 		try {
 			RpcFuture future = new DefaultRpcFuture();
@@ -126,14 +126,14 @@ public class DefaultRpcConnector implements RpcConnector {
 			return future.getResponse();
 		} catch (IllegalChannelStateException e) {
 			reconnect(channel.getId());
-			throw new RpcException(RpcException.NET_IO, e);
+			throw new RpcException(RpcException.NETWORK, "network error");
 		} catch (IOException e) {
 			reconnect(channel.getId());
-			throw new RpcException(RpcException.NET_IO, e);
+			throw new RpcException(RpcException.NETWORK, "network error", e);
 		} catch (TimeoutException e) {
-			throw new RpcException(RpcException.CLIENT_TIMEOUT, e);
+			throw new RpcException(RpcException.CLIENT_TIMEOUT, "client timeout", e);
 		} catch (Exception e) {
-			throw new RpcException(RpcException.UNKNOWN, e);
+			throw new RpcException(RpcException.UNKNOWN, "unknown error", e);
 		}
 	}
 	

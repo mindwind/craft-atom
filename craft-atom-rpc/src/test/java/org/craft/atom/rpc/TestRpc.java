@@ -111,7 +111,7 @@ public class TestRpc {
 		try {
 			ds.echo("hi");
 		} catch (RpcException e) {
-			Assert.assertEquals(RpcException.NET_IO, e.getCode());
+			Assert.assertEquals(RpcException.NETWORK, e.getCode());
 		}
 		connector.setAllowReconnect(true);
 		Thread.sleep(100);
@@ -140,7 +140,7 @@ public class TestRpc {
 			ds.echo("hi");
 			Assert.fail();
 		} catch (RpcException e) {
-			Assert.assertEquals(RpcException.NET_IO, e.getCode());
+			Assert.assertEquals(RpcException.NETWORK, e.getCode());
 		}
 		// heartbeat
 		client = RpcFactory.newRpcClientBuilder(host, port).heartbeatInMillis(50).build();

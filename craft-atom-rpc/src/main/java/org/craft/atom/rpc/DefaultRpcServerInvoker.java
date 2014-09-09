@@ -59,7 +59,7 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 			if (isDeclaredException(e, rpcInterface, methodName, paramTypes)) {
 				return RpcMessages.newRsponseRpcMessage(req.getId(), e);
 			} else {
-				throw new RpcException(RpcException.SERVER_ERROR);
+				throw new RpcException(RpcException.SERVER_ERROR, "server error");
 			}
 		} finally {
 			RpcContext.removeContext();

@@ -54,11 +54,11 @@ public class DefaultRpcFuture implements RpcFuture {
 
 	@Override
 	public RpcMessage getResponse() throws IOException, TimeoutException {
-		Throwable t = getException();
-		if (t != null) {
-			if (t instanceof IOException     ) throw (IOException)      t;
-			if (t instanceof TimeoutException) throw (TimeoutException) t;
-			throw new RpcException(RpcException.UNKNOWN, t);
+		Exception e = getException();
+		if (e != null) {
+			if (e instanceof IOException     ) throw (IOException)      e;
+			if (e instanceof TimeoutException) throw (TimeoutException) e;
+			throw new RpcException(RpcException.UNKNOWN, "unkonw error", e);
 		}
 		
 		synchronized (this) {

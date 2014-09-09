@@ -15,7 +15,7 @@ public final class RpcException extends RuntimeException {
 	
 	
 	public static final byte UNKNOWN         = 0 ;
-	public static final byte NET_IO          = 10;
+	public static final byte NETWORK         = 10;
 	public static final byte CLIENT_BAD_REQ  = 40;
 	public static final byte CLIENT_TIMEOUT  = 41;
     public static final byte SERVER_ERROR    = 50;
@@ -28,19 +28,10 @@ public final class RpcException extends RuntimeException {
 	
 	public RpcException() {}
 	
-	public RpcException(byte code) {
-        this.code = code;
-    }
-	
 	public RpcException(byte code, String message) {
         super(message);
         this.code = code;
     }
-	
-	public RpcException(byte code, Throwable cause) {
-		super(cause);
-		this.code = code;
-	}
 
 	public RpcException(byte code, String message, Throwable cause) {
 		super(message, cause);
