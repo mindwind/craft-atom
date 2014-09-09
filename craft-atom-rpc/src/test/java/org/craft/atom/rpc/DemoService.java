@@ -13,6 +13,6 @@ public interface DemoService {
 	void noreturn(String in);
 	void timeout(String in) throws InterruptedException;
 	void overload() throws InterruptedException;
-	void error() throws IllegalAccessException;
+	void bizException() throws IllegalAccessException;
 	
 }

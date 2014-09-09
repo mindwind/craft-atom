@@ -43,7 +43,7 @@ public class DefaultDemoService implements DemoService {
 	}
 
 	@Override
-	public void error() throws IllegalAccessException {
+	public void bizException() throws IllegalAccessException {
 		throw new IllegalAccessException("biz error");
 	}
 

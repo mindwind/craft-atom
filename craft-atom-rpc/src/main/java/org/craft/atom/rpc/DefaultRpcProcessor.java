@@ -123,8 +123,6 @@ public class DefaultRpcProcessor implements RpcProcessor {
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_ERROR, e));
 			} catch (TimeoutException e) {
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_TIMEOUT, e));
-			} catch (RpcException e) {
-				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), e);
 			} catch (Exception e) {
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.UNKNOWN, e));
 			}

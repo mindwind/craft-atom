@@ -175,6 +175,17 @@ public class TestRpc {
 	}
 	
 	@Test
+	public void testBizException() {
+		try {
+			ds.bizException();
+			Assert.fail();
+		} catch (IllegalAccessException e) {
+			Assert.assertTrue(true);
+		}
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test biz exception. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
 	public void testRt() {
 		// remote
 		RpcContext.getContext().setRpcTimeoutInMillis(5000);
