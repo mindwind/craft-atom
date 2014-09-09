@@ -53,7 +53,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 		if (req.isHeartbeat()) { 
 			RpcMessage rsp = RpcMessages.newHbResponseRpcMessage(req.getId());
 			channel.write(rsp);
-			LOG.debug("[CRAFT-ATOM-RPC] Rpc process heartbeat, |hbreq={}, hbrsp={}, channel={}|", req, rsp, channel);
+			LOG.debug("[CRAFT-ATOM-RPC] Rpc server processor process heartbeat, |hbreq={}, hbrsp={}, channel={}|", req, rsp, channel);
 			return;
 		}
 		
@@ -61,10 +61,10 @@ public class DefaultRpcProcessor implements RpcProcessor {
 		try {
 			executor.execute(new ProcessTask(req, channel));
 		} catch (RejectedExecutionException e) {
-			LOG.warn("[CRAFT-ATOM-RPC] Rpc process overload, |executor={}|", executor);
+			LOG.warn("[CRAFT-ATOM-RPC] Rpc server processor overload, |executor={}|", executor);
 			channel.write(RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_OVERLOAD, "server overload")));
 		}
-		LOG.debug("[CRAFT-ATOM-RPC] Rpc process request, |req={}, channel={}, executor={}|", req, channel, executor);
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc server processor process request, |req={}, channel={}, executor={}|", req, channel, executor);
 	}
 
 	private RpcMessage process0(RpcMessage req) {
@@ -129,9 +129,9 @@ public class DefaultRpcProcessor implements RpcProcessor {
 			
 			try {
 				channel.write(rsp);
-				LOG.debug("[CRAFT-ATOM-RPC] Rpc process response, |rsp={}, channel={}|", rsp, channel);
+				LOG.debug("[CRAFT-ATOM-RPC] Rpc server processor process response, |rsp={}, channel={}|", rsp, channel);
 			} catch (Exception e) {
-				LOG.warn("[CRAFT-ATOM-RPC] Write back rpc response fail", e);
+				LOG.warn("[CRAFT-ATOM-RPC] Rpc server processor write back rpc response fail", e);
 			}
 			
 		}

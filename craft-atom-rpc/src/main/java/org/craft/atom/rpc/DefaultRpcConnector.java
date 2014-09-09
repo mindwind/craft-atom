@@ -77,7 +77,7 @@ public class DefaultRpcConnector implements RpcConnector {
 			channel.setAttribute(RpcClientIoHandler.RPC_FUTURE_CHANNEL, new ConcurrentHashMap<Long, RpcFuture>());
 			long id = channel.getId();
 			channels.put(id, channel);
-			LOG.debug("[CRAFT-ATOM-RPC] Rpc connector established connection, |channel={}|.", channel);
+			LOG.debug("[CRAFT-ATOM-RPC] Rpc client connector established connection, |channel={}|.", channel);
 			return id;
 		} catch (TimeoutException e) {
 			throw new RpcException(RpcException.CLIENT_TIMEOUT, "client timeout", e);
@@ -141,7 +141,7 @@ public class DefaultRpcConnector implements RpcConnector {
 		ProtocolEncoder<RpcMessage> encoder = protocol.getRpcEncoder();
 		byte[] data = encoder.encode(msg);
 		boolean succ = channel.write(data);
-		LOG.debug("[CRAFT-ATOM-RPC] Rpc connector sent request bytes, |length={}, bytes={}, channel={}|", data.length, data, channel);
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc client connector sent request bytes, |length={}, bytes={}, channel={}|", data.length, data, channel);
 		return succ;
 	}
 	
@@ -162,10 +162,10 @@ public class DefaultRpcConnector implements RpcConnector {
 					if (!allowReconnect) return false;
 					long connId = connect();
 					if (connId > 0) {
-						LOG.debug("[CRAFT-ATOM-RPC] Rpc connector reconnect success, |connectionId={}|", connId);
+						LOG.debug("[CRAFT-ATOM-RPC] Rpc client connector reconnect success, |connectionId={}|", connId);
 						return true;
 					} else {
-						LOG.debug("[CRAFT-ATOM-RPC] Rpc connector reconnect fail");
+						LOG.debug("[CRAFT-ATOM-RPC] Rpc client connector reconnect fail");
 						return false;
 					}
 				} catch (Exception e) {
@@ -209,9 +209,9 @@ public class DefaultRpcConnector implements RpcConnector {
 						try {
 							RpcMessage hbmsg = RpcMessages.newHbRequestRpcMessage();
 							write(channel, hbmsg);
-							LOG.debug("[CRAFT-ATOM-RPC] Rpc connector heartbeat, |hbmsg={}, channel={}|", hbmsg, channel);
+							LOG.debug("[CRAFT-ATOM-RPC] Rpc client connector heartbeat, |hbmsg={}, channel={}|", hbmsg, channel);
 						} catch (Exception e) {
-							LOG.warn("[CRAFT-ATOM-RPC] Rpc connector heartbeat error", e);
+							LOG.warn("[CRAFT-ATOM-RPC] Rpc client connector heartbeat error", e);
 						}
 					}
 				}
