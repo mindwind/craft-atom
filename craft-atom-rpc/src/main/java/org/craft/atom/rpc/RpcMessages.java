@@ -35,6 +35,8 @@ public class RpcMessages {
 	
 	public static RpcMessage newHbRequestRpcMessage() {
 		RpcMessage req = newRpcMessage();
+		RpcBody body = req.getBody();
+		body.setRpcOption(new RpcOption());
 		req.setId(ID_GENERATOR.incrementAndGet());
 		req.setHeartbeat(true);
 		return req;

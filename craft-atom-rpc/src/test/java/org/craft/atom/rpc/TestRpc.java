@@ -21,11 +21,11 @@ import org.junit.Test;
 public class TestRpc {
 	
 	
-	private DemoService ds    ; 
-	private RpcServer   server;
-	private RpcClient   client;
-	private String      host  ;
-	private int         port  ;
+	private DemoService ds           ; 
+	private RpcServer   server       ;
+	private RpcClient   client       ;
+	private String      host         ;
+	private int         port         ;
 	
 	
 	@Before
@@ -117,6 +117,36 @@ public class TestRpc {
 		String hello = ds.echo("hello");
 		Assert.assertEquals("hello", hello);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test broken connection and reconnect. ", CaseCounter.incr(3)));
+	}
+	
+	@Test
+	public void testHeartbeat() throws InterruptedException {
+		port = AvailablePortFinder.getNextAvailable();
+		server = RpcFactory.newRpcServerBuilder(port).ioTimeoutInMillis(100).build();
+		server.expose(DemoService.class, new DefaultDemoService(), new RpcParameter());
+		server.serve();
+		client = RpcFactory.newRpcClient(host, port);
+		client.open();
+		ds = client.refer(DemoService.class);
+		DefaultRpcConnector connector = (DefaultRpcConnector) ((DefaultRpcClient) client).getConnector();
+		connector.setAllowReconnect(false);
+		Thread.sleep(220);
+		
+		// no heartbeat
+		try {
+			ds.echo("hi");
+			Assert.fail();
+		} catch (RpcException e) {
+			Assert.assertEquals(RpcException.NET_IO, e.getCode());
+		}
+		// heartbeat
+		client = RpcFactory.newRpcClientBuilder(host, port).heartbeatInMillis(50).build();
+		client.open();
+		ds = client.refer(DemoService.class);
+		Thread.sleep(210);
+		String hi = ds.echo("hi");
+		Assert.assertEquals("hi", hi);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test heartbeat. ", CaseCounter.incr(2)));
 	}
 	
 	@Test

@@ -49,8 +49,13 @@ public class DefaultRpcProcessor implements RpcProcessor {
 	
 	@Override
 	public void process(RpcMessage req, RpcChannel channel) {
-		if (req == null)       return;
-		if (req.isHeartbeat()) channel.write(RpcMessages.newHbResponseRpcMessage(req.getId()));
+		if (req == null) return;
+		if (req.isHeartbeat()) { 
+			RpcMessage rsp = RpcMessages.newHbResponseRpcMessage(req.getId());
+			channel.write(rsp);
+			LOG.debug("[CRAFT-ATOM-RPC] Rpc process heartbeat, |hbreq={}, hbrsp={}, channel={}|", req, rsp, channel);
+			return;
+		}
 		
 		ExecutorService executor = executor(req);
 		executor.execute(new ProcessTask(req, channel));

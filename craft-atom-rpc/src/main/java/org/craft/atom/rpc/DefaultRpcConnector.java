@@ -207,7 +207,9 @@ public class DefaultRpcConnector implements RpcConnector {
 				public void run() {
 					for (Channel<byte[]> channel : channels.values()) {
 						try {
-							write(channel, RpcMessages.newHbRequestRpcMessage());
+							RpcMessage hbmsg = RpcMessages.newHbRequestRpcMessage();
+							write(channel, hbmsg);
+							LOG.debug("[CRAFT-ATOM-RPC] Rpc connector heartbeat, |hbmsg={}, channel={}|", hbmsg, channel);
 						} catch (Exception e) {
 							LOG.warn("[CRAFT-ATOM-RPC] Rpc connector heartbeat error", e);
 						}
