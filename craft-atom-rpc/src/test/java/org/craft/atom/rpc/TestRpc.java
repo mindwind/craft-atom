@@ -170,7 +170,7 @@ public class TestRpc {
 		try {
 			ds.overload();
 		} catch (RpcException e) {
-			Assert.assertTrue(RpcException.SERVER_OVERLOAD == e.getCode());
+			Assert.assertEquals(RpcException.SERVER_OVERLOAD, e.getCode());
 		}
 	}
 	
@@ -189,10 +189,22 @@ public class TestRpc {
 	public void testError() {
 		try {
 			ds.error();
+			Assert.fail();
 		} catch (RpcException e) {
-			Assert.assertTrue(RpcException.SERVER_ERROR == e.getCode());
+			Assert.assertEquals(RpcException.SERVER_ERROR, e.getCode());
 		}
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test error. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testUndeclaredException() {
+		try {
+			ds.undeclaredException();
+			Assert.fail();
+		} catch (RpcException e) {
+			Assert.assertEquals(RpcException.SERVER_ERROR, e.getCode());
+		}
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test undeclared exception. ", CaseCounter.incr(1)));
 	}
 	
 	@Test
@@ -210,7 +222,7 @@ public class TestRpc {
 		// local
 		ds = new DefaultDemoService();
 		s = System.nanoTime();
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 100; i++) {
 			ds.echo("hi");
 		}
 		e = System.nanoTime();

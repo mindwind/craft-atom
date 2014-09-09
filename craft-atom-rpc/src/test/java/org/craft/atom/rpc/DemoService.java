@@ -14,6 +14,7 @@ public interface DemoService {
 	void timeout(String in) throws InterruptedException;
 	void overload() throws InterruptedException;
 	void bizException() throws IllegalAccessException;
+	void undeclaredException() throws IllegalStateException;
 	void error();
 	
 }

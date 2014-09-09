@@ -1,5 +1,6 @@
 package org.craft.atom.rpc;
 
+import org.craft.atom.io.IllegalChannelStateException;
 import org.craft.atom.rpc.api.RpcContext;
 
 /**
@@ -50,6 +51,11 @@ public class DefaultDemoService implements DemoService {
 	@Override
 	public void error() {
 		throw new OutOfMemoryError();
+	}
+
+	@Override
+	public void undeclaredException() throws IllegalStateException {
+		throw new IllegalChannelStateException(); 
 	}
 
 }

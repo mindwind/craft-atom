@@ -7,7 +7,7 @@ import lombok.ToString;
  * @author mindwind
  * @version 1.0, Aug 8, 2014
  */
-@ToString
+@ToString(callSuper = true)
 public final class RpcException extends RuntimeException {
 
 	
@@ -32,9 +32,19 @@ public final class RpcException extends RuntimeException {
         this.code = code;
     }
 	
-	public RpcException(byte code, Throwable cause) {
-        super(cause);
+	public RpcException(byte code, String message) {
+        super(message);
         this.code = code;
     }
+	
+	public RpcException(byte code, Throwable cause) {
+		super(cause);
+		this.code = code;
+	}
+
+	public RpcException(byte code, String message, Throwable cause) {
+		super(message, cause);
+		this.code = code;
+	}
 	
 }

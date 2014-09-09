@@ -1,5 +1,7 @@
 package org.craft.atom.rpc;
 
+import java.lang.reflect.Method;
+
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.rpc.api.RpcContext;
@@ -46,17 +48,36 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 			// Reflect invoke
 			MethodAccess ma = MethodAccess.get(rpcInterface);
 			int methodIndex = ma.getIndex(methodName, paramTypes);
-			try {
-				Object returnObject = ma.invoke(rpcObject, methodIndex, params);
-				return RpcMessages.newRsponseRpcMessage(req.getId(), returnObject);
-			} catch (Exception e) {
-				return RpcMessages.newRsponseRpcMessage(req.getId(), e);
-			}
+			Object returnObject = ma.invoke(rpcObject, methodIndex, params);
+			return RpcMessages.newRsponseRpcMessage(req.getId(), returnObject);
 		} catch (Exception e) {
-			throw new RpcException(RpcException.SERVER_ERROR, e);
+			LOG.warn("[CRAFT-ATOM-RPC] Rpc server invoker error", e);
+			
+			// Clear server side exception stack trace to avoid propagating to client side
+			e.setStackTrace(new StackTraceElement[] {});
+			
+			if (isDeclaredException(e, rpcInterface, methodName, paramTypes)) {
+				return RpcMessages.newRsponseRpcMessage(req.getId(), e);
+			} else {
+				throw new RpcException(RpcException.SERVER_ERROR);
+			}
 		} finally {
 			RpcContext.removeContext();
 		}
+	}
+	
+	private boolean isDeclaredException(Exception e, Class<?> rpcInterface, String methodName, Class<?>[] parameterTypes) {
+		try {
+			Method method = rpcInterface.getMethod(methodName, parameterTypes);
+			Class<?>[] etypes = method.getExceptionTypes();
+			LOG.debug("[CRAFT-ATOM-RPC] Rpc server invoker throw exception, |declaredExceptions={}, thrownException={}|", etypes, e);
+			for (Class<?> et : etypes) {
+				if (et.equals(e.getClass())) return true;
+			}
+		} catch (Exception ex) {
+			return false;
+		}
+		return false;
 	}
 
 	@Override
