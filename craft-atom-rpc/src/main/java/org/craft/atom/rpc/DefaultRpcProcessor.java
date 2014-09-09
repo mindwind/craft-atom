@@ -58,8 +58,13 @@ public class DefaultRpcProcessor implements RpcProcessor {
 		}
 		
 		ExecutorService executor = executor(req);
-		executor.execute(new ProcessTask(req, channel));
-		LOG.debug("[CRAFT-ATOM-RPC] Rpc process, |req={}, channel={}, executor={}|", req, channel, executor);
+		try {
+			executor.execute(new ProcessTask(req, channel));
+		} catch (RejectedExecutionException e) {
+			LOG.warn("[CRAFT-ATOM-RPC] Rpc process overload, |executor={}|", executor);
+			channel.write(RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_OVERLOAD, e)));
+		}
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc process request, |req={}, channel={}, executor={}|", req, channel, executor);
 	}
 
 	private RpcMessage process0(RpcMessage req) {
@@ -118,8 +123,6 @@ public class DefaultRpcProcessor implements RpcProcessor {
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_ERROR, e));
 			} catch (TimeoutException e) {
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_TIMEOUT, e));
-			} catch (RejectedExecutionException e) {
-				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_OVERLOAD, e));
 			} catch (RpcException e) {
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), e);
 			} catch (Exception e) {
@@ -128,6 +131,7 @@ public class DefaultRpcProcessor implements RpcProcessor {
 			
 			try {
 				channel.write(rsp);
+				LOG.debug("[CRAFT-ATOM-RPC] Rpc process response, |rsp={}, channel={}|", rsp, channel);
 			} catch (Exception e) {
 				LOG.warn("[CRAFT-ATOM-RPC] Write back rpc response fail", e);
 			}

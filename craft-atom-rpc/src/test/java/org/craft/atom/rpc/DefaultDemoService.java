@@ -37,4 +37,14 @@ public class DefaultDemoService implements DemoService {
 		return "oneway";
 	}
 
+	@Override
+	public void overload() throws InterruptedException {
+		Thread.sleep(1000);
+	}
+
+	@Override
+	public void error() throws IllegalAccessException {
+		throw new IllegalAccessException("biz error");
+	}
+
 }

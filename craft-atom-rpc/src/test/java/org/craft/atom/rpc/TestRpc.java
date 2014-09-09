@@ -1,5 +1,8 @@
 package org.craft.atom.rpc;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import org.craft.atom.rpc.api.RpcClient;
 import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.api.RpcFactory;
@@ -144,9 +147,31 @@ public class TestRpc {
 		client.open();
 		ds = client.refer(DemoService.class);
 		Thread.sleep(210);
+		
 		String hi = ds.echo("hi");
 		Assert.assertEquals("hi", hi);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test heartbeat. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testOverload() throws InterruptedException {
+		Executor executor = Executors.newCachedThreadPool();
+		for (int i = 0; i < 11; i++) {
+			executor.execute(new Runnable() {
+				
+				@Override
+				public void run() {
+					try { ds.overload(); } catch (InterruptedException e) {}
+					
+				}
+			});
+		}
+		Thread.sleep(100);
+		try {
+			ds.overload();
+		} catch (RpcException e) {
+			Assert.assertTrue(RpcException.SERVER_OVERLOAD == e.getCode());
+		}
 	}
 	
 	@Test
