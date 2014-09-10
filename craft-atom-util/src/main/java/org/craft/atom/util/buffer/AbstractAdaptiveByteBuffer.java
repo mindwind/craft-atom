@@ -2317,7 +2317,7 @@ public abstract class AbstractAdaptiveByteBuffer extends AdaptiveByteBuffer {
         int r = size & 7;
 
         if (q > 0) {
-            int intValue = value | value << 8 | value << 16 | value << 24;
+            int intValue = (value & 0xff) | value << 8 | value << 16 | value << 24;
             long longValue = intValue;
             longValue <<= 32;
             longValue |= intValue;
@@ -2331,7 +2331,7 @@ public abstract class AbstractAdaptiveByteBuffer extends AdaptiveByteBuffer {
         r = r & 3;
 
         if (q > 0) {
-            int intValue = value | value << 8 | value << 16 | value << 24;
+            int intValue = (value & 0xff) | value << 8 | value << 16 | value << 24;
             putInt(intValue);
         }
 
@@ -2339,7 +2339,7 @@ public abstract class AbstractAdaptiveByteBuffer extends AdaptiveByteBuffer {
         r = r & 1;
 
         if (q > 0) {
-            short shortValue = (short) (value | value << 8);
+            short shortValue = (short) ((value & 0xff) | value << 8);
             putShort(shortValue);
         }
 
