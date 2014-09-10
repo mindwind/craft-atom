@@ -1,5 +1,6 @@
 package org.craft.atom.protocol.rpc.model;
 
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 
 import lombok.Getter;
@@ -13,7 +14,10 @@ import lombok.ToString;
  * @version 1.0, Aug 8, 2014
  */
 @ToString
-public class RpcOption {
+public class RpcOption implements Serializable {
+
+	
+	private static final long serialVersionUID = -9035174922898235358L;
 	
 	
 	@Getter @Setter transient private InetSocketAddress serverAddress                         ;

@@ -1,5 +1,7 @@
 package org.craft.atom.protocol.rpc.model;
 
+import java.io.Serializable;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +15,10 @@ import lombok.ToString;
  */
 @ToString
 @EqualsAndHashCode(of = { "name", "parameterTypes" })
-public class RpcMethod {
+public class RpcMethod implements Serializable {
+	
+	
+	private static final long serialVersionUID = -4302065109637231162L;
 	
 	
 	@Getter @Setter private String              name          ;
