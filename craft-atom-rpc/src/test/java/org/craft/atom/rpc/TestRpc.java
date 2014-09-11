@@ -36,7 +36,7 @@ public class TestRpc {
 		host = "localhost";
 		port = AvailablePortFinder.getNextAvailable();
 		server = RpcFactory.newRpcServer(port);
-		server.expose(DemoService.class, new DefaultDemoService(), new RpcParameter());
+		server.export(DemoService.class, new DefaultDemoService(), new RpcParameter());
 		server.serve();
 		client = RpcFactory.newRpcClient(host, port);
 		client.open();
@@ -126,7 +126,7 @@ public class TestRpc {
 	public void testHeartbeat() throws InterruptedException {
 		port = AvailablePortFinder.getNextAvailable();
 		server = RpcFactory.newRpcServerBuilder(port).ioTimeoutInMillis(100).build();
-		server.expose(DemoService.class, new DefaultDemoService(), new RpcParameter());
+		server.export(DemoService.class, new DefaultDemoService(), new RpcParameter());
 		server.serve();
 		client = RpcFactory.newRpcClient(host, port);
 		client.open();

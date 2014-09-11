@@ -21,17 +21,17 @@ public interface RpcServer {
 	void serve();
 	
 	/**
-	 * Expose rpc interface class with the implementor object.
+	 * Export rpc interface class with the implementor object.
 	 * All the declared method in the interface are exposed.
 	 * 
 	 * @param rpcInterface 
 	 * @param rpcObject
 	 * @param rpcParameter
 	 */
-	void expose(Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter);
+	void export(Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter);
 	
 	/**
-	 * Expose rpc interface class with the implementor object.
+	 * Export rpc interface class with the implementor object.
 	 * Only the specific method in the interface is exposed.
 	 * 
 	 * @param rpcInterface
@@ -39,6 +39,6 @@ public interface RpcServer {
 	 * @param rpcObject
 	 * @param rpcParameter
 	 */
-	void expose(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter);
+	void export(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter);
 
 }

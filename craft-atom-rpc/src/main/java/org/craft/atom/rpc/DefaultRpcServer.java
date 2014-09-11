@@ -78,18 +78,18 @@ public class DefaultRpcServer implements RpcServer {
 	}
 
 	@Override
-	public void expose(Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter) {
+	public void export(Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter) {
 		Method[] methods = rpcInterface.getMethods();
 		for (Method method : methods) {
 			RpcMethod rpcMethod = new RpcMethod();
 			rpcMethod.setName(method.getName());
 			rpcMethod.setParameterTypes(method.getParameterTypes());
-			expose(rpcInterface, rpcMethod, rpcObject, rpcParameter);
+			export(rpcInterface, rpcMethod, rpcObject, rpcParameter);
 		}
 	}
 
 	@Override
-	public void expose(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
+	public void export(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
 		RpcEntry entry = new RpcEntry();
 		entry.setRpcInterface(rpcInterface);
 		entry.setRpcMethod(rpcMethod);
