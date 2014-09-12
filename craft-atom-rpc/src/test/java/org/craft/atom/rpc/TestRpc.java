@@ -36,7 +36,7 @@ public class TestRpc {
 		host = "localhost";
 		port = AvailablePortFinder.getNextAvailable();
 		server = RpcFactory.newRpcServer(port);
-		server.export(DemoService.class, new DefaultDemoService(), new RpcParameter());
+		server.export(DemoService.class, new DemoServiceImpl1(), new RpcParameter());
 		server.serve();
 		client = RpcFactory.newRpcClient(host, port);
 		client.open();
@@ -126,7 +126,7 @@ public class TestRpc {
 	public void testHeartbeat() throws InterruptedException {
 		port = AvailablePortFinder.getNextAvailable();
 		server = RpcFactory.newRpcServerBuilder(port).ioTimeoutInMillis(100).build();
-		server.export(DemoService.class, new DefaultDemoService(), new RpcParameter());
+		server.export(DemoService.class, new DemoServiceImpl1(), new RpcParameter());
 		server.serve();
 		client = RpcFactory.newRpcClient(host, port);
 		client.open();
@@ -220,7 +220,7 @@ public class TestRpc {
 		long rrt = e - s;
 		
 		// local
-		ds = new DefaultDemoService();
+		ds = new DemoServiceImpl1();
 		s = System.nanoTime();
 		for (int i = 0; i < 100; i++) {
 			ds.echo("hi");
@@ -230,6 +230,17 @@ public class TestRpc {
 		
 		Assert.assertTrue(rrt > lrt);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test rt |local=%s, remote=%s| ns. ", CaseCounter.incr(1), lrt, rrt));
+	}
+	
+	@Test
+	public void testMultipleImplementor() {
+		server.export("ds2", DemoService.class, new DemoServiceImpl2(), new RpcParameter());
+		String hi = ds.echo("hi");
+		Assert.assertEquals("hi", hi);
+		RpcContext.getContext().setRpcId("ds2");
+		String hihi = ds.echo("hi");
+		Assert.assertEquals("hihi", hihi);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test multiple implementor. ", CaseCounter.incr(2)));
 	}
 	
 }

@@ -34,7 +34,7 @@ public class RpcRegistry {
 		if (rpcId == null) {
 			return Integer.toString(rpcInterface.hashCode()) + Integer.toString(rpcMethod.hashCode());
 		} else {
-			return rpcId + Integer.toString(rpcInterface.hashCode()) + Integer.toString(rpcMethod.hashCode());
+			return rpcId + "-" + Integer.toString(rpcInterface.hashCode()) + Integer.toString(rpcMethod.hashCode());
 		}
 	}
 	

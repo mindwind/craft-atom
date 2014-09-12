@@ -7,7 +7,7 @@ import org.craft.atom.rpc.api.RpcContext;
  * @author mindwind
  * @version 1.0, Sep 5, 2014
  */
-public class DefaultDemoService implements DemoService {
+public class DemoServiceImpl1 implements DemoService {
 
 	
 	@Override
