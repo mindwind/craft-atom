@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * RPC behavior parameter.
+ * RPC behavioral parameter.
  * 
  * @author mindwind
  * @version 1.0, Sep 5, 2014
