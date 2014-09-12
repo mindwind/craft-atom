@@ -26,6 +26,7 @@ public class RpcBody implements Serializable {
 	private static final long serialVersionUID = 5138100956693144357L;
 	
 	
+	@Getter @Setter private String              rpcId       ;
 	@Getter @Setter private Class<?>            rpcInterface;
 	@Getter @Setter private RpcMethod           rpcMethod   ;
 	@Getter @Setter private RpcOption           rpcOption   ;

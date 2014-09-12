@@ -27,14 +27,15 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 	
 	@Override
 	public RpcMessage invoke(RpcMessage req) throws RpcException {
-		Class<?>   rpcInterface = req.getBody().getRpcInterface()      ;
-		RpcMethod  rpcMethod    = req.getBody().getRpcMethod()         ;
-		Class<?>[] paramTypes   = rpcMethod.getParameterTypes()        ;
-		Object[]   params       = rpcMethod.getParameters()            ;
-		String     methodName   = rpcMethod.getName()                  ;
-		String     key          = registry.key(rpcInterface, rpcMethod);
-		RpcEntry   entry        = registry.lookup(key)                 ;
-		Object     rpcObject    = entry.getRpcObject()                 ;
+		String     rpcId        = req.getBody().getRpcId();
+		Class<?>   rpcInterface = req.getBody().getRpcInterface();
+		RpcMethod  rpcMethod    = req.getBody().getRpcMethod();
+		Class<?>[] paramTypes   = rpcMethod.getParameterTypes();
+		Object[]   params       = rpcMethod.getParameters();
+		String     methodName   = rpcMethod.getName();
+		String     key          = registry.key(rpcId, rpcInterface, rpcMethod);
+		RpcEntry   entry        = registry.lookup(key);
+		Object     rpcObject    = entry.getRpcObject();
 		
 		
 		try {

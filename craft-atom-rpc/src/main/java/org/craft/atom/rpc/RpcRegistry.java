@@ -6,6 +6,8 @@ import java.util.Map;
 import org.craft.atom.protocol.rpc.model.RpcMethod;
 
 /**
+ * RPC registry
+ * 
  * @author mindwind
  * @version 1.0, Aug 12, 2014
  */
@@ -28,8 +30,12 @@ public class RpcRegistry {
 		return registry.get(key);
 	}
 	
-	public String key(Class<?> rpcInterface, RpcMethod rpcMethod) {
-		return Integer.toString(rpcInterface.hashCode()) + Integer.toString(rpcMethod.hashCode());
+	public String key(String rpcId, Class<?> rpcInterface, RpcMethod rpcMethod) {
+		if (rpcId == null) {
+			return Integer.toString(rpcInterface.hashCode()) + Integer.toString(rpcMethod.hashCode());
+		} else {
+			return rpcId + Integer.toString(rpcInterface.hashCode()) + Integer.toString(rpcMethod.hashCode());
+		}
 	}
 	
 }

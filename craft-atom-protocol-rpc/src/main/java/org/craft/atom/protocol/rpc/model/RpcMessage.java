@@ -115,4 +115,12 @@ public class RpcMessage implements Serializable {
 		return body.getAttachments();
 	}
 	
+	public void setRpcId(String rpcId) {
+		body.setRpcId(rpcId);
+	}
+	
+	public String getRpcId() {
+		return body.getRpcId();
+	}
+	
 }

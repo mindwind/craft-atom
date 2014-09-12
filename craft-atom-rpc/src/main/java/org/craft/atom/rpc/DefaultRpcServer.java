@@ -79,25 +79,35 @@ public class DefaultRpcServer implements RpcServer {
 
 	@Override
 	public void export(Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter) {
+		export(null, rpcInterface, rpcObject, rpcParameter);
+	}
+
+	@Override
+	public void export(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
+		export(null, rpcInterface, rpcMethod, rpcObject, rpcParameter);
+	}
+
+	@Override
+	public void export(String rpcId, Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter) {
 		Method[] methods = rpcInterface.getMethods();
 		for (Method method : methods) {
 			RpcMethod rpcMethod = new RpcMethod();
 			rpcMethod.setName(method.getName());
 			rpcMethod.setParameterTypes(method.getParameterTypes());
-			export(rpcInterface, rpcMethod, rpcObject, rpcParameter);
+			export(rpcId, rpcInterface, rpcMethod, rpcObject, rpcParameter);
 		}
 	}
 
 	@Override
-	public void export(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
+	public void export(String rpcId, Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
 		RpcEntry entry = new RpcEntry();
 		entry.setRpcInterface(rpcInterface);
 		entry.setRpcMethod(rpcMethod);
 		entry.setRpcObject(rpcObject);
 		entry.setRpcParameter(rpcParameter);
-		String key = registry.key(rpcInterface, rpcMethod);
+		String key = registry.key(rpcId, rpcInterface, rpcMethod);
 		registry.register(key, entry);	
-		LOG.debug("[CRAFT-ATOM-RPC] Rpc server expose, |key={}, entry={}|", key, entry);
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc server export, |key={}, entry={}|", key, entry);
 	}
 
 }

@@ -34,6 +34,7 @@ public final class RpcContext {
 	@Getter @Setter private InetSocketAddress   serverAddress     ;
 	@Getter @Setter private InetSocketAddress   clientAddress     ;
 	@Getter @Setter private Map<String, String> attachments       ;
+	@Getter @Setter private String              rpcId             ;
 	@Getter @Setter private int                 rpcTimeoutInMillis;
 	@Getter @Setter private boolean             oneway            ;
 	
