@@ -1,12 +1,20 @@
 package org.craft.atom.rpc;
 
+import java.util.List;
+import java.util.Map;
+
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IllegalChannelStateException;
+import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.rpc.spi.RpcChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
@@ -16,23 +24,71 @@ import org.craft.atom.rpc.spi.RpcChannel;
 public class DefaultRpcChannel implements RpcChannel {
 	
 	
-	private ProtocolEncoder<RpcMessage> encoder;
-	private Channel<byte[]>             channel;
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultRpcChannel.class);
 	
 	
-	DefaultRpcChannel(Channel<byte[]> channel, ProtocolEncoder<RpcMessage> encoder) {
+	@Getter @Setter private ProtocolEncoder<RpcMessage> encoder;
+	@Getter @Setter private ProtocolDecoder<RpcMessage> decoder;
+	@Getter @Setter private Channel<byte[]>             channel;
+	@Getter @Setter private Map<Long, RpcFuture>        futures;
+	
+	
+	// ~ -------------------------------------------------------------------------------------------------------------
+	
+	
+	DefaultRpcChannel(Channel<byte[]> channel, ProtocolEncoder<RpcMessage> encoder, ProtocolDecoder<RpcMessage> decoder) {
 		this.channel = channel;
 		this.encoder = encoder;
+		this.decoder = decoder;
 	}
 	
-
+	
+	// ~ -------------------------------------------------------------------------------------------------------------
+	
+	
 	@Override
 	public void write(RpcMessage msg) throws RpcException {
 		try {
 			byte[] bytes = encoder.encode(msg);
 			channel.write(bytes);
+			LOG.debug("[CRAFT-ATOM-RPC] Rpc channel write bytes, |length={}, bytes={}, channel={}|", bytes.length, bytes, channel);
 		} catch (IllegalChannelStateException e) {
 			throw new RpcException(RpcException.NETWORK, "broken connection");
+		}
+	}
+	
+	@Override
+	public List<RpcMessage> read(byte[] bytes) {
+		List<RpcMessage> msgs = decoder.decode(bytes);
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc channel read bytes, |length={}, bytes={}, channel={}|", bytes.length, bytes, channel);
+		return msgs;
+	}
+
+	void close() {
+		channel.close();
+	}
+
+	boolean isOpen() {
+		return channel.isOpen();
+	}
+	
+	long getId() {
+		return channel.getId();
+	}
+	
+	void setRpcFuture(long mid, RpcFuture future) {
+		futures.put(mid, future);
+	}
+	
+	void notifyRpcMessage(RpcMessage msg) {
+		RpcFuture future = futures.remove(msg.getId());
+		if (future == null) return;
+		future.setResponse(msg);
+	}
+	
+	void notifyRpcException(Exception e) {
+		for (RpcFuture future : futures.values()) {
+			future.setException(e);
 		}
 	}
 
