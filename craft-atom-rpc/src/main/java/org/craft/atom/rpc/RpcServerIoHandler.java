@@ -4,8 +4,6 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 import org.craft.atom.io.Channel;
-import org.craft.atom.io.IoHandler;
-import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.rpc.spi.RpcProcessor;
 import org.craft.atom.rpc.spi.RpcProtocol;
@@ -16,12 +14,10 @@ import org.slf4j.LoggerFactory;
  * @author mindwind
  * @version 1.0, Aug 7, 2014
  */
-public class RpcServerIoHandler implements IoHandler {
+public class RpcServerIoHandler extends RpcIoHandler {
 	
 	
-	private static final Logger LOG         = LoggerFactory.getLogger(RpcServerIoHandler.class);
-	private static final String RPC_DECODER = "rpc.decoder"                                    ;
-	
+	private static final Logger LOG = LoggerFactory.getLogger(RpcServerIoHandler.class);
 	
 	private RpcProtocol  protocol ;
 	private RpcProcessor processor;
@@ -41,19 +37,18 @@ public class RpcServerIoHandler implements IoHandler {
 	
 	@Override
 	public void channelOpened(Channel<byte[]> channel) {
-		ProtocolDecoder<RpcMessage> decoder = protocol.getRpcDecoder();
-		channel.setAttribute(RPC_DECODER, decoder);
+		DefaultRpcChannel rpcChannel = new DefaultRpcChannel(channel, protocol.getRpcEncoder(), protocol.getRpcDecoder());
+		channel.setAttribute(RpcIoHandler.RPC_CHANNEL, rpcChannel);
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void channelRead(Channel<byte[]> channel, byte[] bytes) {
-		ProtocolDecoder<RpcMessage> decoder = (ProtocolDecoder<RpcMessage>) channel.getAttribute(RPC_DECODER);
-		List<RpcMessage> reqs = decoder.decode(bytes);
+		DefaultRpcChannel rpcChannel = (DefaultRpcChannel) channel.getAttribute(RpcIoHandler.RPC_CHANNEL);
+		List<RpcMessage> reqs = rpcChannel.read(bytes);
 		for (RpcMessage req : reqs) {
 			req.setServerAddress((InetSocketAddress) channel.getLocalAddress());
 			req.setClientAddress((InetSocketAddress) channel.getRemoteAddress());
-			processor.process(req, new DefaultRpcChannel(channel, protocol.getRpcEncoder()));
+			processor.process(req, rpcChannel);
 		}
 	}
 	
@@ -72,11 +67,5 @@ public class RpcServerIoHandler implements IoHandler {
 	public void channelClosed(Channel<byte[]> channel) {
 		LOG.debug("[CRAFT-ATOM-RPC] Channel closed, |channel={}|", channel);
 	}
-
-	@Override
-	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {}
-
-	@Override
-	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {}
 	
 }

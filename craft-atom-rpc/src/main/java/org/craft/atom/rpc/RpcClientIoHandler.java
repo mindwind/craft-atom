@@ -2,13 +2,9 @@ package org.craft.atom.rpc;
 
 import java.nio.channels.ClosedChannelException;
 import java.util.List;
-import java.util.Map;
 
 import org.craft.atom.io.Channel;
-import org.craft.atom.io.IoHandler;
-import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
-import org.craft.atom.rpc.spi.RpcProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,47 +12,30 @@ import org.slf4j.LoggerFactory;
  * @author mindwind
  * @version 1.0, Aug 15, 2014
  */
-public class RpcClientIoHandler implements IoHandler {
+public class RpcClientIoHandler extends RpcIoHandler {
 	
 	
-	private static final Logger LOG                = LoggerFactory.getLogger(RpcClientIoHandler.class);
-	private static final String RPC_DECODER        = "rpc.decoder"                                    ;
-	public  static final String RPC_FUTURE_CHANNEL = "rpc.future.channel"                             ;
-	
-	
-	private RpcProtocol         protocol ;
+	private static final Logger LOG = LoggerFactory.getLogger(RpcClientIoHandler.class);
 	private DefaultRpcConnector connector;
 	
 
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
 	
-	public RpcClientIoHandler(RpcProtocol protocol, DefaultRpcConnector connector) {
-		this.protocol  = protocol;
+	public RpcClientIoHandler(DefaultRpcConnector connector) {
 		this.connector = connector;
 	}
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
 	
-
-	@Override
-	public void channelOpened(Channel<byte[]> channel) {
-		ProtocolDecoder<RpcMessage> decoder = protocol.getRpcDecoder();
-		channel.setAttribute(RPC_DECODER, decoder);
-	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public void channelRead(Channel<byte[]> channel, byte[] bytes) {
-		ProtocolDecoder<RpcMessage> decoder = (ProtocolDecoder<RpcMessage>) channel.getAttribute(RPC_DECODER);
-		List<RpcMessage> rsps = decoder.decode(bytes);
+		DefaultRpcChannel rpcChannel = (DefaultRpcChannel) channel.getAttribute(RpcIoHandler.RPC_CHANNEL);
+		List<RpcMessage> rsps = rpcChannel.read(bytes);
 		for (RpcMessage rsp : rsps) {
-			Map<Long, RpcFuture> map = (Map<Long, RpcFuture>) channel.getAttribute(RPC_FUTURE_CHANNEL);
-			RpcFuture future = map.remove(rsp.getId());
-			if (future != null) {
-				future.setResponse(rsp);
-			}
+			rpcChannel.notifyRpcMessage(rsp);
 		}
 	}
 
@@ -74,22 +53,9 @@ public class RpcClientIoHandler implements IoHandler {
 		channel.close();
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void channelThrown0(Channel<byte[]> channel, Exception cause) {
-		Map<Long, RpcFuture> map = (Map<Long, RpcFuture>) channel.getAttribute(RPC_FUTURE_CHANNEL);
-		for (RpcFuture future : map.values()) {
-			future.setException(cause);
-		}
+		DefaultRpcChannel rpcChannel = (DefaultRpcChannel) channel.getAttribute(RpcIoHandler.RPC_CHANNEL);
+		rpcChannel.notifyRpcException(cause);
 	}
 
-	@Override
-	public void channelFlush(Channel<byte[]> channel, byte[] bytes) {}
-
-	@Override
-	public void channelWritten(Channel<byte[]> channel, byte[] bytes) {}
-	
-	@Override
-	public void channelIdle(Channel<byte[]> channel) {}
-
-	
 }

@@ -20,8 +20,8 @@ import org.craft.atom.io.IoConnector;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.NioOrderedDirectChannelEventDispatcher;
 import org.craft.atom.nio.api.NioFactory;
-import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
+import org.craft.atom.rpc.spi.RpcChannel;
 import org.craft.atom.rpc.spi.RpcConnector;
 import org.craft.atom.rpc.spi.RpcProtocol;
 import org.craft.atom.util.NamedThreadFactory;
@@ -38,18 +38,18 @@ public class DefaultRpcConnector implements RpcConnector {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultRpcConnector.class);
 	
 	
-	@Getter @Setter private int                        connectTimeoutInMillis;
-	@Getter @Setter private int                        rpcTimeoutInMillis    ;
-	@Getter         private int                        heartbeatInMillis     ;
-	@Getter @Setter private int                        reconnectDelay        ;
-	@Getter @Setter private boolean                    allowReconnect        ;
-	@Getter         private SocketAddress              address               ;
-	@Getter @Setter private Map<Long, Channel<byte[]>> channels              ;
-	@Getter @Setter private IoHandler                  ioHandler             ;
-	@Getter @Setter private IoConnector                ioConnector           ;
-	@Getter @Setter private ScheduledExecutorService   hbScheduler           ;
-	@Getter @Setter private ExecutorService            reconnectExecutor     ;
-	@Getter         private RpcProtocol                protocol              ;            
+	@Getter @Setter private int                          connectTimeoutInMillis;
+	@Getter @Setter private int                          rpcTimeoutInMillis    ;
+	@Getter         private int                          heartbeatInMillis     ;
+	@Getter @Setter private int                          reconnectDelay        ;
+	@Getter @Setter private boolean                      allowReconnect        ;
+	@Getter         private SocketAddress                address               ;
+	@Getter @Setter private Map<Long, DefaultRpcChannel> channels              ;
+	@Getter @Setter private IoHandler                    ioHandler             ;
+	@Getter @Setter private IoConnector                  ioConnector           ;
+	@Getter @Setter private ScheduledExecutorService     hbScheduler           ;
+	@Getter @Setter private ExecutorService              reconnectExecutor     ;
+	@Getter         private RpcProtocol                  protocol              ;            
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -62,7 +62,12 @@ public class DefaultRpcConnector implements RpcConnector {
 		rpcTimeoutInMillis     = Integer.MAX_VALUE;
 		heartbeatInMillis      = 0;
 		reconnectExecutor      = Executors.newSingleThreadScheduledExecutor(new NamedThreadFactory("craft-atom-rpc-connector-reconnect"));
-		channels               = new ConcurrentHashMap<Long, Channel<byte[]>>();
+		channels               = new ConcurrentHashMap<Long, DefaultRpcChannel>();
+		ioHandler              = new RpcClientIoHandler(this);
+		ioConnector            = NioFactory.newTcpConnectorBuilder(ioHandler)
+						                   .connectTimeoutInMillis(connectTimeoutInMillis)
+						                   .dispatcher(new NioOrderedDirectChannelEventDispatcher())
+						                   .build();
 	}
 	
 	
@@ -74,10 +79,12 @@ public class DefaultRpcConnector implements RpcConnector {
 		try {
 			Future<Channel<byte[]>> future = ioConnector.connect(address);
 			Channel<byte[]> channel = future.get(connectTimeoutInMillis, TimeUnit.MILLISECONDS);
-			channel.setAttribute(RpcClientIoHandler.RPC_FUTURE_CHANNEL, new ConcurrentHashMap<Long, RpcFuture>());
+			DefaultRpcChannel rpcChannel = new DefaultRpcChannel(channel, protocol.getRpcEncoder(), protocol.getRpcDecoder());
+			rpcChannel.setFutures(new ConcurrentHashMap<Long, RpcFuture>());
+			channel.setAttribute(RpcIoHandler.RPC_CHANNEL, rpcChannel);
 			long id = channel.getId();
-			channels.put(id, channel);
-			LOG.debug("[CRAFT-ATOM-RPC] Rpc client connector established connection, |channel={}|.", channel);
+			channels.put(id, rpcChannel);
+			LOG.debug("[CRAFT-ATOM-RPC] Rpc client connector established connection, |channel={}|.", rpcChannel);
 			return id;
 		} catch (TimeoutException e) {
 			throw new RpcException(RpcException.CLIENT_TIMEOUT, "client timeout", e);
@@ -90,7 +97,7 @@ public class DefaultRpcConnector implements RpcConnector {
 
 	@Override
 	public boolean disconnect(long connectionId) {
-		Channel<byte[]> channel = channels.remove(connectionId);
+		DefaultRpcChannel channel = channels.remove(connectionId);
 		if (channel != null) {
 			channel.close();
 			return true;
@@ -105,18 +112,15 @@ public class DefaultRpcConnector implements RpcConnector {
 	}
 	
 	@Override
-	@SuppressWarnings("unchecked")
 	public RpcMessage send(RpcMessage req) throws RpcException {
-		long reqId = req.getId();
-		Channel<byte[]> channel = select(reqId);
+		long mid = req.getId();
+		DefaultRpcChannel channel = select(mid);
 		if (channel == null) throw new RpcException(RpcException.NETWORK, "network error");
 		
 		try {
 			RpcFuture future = new DefaultRpcFuture();
-			Map<Long, RpcFuture> map = (Map<Long, RpcFuture>) channel.getAttribute(RpcClientIoHandler.RPC_FUTURE_CHANNEL);
-			map.put(reqId, future);
-			boolean succ = write(channel, req);
-			if (!succ) throw new IOException("Unknown I/O error!");
+			channel.setRpcFuture(mid, future);
+			channel.write(req);
 			
 			// One way request, client does not expect response
 			if (req.isOneway()) return null;
@@ -135,14 +139,6 @@ public class DefaultRpcConnector implements RpcConnector {
 		} catch (Exception e) {
 			throw new RpcException(RpcException.UNKNOWN, "unknown error", e);
 		}
-	}
-	
-	private boolean write(Channel<byte[]> channel, RpcMessage msg) {
-		ProtocolEncoder<RpcMessage> encoder = protocol.getRpcEncoder();
-		byte[] data = encoder.encode(msg);
-		boolean succ = channel.write(data);
-		LOG.debug("[CRAFT-ATOM-RPC] Rpc client connector sent request bytes, |length={}, bytes={}, channel={}|", data.length, data, channel);
-		return succ;
 	}
 	
 	void reconnect(final long connectionId) {
@@ -175,13 +171,12 @@ public class DefaultRpcConnector implements RpcConnector {
 		});
 	}
 	
-	@SuppressWarnings("unchecked")
-	private Channel<byte[]> select(long id) {
-		Collection<Channel<byte[]>> collection = channels.values();
+	private DefaultRpcChannel select(long id) {
+		Collection<DefaultRpcChannel> collection = channels.values();
 		Object[] chs = collection.toArray();
 		if (chs.length == 0) return null;
 		int i = (int) (Math.abs(id) % chs.length);
-		return (Channel<byte[]>) chs[i];
+		return (DefaultRpcChannel) chs[i];
 	}
 
 	@Override
@@ -205,10 +200,10 @@ public class DefaultRpcConnector implements RpcConnector {
 			hbScheduler.scheduleAtFixedRate(new Runnable() {
 				@Override
 				public void run() {
-					for (Channel<byte[]> channel : channels.values()) {
+					for (RpcChannel channel : channels.values()) {
 						try {
 							RpcMessage hbmsg = RpcMessages.newHbRequestRpcMessage();
-							write(channel, hbmsg);
+							channel.write(hbmsg);
 							LOG.debug("[CRAFT-ATOM-RPC] Rpc client connector heartbeat, |hbmsg={}, channel={}|", hbmsg, channel);
 						} catch (Exception e) {
 							LOG.warn("[CRAFT-ATOM-RPC] Rpc client connector heartbeat error", e);
@@ -222,11 +217,6 @@ public class DefaultRpcConnector implements RpcConnector {
 	@Override
 	public void setProtocol(RpcProtocol protocol) {
 		this.protocol    = protocol;
-		this.ioHandler   = new RpcClientIoHandler(protocol, this);
-		this.ioConnector = NioFactory.newTcpConnectorBuilder(ioHandler)
-						             .connectTimeoutInMillis(connectTimeoutInMillis)
-						             .dispatcher(new NioOrderedDirectChannelEventDispatcher())
-						             .build();
 	}
 	
 	
@@ -237,7 +227,7 @@ public class DefaultRpcConnector implements RpcConnector {
 	 * Broke all connections
 	 */
 	public void brokeAll() {
-		for (Channel<byte[]> channel : channels.values()) {
+		for (DefaultRpcChannel channel : channels.values()) {
 			channel.close();
 		}
 	}
@@ -247,8 +237,8 @@ public class DefaultRpcConnector implements RpcConnector {
 	 */
 	public int aliveConnectionNum() {
 		int num = 0;
-		for (Channel<byte[]> ch : channels.values()) {
-			if (ch.isOpen()) num++;
+		for (DefaultRpcChannel channel : channels.values()) {
+			if (channel.isOpen()) num++;
 		}
 		return num;
 	}
