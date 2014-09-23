@@ -501,11 +501,11 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 				} catch (ClosedSelectorException e) {
 					LOG.error("[CRAFT-ATOM-NIO] Closed selector exception", e);
 					break;
-				} catch (Throwable t) {
-					LOG.error("[CRAFT-ATOM-NIO] Unexpected exception", t);
+				} catch (Exception e) {
+					LOG.error("[CRAFT-ATOM-NIO] Unexpected exception", e);
 					try {
 						Thread.sleep(1000);
-					} catch (InterruptedException e) {}
+					} catch (InterruptedException ie) {}
 				}
 			}
 			
