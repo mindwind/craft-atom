@@ -98,7 +98,6 @@ public class NioTcpConnector extends NioConnector {
         
         startup();
         selector.wakeup();
-        
 		return futureTask;
 	}
 	

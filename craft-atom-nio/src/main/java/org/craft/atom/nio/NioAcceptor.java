@@ -447,6 +447,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		while (it.hasNext()) {
 			SelectionKey key = it.next();
 			it.remove();
+			checkChannelSize();
 			NioByteChannel channel = acceptByProtocol(key);
 			if (channel != null) {
 				NioProcessor processor = pool.pick(channel);
@@ -455,6 +456,12 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 				processor.add(channel);
 			}
 		}
+	}
+	
+	private void checkChannelSize() throws IOException {
+		int currentChannelSize = x().getAliveChannels().size();
+		int allowChannelSize = config.getChannelSize();
+		if (currentChannelSize > allowChannelSize) throw new IOException("Too many channels, allow channel size limit=" + allowChannelSize);
 	}
 	
 	/**

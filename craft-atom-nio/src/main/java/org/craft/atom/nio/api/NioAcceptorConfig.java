@@ -17,8 +17,9 @@ import org.craft.atom.nio.NioTcpAcceptor;
 public class NioAcceptorConfig extends NioConfig {
 	
 	
-	@Getter @Setter private boolean reuseAddress = true;
-	@Getter         private int     backlog      = 50  ;
+	@Getter @Setter private boolean reuseAddress = true             ;
+	@Getter @Setter private int     channelSize  = Integer.MAX_VALUE;
+	@Getter         private int     backlog      = 50               ;
 	
 	
 	// ~ ---------------------------------------------------------------------------------------------------------------

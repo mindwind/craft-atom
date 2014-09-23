@@ -87,7 +87,6 @@ public class NioTcpAcceptor extends NioAcceptor {
 	@Override
 	protected void bindByProtocol(SocketAddress address) throws IOException {
 		ServerSocketChannel ssc = ServerSocketChannel.open();
-
 		ssc.configureBlocking(false);
 		ServerSocket ss = ssc.socket();
 		ss.setReuseAddress(config.isReuseAddress());
