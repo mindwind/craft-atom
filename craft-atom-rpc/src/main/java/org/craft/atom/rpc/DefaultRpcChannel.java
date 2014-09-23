@@ -50,8 +50,8 @@ public class DefaultRpcChannel implements RpcChannel {
 	public void write(RpcMessage msg) throws RpcException {
 		try {
 			byte[] bytes = encoder.encode(msg);
-			channel.write(bytes);
 			LOG.debug("[CRAFT-ATOM-RPC] Rpc channel write bytes, |length={}, bytes={}, channel={}|", bytes.length, bytes, channel);
+			channel.write(bytes);
 		} catch (IllegalChannelStateException e) {
 			throw new RpcException(RpcException.NETWORK, "broken connection");
 		}
@@ -59,8 +59,8 @@ public class DefaultRpcChannel implements RpcChannel {
 	
 	@Override
 	public List<RpcMessage> read(byte[] bytes) {
-		List<RpcMessage> msgs = decoder.decode(bytes);
 		LOG.debug("[CRAFT-ATOM-RPC] Rpc channel read bytes, |length={}, bytes={}, channel={}|", bytes.length, bytes, channel);
+		List<RpcMessage> msgs = decoder.decode(bytes);
 		return msgs;
 	}
 

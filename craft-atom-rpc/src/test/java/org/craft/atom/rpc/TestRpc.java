@@ -1,7 +1,9 @@
 package org.craft.atom.rpc;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.craft.atom.rpc.api.RpcClient;
 import org.craft.atom.rpc.api.RpcContext;
@@ -24,11 +26,11 @@ import org.junit.Test;
 public class TestRpc {
 	
 	
-	private DemoService ds           ; 
-	private RpcServer   server       ;
-	private RpcClient   client       ;
-	private String      host         ;
-	private int         port         ;
+	private DemoService ds    ; 
+	private RpcServer   server;
+	private RpcClient   client;
+	private String      host  ;
+	private int         port  ;
 	
 	
 	@Before
@@ -36,7 +38,7 @@ public class TestRpc {
 		host = "localhost";
 		port = AvailablePortFinder.getNextAvailable();
 		server = RpcFactory.newRpcServer(port);
-		server.export(DemoService.class, new DemoServiceImpl1(), new RpcParameter());
+		server.export(DemoService.class, new DemoServiceImpl1(), new RpcParameter(10, 100));
 		server.serve();
 		client = RpcFactory.newRpcClient(host, port);
 		client.open();
@@ -48,6 +50,33 @@ public class TestRpc {
 		String hi = ds.echo("hi");
 		Assert.assertEquals("hi", hi);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test basic. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testInMultiThreads() throws InterruptedException {
+		int count = 20;
+		final CountDownLatch latch = new CountDownLatch(count);
+		final AtomicBoolean flag = new AtomicBoolean(true);
+		Executor executor = Executors.newFixedThreadPool(100);
+		for (int i = 0; i < count; i++) {
+			executor.execute(new Runnable() {
+				
+				@Override
+				public void run() {
+					for (int i = 0; i < 10; i++) {
+						String hi = Thread.currentThread().getId() + "-hi-" + i;
+						String ret = ds.echo(hi);
+						if (!hi.equals(ret)) {
+							flag.set(false);
+						}
+					}
+					latch.countDown();
+				}
+			});
+		}
+		latch.await();
+		Assert.assertTrue(flag.get());
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test in multi threads. ", CaseCounter.incr(1)));
 	}
 	
 	@Test
