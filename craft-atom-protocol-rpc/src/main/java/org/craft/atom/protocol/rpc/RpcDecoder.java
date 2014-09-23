@@ -93,7 +93,7 @@ public class RpcDecoder extends AbstractProtocolDecoder implements ProtocolDecod
 		// need more bytes
 		int hs = rm.getHeader().getHeaderSize();
 		int bs = rm.getHeader().getBodySize();
-		if (buf.length() <  hs + bs) { searchIndex = buf.length(); return; }
+		if (buf.length() <  hs + bs + splitIndex) { searchIndex = buf.length(); return; }
 		
 		Serialization<RpcBody> deserializer = registry.lookup(rm.getHeader().getSt());
 		if (deserializer == null) throw new ProtocolException("No mapping `deserializer`!");

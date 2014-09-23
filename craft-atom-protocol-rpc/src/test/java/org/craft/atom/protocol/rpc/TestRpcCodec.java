@@ -104,13 +104,13 @@ public class TestRpcCodec {
 	public void testPipelineDecode() {
 		byte[] bytes = encoder.encode(rm);
 		ByteArrayBuffer buf = new ByteArrayBuffer();
-		buf.append(bytes).append(bytes).append(bytes, 0, 10);
+		buf.append(bytes).append(bytes).append(bytes, 0, 100);
 		byte[] b = buf.array();
 		List<RpcMessage> l = decoder.decode(b);
 		Assert.assertEquals(2, l.size());
 		Assert.assertEquals(rm, l.get(0));
 		Assert.assertEquals(rm, l.get(1));
-		l = decoder.decode(ByteUtil.split(bytes, 10, bytes.length));
+		l = decoder.decode(ByteUtil.split(bytes, 100, bytes.length));
 		Assert.assertEquals(1, l.size());
 		Assert.assertEquals(rm, l.get(0));
 		System.out.format("[CRAFT-ATOM-PROTOCOL-RPC] (^_^)  <%s>  Case -> test pipeline decode.\n", CaseCounter.incr(5));
