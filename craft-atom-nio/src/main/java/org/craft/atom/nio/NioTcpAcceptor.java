@@ -126,7 +126,7 @@ public class NioTcpAcceptor extends NioAcceptor {
 		int currentChannelSize = x().getAliveChannels().size();
 		int allowChannelSize = config.getChannelSize();
 		if (currentChannelSize >= allowChannelSize) {
-			LOG.info("Channel size overflow, |allowChannelSize={}, currentChannelSize={}|", allowChannelSize, currentChannelSize);
+			LOG.info("[CRAFT-ATOM-NIO] Channel size overflow, |allowChannelSize={}, currentChannelSize={}|", allowChannelSize, currentChannelSize);
 			return true;
 		}
 		return false;
