@@ -18,7 +18,7 @@ import org.junit.Test;
  * @author mindwind
  * @version 1.0, Sep 23, 2014
  */
-public class TestNioAcceptorChannelSizeLimit {
+public class TestNioTcpAcceptorChannelSizeLimit {
 	
 	
 	private static final int PORT = AvailablePortFinder.getNextAvailable(33333);
