@@ -34,7 +34,8 @@ public class TestNioTcpConnector {
 		Future<Channel<byte[]>> future = connector.connect("127.0.0.1", AvailablePortFinder.getNextAvailable());
 		
 		try {
-			future.get(1, TimeUnit.SECONDS);
+			future.get(200, TimeUnit.MILLISECONDS);
+			Assert.fail();
 		} catch (InterruptedException e) {
 			
 		} catch (ExecutionException e) {
