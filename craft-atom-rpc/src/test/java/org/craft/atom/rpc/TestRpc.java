@@ -1,10 +1,22 @@
 package org.craft.atom.rpc;
 
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.craft.atom.io.AbstractIoHandler;
+import org.craft.atom.io.Channel;
+import org.craft.atom.io.IoConnector;
+import org.craft.atom.nio.NioConnectorHandler;
+import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.rpc.api.RpcClient;
 import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.api.RpcFactory;
@@ -125,6 +137,23 @@ public class TestRpc {
 			Assert.assertEquals("hi-" + i, hi);
 		}
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test multi connections. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
+	public void testMaxAcceptConnections() throws Exception {
+		int connections = 100;
+		port = AvailablePortFinder.getNextAvailable(33333);
+		server = RpcFactory.newRpcServerBuilder(port).connections(connections).build();
+		server.serve();
+		for (int i = 0; i < connections; i++) { new Socket("127.0.0.1", port); }
+		
+		Thread.sleep(50);
+		IoConnector connector = NioFactory.newTcpConnector(new AbstractIoHandler() {});
+		Future<Channel<byte[]>> future = connector.connect("127.0.0.1", port);
+		Channel<byte[]> channel = future.get(200, TimeUnit.MILLISECONDS);
+		Thread.sleep(50);
+		Assert.assertFalse(channel.isOpen());
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test max accept connections. ", CaseCounter.incr(1)));
 	}
 	
 	@Test

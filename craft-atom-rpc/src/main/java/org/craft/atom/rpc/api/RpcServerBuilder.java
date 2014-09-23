@@ -2,10 +2,10 @@ package org.craft.atom.rpc.api;
 
 import org.craft.atom.rpc.DefaultRpcAcceptor;
 import org.craft.atom.rpc.DefaultRpcExecutorFactory;
-import org.craft.atom.rpc.DefaultRpcServerInvoker;
 import org.craft.atom.rpc.DefaultRpcProcessor;
 import org.craft.atom.rpc.DefaultRpcProtocol;
 import org.craft.atom.rpc.DefaultRpcServer;
+import org.craft.atom.rpc.DefaultRpcServerInvoker;
 import org.craft.atom.rpc.spi.RpcAcceptor;
 import org.craft.atom.rpc.spi.RpcExecutorFactory;
 import org.craft.atom.rpc.spi.RpcInvoker;
@@ -23,6 +23,7 @@ public class RpcServerBuilder {
 	
 	private String             host                                               ;
 	private int                port                                               ;
+	private int                connections       = Integer.MAX_VALUE              ;
 	private int                ioTimeoutInMillis = Integer.MAX_VALUE              ;
 	private RpcAcceptor        acceptor          = new DefaultRpcAcceptor()       ;
 	private RpcInvoker         invoker           = new DefaultRpcServerInvoker()  ;
@@ -33,6 +34,7 @@ public class RpcServerBuilder {
 	
 	public RpcServerBuilder host              (String             host             ) { this.host               = host             ; return this; }
 	public RpcServerBuilder port              (int                port             ) { this.port               = port             ; return this; }
+	public RpcServerBuilder connections       (int                connections      ) { this.connections        = connections      ; return this; }
 	public RpcServerBuilder ioTimeoutInMillis (int                ioTimeoutInMillis) { this.ioTimeoutInMillis  = ioTimeoutInMillis; return this; }
 	public RpcServerBuilder rpcAcceptor       (RpcAcceptor        acceptor         ) { this.acceptor           = acceptor         ; return this; }
 	public RpcServerBuilder rpcInvoker        (RpcInvoker         invoker          ) { this.invoker            = invoker          ; return this; }
@@ -46,6 +48,7 @@ public class RpcServerBuilder {
 		rs.setHost(host);
 		rs.setPort(port);
 		rs.setIoTimeoutInMillis(ioTimeoutInMillis);
+		rs.setConnections(connections);
 		rs.setAcceptor(acceptor);
 		rs.setInvoker(invoker);
 		rs.setProtocol(protocol);

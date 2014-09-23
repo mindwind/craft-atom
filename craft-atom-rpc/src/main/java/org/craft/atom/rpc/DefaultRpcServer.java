@@ -31,6 +31,7 @@ public class DefaultRpcServer implements RpcServer {
 	@Getter @Setter private String               host             ;
 	@Getter @Setter private int                  port             ;
 	@Getter @Setter private int                  ioTimeoutInMillis;
+	@Getter @Setter private int                  connections      ;
 	@Getter @Setter private RpcAcceptor          acceptor         ;
 	@Getter @Setter private RpcProcessor         processor        ;
 	@Getter @Setter private RpcProtocol          protocol         ;
@@ -56,6 +57,7 @@ public class DefaultRpcServer implements RpcServer {
 		acceptor .setProcessor(processor);
 		acceptor .setProtocol(protocol);
 		acceptor .setIoTimeoutInMillis(ioTimeoutInMillis);
+		acceptor.setConnections(connections);
 		acceptor .setAddress(address);
 		processor.setInvoker(invoker);
 		processor.setExecutorFactory(executorFactory);

@@ -23,6 +23,7 @@ public class DefaultRpcAcceptor implements RpcAcceptor {
 	
 	
 	@Getter         private int           ioTimeoutInMillis;
+	@Getter         private int           connections      ;
 	@Getter         private SocketAddress address          ;
 	@Getter @Setter private RpcProcessor  processor        ;
 	@Getter @Setter private RpcProtocol   protocol         ;
@@ -43,6 +44,7 @@ public class DefaultRpcAcceptor implements RpcAcceptor {
 	public void bind() throws IOException {
 		ioHandler  = new RpcServerIoHandler(protocol, processor);
 		ioAcceptor = NioFactory.newTcpAcceptorBuilder(ioHandler)
+							   .channelSize(connections)
 				               .ioTimeoutInMillis(ioTimeoutInMillis)
 				               .dispatcher(new NioOrderedDirectChannelEventDispatcher())
 				               .build();
@@ -57,6 +59,11 @@ public class DefaultRpcAcceptor implements RpcAcceptor {
 	@Override
 	public void setIoTimeoutInMillis(int ioTimeoutInMillis) {
 		this.ioTimeoutInMillis = ioTimeoutInMillis;
+	}
+
+	@Override
+	public void setConnections(int connections) {
+		this.connections = connections;
 	}
 
 }

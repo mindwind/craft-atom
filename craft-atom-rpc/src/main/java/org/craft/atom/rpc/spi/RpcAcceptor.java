@@ -49,4 +49,11 @@ public interface RpcAcceptor {
 	 */
 	void setIoTimeoutInMillis(int ioTimeoutInMillis);
 	
+	/**
+	 * Set max accepted connection size
+	 * 
+	 * @param connections
+	 */
+	void setConnections(int connections);
+	
 }
