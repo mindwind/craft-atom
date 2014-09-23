@@ -106,9 +106,9 @@ public class NioTcpAcceptor extends NioAcceptor {
 		SocketChannel sc = null;
 		try {
 			sc = ssc.accept();
-			if (sc == null) {
-				return null;
-			}
+			if (sc == null)              {            return null; }
+			if (isChannelSizeOverflow()) { close(sc); return null; }
+			
 			sc.configureBlocking(false);
 			NioByteChannel channel = new NioTcpByteChannel(sc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()), dispatcher);
 			NioProcessor processor = pool.pick(channel);
@@ -117,14 +117,28 @@ public class NioTcpAcceptor extends NioAcceptor {
 			processor.add(channel);
 			return channel;
 		} catch (IOException e) {
-			if (sc != null) {
-				try {
-					sc.close();
-				} catch (IOException ex) {
-					LOG.error("[CRAFT-ATOM-NIO] Close exception", ex);
-				}
-			}
+			close(sc);
 			throw e;
+		}
+	}
+	
+	private boolean isChannelSizeOverflow() throws IOException {
+		int currentChannelSize = x().getAliveChannels().size();
+		int allowChannelSize = config.getChannelSize();
+		if (currentChannelSize >= allowChannelSize) {
+			LOG.info("Channel size overflow, |allowChannelSize={}, currentChannelSize={}|", allowChannelSize, currentChannelSize);
+			return true;
+		}
+		return false;
+	}
+	
+	private void close(SocketChannel sc) {
+		if (sc == null) { return; }
+		
+		try {
+			sc.close();
+		} catch (IOException ex) {
+			LOG.error("[CRAFT-ATOM-NIO] Close exception", ex);
 		}
 	}
 
