@@ -23,7 +23,6 @@ import org.craft.atom.io.IoAcceptor;
 import org.craft.atom.io.IoAcceptorX;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.io.IoProcessorX;
-import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.api.NioAcceptorConfig;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
@@ -448,13 +447,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 			SelectionKey key = it.next();
 			it.remove();
 			checkChannelSize();
-			NioByteChannel channel = acceptByProtocol(key);
-			if (channel != null) {
-				NioProcessor processor = pool.pick(channel);
-				processor.setProtocol(IoProtocol.TCP);
-				channel.setProcessor(processor);
-				processor.add(channel);
-			}
+			acceptByProtocol(key);
 		}
 	}
 	

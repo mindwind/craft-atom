@@ -10,6 +10,7 @@ import java.nio.channels.SocketChannel;
 import lombok.ToString;
 
 import org.craft.atom.io.IoHandler;
+import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.api.NioAcceptorConfig;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
@@ -110,6 +111,10 @@ public class NioTcpAcceptor extends NioAcceptor {
 			}
 			sc.configureBlocking(false);
 			NioByteChannel channel = new NioTcpByteChannel(sc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()), dispatcher);
+			NioProcessor processor = pool.pick(channel);
+			processor.setProtocol(IoProtocol.TCP);
+			channel.setProcessor(processor);
+			processor.add(channel);
 			return channel;
 		} catch (IOException e) {
 			if (sc != null) {
