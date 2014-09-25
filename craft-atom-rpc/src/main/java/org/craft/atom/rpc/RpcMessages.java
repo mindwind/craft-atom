@@ -84,4 +84,16 @@ public class RpcMessages {
 		return rsp;
 	}
 	
+	public static Object unpackResponseMessage(RpcMessage rsp) throws Exception {
+		// void
+		if (rsp == null) { return null; }
+
+		// exception
+		Exception e = rsp.getException();
+		if (e != null) { throw e; }
+
+		// return object
+		return rsp.getReturnObject();
+	}
+	
 }

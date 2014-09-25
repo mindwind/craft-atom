@@ -41,15 +41,7 @@ public class RpcInvocationHandler implements InvocationHandler {
 		RpcMessage rsp = invoker.invoke(req);
 		LOG.debug("[CRAFT-ATOM-RPC] Rpc client proxy after  invocation, |rsp={}|", rsp);
 		
-		// void
-		if (rsp == null) return null;
-		
-		// exception
-		Exception e = rsp.getException();
-		if (e != null) throw e;
-		
-		// return object
-		return rsp.getReturnObject();
+		return RpcMessages.unpackResponseMessage(rsp);
 	}
 
 }
