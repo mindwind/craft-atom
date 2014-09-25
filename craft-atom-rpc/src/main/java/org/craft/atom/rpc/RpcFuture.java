@@ -1,6 +1,7 @@
 package org.craft.atom.rpc;
 
 import java.io.IOException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -12,7 +13,7 @@ import org.craft.atom.protocol.rpc.model.RpcMessage;
  * @author mindwind
  * @version 1.0, Aug 19, 2014
  */
-public interface RpcFuture {
+public interface RpcFuture<V> extends Future<V> {
 	
 	
 	/**

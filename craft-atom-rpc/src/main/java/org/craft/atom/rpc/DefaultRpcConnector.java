@@ -15,12 +15,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.craft.atom.io.Channel;
-import org.craft.atom.io.IllegalChannelStateException;
 import org.craft.atom.io.IoConnector;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.NioOrderedDirectChannelEventDispatcher;
 import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
+import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.spi.RpcChannel;
 import org.craft.atom.rpc.spi.RpcConnector;
 import org.craft.atom.rpc.spi.RpcProtocol;
@@ -80,7 +80,7 @@ public class DefaultRpcConnector implements RpcConnector {
 			Future<Channel<byte[]>> future = ioConnector.connect(address);
 			Channel<byte[]> channel = future.get(connectTimeoutInMillis, TimeUnit.MILLISECONDS);
 			DefaultRpcChannel rpcChannel = new DefaultRpcChannel(channel, protocol.getRpcEncoder(), protocol.getRpcDecoder());
-			rpcChannel.setFutures(new ConcurrentHashMap<Long, RpcFuture>());
+			rpcChannel.setFutures(new ConcurrentHashMap<Long, RpcFuture<?>>());
 			channel.setAttribute(RpcIoHandler.RPC_CHANNEL, rpcChannel);
 			long id = channel.getId();
 			channels.put(id, rpcChannel);
@@ -112,28 +112,36 @@ public class DefaultRpcConnector implements RpcConnector {
 	}
 	
 	@Override
-	public RpcMessage send(RpcMessage req) throws RpcException {
+	public RpcMessage send(RpcMessage req, boolean async) throws RpcException {
 		long mid = req.getId();
 		DefaultRpcChannel channel = select(mid);
 		if (channel == null) throw new RpcException(RpcException.NETWORK, "network error");
 		
 		try {
-			RpcFuture future = new DefaultRpcFuture();
-			channel.setRpcFuture(mid, future);
+			boolean oneway = req.isOneway();
+			RpcFuture<Object> future = null;
+			if (!oneway) {
+				future = new DefaultRpcFuture<Object>();
+				channel.setRpcFuture(mid, future);
+			 }
 			channel.write(req);
 			
 			// One way request, client does not expect response
-			if (req.isOneway()) return null;
+			if (oneway) { return null; }
 			
-			// Wait response
-			future.await(req.getRpcTimeoutInMillis(), TimeUnit.MILLISECONDS);
-			return future.getResponse();
-		} catch (IllegalChannelStateException e) {
-			reconnect(channel.getId());
-			throw new RpcException(RpcException.NETWORK, "network error");
+			if (async) {
+				// async and set future
+				RpcContext.getContext().setFuture(future);
+				return null;
+			} else {
+				// sync and wait response
+				future.await(req.getRpcTimeoutInMillis(), TimeUnit.MILLISECONDS);
+				return future.getResponse();
+			}
+		} catch (RpcException e) {
+			throw e;
 		} catch (IOException e) {
-			reconnect(channel.getId());
-			throw new RpcException(RpcException.NETWORK, "network error", e);
+			throw new RpcException(RpcException.NETWORK, "network error", e); 
 		} catch (TimeoutException e) {
 			throw new RpcException(RpcException.CLIENT_TIMEOUT, "client timeout", e);
 		} catch (Exception e) {

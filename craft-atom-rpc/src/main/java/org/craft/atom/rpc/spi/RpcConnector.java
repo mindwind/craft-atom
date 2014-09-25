@@ -1,6 +1,5 @@
 package org.craft.atom.rpc.spi;
 
-import java.io.IOException;
 import java.net.SocketAddress;
 
 import org.craft.atom.protocol.rpc.model.RpcMessage;
@@ -40,13 +39,15 @@ public interface RpcConnector {
 	void close();
 	
 	/**
-	 * Send rpc request message and return rpc response message.
+	 * Send rpc request message and wait return rpc response message.
+	 * If 'async' flag is set and return <tt>null</tt>.
 	 * 
-	 * @param req  rpc req msg
-	 * @return     rpc rsp msg
-	 * @throws IOException If some other rpc error occurs
+	 * @param req   rpc req msg
+	 * @param async flag for asynchronous request.
+	 * @return      rpc rsp msg
+	 * @throws RpcException If some other rpc error occurs
 	 */
-	RpcMessage send(RpcMessage req) throws RpcException;
+	RpcMessage send(RpcMessage req, boolean async) throws RpcException;
 	
 	/**
 	 * Set rpc protocol

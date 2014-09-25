@@ -30,7 +30,7 @@ public class DefaultRpcChannel implements RpcChannel {
 	@Getter @Setter private ProtocolEncoder<RpcMessage> encoder;
 	@Getter @Setter private ProtocolDecoder<RpcMessage> decoder;
 	@Getter @Setter private Channel<byte[]>             channel;
-	@Getter @Setter private Map<Long, RpcFuture>        futures;
+	@Getter @Setter private Map<Long, RpcFuture<?>>     futures;
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
@@ -76,18 +76,18 @@ public class DefaultRpcChannel implements RpcChannel {
 		return channel.getId();
 	}
 	
-	void setRpcFuture(long mid, RpcFuture future) {
+	void setRpcFuture(long mid, RpcFuture<?> future) {
 		futures.put(mid, future);
 	}
 	
 	void notifyRpcMessage(RpcMessage msg) {
-		RpcFuture future = futures.remove(msg.getId());
+		RpcFuture<?> future = futures.remove(msg.getId());
 		if (future == null) return;
 		future.setResponse(msg);
 	}
 	
 	void notifyRpcException(Exception e) {
-		for (RpcFuture future : futures.values()) {
+		for (RpcFuture<?> future : futures.values()) {
 			future.setException(e);
 		}
 	}

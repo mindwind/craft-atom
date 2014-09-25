@@ -3,6 +3,7 @@ package org.craft.atom.rpc.api;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +12,7 @@ import lombok.ToString;
 
 /**
  * RPC context is a thread local context. 
- * Each rpc invocation associate a context instance through current thread.
+ * Each rpc invocation bind a context instance to current thread.
  * 
  * @author mindwind
  * @version 1.0, Aug 26, 2014
@@ -37,6 +38,8 @@ public final class RpcContext {
 	@Getter @Setter private String              rpcId             ;
 	@Getter @Setter private int                 rpcTimeoutInMillis;
 	@Getter @Setter private boolean             oneway            ;
+	@Getter @Setter private boolean             async             ;
+	        @Setter private Future<?>           future            ;
 	
 	
 	public RpcContext() {
@@ -98,6 +101,16 @@ public final class RpcContext {
      */
     public String getAttachment(String key) {
     	return attachments.get(key);
+    }
+    
+    /**
+     * Get future object for asynchronous invocation.
+     * 
+     * @return
+     */
+	@SuppressWarnings("unchecked")
+	public <T> Future<T> getFuture() {
+        return (Future<T>) future;
     }
 
 }

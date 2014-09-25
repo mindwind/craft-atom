@@ -31,8 +31,9 @@ public class DefaultRpcClientInvoker implements RpcInvoker {
 			req.setOneway(ctx.isOneway());
 			req.setAttachments(ctx.getAttachments());
 			req.setRpcId(ctx.getRpcId());
-			LOG.debug("[CRAFT-ATOM-RPC] Rpc client invoker is invoking, |req={}|", req);
-			return connector.send(req);
+			boolean async = ctx.isAsync();
+			LOG.debug("[CRAFT-ATOM-RPC] Rpc client invoker is invoking, |req={}, async={}|", req, async);
+			return connector.send(req, async);
 		} finally {
 			RpcContext.removeContext();
 		}
