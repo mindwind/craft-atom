@@ -44,10 +44,10 @@ public class TestNioTcpAcceptorChannelSizeLimit {
 		}
 		
 		try {
-			Thread.sleep(50);
+			Thread.sleep(100);
 			Future<Channel<byte[]>> future = connector.connect("127.0.0.1", PORT);
 			Channel<byte[]> channel = future.get(200, TimeUnit.MILLISECONDS);
-			Thread.sleep(50);
+			Thread.sleep(200);
 			Assert.assertFalse(channel.isOpen());
 		} catch (Exception e) {
 			Assert.fail();
