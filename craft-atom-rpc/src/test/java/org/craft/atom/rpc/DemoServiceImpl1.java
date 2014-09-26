@@ -2,12 +2,17 @@ package org.craft.atom.rpc;
 
 import org.craft.atom.io.IllegalChannelStateException;
 import org.craft.atom.rpc.api.RpcContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author mindwind
  * @version 1.0, Sep 5, 2014
  */
 public class DemoServiceImpl1 implements DemoService {
+	
+	
+	private static final Logger LOG = LoggerFactory.getLogger(DemoServiceImpl1.class);
 
 	
 	@Override
@@ -17,7 +22,7 @@ public class DemoServiceImpl1 implements DemoService {
 
 	@Override
 	public void noreturn(String in) {
-		System.out.println("Invoked noreturn() in=" + in);
+		LOG.debug("[CRAFT-ATOM-RPC] Invoked noreturn() in={}", in);
 	}
 
 	@Override
@@ -34,7 +39,7 @@ public class DemoServiceImpl1 implements DemoService {
 
 	@Override
 	public String oneway() {
-		System.out.println("Invoked oneway()");
+		LOG.debug("[CRAFT-ATOM-RPC] Invoked oneway()");
 		return "oneway";
 	}
 
