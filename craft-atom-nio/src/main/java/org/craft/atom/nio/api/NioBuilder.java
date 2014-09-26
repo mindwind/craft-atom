@@ -3,7 +3,7 @@ package org.craft.atom.nio.api;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.NioAdaptiveBufferSizePredictorFactory;
 import org.craft.atom.nio.NioConfig;
-import org.craft.atom.nio.NioOrderedThreadPoolChannelEventDispatcher;
+import org.craft.atom.nio.NioOrderedDirectChannelEventDispatcher;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
@@ -15,18 +15,18 @@ import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 public abstract class NioBuilder<T> {
 	
 	
-	protected final IoHandler                     handler                                                             ;
-	protected       NioChannelEventDispatcher     dispatcher        = new NioOrderedThreadPoolChannelEventDispatcher();
-	protected       NioBufferSizePredictorFactory predictorFactory  = new NioAdaptiveBufferSizePredictorFactory()     ;
-	protected       int                           readBufferSize    = 2048                                            ;
-	protected       int                           minReadBufferSize = 64                                              ;
-	protected       int                           maxReadBufferSize = 65536                                           ;
-	protected       int                           ioTimeoutInMillis = 120 * 1000                                      ;
-	protected       int                           processorPoolSize = Runtime.getRuntime().availableProcessors()      ;
-	protected       int                           executorSize      = processorPoolSize << 3                          ;
-	protected       int                           channelEventSize  = Integer.MAX_VALUE                               ;
-	protected       int                           totalEventSize    = Integer.MAX_VALUE                               ;
-	protected       boolean                       readWriteFair     = true                                            ;
+	protected final IoHandler                     handler                                                         ;
+	protected       NioChannelEventDispatcher     dispatcher        = new NioOrderedDirectChannelEventDispatcher();
+	protected       NioBufferSizePredictorFactory predictorFactory  = new NioAdaptiveBufferSizePredictorFactory() ;
+	protected       int                           readBufferSize    = 2048                                        ;
+	protected       int                           minReadBufferSize = 64                                          ;
+	protected       int                           maxReadBufferSize = 65536                                       ;
+	protected       int                           ioTimeoutInMillis = 120 * 1000                                  ;
+	protected       int                           processorPoolSize = Runtime.getRuntime().availableProcessors()  ;
+	protected       int                           executorSize      = processorPoolSize << 3                      ;
+	protected       int                           channelEventSize  = Integer.MAX_VALUE                           ;
+	protected       int                           totalEventSize    = Integer.MAX_VALUE                           ;
+	protected       boolean                       readWriteFair     = true                                        ;
 	
 	
 	public NioBuilder(IoHandler handler) {

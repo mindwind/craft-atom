@@ -60,7 +60,7 @@ abstract public class NioConnector extends NioReactor implements IoConnector {
 	 * @param config
 	 */
 	public NioConnector(IoHandler handler, NioConnectorConfig config) {
-		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(config.getExecutorSize(), config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory());
+		this(handler, config, new NioOrderedDirectChannelEventDispatcher(config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory());
 	}
 	
 	/**
