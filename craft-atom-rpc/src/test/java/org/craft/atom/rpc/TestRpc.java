@@ -266,7 +266,7 @@ public class TestRpc {
 		RpcContext.getContext().setRpcTimeoutInMillis(5000);
 		ds.echo("hi");
 		long s = System.nanoTime();
-		for (int i = 0; i < 1000; i++) {
+		for (int i = 0; i < 100; i++) {
 			ds.echo("hi");
 		}
 		long e = System.nanoTime();
@@ -294,6 +294,28 @@ public class TestRpc {
 		String hihi = ds.echo("hi");
 		Assert.assertEquals("hihi", hihi);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test multiple implementor. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testAsync() throws Exception {
+		// Async two-way
+		RpcContext ctx = RpcContext.getContext();
+		ctx.setAsync(true);
+		String r = ds.echo("hi");
+		Assert.assertNull(r);
+		Future<String> future = ctx.getFuture();
+		r = future.get(2, TimeUnit.SECONDS);
+		Assert.assertEquals("hi", r);
+		
+		// Async one-way
+		ctx = RpcContext.getContext();
+		ctx.setAsync(true);
+		ctx.setOneway(true);
+		r = ds.echo("hi");
+		Assert.assertNull(r);
+		future = ctx.getFuture();
+		Assert.assertNull(future);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test async. ", CaseCounter.incr(4)));
 	}
 	
 }

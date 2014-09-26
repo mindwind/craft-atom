@@ -94,7 +94,7 @@ public class DefaultRpcFuture<V> implements RpcFuture<V> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-		await(timeout, TimeUnit.MILLISECONDS);
+		await(timeout, unit);
 		try {
 			RpcMessage rsp = getResponse();
 			return (V) RpcMessages.unpackResponseMessage(rsp);
