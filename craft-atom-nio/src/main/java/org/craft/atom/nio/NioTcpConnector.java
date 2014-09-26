@@ -277,7 +277,7 @@ public class NioTcpConnector extends NioConnector {
 						}
 					}
 				} catch (Exception e) {
-					LOG.error("[CRAFT-ATOM-NIO] Connect exception", e);
+					LOG.warn("[CRAFT-ATOM-NIO] Connect exception", e);
 				}
 			}
 
