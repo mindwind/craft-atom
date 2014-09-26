@@ -11,12 +11,12 @@
 	</appender>
 	
 	<category name="org.craft.atom.nio" additivity="false">
-		<priority value="debug" />
+		<priority value="warn" />
 		<appender-ref ref="console" />
 	</category>
 	
 	<category name="org.craft.atom.io" additivity="false">
-		<priority value="debug" />
+		<priority value="warn" />
 		<appender-ref ref="console" />
 	</category>
 
