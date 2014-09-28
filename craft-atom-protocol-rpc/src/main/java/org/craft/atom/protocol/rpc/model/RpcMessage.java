@@ -40,7 +40,7 @@ public class RpcMessage implements Serializable {
 	}
 	
 	public void setOneway(boolean oneway) {
-		if (oneway) header.setOw();
+		if (oneway) { header.setOw(); }
 	}
 	
 	public boolean isResponse() {
@@ -48,7 +48,7 @@ public class RpcMessage implements Serializable {
 	}
 	
 	public void setResponse(boolean response) {
-		if (response) header.setRp();
+		if (response) { header.setRp(); }
 	}
 	
 	public boolean isHeartbeat() {
@@ -56,7 +56,7 @@ public class RpcMessage implements Serializable {
 	}
 	
 	public void setHeartbeat(boolean heartbeat) {
-		if (heartbeat) header.setHb();
+		if (heartbeat) { header.setHb(); }
 	}
 	
 	public long getId() {
