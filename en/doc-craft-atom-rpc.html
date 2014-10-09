@@ -70,7 +70,14 @@ DemoService demo = client.refer(DemoService.class);
 demo.echo("hi");
 </code></pre>
 
-
+<h3>Polymorphic invocation</h3>
+<p><code>DemoService</code> has another implementor and exported with 'demo2' as its rpc id.
+<pre><code data-language="java">
+// Invoke another implementor which rpcId is 'demo2'
+DemoService demo = client.refer(DemoService.class);
+RpcContext.getContext().setRpcId("demo2");
+demo.echo("hi");
+</code></pre>
 
 			</div>
 		</div>
