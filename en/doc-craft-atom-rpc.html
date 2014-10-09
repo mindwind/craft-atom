@@ -27,8 +27,8 @@
 <p>
 An easy use and efficient java rpc component.<br>
 It provides:<br>
-- Synchronous call.<br>
-- Asynchronous call.
+- Synchronous remote invocation.<br>
+- Asynchronous remote invocation.
 </p>
 
 
@@ -79,6 +79,22 @@ RpcContext.getContext().setRpcId("demo2");
 demo.echo("hi");
 </code></pre>
 
+<h3>Asynchronous invocation</h3>
+<p>The default remote invocation is synchronous, launch asynchronous invocation code example as follows:</p>
+<pre><code data-language="java">
+// Set invocation of this time is asynchronous
+RpcContext ctx = RpcContext.getContext();
+ctx.setAsync(true);
+String r = ds.echo("hi");
+
+// Return null for asynchronous invocation.
+assert r == null;
+
+// Do something other ... and get the invocation result.
+Future&lt;String&gt; future = ctx.getFuture();
+r = future.get(2, TimeUnit.SECONDS);
+assert r != null;
+</code></pre>
 			</div>
 		</div>
 		
