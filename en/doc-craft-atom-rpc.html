@@ -38,7 +38,29 @@ Using rpc include two steps:<br>
 1. Export remote API for server side.<br>
 2. Import remote API and invoke it for client side.
 </p>
+
 <h3>Export remote API</h3>
+<p>Only exported API can be invoked from remote peer, the code example as follows:</p>
+<pre><code data-language="java">
+RpcServer server = RpcFactory.newRpcServer(port);
+server.export(DemoService.class, new DemoServiceImpl(), new RpcParameter(10, 100));
+server.open();
+</code></pre>
+
+<p>Not export entire interface just a method.</p>
+<pre><code data-language="java">
+RpcMethod rpcMethod = new RpcMethod();
+rpcMethod.setName("echo");
+rpcMethod.setParameterTypes(new Class&lt;?&gt;[] { String.class });
+server.export(DemoService.class, rpcMethod, new DemoServiceImpl1(), new RpcParameter(10, 100));
+</code></pre>
+
+<p>For polymorphism of OOP, if a interface has more than one implementor, how to export?</p>
+<pre><code data-language="java">
+// Set 'rpcId' to bind a specific interface implementor
+String rpcId = "demo2";
+server.export(rpcId, DemoService.class, new DemoServiceImpl2(), new RpcParameter());
+</code></pre>
 
 <h3>Import remote API</h3>
 
