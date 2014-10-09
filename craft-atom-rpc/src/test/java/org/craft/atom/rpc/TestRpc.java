@@ -46,7 +46,7 @@ public class TestRpc {
 		port = AvailablePortFinder.getNextAvailable();
 		server = RpcFactory.newRpcServer(port);
 		server.export(DemoService.class, new DemoServiceImpl1(), new RpcParameter(10, 100));
-		server.serve();
+		server.open();
 		client = RpcFactory.newRpcClient(host, port);
 		client.open();
 		ds = client.refer(DemoService.class);
@@ -139,7 +139,7 @@ public class TestRpc {
 		int connections = 100;
 		port = AvailablePortFinder.getNextAvailable(33333);
 		server = RpcFactory.newRpcServerBuilder(port).connections(connections).build();
-		server.serve();
+		server.open();
 		for (int i = 0; i < connections; i++) { new Socket("127.0.0.1", port); }
 		
 		Thread.sleep(50);
@@ -180,7 +180,7 @@ public class TestRpc {
 		port = AvailablePortFinder.getNextAvailable();
 		server = RpcFactory.newRpcServerBuilder(port).ioTimeoutInMillis(100).build();
 		server.export(DemoService.class, new DemoServiceImpl1(), new RpcParameter());
-		server.serve();
+		server.open();
 		client = RpcFactory.newRpcClient(host, port);
 		client.open();
 		ds = client.refer(DemoService.class);

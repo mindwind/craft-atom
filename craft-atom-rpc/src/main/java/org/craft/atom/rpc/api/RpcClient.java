@@ -23,6 +23,7 @@ public interface RpcClient {
 	
 	/**
 	 * Open the client, connect to rpc server for communicating.
+	 *  Just invoke this once.
 	 *
 	 * @throws RpcException If some other rpc error occurs
 	 */

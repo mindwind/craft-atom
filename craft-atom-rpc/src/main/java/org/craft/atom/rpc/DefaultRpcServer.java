@@ -69,7 +69,7 @@ public class DefaultRpcServer implements RpcServer {
 	
 	
 	@Override
-	public void serve() {
+	public void open() {
 		try {
 			acceptor.bind();
 		} catch (Exception e) {

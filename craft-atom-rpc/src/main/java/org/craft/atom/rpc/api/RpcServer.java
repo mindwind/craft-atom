@@ -6,7 +6,7 @@ import org.craft.atom.protocol.rpc.model.RpcMethod;
  * RPC server.
  * <p>
  * Use {@link RpcFactory} creates a rpc server and expose the remote interfaces or methods.
- * Last invoke {@link RpcServer#serve()} to start the server to serve the rpc request from {@link RpcClient}.
+ * Last invoke {@link RpcServer#open()} to start the server to serve the rpc request from {@link RpcClient}.
  *  
  * @author mindwind
  * @version 1.0, Jul 30, 2014
@@ -14,10 +14,10 @@ import org.craft.atom.protocol.rpc.model.RpcMethod;
 public interface RpcServer {
 	
 	/**
-	 * Start the rpc server and get things going.
+	 * Open the rpc server and get things going.
 	 * Just invoke this once.
 	 */
-	void serve();
+	void open();
 	
 	/**
 	 * Export rpc interface class. All the declared method in the interface are exposed.
