@@ -63,6 +63,14 @@ server.export(rpcId, DemoService.class, new DemoServiceImpl2(), new RpcParameter
 </code></pre>
 
 <h3>Import remote API</h3>
+<pre><code data-language="java">
+client = RpcFactory.newRpcClient(host, port);
+client.open();
+DemoService demo = client.refer(DemoService.class);
+demo.echo("hi");
+</code></pre>
+
+
 
 			</div>
 		</div>
