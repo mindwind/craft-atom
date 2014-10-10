@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
+		<title>文档：craft-atom-rpc</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-rpc</h1>
+<div class="date">2014-10-10 mindwind</div>
+
+<h2>简介</h2>
+<p>
+高效且易于使用的 java rpc 组件。
+它提供：<br>
+- 同步远程调用。<br>
+- 异步远程调用。
+</p>
+
+<h2>入门</h2>
+<p>
+使用该 rpc 组件包括下面 2 个步骤：<br>
+1. 对于服务端，导出远程 API。<br>
+2. 对于客户端，导入远程 API 并调用它。
+</p>
+
+<h3>导出远程 API</h3>
+
+<p>只有导出的 API 能够从远程被调用，代码示例如下：</p>
+<pre><code data-language="java">
+RpcServer server = RpcFactory.newRpcServer(port);
+server.export(DemoService.class, new DemoServiceImpl(), new RpcParameter(10, 100));
+server.open();
+</code></pre>
+
+<p>只导出部分方法而不是整个接口。</p>
+<pre><code data-language="java">
+RpcMethod rpcMethod = new RpcMethod();
+rpcMethod.setName("echo");
+rpcMethod.setParameterTypes(new Class&lt;?&gt;[] { String.class });
+server.export(DemoService.class, rpcMethod, new DemoServiceImpl1(), new RpcParameter(10, 100));
+</code></pre>
+
+<p>对于面向对象编程的多态性，假如一个接口有多个实现者，如何导出呢？调用哪个实现？</p>
+<pre><code data-language="java">
+// Set 'rpcId' to bind a specific interface implementor
+String rpcId = "demo2";
+server.export(rpcId, DemoService.class, new DemoServiceImpl2(), new RpcParameter());
+</code></pre>
+
+<h3>导入远程 API</h3>
+<pre><code data-language="java">
+client = RpcFactory.newRpcClient(host, port);
+client.open();
+DemoService demo = client.refer(DemoService.class);
+demo.echo("hi");
+</code></pre>
+
+<h3>多态调用</h3>
+<p><code>DemoService</code> 还有另外一个实现并且以 ‘demo2’ 作为 rpc 标识导出。</p>
+<pre><code data-language="java">
+// Invoke another implementor which rpcId is 'demo2'
+DemoService demo = client.refer(DemoService.class);
+RpcContext.getContext().setRpcId("demo2");
+demo.echo("hi");
+</code></pre>
+
+<h3>异步调用</h3>
+<p>默认的远程调用都是同步的，发起一个异步调用的代码示例如下：</p>
+<pre><code data-language="java">
+// Set invocation of this time is asynchronous
+RpcContext ctx = RpcContext.getContext();
+ctx.setAsync(true);
+String r = ds.echo("hi");
+
+// Return null for asynchronous invocation.
+assert r == null;
+
+// Do something other ... and get the invocation result.
+Future&lt;String&gt; future = ctx.getFuture();
+r = future.get(2, TimeUnit.SECONDS);
+assert r != null;
+</code></pre>
+
+<h3>单向调用</h3>
+<p>
+单向调用是一种特殊类型的异步调用，意味着客户端对本次调用不期待服务端的响应结果。
+实际上服务端对于单向调用请求也不会作出响应。对于特定场景单向调用性能更好，但并不那么可靠。
+代码示例如下：
+</p>
+<pre><code data-language="java">
+/ Set invocation of this time is oneway
+RpcContext ctx = RpcContext.getContext();
+ctx.setOneway(true);
+String r = ds.echo("hi");
+
+// Return null for oneway invocation.
+assert r == null;
+
+// Oneway invocation, no future object return.
+Future&lt;String&gt; future = ctx.getFuture();
+assert future == null;
+</code></pre>
+			</div>
+		</div>
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
