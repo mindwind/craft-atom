@@ -27,10 +27,9 @@
 <p>
 An easy use and efficient java rpc component.<br>
 It provides:<br>
-- Synchronous remote invocation.<br>
-- Asynchronous remote invocation.
+- Synchronous invocation.<br>
+- Asynchronous invocation.
 </p>
-
 
 <h2>Getting Started</h2>
 <p>
@@ -95,6 +94,26 @@ Future&lt;String&gt; future = ctx.getFuture();
 r = future.get(2, TimeUnit.SECONDS);
 assert r != null;
 </code></pre>
+
+<h3>Oneway invocation</h3>
+<p>
+Oneway is a special asynchronous invocation, which means the client does not expect the server response for this invocation.
+Actually server also never response oneway request. The code example as follows:
+</p>
+<pre><code data-language="java">
+/ Set invocation of this time is oneway
+RpcContext ctx = RpcContext.getContext();
+ctx.setOneway(true);
+String r = ds.echo("hi");
+
+// Return null for oneway invocation.
+assert r == null;
+
+// Oneway invocation, no future object return.
+Future&lt;String&gt; future = ctx.getFuture();
+assert future == null;
+</code></pre>
+
 			</div>
 		</div>
 		
