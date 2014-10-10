@@ -37,13 +37,13 @@ public class NioTextlineServerIoHandler extends AbstractIoHandler {
 	
     @Override
     public void channelOpened(Channel&lt;byte[]&gt; channel) {
-        TextLineDecoder decoder = new TextLineDecoder(Charset.forName("utf-8"), "\n", 2048, 10240);
+        ProtocolDecoder&lt;String&gt; decoder = TextLineCodecFactory.newTextLineDecoderBuilder(UTF_8, "\n").build();
         channel.setAttribute("decoder", decoder);
     }
 	
     @Override
     public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
-        TextLineDecoder decoder = (TextLineDecoder) channel.getAttribute("decoder");
+        ProtocolDecoder&lt;String&gt; decoder = (ProtocolDecoder&lt;String&gt;) channel.getAttribute("decoder");
         List&lt;String&gt; lines = decoder.decode(bytes);
         // do something others
     }

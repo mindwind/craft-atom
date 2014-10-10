@@ -37,18 +37,18 @@ public class NioHttpServerIoHandler extends AbstractIoHandler {
 	
     @Override
     public void channelOpened(Channel&lt;byte[]&gt; channel) {
-        HttpRequestDecoder decoder = new HttpRequestDecoder(Charset.forName("utf-8"), 20480, 1024, 20480);
+        ProtocolDecoder&lt;HttpRequest&gt; decoder = HttpCodecFactory.newHttpRequestDecoder();
         channel.setAttribute("decoder", decoder);
     }
 	
     @Override
     public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
-        HttpRequestDecoder decoder = (HttpRequestDecoder) channel.getAttribute("decoder");
+        ProtocolDecoder&lt;HttpRequest&gt; decoder = (ProtocolDecoder&lt;HttpRequest&gt;) channel.getAttribute("decoder");
         List&lt;HttpRequest&gt; requests = decoder.decode(bytes);
         
         // After handle the request, we should produce a response and send back to client.
         HttpResponse response = HttpResponses.new200Response("response content");
-        HttpResponseEncoder encoder = new HttpResponseEncoder(Charset.forName("utf-8"));
+        ProtocolEncoder&lt;HttpResponse&gt; encoder = HttpCodecFactory.newHttpResponseEncoder(Charset.forName("utf-8"));
         byte[] bytes = encoder.encode(response);
         channel.write(bytes);
     }
