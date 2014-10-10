@@ -33,7 +33,7 @@ It provides:<br>
 
 <h2>Getting Started</h2>
 <p>
-Using rpc include two steps:<br>
+Using this rpc component include two steps as follows:<br>
 1. Export remote API for server side.<br>
 2. Import remote API and invoke it for client side.
 </p>
@@ -46,7 +46,7 @@ server.export(DemoService.class, new DemoServiceImpl(), new RpcParameter(10, 100
 server.open();
 </code></pre>
 
-<p>Not export entire interface just a method.</p>
+<p>Not export entire interface just some methods.</p>
 <pre><code data-language="java">
 RpcMethod rpcMethod = new RpcMethod();
 rpcMethod.setName("echo");
@@ -54,7 +54,7 @@ rpcMethod.setParameterTypes(new Class&lt;?&gt;[] { String.class });
 server.export(DemoService.class, rpcMethod, new DemoServiceImpl1(), new RpcParameter(10, 100));
 </code></pre>
 
-<p>For polymorphism of OOP, if a interface has more than one implementor, how to export?</p>
+<p>For polymorphism of OOP, if a interface has more than one implementor, how to export? Which to be invoked?</p>
 <pre><code data-language="java">
 // Set 'rpcId' to bind a specific interface implementor
 String rpcId = "demo2";
@@ -70,7 +70,7 @@ demo.echo("hi");
 </code></pre>
 
 <h3>Polymorphic invocation</h3>
-<p><code>DemoService</code> has another implementor and exported with 'demo2' as its rpc id.
+<p><code>DemoService</code> has another implementor and be exported with 'demo2' as its rpc id.</p>
 <pre><code data-language="java">
 // Invoke another implementor which rpcId is 'demo2'
 DemoService demo = client.refer(DemoService.class);
@@ -98,7 +98,9 @@ assert r != null;
 <h3>Oneway invocation</h3>
 <p>
 Oneway is a special asynchronous invocation, which means the client does not expect the server response for this invocation.
-Actually server also never response oneway request. The code example as follows:
+Actually server also never response oneway request. 
+For some specific scene, the oneway invocation which performance is better but not so reliable.
+The code example as follows:
 </p>
 <pre><code data-language="java">
 / Set invocation of this time is oneway
