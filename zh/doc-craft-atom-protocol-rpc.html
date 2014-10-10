@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset='utf-8'>
+	  	<meta http-equiv="X-UA-Compatible" content="chrome=1">
+	  	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+	  	<link rel="icon" href="../favicon.ico" type="image/x-icon">
+	  	<link rel="stylesheet" href="../css/craft.css">
+	  	<link rel="stylesheet" href="../css/code.css">
+		<script type="text/javascript" src="../js/jquery.js"></script>
+		<script type="text/javascript" src="../js/craft.js"></script>
+		<script type="text/javascript" src="../js/rainbow.js"></script>
+		<script type="text/javascript" src="../js/rainbow.generic.js"></script>
+		<script type="text/javascript" src="../js/rainbow.java.js"></script>
+		<title>文档：craft-atom-protocol-rpc</title>
+	</head>
+
+	<body>
+		<div id="header" class="header"></div>
+		
+		<div id="center" class="center">
+			<div id="content" class="content">
+<h1>craft-atom-protocol-rpc</h1>
+<div class="date">2014-10-10 mindwind</div>
+
+<h2>简介</h2>
+<p>
+一个简单自定义的 rpc 协议实现，它实现了 <a href="doc-craft-atom-protocol" target="_blank">craft-atom-protocol</a> 定义的 api。
+<a href="doc-craft-atom-rpc" target="_blank">craft-atom-rpc</a> 使用它作为默认的协议编解码实现。
+</p>
+
+<h2>入门</h2>
+<p>对 rpc 请求进行解码和响应编码的代码示例如下：</p>
+<pre><code data-language="java">
+public class RpcServerIoHandler extends AbstractIoHandler {
+	
+    @Override
+    public void channelOpened(Channel&lt;byte[]&gt; channel) {
+        ProtocolDecoder&lt;RpcMessage&gt; decoder = RpcCodecFactory.newRpcDecoder();
+        channel.setAttribute("decoder", decoder);
+    }
+	
+    @Override
+    public void channelRead(Channel&lt;byte[]&gt; channel, byte[] bytes) {
+        ProtocolEncoder&lt;RpcMessage&gt; decoder = (ProtocolEncoder&lt;RpcMessage&gt;) channel.getAttribute("decoder");
+        List&lt;RpcMessage&gt; msgs = decoder.decode(bytes);
+        
+        // After handle the request, we should produce a response and send back to client.
+        RpcMessage rsp = ...;
+        ProtocolEncoder&lt;RpcMessage&gt; encoder = RpcCodecFactory.newRpcEncoder();
+        byte[] bytes = encoder.encode(rsp);
+        channel.write(bytes);
+    }
+}
+</code></pre>
+			</div>
+		</div>
+		
+		<div id="footer" class="footer"></div>
+	</body>
+</html>
