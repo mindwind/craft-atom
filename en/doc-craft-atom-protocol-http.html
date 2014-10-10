@@ -33,7 +33,7 @@ A simple http protocol implementor, which implements <a href="doc-craft-atom-pro
 First of all, we look at an example of http request decode and response encode as follows:
 </p>
 <pre><code data-language="java">
-public class NioHttpServerHandler extends AbstractIoHandler {
+public class NioHttpServerIoHandler extends AbstractIoHandler {
 	
     @Override
     public void channelOpened(Channel&lt;byte[]&gt; channel) {

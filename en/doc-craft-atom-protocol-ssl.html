@@ -33,7 +33,7 @@ A simple ssl protocol implementor, it wraps <code>SSLEngine</code> class which f
 First of all, we look at an example of ssl decode as follows:
 </p>
 <pre><code data-language="java">
-public class NioSslServerHandler extends AbstractIoHandler {
+public class NioSslServerIoHandler extends AbstractIoHandler {
 	
     @Override
     public void channelOpened(Channel&lt;byte[]&gt; channel) {

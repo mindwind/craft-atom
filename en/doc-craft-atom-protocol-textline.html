@@ -33,7 +33,7 @@ A simple textline protocol implementor, which implements <a href="doc-craft-atom
 First of all, we look at an example of text-line decode as follows:
 </p>
 <pre><code data-language="java">
-public class NioTextlineServerHandler extends AbstractIoHandler {
+public class NioTextlineServerIoHandler extends AbstractIoHandler {
 	
     @Override
     public void channelOpened(Channel&lt;byte[]&gt; channel) {
