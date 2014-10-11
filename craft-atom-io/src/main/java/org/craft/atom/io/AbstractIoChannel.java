@@ -14,11 +14,11 @@ import lombok.ToString;
 public abstract class AbstractIoChannel extends AbstractChannel {
 
 	
-	@Getter @Setter protected long lastIoTime            = System.currentTimeMillis()                   ;
-	@Getter         protected int  minReadBufferSize     = IoConfig.MIN_READ_BUFFER_SIZE                ;
-	@Getter         protected int  defaultReadBufferSize = IoConfig.DEFAULT_READ_BUFFER_SIZE            ;
-	@Getter         protected int  maxReadBufferSize     = IoConfig.MAX_READ_BUFFER_SIZE                ;
-	@Getter         protected int  maxWriteBufferSize    = maxReadBufferSize + (maxReadBufferSize >>> 1);
+	@Getter @Setter protected volatile long lastIoTime            = System.currentTimeMillis()                   ;
+	@Getter         protected          int  minReadBufferSize     = IoConfig.MIN_READ_BUFFER_SIZE                ;
+	@Getter         protected          int  defaultReadBufferSize = IoConfig.DEFAULT_READ_BUFFER_SIZE            ;
+	@Getter         protected          int  maxReadBufferSize     = IoConfig.MAX_READ_BUFFER_SIZE                ;
+	@Getter         protected          int  maxWriteBufferSize    = maxReadBufferSize + (maxReadBufferSize >>> 1);
 	
 	
 	// ~ -----------------------------------------------------------------------------------------------------------
