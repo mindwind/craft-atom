@@ -1,7 +1,6 @@
 package org.craft.atom.rpc.spi;
 
 
-
 /**
  * RPC registry
  * 
@@ -27,8 +26,8 @@ public interface RpcRegistry {
 	/**
 	 * Lookup a rpc entry by the entry key.
 	 * 
-	 * @param key the entry key
-	 * @return
+	 * @param  entry query entry
+	 * @return result entry
 	 */
-	RpcEntry lookup(String key);
+	RpcEntry lookup(RpcEntry entry);
 }

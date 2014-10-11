@@ -7,10 +7,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.rpc.api.RpcParameter;
+import org.craft.atom.rpc.spi.RpcEntry;
 import org.craft.atom.rpc.spi.RpcExecutorFactory;
+import org.craft.atom.rpc.spi.RpcRegistry;
 import org.craft.atom.util.NamedThreadFactory;
 
 /**
@@ -20,25 +25,37 @@ import org.craft.atom.util.NamedThreadFactory;
 public class DefaultRpcExecutorFactory implements RpcExecutorFactory {
 
 	
-	private Map<String, ExecutorService> pool     = new ConcurrentHashMap<String, ExecutorService>();
-	private RpcRegistry                  registry = RpcRegistry.getInstance()                       ;
+	@Getter @Setter private RpcRegistry                  registry;
+	@Getter @Setter private Map<String, ExecutorService> pool    ;
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
+	
+	
+	public DefaultRpcExecutorFactory() {
+		this.pool = new ConcurrentHashMap<String, ExecutorService>();
+	}
+	
+	
+	// ~ ------------------------------------------------------------------------------------------------------------
 	
 	
 	@Override
 	public ExecutorService getExecutor(RpcMessage msg) {
-		String    rpcId        = msg.getBody().getRpcId(); 
-		Class<?>  rpcInterface = msg.getBody().getRpcInterface();
-		RpcMethod rpcMethod    = msg.getBody().getRpcMethod();
-		String key = registry.key(rpcId, rpcInterface, rpcMethod);
-		return getExecutor(key);
+		String          rpcId        = msg.getBody().getRpcId(); 
+		RpcMethod       rpcMethod    = msg.getBody().getRpcMethod();
+		Class<?>        rpcInterface = msg.getBody().getRpcInterface();
+		DefaultRpcEntry entry        = new DefaultRpcEntry(rpcId, rpcInterface, rpcMethod);
+		return getExecutor(entry);
 	}
 	
-	private ExecutorService getExecutor(String key) {
+	private ExecutorService getExecutor(RpcEntry queryEntry) {
+		String key = queryEntry.getKey();
 		ExecutorService es = pool.get(key);
 		if (es == null) {
 			synchronized (this) {
 				if (es == null) {
-					RpcEntry     entry     = registry.lookup(key);
+					RpcEntry     entry     = registry.lookup(queryEntry);
 					RpcParameter parameter = entry.getRpcParameter();
 					int          threads   = parameter.getRpcThreads() == 0 ? 1 : parameter.getRpcThreads();
 					int          queues    = parameter.getRpcQueues()  == 0 ? 1 : parameter.getRpcQueues() ;

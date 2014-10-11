@@ -15,6 +15,7 @@ import org.craft.atom.rpc.spi.RpcExecutorFactory;
 import org.craft.atom.rpc.spi.RpcInvoker;
 import org.craft.atom.rpc.spi.RpcProcessor;
 import org.craft.atom.rpc.spi.RpcProtocol;
+import org.craft.atom.rpc.spi.RpcRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,19 +50,21 @@ public class DefaultRpcServer implements RpcServer {
 		processor         = new DefaultRpcProcessor()      ;
 		invoker           = new DefaultRpcServerInvoker()  ;
 		executorFactory   = new DefaultRpcExecutorFactory();
-		registry          = RpcRegistry.getInstance()      ;
+		registry          = new DefaultRpcRegistry()       ;
 	}
 	
 	public void init() {
 		SocketAddress address = (host == null ? new InetSocketAddress(port) : new InetSocketAddress(host, port));
+		executorFactory.setRegistry(registry);
+		invoker.setRegistry(registry);
+		processor.setInvoker(invoker);
+		processor.setExecutorFactory(executorFactory);
 		acceptor .setProcessor(processor);
 		acceptor .setProtocol(protocol);
 		acceptor .setIoTimeoutInMillis(ioTimeoutInMillis);
-		acceptor.setConnections(connections);
+		acceptor .setConnections(connections);
 		acceptor .setAddress(address);
-		processor.setInvoker(invoker);
-		processor.setExecutorFactory(executorFactory);
-		LOG.debug("[CRAFT-ATOM-RPC] Rpc server init.");
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc server init complete.");
 	}
 	
 	
@@ -76,7 +79,7 @@ public class DefaultRpcServer implements RpcServer {
 			LOG.error("[CRAFT-ATOM-RPC] Rpc server start fail, exit!", e);
 			System.exit(0);
 		}
-		LOG.debug("[CRAFT-ATOM-RPC] Rpc server is serving, |host={}, port={}|.", host, port);
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc server is open for serving, |host={}, port={}|.", host, port);
 	}
 
 	@Override
@@ -102,14 +105,9 @@ public class DefaultRpcServer implements RpcServer {
 
 	@Override
 	public void export(String rpcId, Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
-		RpcEntry entry = new RpcEntry();
-		entry.setRpcInterface(rpcInterface);
-		entry.setRpcMethod(rpcMethod);
-		entry.setRpcObject(rpcObject);
-		entry.setRpcParameter(rpcParameter);
-		String key = registry.key(rpcId, rpcInterface, rpcMethod);
-		registry.register(key, entry);	
-		LOG.debug("[CRAFT-ATOM-RPC] Rpc server export, |key={}, entry={}|", key, entry);
+		DefaultRpcEntry entry = new DefaultRpcEntry(rpcId, rpcInterface, rpcMethod, rpcObject, rpcParameter);
+		registry.register(entry);	
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc server export, |entry={}|", entry);
 	}
 
 }

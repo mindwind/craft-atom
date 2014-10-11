@@ -12,6 +12,7 @@ import org.craft.atom.io.AbstractIoHandler;
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoConnector;
 import org.craft.atom.nio.api.NioFactory;
+import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.rpc.api.RpcClient;
 import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.api.RpcFactory;
@@ -316,6 +317,31 @@ public class TestRpc {
 		future = ctx.getFuture();
 		Assert.assertNull(future);
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test async. ", CaseCounter.incr(4)));
+	}
+	
+	@Test
+	public void testPartialExported() {
+		port = AvailablePortFinder.getNextAvailable(33333);
+		server = RpcFactory.newRpcServerBuilder(port).build();
+		server.open();
+		RpcMethod rpcMethod = new RpcMethod();
+		rpcMethod.setName("echo");
+		rpcMethod.setParameterTypes(new Class<?>[] { String.class });
+		server.export(DemoService.class, rpcMethod, new DemoServiceImpl1(), new RpcParameter(10, 100));
+		client = RpcFactory.newRpcClient(host, port);
+		client.open();
+		ds = client.refer(DemoService.class);
+		
+		String hi = ds.echo("hi");
+		Assert.assertEquals("hi", hi);
+		
+		try {
+			ds.noreturn("hello");
+			Assert.fail();
+		} catch (RpcException e) {
+			Assert.assertTrue(true);
+		}
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test partial exported. ", CaseCounter.incr(2)));
 	}
 	
 }

@@ -56,7 +56,7 @@ public class DefaultRpcClient implements RpcClient {
 		connector   .setRpcTimeoutInMillis(rpcTimeoutInMillis);
 		invoker     .setConnector(connector);
 		proxyFactory.setInvoker(invoker);
-		LOG.debug("[CRAFT-ATOM-RPC] Rpc client init.");
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc client init complete.");
 	}
 	
 	

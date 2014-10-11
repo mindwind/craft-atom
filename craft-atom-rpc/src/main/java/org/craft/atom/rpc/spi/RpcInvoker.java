@@ -32,4 +32,11 @@ public interface RpcInvoker {
 	 * @param connector
 	 */
 	void setConnector(RpcConnector connector);
+	
+	/**
+	 * Set rpc registry
+	 * 
+	 * @param registry
+	 */
+	void setRegistry(RpcRegistry registry);
 }

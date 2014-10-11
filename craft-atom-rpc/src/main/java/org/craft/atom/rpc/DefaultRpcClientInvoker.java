@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.spi.RpcConnector;
-import org.craft.atom.rpc.spi.RpcInvoker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +13,7 @@ import org.slf4j.LoggerFactory;
  * @author mindwind
  * @version 1.0, Aug 21, 2014
  */
-public class DefaultRpcClientInvoker implements RpcInvoker {
+public class DefaultRpcClientInvoker extends AbstractRpcInvoker {
 	
 	
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultRpcClientInvoker.class);
@@ -53,6 +52,5 @@ public class DefaultRpcClientInvoker implements RpcInvoker {
 		timeout = Integer.MAX_VALUE;
 		return timeout;
 	}
-
 	
 }

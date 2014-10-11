@@ -21,4 +21,11 @@ public interface RpcExecutorFactory {
 	 */
 	ExecutorService getExecutor(RpcMessage msg);
 	
+	/**
+	 * Set rpc registry
+	 * 
+	 * @param registry
+	 */
+	void setRegistry(RpcRegistry registry);
+	
 }

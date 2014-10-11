@@ -2,11 +2,16 @@ package org.craft.atom.rpc;
 
 import java.lang.reflect.Method;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.spi.RpcConnector;
+import org.craft.atom.rpc.spi.RpcEntry;
 import org.craft.atom.rpc.spi.RpcInvoker;
+import org.craft.atom.rpc.spi.RpcRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +27,7 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultRpcServerInvoker.class);
 	
 	
-	private RpcRegistry registry = RpcRegistry.getInstance();
+	@Getter @Setter private RpcRegistry registry;
 
 	
 	@Override
@@ -33,8 +38,7 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 		Class<?>[] paramTypes   = rpcMethod.getParameterTypes();
 		Object[]   params       = rpcMethod.getParameters();
 		String     methodName   = rpcMethod.getName();
-		String     key          = registry.key(rpcId, rpcInterface, rpcMethod);
-		RpcEntry   entry        = registry.lookup(key);
+		RpcEntry   entry        = registry.lookup(new DefaultRpcEntry(rpcId, rpcInterface, rpcMethod));
 		Object     rpcObject    = entry.getRpcObject();
 		
 		
