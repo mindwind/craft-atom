@@ -120,10 +120,13 @@ public class DefaultRpcProcessor implements RpcProcessor {
 				// Wait response
 				rsp = future.get(rpcTimeoutInMillis(req), TimeUnit.MILLISECONDS);
 			} catch (ExecutionException e) {
+				LOG.warn("[CRAFT-ATOM-RPC] Rpc server processor execute error", e);
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_ERROR, "server error"));
 			} catch (TimeoutException e) {
+				LOG.warn("[CRAFT-ATOM-RPC] Rpc server processor execute timeout", e);
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_TIMEOUT, "server timeout"));
 			} catch (Exception e) {
+				LOG.warn("[CRAFT-ATOM-RPC] Rpc server processor execute unknown error", e);
 				rsp = RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.UNKNOWN, "unknown error"));
 			}
 			
