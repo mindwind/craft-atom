@@ -22,9 +22,9 @@ import org.craft.atom.rpc.spi.RpcProtocol;
 public class DefaultRpcAcceptor implements RpcAcceptor {
 	
 	
-	@Getter         private int           ioTimeoutInMillis;
-	@Getter         private int           connections      ;
-	@Getter         private SocketAddress address          ;
+	@Getter @Setter private int           ioTimeoutInMillis;
+	@Getter @Setter private int           connections      ;
+	@Getter @Setter private SocketAddress address          ;
 	@Getter @Setter private RpcProcessor  processor        ;
 	@Getter @Setter private RpcProtocol   protocol         ;
 	@Getter @Setter private IoHandler     ioHandler        ;
@@ -49,21 +49,6 @@ public class DefaultRpcAcceptor implements RpcAcceptor {
 				               .dispatcher(new NioOrderedDirectChannelEventDispatcher())
 				               .build();
 		ioAcceptor.bind(address);
-	}
-
-	@Override
-	public void setAddress(SocketAddress address) {
-		this.address = address;
-	}
-
-	@Override
-	public void setIoTimeoutInMillis(int ioTimeoutInMillis) {
-		this.ioTimeoutInMillis = ioTimeoutInMillis;
-	}
-
-	@Override
-	public void setConnections(int connections) {
-		this.connections = connections;
 	}
 
 }
