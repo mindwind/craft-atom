@@ -20,7 +20,7 @@ public interface RpcServer {
 	void open();
 	
 	/**
-	 * Export rpc interface class. All the declared method in the interface are exposed.
+	 * Export rpc interface class. All the declared method in the interface are exported.
 	 * 
 	 * @param rpcInterface  exported rpc interface
 	 * @param rpcObject     implementor object of rpc interface
@@ -29,7 +29,7 @@ public interface RpcServer {
 	void export(Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter);
 	
 	/**
-	 * Export rpc interface class. Only the specific method in the interface is exposed.
+	 * Export rpc interface class. Only the specific method in the interface is exported.
 	 * 
 	 * @param rpcInterface exported rpc interface
 	 * @param rpcMethod    exported rpc method
@@ -39,7 +39,7 @@ public interface RpcServer {
 	void export(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter);
 	
 	/**
-	 * Export rpc interface class with specific id. All the declared method in the interface are exposed.
+	 * Export rpc interface class with specific id. All the declared method in the interface are exported.
 	 * 
 	 * @param rpcId         identifier for rpc interface, if the rpc interface has multiple implementor object, set different rpc id.
 	 * @param rpcInterface  exported rpc interface
@@ -49,7 +49,7 @@ public interface RpcServer {
 	void export(String rcpId, Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter);
 	
 	/**
-	 * Export rpc interface class with specific id. Only the specific method in the interface is exposed.
+	 * Export rpc interface class with specific id. Only the specific method in the interface is exported.
 	 * 
 	 * @param rpcId        identifier for rpc interface, if the rpc interface has multiple implementor object, set different rpc id.
 	 * @param rpcInterface exported rpc interface
