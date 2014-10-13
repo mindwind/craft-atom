@@ -1,4 +1,4 @@
-package org.craft.atom.util;
+package org.craft.atom.util.thread;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -9,12 +9,10 @@ import lombok.ToString;
  * A named thread factory implementor.<br>
  * When using thread pool with your own named thread is a better practice.
  * 
- * @deprecated use {@link org.craft.atom.util.thread.NamedThreadFactory} replace this, would be removed in next major version release.
  * @author  mindwind
  * @version 1.0, Nov 19, 2012
  */
 @ToString
-@Deprecated
 public class NamedThreadFactory implements ThreadFactory {
 	
 	

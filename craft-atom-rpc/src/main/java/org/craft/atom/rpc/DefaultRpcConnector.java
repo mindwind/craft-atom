@@ -24,7 +24,7 @@ import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.spi.RpcChannel;
 import org.craft.atom.rpc.spi.RpcConnector;
 import org.craft.atom.rpc.spi.RpcProtocol;
-import org.craft.atom.util.NamedThreadFactory;
+import org.craft.atom.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -16,7 +16,7 @@ import org.craft.atom.rpc.api.RpcParameter;
 import org.craft.atom.rpc.spi.RpcApi;
 import org.craft.atom.rpc.spi.RpcExecutorFactory;
 import org.craft.atom.rpc.spi.RpcRegistry;
-import org.craft.atom.util.NamedThreadFactory;
+import org.craft.atom.util.thread.NamedThreadFactory;
 
 /**
  * @author mindwind
@@ -45,8 +45,8 @@ public class DefaultRpcExecutorFactory implements RpcExecutorFactory {
 		String          rpcId        = msg.getBody().getRpcId(); 
 		RpcMethod       rpcMethod    = msg.getBody().getRpcMethod();
 		Class<?>        rpcInterface = msg.getBody().getRpcInterface();
-		DefaultRpcApi entry        = new DefaultRpcApi(rpcId, rpcInterface, rpcMethod);
-		return getExecutor(entry);
+		DefaultRpcApi   api          = new DefaultRpcApi(rpcId, rpcInterface, rpcMethod);
+		return getExecutor(api);
 	}
 	
 	private ExecutorService getExecutor(RpcApi queryApi) {
