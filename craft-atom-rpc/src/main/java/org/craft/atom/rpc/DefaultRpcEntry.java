@@ -53,4 +53,10 @@ public class DefaultRpcEntry implements RpcEntry {
 		}
 	}
 
+	@Override
+	public String getName() {
+		String format = "{rpc-id=%s, rpc-interface=%s, rpc-method-name=%s, rpc-method-parameter-types=%s, rpc-object=%s, rpc-parameter=%s}";
+		return String.format(format, rpcId, rpcInterface.getName(), rpcMethod.getName(), rpcMethod.getParameterTypes().toString(), rpcObject.toString(), rpcParameter.toString());
+	}
+
 }

@@ -11,9 +11,14 @@ import org.craft.atom.rpc.api.RpcParameter;
 public interface RpcEntry {
 
 	/**
-	 * @return rpc entry key
+	 * @return rpc entry key.
 	 */
 	String getKey();
+	
+	/**
+	 * @return rpc entry name.
+	 */
+	String getName();
 	
 	/**
 	 * @return implementor object of rpc interface
