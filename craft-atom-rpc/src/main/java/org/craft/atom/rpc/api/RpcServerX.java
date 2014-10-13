@@ -18,22 +18,22 @@ public interface RpcServerX {
 	int connectionCount();
 	
 	/**
-	 * @return rpc api set.
+	 * @return rpc api collection.
 	 */
 	Set<RpcApi> apis();
 	
 	/**
-	 * @return wait request count of the rpc api.
+	 * @return the approximate wait request count of the rpc api.
 	 */
 	int waitCount(RpcApi api);
 	
 	/**
-	 * @return processing request count of the rpc api.
+	 * @return the approximate processing request count of the rpc api.
 	 */
 	int processingCount(RpcApi api);
 	
 	/**
-	 * @return complete request count of the rpc api.
+	 * @return the approximate complete request count of the rpc api.
 	 */
-	int completeCount(RpcApi api);
+	long completeCount(RpcApi api);
 }

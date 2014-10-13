@@ -165,7 +165,6 @@ public class DefaultRpcProcessor implements RpcProcessor {
 			} catch (Exception e) {
 				LOG.warn("[CRAFT-ATOM-RPC] Rpc server processor write back rpc response fail", e);
 			}
-			
 		}
 	}
 

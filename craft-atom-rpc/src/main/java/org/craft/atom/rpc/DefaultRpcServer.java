@@ -3,6 +3,9 @@ package org.craft.atom.rpc;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +13,9 @@ import lombok.Setter;
 import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.rpc.api.RpcParameter;
 import org.craft.atom.rpc.api.RpcServer;
+import org.craft.atom.rpc.api.RpcServerX;
 import org.craft.atom.rpc.spi.RpcAcceptor;
+import org.craft.atom.rpc.spi.RpcApi;
 import org.craft.atom.rpc.spi.RpcExecutorFactory;
 import org.craft.atom.rpc.spi.RpcInvoker;
 import org.craft.atom.rpc.spi.RpcProcessor;
@@ -108,6 +113,23 @@ public class DefaultRpcServer implements RpcServer {
 		DefaultRpcApi entry = new DefaultRpcApi(rpcId, rpcInterface, rpcMethod, rpcObject, rpcParameter);
 		registry.register(entry);	
 		LOG.debug("[CRAFT-ATOM-RPC] Rpc server export, |entry={}|", entry);
+	}
+
+	@Override
+	public RpcServerX x() {
+		DefaultRpcServerX x = new DefaultRpcServerX();
+		Set<RpcApi> apis = registry.apis();
+		x.setApis(apis);
+		x.setConnectionCount(acceptor.connectionCount());
+		Map<String, long[]> counts = new HashMap<String, long[]>();
+		for (RpcApi api : apis) {
+			int wc = processor.waitCount(api);
+			int pc = processor.processingCount(api);
+			long cc = processor.completeCount(api);
+			counts.put(api.getKey(), new long[] {wc, pc, cc});
+		}
+		x.setCounts(counts);
+		return x;
 	}
 
 }

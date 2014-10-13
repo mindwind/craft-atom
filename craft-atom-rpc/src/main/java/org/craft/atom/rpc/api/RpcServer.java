@@ -11,7 +11,7 @@ import org.craft.atom.protocol.rpc.model.RpcMethod;
  * @author mindwind
  * @version 1.0, Jul 30, 2014
  */
-public interface RpcServer {
+public interface RpcServer extends RpcServerMBean {
 	
 	/**
 	 * Open the rpc server and get things going.

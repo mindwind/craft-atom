@@ -1,6 +1,5 @@
 package org.craft.atom.rpc.spi;
 
-import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.util.thread.MonitoringExecutorService;
 
 /**
