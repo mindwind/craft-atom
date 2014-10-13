@@ -49,14 +49,14 @@ public class DefaultRpcExecutorFactory implements RpcExecutorFactory {
 		return getExecutor(entry);
 	}
 	
-	private ExecutorService getExecutor(RpcApi queryEntry) {
-		String key = queryEntry.getKey();
+	private ExecutorService getExecutor(RpcApi queryApi) {
+		String key = queryApi.getKey();
 		ExecutorService es = pool.get(key);
 		if (es == null) {
 			synchronized (this) {
 				if (es == null) {
-					RpcApi     entry     = registry.lookup(queryEntry);
-					RpcParameter parameter = entry.getRpcParameter();
+					RpcApi       api       = registry.lookup(queryApi);
+					RpcParameter parameter = api.getRpcParameter();
 					int          threads   = parameter.getRpcThreads() == 0 ? 1 : parameter.getRpcThreads();
 					int          queues    = parameter.getRpcQueues()  == 0 ? 1 : parameter.getRpcQueues() ;
 					ThreadPoolExecutor tpe = new RpcThreadPoolExecutor(threads, threads, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(queues), new NamedThreadFactory("craft-atom-rpc"));
