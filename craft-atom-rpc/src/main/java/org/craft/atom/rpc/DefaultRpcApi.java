@@ -38,7 +38,9 @@ public final class DefaultRpcApi implements RpcApi, Comparable<RpcApi> {
 	}
 	
 	public DefaultRpcApi(String rpcId, Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
-		this(rpcId, rpcInterface, rpcMethod);
+		this.rpcId        = rpcId       ;
+		this.rpcInterface = rpcInterface;
+		this.rpcMethod    = rpcMethod   ;
 		this.rpcObject    = rpcObject   ;
 		this.rpcParameter = rpcParameter;
 		this.key          = key()       ;
@@ -59,7 +61,7 @@ public final class DefaultRpcApi implements RpcApi, Comparable<RpcApi> {
 
 	private String name() {
 		String format = "{rpc-id=%s, rpc-interface=%s, rpc-method-name=%s, rpc-method-parameter-types=%s, rpc-object=%s, rpc-parameter=%s}";
-		return String.format(format, rpcId, rpcInterface.getName(), rpcMethod.getName(), rpcMethod.getParameterTypes().toString(), rpcObject.toString(), rpcParameter.toString());
+		return String.format(format, rpcId, rpcInterface.getName(), rpcMethod.getName(), rpcMethod.getParameterTypes(), rpcObject, rpcParameter);
 	}
 
 	@Override

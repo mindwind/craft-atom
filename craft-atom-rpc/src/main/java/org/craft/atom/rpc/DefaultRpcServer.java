@@ -110,9 +110,9 @@ public class DefaultRpcServer implements RpcServer {
 
 	@Override
 	public void export(String rpcId, Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
-		DefaultRpcApi entry = new DefaultRpcApi(rpcId, rpcInterface, rpcMethod, rpcObject, rpcParameter);
-		registry.register(entry);	
-		LOG.debug("[CRAFT-ATOM-RPC] Rpc server export, |entry={}|", entry);
+		DefaultRpcApi api = new DefaultRpcApi(rpcId, rpcInterface, rpcMethod, rpcObject, rpcParameter);
+		registry.register(api);	
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc server export, |entry={}|", api);
 	}
 
 	@Override
