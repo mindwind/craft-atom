@@ -1,5 +1,7 @@
 package org.craft.atom.rpc.spi;
 
+import java.util.Set;
+
 
 /**
  * RPC registry
@@ -30,4 +32,9 @@ public interface RpcRegistry {
 	 * @return result rpc api.
 	 */
 	RpcApi lookup(RpcApi api);
+	
+	/**
+	 * @return all registered rpc apis.
+	 */
+	Set<RpcApi> apis();
 }

@@ -1,6 +1,9 @@
 package org.craft.atom.rpc;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.craft.atom.rpc.spi.RpcApi;
@@ -31,6 +34,12 @@ public class DefaultRpcRegistry implements RpcRegistry {
 	@Override
 	public RpcApi lookup(RpcApi api) {
 		return registry.get(api.getKey());
+	}
+
+	@Override
+	public Set<RpcApi> apis() {
+		Set<RpcApi> apis = new TreeSet<RpcApi>(registry.values());
+		return Collections.unmodifiableSet(apis);
 	}
 	
 }
