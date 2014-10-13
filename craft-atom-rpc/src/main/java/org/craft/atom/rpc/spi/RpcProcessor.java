@@ -37,4 +37,19 @@ public interface RpcProcessor {
 	 */
 	void setExecutorFactory(RpcExecutorFactory executorFactory);
 	
+	/**
+	 * @return the approximate wait request count of the rpc api.
+	 */
+	int waitCount(RpcApi api);
+	
+	/**
+	 * @return the approximate processing request count of the rpc api.
+	 */
+	int processingCount(RpcApi api);
+	
+	/**
+	 * @return the approximate complete request count of the rpc api.
+	 */
+	long completeCount(RpcApi api);
+	
 }

@@ -1,8 +1,7 @@
 package org.craft.atom.rpc.spi;
 
-import java.util.concurrent.ExecutorService;
-
 import org.craft.atom.protocol.rpc.model.RpcMessage;
+import org.craft.atom.util.thread.MonitoringExecutorService;
 
 /**
  * RPC executor factory provides method for getting or creating <code>ExecutorService</code> instance.
@@ -16,10 +15,10 @@ public interface RpcExecutorFactory {
 	/**
 	 * Get a new (or reusable) executor service.
 	 * 
-	 * @param  msg
+	 * @param  api
 	 * @return executor
 	 */
-	ExecutorService getExecutor(RpcMessage msg);
+	MonitoringExecutorService getExecutor(RpcApi api);
 	
 	/**
 	 * Set rpc registry

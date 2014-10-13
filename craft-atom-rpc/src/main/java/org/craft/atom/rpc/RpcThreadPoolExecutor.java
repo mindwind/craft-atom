@@ -2,14 +2,15 @@ package org.craft.atom.rpc;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import org.craft.atom.util.thread.MonitoringThreadPoolExecutor;
 
 /**
  * @author mindwind
  * @version 1.0, Sep 9, 2014
  */
-public class RpcThreadPoolExecutor extends ThreadPoolExecutor {
+public class RpcThreadPoolExecutor extends MonitoringThreadPoolExecutor {
 
 	
 	public RpcThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory) {

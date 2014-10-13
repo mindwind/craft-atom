@@ -13,10 +13,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.craft.atom.protocol.rpc.model.RpcMessage;
+import org.craft.atom.protocol.rpc.model.RpcMethod;
+import org.craft.atom.rpc.spi.RpcApi;
 import org.craft.atom.rpc.spi.RpcChannel;
 import org.craft.atom.rpc.spi.RpcExecutorFactory;
 import org.craft.atom.rpc.spi.RpcInvoker;
 import org.craft.atom.rpc.spi.RpcProcessor;
+import org.craft.atom.util.thread.MonitoringExecutorService;
 import org.craft.atom.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +60,8 @@ public class DefaultRpcProcessor implements RpcProcessor {
 			return;
 		}
 		
-		ExecutorService executor = executor(req);
+		RpcApi api = api(req);
+		MonitoringExecutorService executor = executor(api);
 		try {
 			executor.execute(new ProcessTask(req, channel));
 		} catch (RejectedExecutionException e) {
@@ -83,8 +87,33 @@ public class DefaultRpcProcessor implements RpcProcessor {
 		return timeout;
 	}
 	
-	private ExecutorService executor(RpcMessage msg) {
-		return executorFactory.getExecutor(msg);
+	private MonitoringExecutorService executor(RpcApi api) {
+		return executorFactory.getExecutor(api);
+	}
+	
+	private RpcApi api(RpcMessage msg) {
+		String          rpcId        = msg.getBody().getRpcId(); 
+		RpcMethod       rpcMethod    = msg.getBody().getRpcMethod();
+		Class<?>        rpcInterface = msg.getBody().getRpcInterface();
+		DefaultRpcApi   api          = new DefaultRpcApi(rpcId, rpcInterface, rpcMethod);
+		return api;
+	}
+	
+	@Override
+	public int waitCount(RpcApi api) {
+		return executor(api).waitCount();
+	}
+
+
+	@Override
+	public int processingCount(RpcApi api) {
+		return executor(api).executingCount();
+	}
+
+
+	@Override
+	public long completeCount(RpcApi api) {
+		return executor(api).completeCount();
 	}
 	
 	
@@ -139,5 +168,6 @@ public class DefaultRpcProcessor implements RpcProcessor {
 			
 		}
 	}
+
 
 }
