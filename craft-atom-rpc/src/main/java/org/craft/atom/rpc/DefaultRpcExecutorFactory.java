@@ -13,7 +13,7 @@ import lombok.Setter;
 import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.rpc.api.RpcParameter;
-import org.craft.atom.rpc.spi.RpcEntry;
+import org.craft.atom.rpc.spi.RpcApi;
 import org.craft.atom.rpc.spi.RpcExecutorFactory;
 import org.craft.atom.rpc.spi.RpcRegistry;
 import org.craft.atom.util.NamedThreadFactory;
@@ -45,17 +45,17 @@ public class DefaultRpcExecutorFactory implements RpcExecutorFactory {
 		String          rpcId        = msg.getBody().getRpcId(); 
 		RpcMethod       rpcMethod    = msg.getBody().getRpcMethod();
 		Class<?>        rpcInterface = msg.getBody().getRpcInterface();
-		DefaultRpcEntry entry        = new DefaultRpcEntry(rpcId, rpcInterface, rpcMethod);
+		DefaultRpcApi entry        = new DefaultRpcApi(rpcId, rpcInterface, rpcMethod);
 		return getExecutor(entry);
 	}
 	
-	private ExecutorService getExecutor(RpcEntry queryEntry) {
+	private ExecutorService getExecutor(RpcApi queryEntry) {
 		String key = queryEntry.getKey();
 		ExecutorService es = pool.get(key);
 		if (es == null) {
 			synchronized (this) {
 				if (es == null) {
-					RpcEntry     entry     = registry.lookup(queryEntry);
+					RpcApi     entry     = registry.lookup(queryEntry);
 					RpcParameter parameter = entry.getRpcParameter();
 					int          threads   = parameter.getRpcThreads() == 0 ? 1 : parameter.getRpcThreads();
 					int          queues    = parameter.getRpcQueues()  == 0 ? 1 : parameter.getRpcQueues() ;

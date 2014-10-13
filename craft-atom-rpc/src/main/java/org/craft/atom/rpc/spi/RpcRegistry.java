@@ -10,24 +10,24 @@ package org.craft.atom.rpc.spi;
 public interface RpcRegistry {
 
 	/**
-	 * Register a entry.
+	 * Register a rpc api.
 	 * 
-	 * @param entry
+	 * @param api
 	 */
-	void register(RpcEntry entry);
+	void register(RpcApi api);
 	
 	/**
-	 * Unregister a entry.
+	 * Unregister a rpc api.
 	 * 
-	 * @param entry
+	 * @param api
 	 */
-	void unregister(RpcEntry entry);
+	void unregister(RpcApi api);
 	
 	/**
-	 * Lookup a rpc entry by the entry key.
+	 * Lookup a rpc api.
 	 * 
-	 * @param  entry query entry
-	 * @return result entry
+	 * @param  api query api object
+	 * @return result rpc api.
 	 */
-	RpcEntry lookup(RpcEntry entry);
+	RpcApi lookup(RpcApi api);
 }

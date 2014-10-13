@@ -3,20 +3,20 @@ package org.craft.atom.rpc.spi;
 import org.craft.atom.rpc.api.RpcParameter;
 
 /**
- * RPC entry, used by {@link RpcRegistry} to encapsulate exported remote API.
+ * RPC api object, used by {@link RpcRegistry} to encapsulate exported remote API.
  * 
  * @author mindwind
  * @version 1.0, Oct 11, 2014
  */
-public interface RpcEntry {
+public interface RpcApi {
 
 	/**
-	 * @return rpc entry key.
+	 * @return rpc api key.
 	 */
 	String getKey();
 	
 	/**
-	 * @return rpc entry name.
+	 * @return rpc api name.
 	 */
 	String getName();
 	

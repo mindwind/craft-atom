@@ -6,14 +6,14 @@ import lombok.ToString;
 
 import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.rpc.api.RpcParameter;
-import org.craft.atom.rpc.spi.RpcEntry;
+import org.craft.atom.rpc.spi.RpcApi;
 
 /**
  * @author mindwind
  * @version 1.0, Aug 12, 2014
  */
 @ToString
-public class DefaultRpcEntry implements RpcEntry {
+public class DefaultRpcApi implements RpcApi {
 	
 	
 	@Getter @Setter private String       rpcId       ;
@@ -26,15 +26,15 @@ public class DefaultRpcEntry implements RpcEntry {
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
 	
-	public DefaultRpcEntry() {}
+	public DefaultRpcApi() {}
 	
-	public DefaultRpcEntry(String rpcId, Class<?> rpcInterface, RpcMethod rpcMethod) {
+	public DefaultRpcApi(String rpcId, Class<?> rpcInterface, RpcMethod rpcMethod) {
 		this.rpcId        = rpcId       ;
 		this.rpcInterface = rpcInterface;
 		this.rpcMethod    = rpcMethod   ;
 	}
 	
-	public DefaultRpcEntry(String rpcId, Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
+	public DefaultRpcApi(String rpcId, Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
 		this(rpcId, rpcInterface, rpcMethod);
 		this.rpcObject    = rpcObject   ;
 		this.rpcParameter = rpcParameter;

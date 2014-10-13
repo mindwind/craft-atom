@@ -9,7 +9,7 @@ import org.craft.atom.protocol.rpc.model.RpcMessage;
 import org.craft.atom.protocol.rpc.model.RpcMethod;
 import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.spi.RpcConnector;
-import org.craft.atom.rpc.spi.RpcEntry;
+import org.craft.atom.rpc.spi.RpcApi;
 import org.craft.atom.rpc.spi.RpcInvoker;
 import org.craft.atom.rpc.spi.RpcRegistry;
 import org.slf4j.Logger;
@@ -38,8 +38,8 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 		Class<?>[] paramTypes   = rpcMethod.getParameterTypes();
 		Object[]   params       = rpcMethod.getParameters();
 		String     methodName   = rpcMethod.getName();
-		RpcEntry   entry        = registry.lookup(new DefaultRpcEntry(rpcId, rpcInterface, rpcMethod));
-		Object     rpcObject    = entry.getRpcObject();
+		RpcApi service      = registry.lookup(new DefaultRpcApi(rpcId, rpcInterface, rpcMethod));
+		Object     rpcObject    = service.getRpcObject();
 		
 		
 		try {

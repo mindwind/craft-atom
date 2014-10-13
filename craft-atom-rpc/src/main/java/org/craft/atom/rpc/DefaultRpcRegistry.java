@@ -3,7 +3,7 @@ package org.craft.atom.rpc;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.craft.atom.rpc.spi.RpcEntry;
+import org.craft.atom.rpc.spi.RpcApi;
 import org.craft.atom.rpc.spi.RpcRegistry;
 
 /**
@@ -15,22 +15,22 @@ import org.craft.atom.rpc.spi.RpcRegistry;
 public class DefaultRpcRegistry implements RpcRegistry {
 	
 	
-	private Map<String, RpcEntry> registry = new ConcurrentHashMap<String, RpcEntry>();
+	private Map<String, RpcApi> registry = new ConcurrentHashMap<String, RpcApi>();
 	
 
 	@Override
-	public void register(RpcEntry entry) {
-		registry.put(entry.getKey(), entry);
+	public void register(RpcApi api) {
+		registry.put(api.getKey(), api);
 	}
 
 	@Override
-	public void unregister(RpcEntry entry) {
-		registry.remove(entry.getKey());
+	public void unregister(RpcApi api) {
+		registry.remove(api.getKey());
 	}
 
 	@Override
-	public RpcEntry lookup(RpcEntry entry) {
-		return registry.get(entry.getKey());
+	public RpcApi lookup(RpcApi api) {
+		return registry.get(api.getKey());
 	}
 	
 }
