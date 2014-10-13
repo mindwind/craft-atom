@@ -56,4 +56,9 @@ public interface RpcAcceptor {
 	 */
 	void setConnections(int connections);
 	
+	/**
+	 * @return current connection count of the acceptor.
+	 */
+	int connectionCount();
+	
 }

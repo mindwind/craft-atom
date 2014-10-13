@@ -51,4 +51,10 @@ public class DefaultRpcAcceptor implements RpcAcceptor {
 		ioAcceptor.bind(address);
 	}
 
+
+	@Override
+	public int connectionCount() {
+		return ioAcceptor.x().getAliveChannels().size();
+	}
+
 }
