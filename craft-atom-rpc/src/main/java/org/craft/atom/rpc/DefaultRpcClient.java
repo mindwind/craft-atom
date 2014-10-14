@@ -86,7 +86,9 @@ public class DefaultRpcClient implements RpcClient {
 
 	@Override
 	public RpcClientX x() {
-		return null;
+		DefaultRpcClientX x = new DefaultRpcClientX();
+		x.setWaitCount(connector.waitCount());
+		return x;
 	}
 
 }

@@ -16,6 +16,7 @@ import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoConnector;
 import org.craft.atom.nio.api.NioFactory;
 import org.craft.atom.rpc.api.RpcClient;
+import org.craft.atom.rpc.api.RpcClientX;
 import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.api.RpcFactory;
 import org.craft.atom.rpc.api.RpcParameter;
@@ -359,6 +360,15 @@ public class TestRpc {
 			}
 		}
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test server x. ", CaseCounter.incr(4)));
+	}
+	
+	@Test
+	public void testClientX() {
+		ds.echo("hi");
+		RpcClientX x = client.x();
+		int wc = x.waitCount();
+		Assert.assertEquals(0, wc);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test client x. ", CaseCounter.incr(1)));
 	}
 	
 	@Test
