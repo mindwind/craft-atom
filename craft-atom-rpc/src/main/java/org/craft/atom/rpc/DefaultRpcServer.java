@@ -99,24 +99,21 @@ public class DefaultRpcServer implements RpcServer {
 	}
 
 	@Override
-	public void export(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
-		export(null, rpcInterface, rpcMethod, rpcObject, rpcParameter);
+	public void export(Class<?> rpcInterface, String rpcMethodName, Class<?>[] rpcMethodParameterTypes, Object rpcObject, RpcParameter rpcParameter) {
+		export(null, rpcInterface, rpcMethodName, rpcMethodParameterTypes, rpcObject, rpcParameter);
 	}
 
 	@Override
 	public void export(String rpcId, Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter) {
 		Method[] methods = rpcInterface.getMethods();
 		for (Method method : methods) {
-			RpcMethod rpcMethod = new RpcMethod();
-			rpcMethod.setName(method.getName());
-			rpcMethod.setParameterTypes(method.getParameterTypes());
-			export(rpcId, rpcInterface, rpcMethod, rpcObject, rpcParameter);
+			export(rpcId, rpcInterface, method.getName(), method.getParameterTypes(), rpcObject, rpcParameter);
 		}
 	}
 
 	@Override
-	public void export(String rpcId, Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter) {
-		DefaultRpcApi api = new DefaultRpcApi(rpcId, rpcInterface, rpcMethod, rpcObject, rpcParameter);
+	public void export(String rpcId, Class<?> rpcInterface, String rpcMethodName, Class<?>[] rpcMethodParameterTypes, Object rpcObject, RpcParameter rpcParameter) {
+		DefaultRpcApi api = new DefaultRpcApi(rpcId, rpcInterface, new RpcMethod(rpcMethodName, rpcMethodParameterTypes), rpcObject, rpcParameter);
 		registry.register(api);	
 		LOG.debug("[CRAFT-ATOM-RPC] Rpc server export, |api={}|", api);
 	}

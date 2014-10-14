@@ -1,6 +1,5 @@
 package org.craft.atom.rpc.api;
 
-import org.craft.atom.protocol.rpc.model.RpcMethod;
 
 /**
  * RPC server.
@@ -36,12 +35,13 @@ public interface RpcServer extends RpcServerMBean {
 	/**
 	 * Export rpc interface class. Only the specific method in the interface is exported.
 	 * 
-	 * @param rpcInterface exported rpc interface
-	 * @param rpcMethod    exported rpc method
-	 * @param rpcObject    implementor object of rpc interface
-	 * @param rpcParameter behavioral parameter
+	 * @param rpcInterface            exported rpc interface
+	 * @param rpcMethodName           exported rpc method name
+	 * @param rpcMethodParameterTypes exported rpc method parameter types
+	 * @param rpcObject               implementor object of rpc interface
+	 * @param rpcParameter            behavioral parameter
 	 */
-	void export(Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter);
+	void export(Class<?> rpcInterface, String rpcMethodName, Class<?>[] rpcMethodParameterTypes, Object rpcObject, RpcParameter rpcParameter);
 	
 	/**
 	 * Export rpc interface class with specific id. All the declared method in the interface are exported.
@@ -56,12 +56,13 @@ public interface RpcServer extends RpcServerMBean {
 	/**
 	 * Export rpc interface class with specific id. Only the specific method in the interface is exported.
 	 * 
-	 * @param rpcId        identifier for rpc interface, if the rpc interface has multiple implementor object, set different rpc id.
-	 * @param rpcInterface exported rpc interface
-	 * @param rpcMethod    exported rpc method
-	 * @param rpcObject    implementor object of rpc interface
-	 * @param rpcParameter behavioral parameter
+	 * @param rpcId                   identifier for rpc interface, if the rpc interface has multiple implementor object, set different rpc id.
+	 * @param rpcInterface            exported rpc interface
+	 * @param rpcMethodName           exported rpc method name
+	 * @param rpcMethodParameterTypes exported rpc method parameter types
+	 * @param rpcObject               implementor object of rpc interface
+	 * @param rpcParameter            behavioral parameter
 	 */
-	void export(String rpcId, Class<?> rpcInterface, RpcMethod rpcMethod, Object rpcObject, RpcParameter rpcParameter);
+	void export(String rpcId, Class<?> rpcInterface, String rpcMethodName, Class<?>[] rpcMethodParameterTypes, Object rpcObject, RpcParameter rpcParameter);
 
 }
