@@ -80,6 +80,7 @@ public class DefaultRpcClient implements RpcClient {
 	@Override
 	public void close() {
 		connector.close();
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc client closed.");
 	}
 
 }

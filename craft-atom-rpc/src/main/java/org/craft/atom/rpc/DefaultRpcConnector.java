@@ -110,8 +110,8 @@ public class DefaultRpcConnector implements RpcConnector {
 		brokeAll();
 		channels.clear();
 		ioConnector.shutdown();
-		hbScheduler.shutdownNow();
 		reconnectExecutor.shutdownNow();
+		if (hbScheduler != null) { hbScheduler.shutdownNow(); }
 	}
 	
 	@Override

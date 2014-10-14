@@ -1,6 +1,8 @@
 package org.craft.atom.rpc;
 
+import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
@@ -357,6 +359,18 @@ public class TestRpc {
 			}
 		}
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test server x. ", CaseCounter.incr(4)));
+	}
+	
+	@Test
+	public void testClose() throws UnknownHostException, IOException {
+		client.close();
+		server.close();
+		try {
+			new Socket(host, port);
+		} catch (IOException e) {
+			Assert.assertTrue(true);
+		}
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test close. ", CaseCounter.incr(1)));
 	}
 	
 }

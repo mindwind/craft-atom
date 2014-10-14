@@ -91,6 +91,7 @@ public class DefaultRpcServer implements RpcServer {
 	public void close() {
 		acceptor.close();
 		processor.close();
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc server closed");
 	}
 
 	@Override
