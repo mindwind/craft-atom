@@ -9,9 +9,10 @@ import org.craft.atom.rpc.RpcException;
 /**
  * RPC connector.
  * <p>
- * Connects to rpc server, communicates with the server.
- * Hold and keep long-lived connections.
+ * Connects to rpc server,  use {@link RpcChannel} to communicate with rpc server.
+ * Holds and keep long-lived connections.
  * 
+ * @see RpcChannel
  * @author mindwind
  * @version 1.0, Aug 14, 2014
  */
@@ -88,5 +89,10 @@ public interface RpcConnector {
 	 * @return global rpc timeout in millisecond
 	 */
 	int getRpcTimeoutInMillis();
+	
+	/**
+	 * @return the approximate wait to be sent request count.
+	 */
+	int waitCount();
 	
 }

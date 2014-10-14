@@ -23,7 +23,7 @@ public interface RpcServerX {
 	Set<RpcApi> apis();
 	
 	/**
-	 * @return the approximate wait request count of the rpc api.
+	 * @return the approximate wait to be handle request count of the rpc api.
 	 */
 	int waitCount(RpcApi api);
 	

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.craft.atom.rpc.api.RpcClient;
+import org.craft.atom.rpc.api.RpcClientX;
 import org.craft.atom.rpc.spi.RpcConnector;
 import org.craft.atom.rpc.spi.RpcInvoker;
 import org.craft.atom.rpc.spi.RpcProtocol;
@@ -81,6 +82,11 @@ public class DefaultRpcClient implements RpcClient {
 	public void close() {
 		connector.close();
 		LOG.debug("[CRAFT-ATOM-RPC] Rpc client closed.");
+	}
+
+	@Override
+	public RpcClientX x() {
+		return null;
 	}
 
 }

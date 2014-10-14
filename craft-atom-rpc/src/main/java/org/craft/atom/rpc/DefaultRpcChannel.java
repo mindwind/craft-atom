@@ -91,5 +91,9 @@ public class DefaultRpcChannel implements RpcChannel {
 			future.setException(e);
 		}
 	}
+	
+	int waitCount() {
+		return channel.getWriteQueue().size();
+	}
 
 }

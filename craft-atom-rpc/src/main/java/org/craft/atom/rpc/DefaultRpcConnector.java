@@ -230,6 +230,15 @@ public class DefaultRpcConnector implements RpcConnector {
 		this.protocol    = protocol;
 	}
 	
+	@Override
+	public int waitCount() {
+		int wc = 0;
+		for (DefaultRpcChannel ch : channels.values()) {
+			wc += ch.waitCount();
+		}
+		return wc;
+	}
+	
 	
 	// ~ ----------------------------------------------------------------------------------------------------- for test
 	

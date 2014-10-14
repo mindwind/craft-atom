@@ -11,7 +11,7 @@ import org.craft.atom.rpc.RpcException;
  * @author mindwind
  * @version 1.0, Aug 4, 2014
  */
-public interface RpcClient {
+public interface RpcClient extends RpcClientMBean {
 
 	/**
 	 * Refer the rpc api proxy instance which implements the specific rpc interface.

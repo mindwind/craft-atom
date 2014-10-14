@@ -6,7 +6,7 @@ import java.net.SocketAddress;
 /**
  * RPC acceptor.
  * <p>
- * Accepts incoming rpc requests, use {@link RpcChannel} communicates with remote another peer.
+ * Accepts incoming rpc requests, use {@link RpcChannel} to communicate with rpc client.
  * 
  * @see RpcChannel
  * @author mindwind
