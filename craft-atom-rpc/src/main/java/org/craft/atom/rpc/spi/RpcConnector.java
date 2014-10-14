@@ -34,7 +34,7 @@ public interface RpcConnector {
 	boolean disconnect(long connectionId);
 	
 	/**
-	 * Close itsself and release all the connecitons.
+	 * Close itself and release all the resources.
 	 */
 	void close();
 	

@@ -23,14 +23,14 @@ public interface RpcClient {
 	
 	/**
 	 * Open the client, connect to rpc server for communicating.
-	 *  Just invoke this once.
+	 * Just invoke this once.
 	 *
 	 * @throws RpcException If some other rpc error occurs
 	 */
 	void open() throws RpcException;
 	
 	/**
-	 * Close the client, disconnect all the connections.
+	 * Close the client, disconnect all the connections and dispose all other resources.
 	 */
 	void close();
 	
