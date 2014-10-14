@@ -120,6 +120,31 @@ public class DefaultRpcServer implements RpcServer {
 	}
 
 	@Override
+	public void unexport(Class<?> rpcInterface) {
+		unexport(null, rpcInterface);
+	}
+
+	@Override
+	public void unexport(Class<?> rpcInterface, String rpcMethodName, Class<?>[] rpcMethodParameterTypes) {
+		unexport(null, rpcInterface);
+	}
+
+	@Override
+	public void unexport(String rpcId, Class<?> rpcInterface) {
+		Method[] methods = rpcInterface.getMethods();
+		for (Method method : methods) {
+			unexport(rpcId, rpcInterface, method.getName(), method.getParameterTypes());
+		}
+	}
+
+	@Override
+	public void unexport(String rpcId, Class<?> rpcInterface, String rpcMethodName, Class<?>[] rpcMethodParameterTypes) {
+		DefaultRpcApi api = new DefaultRpcApi(rpcId, rpcInterface, new RpcMethod(rpcMethodName, rpcMethodParameterTypes));
+		registry.unregister(api);
+		LOG.debug("[CRAFT-ATOM-RPC] Rpc server unexport, |api={}|", api);
+	}
+	
+	@Override
 	public RpcServerX x() {
 		DefaultRpcServerX x = new DefaultRpcServerX();
 		Set<RpcApi> apis = registry.apis();

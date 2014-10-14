@@ -24,7 +24,7 @@ public interface RpcServer extends RpcServerMBean {
 	void close();
 	
 	/**
-	 * Export rpc interface class. All the declared method in the interface are exported.
+	 * Export rpc interface. All the declared method in the interface are exported.
 	 * 
 	 * @param rpcInterface  exported rpc interface
 	 * @param rpcObject     implementor object of rpc interface
@@ -33,7 +33,7 @@ public interface RpcServer extends RpcServerMBean {
 	void export(Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter);
 	
 	/**
-	 * Export rpc interface class. Only the specific method in the interface is exported.
+	 * Export rpc interface and only the specific method in the interface is exported.
 	 * 
 	 * @param rpcInterface            exported rpc interface
 	 * @param rpcMethodName           exported rpc method name
@@ -44,7 +44,7 @@ public interface RpcServer extends RpcServerMBean {
 	void export(Class<?> rpcInterface, String rpcMethodName, Class<?>[] rpcMethodParameterTypes, Object rpcObject, RpcParameter rpcParameter);
 	
 	/**
-	 * Export rpc interface class with specific id. All the declared method in the interface are exported.
+	 * Export rpc interface with specific id. All the declared method in the interface are exported.
 	 * 
 	 * @param rpcId         identifier for rpc interface, if the rpc interface has multiple implementor object, set different rpc id.
 	 * @param rpcInterface  exported rpc interface
@@ -54,7 +54,7 @@ public interface RpcServer extends RpcServerMBean {
 	void export(String rcpId, Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter);
 	
 	/**
-	 * Export rpc interface class with specific id. Only the specific method in the interface is exported.
+	 * Export rpc interface with specific id. Only the specific method in the interface is exported.
 	 * 
 	 * @param rpcId                   identifier for rpc interface, if the rpc interface has multiple implementor object, set different rpc id.
 	 * @param rpcInterface            exported rpc interface
@@ -64,5 +64,39 @@ public interface RpcServer extends RpcServerMBean {
 	 * @param rpcParameter            behavioral parameter
 	 */
 	void export(String rpcId, Class<?> rpcInterface, String rpcMethodName, Class<?>[] rpcMethodParameterTypes, Object rpcObject, RpcParameter rpcParameter);
+	
+	/**
+	 * Unexport rpc interface specific method.
+	 * 
+	 * @param rpcInterface            exported rpc interface
+	 * @param rpcMethodName           exported rpc method name
+	 * @param rpcMethodParameterTypes exported rpc method parameter types
+	 */
+	void unexport(Class<?> rpcInterface, String rpcMethodName, Class<?>[] rpcMethodParameterTypes);
+	
+	/**
+	 * Unexport rpc interface.
+	 * 
+	 * @param rpcInterface exported rpc interface
+	 */
+	void unexport(Class<?> rpcInterface);
+	
+	/**
+	 * Unexport rpc interface witch specific id.
+	 * 
+	 * @param rpcId        identifier for rpc interface, if the rpc interface has multiple implementor object, set different rpc id.
+	 * @param rpcInterface exported rpc interface
+	 */
+	void unexport(String rpcId, Class<?> rpcInterface);
+	
+	/**
+	 * Unexport rpc interface with specific id. Only the specific method in the interface is unexported.
+	 * 
+	 * @param rpcId                   identifier for rpc interface, if the rpc interface has multiple implementor object, set different rpc id.
+	 * @param rpcInterface            exported rpc interface
+	 * @param rpcMethodName           exported rpc method name
+	 * @param rpcMethodParameterTypes exported rpc method parameter types
+	 */
+	void unexport(String rpcId, Class<?> rpcInterface, String rpcMethodName, Class<?>[] rpcMethodParameterTypes);
 
 }
