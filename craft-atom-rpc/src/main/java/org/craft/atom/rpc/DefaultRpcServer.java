@@ -126,7 +126,7 @@ public class DefaultRpcServer implements RpcServer {
 
 	@Override
 	public void unexport(Class<?> rpcInterface, String rpcMethodName, Class<?>[] rpcMethodParameterTypes) {
-		unexport(null, rpcInterface);
+		unexport(null, rpcInterface, rpcMethodName, rpcMethodParameterTypes);
 	}
 
 	@Override

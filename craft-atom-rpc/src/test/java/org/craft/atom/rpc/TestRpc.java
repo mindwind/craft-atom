@@ -373,4 +373,17 @@ public class TestRpc {
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test close. ", CaseCounter.incr(1)));
 	}
 	
+	@Test
+	public void testUnexport() {
+		server.unexport(DemoService.class, "echo", new Class<?>[] { String.class });
+		try {
+			ds.echo("hi");
+		} catch (RpcException e) {
+			Assert.assertEquals(RpcException.SERVER_ERROR, e.getCode());
+		}
+		ds.noreturn("hello");
+		Assert.assertTrue(true);
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test unexport. ", CaseCounter.incr(2)));
+	}
+	
 }
