@@ -363,7 +363,6 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		
 		// close acceptor selector
 		this.selector.close();
-		
 		super.shutdown();
 		LOG.debug("[CRAFT-ATOM-NIO] Shutdown acceptor successful");
 	}

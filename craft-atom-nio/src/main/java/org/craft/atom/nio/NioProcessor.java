@@ -132,9 +132,9 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 	
 	private void shutdown0() throws IOException {
 		// close all the channel within this processor
-		this.closingChannels.addAll(newChannels);
+		closingChannels.addAll(newChannels);
 		newChannels.clear();
-		this.closingChannels.addAll(flushingChannels);
+		closingChannels.addAll(flushingChannels);
 		flushingChannels.clear();
 		close();
 		
