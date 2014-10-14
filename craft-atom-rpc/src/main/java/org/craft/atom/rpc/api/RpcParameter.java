@@ -2,6 +2,7 @@ package org.craft.atom.rpc.api;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * RPC behavioral parameter.
@@ -9,6 +10,7 @@ import lombok.Setter;
  * @author mindwind
  * @version 1.0, Sep 5, 2014
  */
+@ToString
 public class RpcParameter {
 	
 	

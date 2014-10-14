@@ -1,6 +1,7 @@
 package org.craft.atom.rpc;
 
 import java.net.Socket;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -18,6 +19,8 @@ import org.craft.atom.rpc.api.RpcContext;
 import org.craft.atom.rpc.api.RpcFactory;
 import org.craft.atom.rpc.api.RpcParameter;
 import org.craft.atom.rpc.api.RpcServer;
+import org.craft.atom.rpc.api.RpcServerX;
+import org.craft.atom.rpc.spi.RpcApi;
 import org.craft.atom.test.AvailablePortFinder;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Assert;
@@ -342,6 +345,22 @@ public class TestRpc {
 			Assert.assertEquals(RpcException.SERVER_ERROR, e.getCode());
 		}
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test partial exported. ", CaseCounter.incr(2)));
+	}
+	
+	@Test
+	public void testServerX() {
+		ds.echo("hi");
+		RpcServerX x = server.x();
+		Set<RpcApi> apis = x.apis();	
+		Assert.assertEquals(1, x.connectionCount());
+		for (RpcApi api : apis) {
+			if (api.getMethodName().equals("echo")) {
+				Assert.assertEquals(0, x.waitCount(api));
+				Assert.assertEquals(0, x.processingCount(api));
+				Assert.assertEquals(1, x.completeCount(api));
+			}
+		}
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test server x. ", CaseCounter.incr(4)));
 	}
 	
 }

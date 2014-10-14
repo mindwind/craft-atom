@@ -11,14 +11,34 @@ import org.craft.atom.rpc.api.RpcParameter;
 public interface RpcApi {
 
 	/**
-	 * @return rpc api key.
+	 * @return rpc api key for unique mapping.
 	 */
 	String getKey();
 	
 	/**
-	 * @return rpc api name.
+	 * @return rpc api name for human read.
 	 */
 	String getName();
+	
+	/**
+	 * @return rpc api id for distinguish different implementor.
+	 */
+	String getId();
+	
+	/**
+	 * @return rpc api interface.
+	 */
+	Class<?> getInterface();
+	
+	/**
+	 * @return rpc api method name.
+	 */
+	String getMethodName();
+	
+	/**
+	 * @return rpc api method parameter types.
+	 */
+	Class<?>[] getMethodParameterTypes();
 	
 	/**
 	 * @return implementor object of rpc interface

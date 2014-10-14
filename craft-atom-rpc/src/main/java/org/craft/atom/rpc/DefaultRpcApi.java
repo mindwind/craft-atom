@@ -70,4 +70,24 @@ public final class DefaultRpcApi implements RpcApi, Comparable<RpcApi> {
 		return key.compareTo(api.getKey());
 	}
 
+	@Override
+	public String getId() {
+		return rpcId;
+	}
+
+	@Override
+	public Class<?> getInterface() {
+		return rpcInterface;
+	}
+
+	@Override
+	public String getMethodName() {
+		return rpcMethod.getName();
+	}
+
+	@Override
+	public Class<?>[] getMethodParameterTypes() {
+		return rpcMethod.getParameterTypes();
+	}
+	
 }
