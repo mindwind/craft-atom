@@ -24,6 +24,11 @@ public interface RpcProcessor {
 	void process(RpcMessage req, RpcChannel channel);
 	
 	/**
+	 * Close itself and release all the resources.
+	 */
+	void close();
+	
+	/**
 	 * Set rpc invoker.
 	 * 
 	 * @param invoker

@@ -64,4 +64,12 @@ public class DefaultRpcExecutorFactory implements RpcExecutorFactory {
 		return es;
 	}
 
+
+	@Override
+	public void shutdown() {
+		for (MonitoringExecutorService mes : pool.values()) {
+			mes.shutdownNow();
+		}
+	}
+
 }

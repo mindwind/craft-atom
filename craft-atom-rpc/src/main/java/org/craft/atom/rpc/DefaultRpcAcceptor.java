@@ -57,4 +57,10 @@ public class DefaultRpcAcceptor implements RpcAcceptor {
 		return ioAcceptor.x().getAliveChannels().size();
 	}
 
+
+	@Override
+	public void close() {
+		ioAcceptor.shutdown();
+	}
+
 }

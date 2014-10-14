@@ -13,7 +13,7 @@ import org.craft.atom.util.thread.MonitoringExecutorService;
 public interface RpcExecutorFactory {
 	
 	/**
-	 * Get a new (or reusable) executor service.
+	 * Get a new (or reusable) monitoring executor service.
 	 * 
 	 * @param  api
 	 * @return executor
@@ -27,5 +27,10 @@ public interface RpcExecutorFactory {
 	 * @param registry
 	 */
 	void setRegistry(RpcRegistry registry);
+	
+	/**
+	 * Shutdown the factory
+	 */
+	void shutdown();
 	
 }

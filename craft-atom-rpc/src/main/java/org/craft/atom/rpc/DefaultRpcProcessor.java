@@ -173,4 +173,10 @@ public class DefaultRpcProcessor implements RpcProcessor {
 	}
 
 
+	@Override
+	public void close() {
+		timeoutExecutor.shutdownNow();
+		executorFactory.shutdown();
+	}
+
 }

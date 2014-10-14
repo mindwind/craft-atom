@@ -14,10 +14,15 @@ import org.craft.atom.protocol.rpc.model.RpcMethod;
 public interface RpcServer extends RpcServerMBean {
 	
 	/**
-	 * Open the rpc server and get things going.
+	 * Open the rpc server and get things going. 
 	 * Just invoke this once.
 	 */
 	void open();
+	
+	/**
+	 * Close the server, dispose all resources.
+	 */
+	void close();
 	
 	/**
 	 * Export rpc interface class. All the declared method in the interface are exported.

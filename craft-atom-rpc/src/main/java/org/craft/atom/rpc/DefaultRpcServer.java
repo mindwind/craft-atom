@@ -86,6 +86,12 @@ public class DefaultRpcServer implements RpcServer {
 		}
 		LOG.debug("[CRAFT-ATOM-RPC] Rpc server is open for serving, |host={}, port={}|.", host, port);
 	}
+	
+	@Override
+	public void close() {
+		acceptor.close();
+		processor.close();
+	}
 
 	@Override
 	public void export(Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter) {

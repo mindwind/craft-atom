@@ -22,6 +22,11 @@ public interface RpcAcceptor {
 	void bind() throws IOException;
 	
 	/**
+	 * Close itself and release all the resources.
+	 */
+	void close();
+	
+	/**
 	 * Set rpc processor
 	 * 
 	 * @param processor
