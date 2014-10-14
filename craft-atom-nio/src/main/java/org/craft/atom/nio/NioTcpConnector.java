@@ -234,7 +234,6 @@ public class NioTcpConnector extends NioConnector {
 		
 		// shutdown all the processor in the pool
 		pool.shutdown();
-
 		LOG.debug("[CRAFT-ATOM-NIO] Shutdown connector successful");
 	}
 	
@@ -286,7 +285,7 @@ public class NioTcpConnector extends NioConnector {
 				try {
 					shutdown0();
 				} catch (Exception e) {
-					LOG.error("[CRAFT-ATOM-NIO] Shutdown exception", e);
+					LOG.error("[CRAFT-ATOM-NIO] Shutdown error", e);
 				}
 			}
 		}
