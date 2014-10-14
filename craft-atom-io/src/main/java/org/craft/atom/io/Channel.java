@@ -1,6 +1,7 @@
 package org.craft.atom.io;
 
 import java.net.SocketAddress;
+import java.util.Queue;
 
 /**
  * A nexus for I/O operations.
@@ -161,4 +162,12 @@ public interface Channel<D> {
      * @return the socket address of local machine which is associated with this channel.
      */
     SocketAddress getLocalAddress();
+    
+    /**
+     * Get the channel inner write queue.
+     * The queue is used by the channel, so changes to the queue are reflected in the channel, and vice-versa.
+     * 
+     * @return the write queue if the channel implementor has a inner queue.
+     */
+    Queue<D> getWriteQueue();
 }

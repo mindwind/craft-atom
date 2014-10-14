@@ -7,6 +7,7 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -72,18 +73,24 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 
 	@Override
 	public boolean write(byte[] data) throws IllegalChannelStateException {
-		if (isClosed())  throw new IllegalChannelStateException("Channel is closed");
-		if (isClosing()) throw new IllegalChannelStateException("Channel is closing");
-		if (isPaused())  throw new IllegalChannelStateException("Channel is paused");
-	
-		if (data == null) {
-			return false;
-		}
+		if (isClosed())   { throw new IllegalChannelStateException("Channel is closed"); }
+		if (isClosing())  { throw new IllegalChannelStateException("Channel is closing"); }
+		if (isPaused())   { throw new IllegalChannelStateException("Channel is paused"); }
+		if (data == null) { return false; }
 		
 		setLastIoTime(System.currentTimeMillis());
 		getWriteBufferQueue().add(ByteBuffer.wrap(data));
 		processor.flush(this);
 		return true;
+	}
+	
+	@Override
+	public Queue<byte[]> getWriteQueue() {
+		Queue<byte[]> q = new LinkedBlockingQueue<byte[]>();
+		for (ByteBuffer buf : writeBufferQueue) {
+			q.add(buf.array());
+		}
+		return q;
 	}
 	
 	@Override
