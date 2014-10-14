@@ -48,10 +48,7 @@ server.open();
 
 <p>Not export entire interface just some methods.</p>
 <pre><code data-language="java">
-RpcMethod rpcMethod = new RpcMethod();
-rpcMethod.setName("echo");
-rpcMethod.setParameterTypes(new Class&lt;?&gt;[] { String.class });
-server.export(DemoService.class, rpcMethod, new DemoServiceImpl1(), new RpcParameter(10, 100));
+server.export(DemoService.class, "echo", new Class&lt;?&gt;[] { String.class }, new DemoServiceImpl1(), new RpcParameter(10, 100));
 </code></pre>
 
 <p>For polymorphism of OOP, if a interface has more than one implementor, how to export? Which to be invoked?</p>

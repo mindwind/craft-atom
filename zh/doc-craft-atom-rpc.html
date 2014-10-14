@@ -49,10 +49,7 @@ server.open();
 
 <p>只导出部分方法而不是整个接口。</p>
 <pre><code data-language="java">
-RpcMethod rpcMethod = new RpcMethod();
-rpcMethod.setName("echo");
-rpcMethod.setParameterTypes(new Class&lt;?&gt;[] { String.class });
-server.export(DemoService.class, rpcMethod, new DemoServiceImpl1(), new RpcParameter(10, 100));
+server.export(DemoService.class, "echo", new Class&lt;?&gt;[] { String.class }, new DemoServiceImpl1(), new RpcParameter(10, 100));
 </code></pre>
 
 <p>对于面向对象编程的多态性，假如一个接口有多个实现者，如何导出呢？调用哪个实现？</p>
