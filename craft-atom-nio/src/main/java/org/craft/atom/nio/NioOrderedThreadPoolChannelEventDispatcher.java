@@ -10,7 +10,7 @@ import lombok.ToString;
 
 import org.craft.atom.io.ChannelEvent;
 import org.craft.atom.nio.spi.AbstractNioChannelEventDispatcher;
-import org.craft.atom.util.NamedThreadFactory;
+import org.craft.atom.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

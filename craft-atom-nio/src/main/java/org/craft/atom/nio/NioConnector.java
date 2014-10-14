@@ -16,7 +16,7 @@ import org.craft.atom.io.IoHandler;
 import org.craft.atom.nio.api.NioConnectorConfig;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
-import org.craft.atom.util.NamedThreadFactory;
+import org.craft.atom.util.thread.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
