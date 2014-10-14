@@ -140,7 +140,6 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 		
 		// close processor selector
 		this.selector.close();
-
 		LOG.debug("[CRAFT-ATOM-NIO] Shutdown processor successful");
 	}
 	

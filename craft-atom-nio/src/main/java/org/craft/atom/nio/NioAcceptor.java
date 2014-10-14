@@ -227,7 +227,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	 * 
 	 * @throws IOException
 	 */
-	public void init() throws IOException {
+	private void init() throws IOException {
 		selector = Selector.open();
 		selectable = true;
 		new AcceptThread().start();
@@ -364,9 +364,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		// close acceptor selector
 		this.selector.close();
 		
-		// shutdown all the processor in the pool
-		pool.shutdown();
-
+		super.shutdown();
 		LOG.debug("[CRAFT-ATOM-NIO] Shutdown acceptor successful");
 	}
 	

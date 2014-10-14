@@ -39,7 +39,9 @@ abstract public class AbstractNioChannelEventDispatcher implements NioChannelEve
 		this.semaphore = new Semaphore(totalEventSize, false);
 	}
 	
+	
 	// ~ ------------------------------------------------------------------------------------------------------------
+	
 	
 	protected void beforeDispatch(NioByteChannel channel) {
 		boolean b = channel.tryAcquire();
@@ -64,5 +66,8 @@ abstract public class AbstractNioChannelEventDispatcher implements NioChannelEve
 		
 		semaphore.release();
 	}
+	
+	@Override
+	public void shutdown() {}
 
 }

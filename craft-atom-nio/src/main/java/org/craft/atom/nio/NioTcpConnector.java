@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Connects to server based TCP.
+ * Connects to server based on TCP.
  * 
  * @author mindwind
  * @version 1.0, Feb 24, 2013
@@ -229,11 +229,11 @@ public class NioTcpConnector extends NioConnector {
 		this.connectQueue.clear();
 		this.cancelQueue.clear();
 		
-		// close acceptor selector
+		// close connector selector
 		this.selector.close();
 		
 		// shutdown all the processor in the pool
-		pool.shutdown();
+		super.shutdown();
 		LOG.debug("[CRAFT-ATOM-NIO] Shutdown connector successful");
 	}
 	

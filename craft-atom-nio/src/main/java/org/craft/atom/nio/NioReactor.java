@@ -31,6 +31,12 @@ abstract public class NioReactor implements IoReactor {
 
 	
 	@Override
+	public void shutdown() {
+		dispatcher.shutdown();
+		pool.shutdown();
+	}
+	
+	@Override
 	public IoHandler getHandler() {
 		return handler;
 	}

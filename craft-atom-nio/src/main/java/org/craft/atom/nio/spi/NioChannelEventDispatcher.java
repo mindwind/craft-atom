@@ -16,10 +16,15 @@ import org.craft.atom.nio.NioOrderedThreadPoolChannelEventDispatcher;
 public interface NioChannelEventDispatcher {
 	
 	/**
-	 * Dispatch event to handle
+	 * Dispatch event to handle.
 	 * 
 	 * @param event
 	 */
 	void dispatch(ChannelEvent<byte[]> event);
+	
+	/**
+	 * Shutdown the dispatcher and dispose holden resources.
+	 */
+	void shutdown();
 	
 }
