@@ -38,8 +38,8 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 		Class<?>[] paramTypes   = rpcMethod.getParameterTypes();
 		Object[]   params       = rpcMethod.getParameters();
 		String     methodName   = rpcMethod.getName();
-		RpcApi service      = registry.lookup(new DefaultRpcApi(rpcId, rpcInterface, rpcMethod));
-		Object     rpcObject    = service.getRpcObject();
+		RpcApi     api          = registry.lookup(new DefaultRpcApi(rpcId, rpcInterface, rpcMethod));
+		Object     rpcObject    = api.getRpcObject();
 		
 		
 		try {
