@@ -69,6 +69,9 @@ public class RpcMessages {
 	}
 	
 	public static RpcMessage newRsponseRpcMessage(long id, Exception e) {
+		// Clear server side exception stack trace to avoid propagating to client side
+		e.setStackTrace(new StackTraceElement[] {});
+					
 		RpcMessage rsp = newRpcMessage();
 		rsp.setId(id);
 		rsp.setResponse(true);

@@ -61,12 +61,16 @@ public class DefaultRpcProcessor implements RpcProcessor {
 		}
 		
 		RpcApi api = api(req);
-		MonitoringExecutorService executor = executor(api);
+		MonitoringExecutorService executor = null;
 		try {
+			executor = executor(api);
 			executor.execute(new ProcessTask(req, channel));
 		} catch (RejectedExecutionException e) {
 			LOG.warn("[CRAFT-ATOM-RPC] Rpc server processor overload, |executor={}|", executor);
 			channel.write(RpcMessages.newRsponseRpcMessage(req.getId(), new RpcException(RpcException.SERVER_OVERLOAD, "server overload")));
+		} catch (RpcException e) {
+			LOG.warn("[CRAFT-ATOM-RPC] Rpc server processor error", e);
+			channel.write(RpcMessages.newRsponseRpcMessage(req.getId(), e));
 		}
 		LOG.debug("[CRAFT-ATOM-RPC] Rpc server processor process request, |req={}, channel={}, executor={}|", req, channel, executor);
 	}

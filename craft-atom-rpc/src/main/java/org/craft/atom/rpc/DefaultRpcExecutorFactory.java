@@ -48,7 +48,9 @@ public class DefaultRpcExecutorFactory implements RpcExecutorFactory {
 		if (es == null) {
 			synchronized (this) {
 				if (es == null) {
-					RpcApi       api       = registry.lookup(queryApi);
+					RpcApi api = registry.lookup(queryApi);
+					if (api == null) { throw new RpcException(RpcException.SERVER_ERROR, "No exported api mapping"); } 
+					
 					RpcParameter parameter = api.getRpcParameter();
 					int          threads   = parameter.getRpcThreads() == 0 ? 1 : parameter.getRpcThreads();
 					int          queues    = parameter.getRpcQueues()  == 0 ? 1 : parameter.getRpcQueues() ;

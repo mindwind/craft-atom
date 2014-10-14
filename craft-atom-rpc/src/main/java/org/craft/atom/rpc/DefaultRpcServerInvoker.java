@@ -38,8 +38,10 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 		Class<?>[] paramTypes   = rpcMethod.getParameterTypes();
 		Object[]   params       = rpcMethod.getParameters();
 		String     methodName   = rpcMethod.getName();
-		RpcApi     api          = registry.lookup(new DefaultRpcApi(rpcId, rpcInterface, rpcMethod));
-		Object     rpcObject    = api.getRpcObject();
+		
+		RpcApi api = registry.lookup(new DefaultRpcApi(rpcId, rpcInterface, rpcMethod));
+		if (api == null) { throw new RpcException(RpcException.SERVER_ERROR, "No exported api mapping"); } 
+		Object rpcObject = api.getRpcObject();
 		
 		
 		try {
@@ -57,10 +59,6 @@ public class DefaultRpcServerInvoker implements RpcInvoker {
 			return RpcMessages.newRsponseRpcMessage(req.getId(), returnObject);
 		} catch (Exception e) {
 			LOG.warn("[CRAFT-ATOM-RPC] Rpc server invoker error", e);
-			
-			// Clear server side exception stack trace to avoid propagating to client side
-			e.setStackTrace(new StackTraceElement[] {});
-			
 			if (isDeclaredException(e, rpcInterface, methodName, paramTypes)) {
 				return RpcMessages.newRsponseRpcMessage(req.getId(), e);
 			} else {

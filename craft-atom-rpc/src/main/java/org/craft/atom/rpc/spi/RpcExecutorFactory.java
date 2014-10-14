@@ -1,5 +1,6 @@
 package org.craft.atom.rpc.spi;
 
+import org.craft.atom.rpc.RpcException;
 import org.craft.atom.util.thread.MonitoringExecutorService;
 
 /**
@@ -16,8 +17,9 @@ public interface RpcExecutorFactory {
 	 * 
 	 * @param  api
 	 * @return executor
+	 * @throws RpcException if any rpc error occurs.
 	 */
-	MonitoringExecutorService getExecutor(RpcApi api);
+	MonitoringExecutorService getExecutor(RpcApi api) throws RpcException;
 	
 	/**
 	 * Set rpc registry

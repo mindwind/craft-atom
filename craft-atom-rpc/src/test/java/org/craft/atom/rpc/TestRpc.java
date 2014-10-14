@@ -339,7 +339,7 @@ public class TestRpc {
 			ds.noreturn("hello");
 			Assert.fail();
 		} catch (RpcException e) {
-			Assert.assertTrue(true);
+			Assert.assertEquals(RpcException.SERVER_ERROR, e.getCode());
 		}
 		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test partial exported. ", CaseCounter.incr(2)));
 	}
