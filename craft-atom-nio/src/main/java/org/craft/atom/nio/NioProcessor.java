@@ -8,7 +8,6 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
@@ -22,7 +21,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import lombok.ToString;
 
-import org.craft.atom.io.Channel;
 import org.craft.atom.io.ChannelEventType;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.io.IoProcessor;
@@ -620,6 +618,19 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 		scheduleClose(channel);
 		wakeup();
     }
+    
+	@Override
+	public IoProcessorX x() {
+		NioProcessorX x = new NioProcessorX();
+		x.setNewChannelCount(newChannels.size());
+		x.setFlushingChannelCount(flushingChannels.size());
+		x.setClosingChannelCount(closingChannels.size());
+		return x;
+	}
+	
+	public void setProtocol(IoProtocol protocol) {
+		this.protocol = protocol;
+	}
 	
     
 	// ~ -------------------------------------------------------------------------------------------------------------
@@ -686,22 +697,6 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 				}
 			}
 		}
-	}
-	
-	
-	// ~ -------------------------------------------------------------------------------------------------------------
-	
-	
-	public void setProtocol(IoProtocol protocol) {
-		this.protocol = protocol;
-	}
-	
-	public IoProcessorX x() {
-		IoProcessorX ipx = new IoProcessorX();
-		ipx.setNewChannels(new HashSet<Channel<byte[]>>(newChannels));
-		ipx.setFlushingChannels(new HashSet<Channel<byte[]>>(flushingChannels));
-		ipx.setClosingChannels(new HashSet<Channel<byte[]>>(closingChannels));
-		return ipx;
 	}
 
 }

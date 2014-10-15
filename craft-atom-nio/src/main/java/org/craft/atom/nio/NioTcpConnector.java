@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.Callable;
@@ -16,9 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import lombok.ToString;
 
 import org.craft.atom.io.Channel;
-import org.craft.atom.io.IoConnectorX;
 import org.craft.atom.io.IoHandler;
-import org.craft.atom.io.IoProcessorX;
 import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.api.NioConnectorConfig;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
@@ -314,7 +311,6 @@ public class NioTcpConnector extends NioConnector {
 			processor.add(channel);
 			
 			// finish connect, fire channel opened event
-//			processor.fireChannelOpened(channel);
 			return channel;
 		}
 
@@ -336,22 +332,9 @@ public class NioTcpConnector extends NioConnector {
 	}
 	
 	@Override
-	public IoConnectorX x() {
-		IoConnectorX icx = new IoConnectorX();
-		icx.setSelectable(selectable);
-		icx.setAliveChannels(new HashSet<Channel<byte[]>>(pool.getIdleTimer().aliveChannels()));
-		for (ConnectionCall cc : connectQueue) {
-			icx.addConnectingChannel(cc.getSocketChannel());
-		}
-		for (ConnectionCall cc : cancelQueue) {
-			icx.addDisconnectingChannel(cc.getSocketChannel());
-		}
-		NioProcessor[] nps = pool.getPool();
-		for (NioProcessor np : nps) {
-			IoProcessorX ipx = np.x();
-			icx.add(ipx);
-		}
-		return icx;
+	protected void xByProtocol(NioConnectorX x) {
+		x.setConnectingChannelCount(connectQueue.size());
+		x.setDisconnectingChannelCount(cancelQueue.size());
 	}
 
 }

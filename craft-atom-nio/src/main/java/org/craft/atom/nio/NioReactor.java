@@ -3,7 +3,9 @@ package org.craft.atom.nio;
 import lombok.ToString;
 
 import org.craft.atom.io.IoHandler;
+import org.craft.atom.io.IoProcessorX;
 import org.craft.atom.io.IoReactor;
+import org.craft.atom.io.IoReactorX;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
@@ -47,6 +49,25 @@ abstract public class NioReactor implements IoReactor {
 	
 	public NioBufferSizePredictorFactory getPredictorFactory() {
 		return predictorFactory;
+	}
+	
+	protected IoReactorX x() {
+		NioReactorX x = new NioReactorX();
+		NioProcessor[] nps = pool.getPool();
+		int nc = 0;
+		int fc = 0;
+		int cc = 0;
+		for (NioProcessor np : nps) {
+			IoProcessorX px = np.x();
+			nc += px.newChannelCount();
+			fc += px.flushingChannelCount();
+			cc += px.closingChannelCount();
+		}
+		x.setNewChannelCount(nc);
+		x.setFlushingChannelCount(fc);
+		x.setClosingChannelCount(cc);
+		x.setAliveChannelCount(pool.getIdleTimer().aliveChannels().size());
+		return x;
 	}
 
 }

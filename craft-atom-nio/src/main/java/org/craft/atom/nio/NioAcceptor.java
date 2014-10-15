@@ -18,11 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.ToString;
 
-import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoAcceptor;
 import org.craft.atom.io.IoAcceptorX;
 import org.craft.atom.io.IoHandler;
-import org.craft.atom.io.IoProcessorX;
+import org.craft.atom.io.IoReactorX;
 import org.craft.atom.nio.api.NioAcceptorConfig;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
@@ -503,18 +502,16 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	
 	@Override
 	public IoAcceptorX x() {
-		IoAcceptorX iax = new IoAcceptorX();
-		iax.setSelectable(selectable);
-		iax.setWaitBindAddresses(new HashSet<SocketAddress>(bindAddresses));
-		iax.setWaitUnbindAddresses(new HashSet<SocketAddress>(unbindAddresses));
-		iax.setBoundAddresses(new HashSet<SocketAddress>(boundmap.keySet()));
-		iax.setAliveChannels(new HashSet<Channel<byte[]>>(pool.getIdleTimer().aliveChannels()));
-		NioProcessor[] nps = pool.getPool();
-		for (NioProcessor np : nps) {
-			IoProcessorX ipx = np.x();
-			iax.add(ipx);
-		}
-		return iax;
+		NioAcceptorX x = new NioAcceptorX();
+		x.setWaitBindAddresses(new HashSet<SocketAddress>(bindAddresses));
+		x.setWaitUnbindAddresses(new HashSet<SocketAddress>(unbindAddresses));
+		x.setBoundAddresses(new HashSet<SocketAddress>(boundmap.keySet()));
+		IoReactorX rx = super.x();
+		x.setNewChannelCount(rx.newChannelCount());
+		x.setFlushingChannelCount(rx.flushingChannelCount());
+		x.setClosingChannelCount(rx.closingChannelCount());
+		x.setAliveChannelCount(rx.aliveChannelCount());
+		return x;
 	}
 
 }

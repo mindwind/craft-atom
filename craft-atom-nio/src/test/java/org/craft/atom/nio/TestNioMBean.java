@@ -39,24 +39,20 @@ public class TestNioMBean {
     	
     	IoAcceptorX iax = acceptor.x();
     	Assert.assertNotNull(iax);
-    	Assert.assertNotNull(iax.getBoundAddresses());
-    	Assert.assertEquals(3, iax.getBoundAddresses().size());
-    	Assert.assertNotNull(iax.getWaitBindAddresses());
-    	Assert.assertEquals(0, iax.getWaitBindAddresses().size());
-    	Assert.assertNotNull(iax.getWaitUnbindAddresses());
-    	Assert.assertEquals(0, iax.getWaitUnbindAddresses().size());
-    	Assert.assertNotNull(iax.getIoProcessorXList());
-    	Assert.assertEquals(4, iax.getAliveChannels().size());
+    	Assert.assertNotNull(iax.boundAddresses());
+    	Assert.assertEquals(3, iax.boundAddresses().size());
+    	Assert.assertNotNull(iax.waitBindAddresses());
+    	Assert.assertEquals(0, iax.waitBindAddresses().size());
+    	Assert.assertNotNull(iax.waitUnbindAddresses());
+    	Assert.assertEquals(0, iax.waitUnbindAddresses().size());
+    	Assert.assertEquals(4, iax.aliveChannelCount());
     	
     	IoConnectorX icx = connector.x();
     	Assert.assertNotNull(icx);
-    	Assert.assertNotNull(icx.getConnectingChannels());
-    	Assert.assertEquals(0, icx.getConnectingChannels().size());
-    	Assert.assertNotNull(icx.getDisconnectingChannels());
-    	Assert.assertEquals(0, icx.getDisconnectingChannels().size());
-    	Assert.assertNotNull(icx.getIoProcessorXList());
-    	Assert.assertEquals(4, icx.getAliveChannels().size());
-		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test nio mxbean. ", CaseCounter.incr(16)));
+    	Assert.assertEquals(0, icx.connectingChannelCount());
+    	Assert.assertEquals(0, icx.disconnectingChannelCount());
+    	Assert.assertEquals(4, icx.aliveChannelCount());
+		System.out.println(String.format("[CRAFT-ATOM-NIO] (^_^)  <%s>  Case -> test nio mxbean. ", CaseCounter.incr(12)));
 	}
 	
 }
