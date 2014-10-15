@@ -1,26 +1,30 @@
 package org.craft.atom.io;
 
-import java.io.Serializable;
 import java.net.SocketAddress;
 import java.util.Set;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
+ * The x-ray of {@link IoAcceptor}
+ * 
  * @author mindwind
- * @version 1.0, Dec 24, 2013
+ * @version 1.0, Oct 15, 2014
  */
-@ToString(callSuper = true)
-public class IoAcceptorX extends IoReactorX implements Serializable {
+public interface IoAcceptorX extends IoReactorX {
+	
+	/**
+	 * @return wait to bind address set.
+	 */
+	Set<SocketAddress> waitBindAddresses();
+	
+	/**
+	 * @return wait to unbind address set.
+	 */
+	Set<SocketAddress> waitUnbindAddresses();
+	
+	/**
+	 * @return already bound address set.
+	 */
+	Set<SocketAddress> boundAddresses();
 
-	
-	private static final long serialVersionUID = 3536608515158732642L;
-	
-	
-	@Getter @Setter private Set<SocketAddress> waitBindAddresses  ;
-	@Getter @Setter private Set<SocketAddress> waitUnbindAddresses;
-	@Getter @Setter private Set<SocketAddress> boundAddresses     ;
-	
 }
