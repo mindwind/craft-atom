@@ -12,19 +12,6 @@ CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
 
 
 
-craft-atom 2.2.0
------------------------------------------------------------------------------------------------------------------------
-UPGRADE URGENCY: LOW
-
-* craft-atom-rpc
-* craft-atom-protocol-rpc
-  [NEW]      - rpc support
-  
-* craft-atom-nio
-  [FIX]      - just handle `Exception` not `Throwable`, so `IoHandler` broke backwards compatibility.
-
-
-
 
 craft-atom 2.1.2
 -----------------------------------------------------------------------------------------------------------------------
@@ -33,6 +20,7 @@ UPGRADE URGENCY: LOW
 * craft-atom-redis
   [FIX]      - java doc warning.
   [NEW]      - api for shard redis, return specific shard by shard key.
+
 
 
 
@@ -51,6 +39,7 @@ UPGRADE URGENCY: LOW
 
 
 
+
 craft-atom 2.1.0
 -----------------------------------------------------------------------------------------------------------------------
 UPGRADE URGENCY: LOW
@@ -59,6 +48,7 @@ UPGRADE URGENCY: LOW
   [NEW]      - *SCAN command api.
   [NEW]      - PUBSUB command api.
   [IMPROVE]  - upgrade jedis to 2.4.2 version.
+
   
   
 
