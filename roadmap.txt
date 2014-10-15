@@ -7,17 +7,3 @@ NEW     - ZRANGEBYLEX
 NEW     - ZREMRANGEBYLEX
 NEW     - ROLE
 IMPROVE - upgrade jedis to newest version 2.6.0 
-
-
-
-craft-atom-protocol-rpc
------------------------------------------------------------------------------------------------------------------------
-general java rpc protocol support
-
-
-
-craft-atom-rpc
------------------------------------------------------------------------------------------------------------------------
-general java rpc support
-
-
