@@ -54,7 +54,7 @@ public class DefaultRpcAcceptor implements RpcAcceptor {
 
 	@Override
 	public int connectionCount() {
-		return ioAcceptor.x().getAliveChannels().size();
+		return ioAcceptor.x().aliveChannelCount();
 	}
 
 
