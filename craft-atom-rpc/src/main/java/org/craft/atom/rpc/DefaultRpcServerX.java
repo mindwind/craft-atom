@@ -18,9 +18,9 @@ import org.craft.atom.rpc.spi.RpcApi;
 public class DefaultRpcServerX implements RpcServerX {
 	
 	
-	@Getter @Setter private int          connectionCount;
-	@Getter @Setter private Set<RpcApi>  apis           ;
-	@Getter @Setter private Map<String, long[]> counts  ;
+	@Getter @Setter private int                 connectionCount;
+	@Getter @Setter private Set<RpcApi>         apis           ;
+	@Getter @Setter private Map<String, long[]> counts         ;
 	
 
 	@Override
