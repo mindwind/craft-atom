@@ -192,19 +192,19 @@ public class HttpRequest extends HttpMessage {
     }
 	
     @Override
-	public void addCookie(HttpCookie cookie) {
+	public void addCookie(Cookie cookie) {
 		addHeader(HttpHeaders.newCookieHeader(cookie));
 	}
     
     @Override
-	protected List<HttpCookie> parseCookies() {
-		List<HttpCookie> cookies = new ArrayList<HttpCookie>();
+	protected List<Cookie> parseCookies() {
+		List<Cookie> cookies = new ArrayList<Cookie>();
 		
 		List<HttpHeader> cookieHeaders = getHeaders(HttpHeaderType.COOKIE.getName());
 		for (HttpHeader cookieHeader : cookieHeaders) {
 			String cookieValue = cookieHeader.getValue();
 			try {
-				List<HttpCookie> cl = COOKIE_DECODER.decode(cookieValue.getBytes(COOKIE_DECODER.getCharset()));
+				List<Cookie> cl = COOKIE_DECODER.decode(cookieValue.getBytes(COOKIE_DECODER.getCharset()));
 				cookies.addAll(cl);
 			} catch (ProtocolException e) {
 				LOG.warn("[CRAFT-ATOM-PROTOCOL-HTTP] Decode request cookie error", e);

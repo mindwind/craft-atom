@@ -8,6 +8,7 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
@@ -21,13 +22,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import lombok.ToString;
 
+import org.craft.atom.io.Channel;
 import org.craft.atom.io.ChannelEventType;
 import org.craft.atom.io.IoHandler;
 import org.craft.atom.io.IoProcessor;
 import org.craft.atom.io.IoProcessorX;
 import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
-import org.craft.atom.util.thread.NamedThreadFactory;
+import org.craft.atom.util.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,14 +132,15 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 	
 	private void shutdown0() throws IOException {
 		// close all the channel within this processor
-		closingChannels.addAll(newChannels);
+		this.closingChannels.addAll(newChannels);
 		newChannels.clear();
-		closingChannels.addAll(flushingChannels);
+		this.closingChannels.addAll(flushingChannels);
 		flushingChannels.clear();
 		close();
 		
 		// close processor selector
 		this.selector.close();
+
 		LOG.debug("[CRAFT-ATOM-NIO] Shutdown processor successful");
 	}
 	
@@ -169,9 +172,9 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 				String key = udpChannelKey(channel.getLocalAddress(), channel.getRemoteAddress());
 				udpChannels.remove(key);
 			}
-		} catch (Exception e) {
-			LOG.warn("[CRAFT-ATOM-NIO] Catch close exception and fire it, |channel={}|", channel, e);
-			fireChannelThrown(channel, e);
+		} catch (Throwable t) {
+			LOG.warn("[CRAFT-ATOM-NIO] Catch close exception and fire it, |channel={}|", channel, t);
+			fireChannelThrown(channel, t);
 		}
 	}
 	
@@ -293,14 +296,14 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 			} else if (protocol.equals(IoProtocol.UDP)) {
 				readBytes = readUdp(channel, buf);
 			}
-		} catch (Exception e) {
-			LOG.debug("[CRAFT-ATOM-NIO] Catch read exception and fire it, |channel={}|", channel, e);
+		} catch (Throwable t) {
+			LOG.debug("[CRAFT-ATOM-NIO] Catch read exception and fire it, |channel={}|", channel, t);
 
 			// fire exception caught event
-			fireChannelThrown(channel, e);
+			fireChannelThrown(channel, t);
 			
 			// if it is IO exception close channel avoid infinite loop.
-			if (e instanceof IOException) {
+			if (t instanceof IOException) {
 				scheduleClose(channel);
 			}
 		} finally {
@@ -410,14 +413,14 @@ public class NioProcessor extends NioReactor implements IoProcessor {
                     c++;
             		flush0(channel);
             	}
-			} catch (Exception e) {
-				LOG.debug("[CRAFT-ATOM-NIO] Catch flush exception and fire it", e);
+			} catch (Throwable t) {
+				LOG.debug("[CRAFT-ATOM-NIO] Catch flush exception and fire it", t);
 				
 				// fire channel thrown event 
-				fireChannelThrown(channel, e);
+				fireChannelThrown(channel, t);
 				
 				// if it is IO exception close channel avoid infinite loop.
-				if (e instanceof IOException) {
+				if (t instanceof IOException) {
 					scheduleClose(channel);
 				}
 			}
@@ -618,19 +621,6 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 		scheduleClose(channel);
 		wakeup();
     }
-    
-	@Override
-	public IoProcessorX x() {
-		NioProcessorX x = new NioProcessorX();
-		x.setNewChannelCount(newChannels.size());
-		x.setFlushingChannelCount(flushingChannels.size());
-		x.setClosingChannelCount(closingChannels.size());
-		return x;
-	}
-	
-	public void setProtocol(IoProtocol protocol) {
-		this.protocol = protocol;
-	}
 	
     
 	// ~ -------------------------------------------------------------------------------------------------------------
@@ -655,8 +645,8 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_WRITTEN, channel, handler, buf.array()));
 	}
 	
-	private void fireChannelThrown(NioByteChannel channel, Exception e) {
-		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_THROWN, channel, handler, e));
+	private void fireChannelThrown(NioByteChannel channel, Throwable t) {
+		dispatcher.dispatch(new NioByteChannelEvent(ChannelEventType.CHANNEL_THROWN, channel, handler, t));
 	}
 	
 	private void fireChannelClosed(NioByteChannel channel) {
@@ -697,6 +687,22 @@ public class NioProcessor extends NioReactor implements IoProcessor {
 				}
 			}
 		}
+	}
+	
+	
+	// ~ -------------------------------------------------------------------------------------------------------------
+	
+	
+	public void setProtocol(IoProtocol protocol) {
+		this.protocol = protocol;
+	}
+	
+	public IoProcessorX x() {
+		IoProcessorX ipx = new IoProcessorX();
+		ipx.setNewChannels(new HashSet<Channel<byte[]>>(newChannels));
+		ipx.setFlushingChannels(new HashSet<Channel<byte[]>>(flushingChannels));
+		ipx.setClosingChannels(new HashSet<Channel<byte[]>>(closingChannels));
+		return ipx;
 	}
 
 }

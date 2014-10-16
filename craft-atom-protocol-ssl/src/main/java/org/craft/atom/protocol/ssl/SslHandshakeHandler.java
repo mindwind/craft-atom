@@ -5,7 +5,6 @@ package org.craft.atom.protocol.ssl;
  * 
  * @author mindwind
  * @version 1.0, Oct 18, 2013
- * @deprecated replaced by {@code org.craft.atom.protocol.ssl.spi.SslHandshakeHandler}
  */
 public interface SslHandshakeHandler {
 	

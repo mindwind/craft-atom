@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.SocketChannel;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.Callable;
@@ -15,7 +16,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import lombok.ToString;
 
 import org.craft.atom.io.Channel;
+import org.craft.atom.io.IoConnectorX;
 import org.craft.atom.io.IoHandler;
+import org.craft.atom.io.IoProcessorX;
 import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.api.NioConnectorConfig;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
@@ -24,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Connects to server based on TCP.
+ * Connects to server based TCP.
  * 
  * @author mindwind
  * @version 1.0, Feb 24, 2013
@@ -65,7 +68,7 @@ public class NioTcpConnector extends NioConnector {
 	
 	
 	@Override
-	protected Future<Channel<byte[]>> connectByProtocol(SocketAddress remoteAddress, SocketAddress localAddress) throws IOException {
+	protected Future<Channel<byte[]>> connectByProtocol(SocketAddress remoteAddress, SocketAddress localAddress) {
 		SocketChannel sc = null;
 		boolean success = false;
 		try {
@@ -75,9 +78,14 @@ public class NioTcpConnector extends NioConnector {
             	Future<Channel<byte[]>> future = executorService.submit(new ConnectionCall(sc));
             	success = true;
             	LOG.debug("[CRAFT-ATOM-NIO] Established local connection");
+
                 return future;
             }
+
             success = true;
+        } catch (IOException e) {
+            LOG.warn("[CRAFT-ATOM-NIO] Connect exception", e);
+            throw new RuntimeException(e);
         } finally {
             if (!success && sc != null) {
                 try {
@@ -95,6 +103,7 @@ public class NioTcpConnector extends NioConnector {
         
         startup();
         selector.wakeup();
+        
 		return futureTask;
 	}
 	
@@ -176,7 +185,7 @@ public class NioTcpConnector extends NioConnector {
 				success = true;
 			} finally {
 				if (!success) {
-					// Connect failed, we have to cancel it.
+					// The connection failed, we have to cancel it.
 					cancelQueue.offer(cc);
 				}
 			}
@@ -226,11 +235,12 @@ public class NioTcpConnector extends NioConnector {
 		this.connectQueue.clear();
 		this.cancelQueue.clear();
 		
-		// close connector selector
+		// close acceptor selector
 		this.selector.close();
 		
 		// shutdown all the processor in the pool
-		super.shutdown();
+		pool.shutdown();
+
 		LOG.debug("[CRAFT-ATOM-NIO] Shutdown connector successful");
 	}
 	
@@ -273,7 +283,7 @@ public class NioTcpConnector extends NioConnector {
 						}
 					}
 				} catch (Exception e) {
-					LOG.warn("[CRAFT-ATOM-NIO] Connect exception", e);
+					LOG.error("[CRAFT-ATOM-NIO] Connect exception", e);
 				}
 			}
 
@@ -282,7 +292,7 @@ public class NioTcpConnector extends NioConnector {
 				try {
 					shutdown0();
 				} catch (Exception e) {
-					LOG.error("[CRAFT-ATOM-NIO] Shutdown error", e);
+					LOG.error("[CRAFT-ATOM-NIO] Shutdown exception", e);
 				}
 			}
 		}
@@ -309,8 +319,6 @@ public class NioTcpConnector extends NioConnector {
 			processor.setProtocol(IoProtocol.TCP);
 			channel.setProcessor(processor);
 			processor.add(channel);
-			
-			// finish connect, fire channel opened event
 			return channel;
 		}
 
@@ -332,9 +340,22 @@ public class NioTcpConnector extends NioConnector {
 	}
 	
 	@Override
-	protected void xByProtocol(NioConnectorX x) {
-		x.setConnectingChannelCount(connectQueue.size());
-		x.setDisconnectingChannelCount(cancelQueue.size());
+	public IoConnectorX x() {
+		IoConnectorX icx = new IoConnectorX();
+		icx.setSelectable(selectable);
+		icx.setAliveChannels(new HashSet<Channel<byte[]>>(pool.getIdleTimer().aliveChannels()));
+		for (ConnectionCall cc : connectQueue) {
+			icx.addConnectingChannel(cc.getSocketChannel());
+		}
+		for (ConnectionCall cc : cancelQueue) {
+			icx.addDisconnectingChannel(cc.getSocketChannel());
+		}
+		NioProcessor[] nps = pool.getPool();
+		for (NioProcessor np : nps) {
+			IoProcessorX ipx = np.x();
+			icx.add(ipx);
+		}
+		return icx;
 	}
 
 }

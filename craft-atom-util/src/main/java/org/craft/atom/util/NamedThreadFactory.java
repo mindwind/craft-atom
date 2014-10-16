@@ -1,4 +1,4 @@
-package org.craft.atom.util.thread;
+package org.craft.atom.util;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;

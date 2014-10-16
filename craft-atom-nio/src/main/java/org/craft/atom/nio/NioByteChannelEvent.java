@@ -50,11 +50,11 @@ public class NioByteChannelEvent extends AbstractNioByteChannelEvent {
 	public void fire() {
 		try {
 			fire0();
-		} catch (Exception e) {
+		} catch (Throwable t) {
 			try {
-				handler.channelThrown(channel, e);
-			} catch (Exception ex) {
-				LOG.info("[CRAFT-ATOM-NIO] Catch channel thrown exception", ex);
+				handler.channelThrown(channel, t);
+			} catch (Throwable t1) {
+				LOG.warn("[CRAFT-ATOM-NIO] Catch channel thrown exception", t1);
 			}
 		}
 	}
@@ -71,7 +71,7 @@ public class NioByteChannelEvent extends AbstractNioByteChannelEvent {
 			handler.channelWritten(channel, (byte[]) parameter);
 			break;
 		case CHANNEL_THROWN:
-			handler.channelThrown(channel, (Exception) parameter);
+			handler.channelThrown(channel, (Throwable) parameter);
 			break;
 		case CHANNEL_IDLE:
 			handler.channelIdle(channel);

@@ -12,13 +12,11 @@ import lombok.ToString;
 
 import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoConnector;
-import org.craft.atom.io.IoConnectorX;
 import org.craft.atom.io.IoHandler;
-import org.craft.atom.io.IoReactorX;
 import org.craft.atom.nio.api.NioConnectorConfig;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
-import org.craft.atom.util.thread.NamedThreadFactory;
+import org.craft.atom.util.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +60,7 @@ abstract public class NioConnector extends NioReactor implements IoConnector {
 	 * @param config
 	 */
 	public NioConnector(IoHandler handler, NioConnectorConfig config) {
-		this(handler, config, new NioOrderedDirectChannelEventDispatcher(config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory());
+		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(config.getExecutorSize(), config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory());
 	}
 	
 	/**
@@ -118,19 +116,36 @@ abstract public class NioConnector extends NioReactor implements IoConnector {
 		selectable = true;
 	}
 	
-	@Override
-	public Future<Channel<byte[]>> connect(String ip, int port) throws IOException {
+	/**
+	 * Asynchronous connects to the specified ip and port.
+	 * 
+	 * @param ip
+	 * @param port
+	 * @return <code>Future</code> instance which is completed when the channel initiated by this call succeeds or fails.
+	 */
+	public Future<Channel<byte[]>> connect(String ip, int port) {
 		SocketAddress remoteAddress = new InetSocketAddress(ip, port);
 		return connect(remoteAddress);
 	}
 	
-	@Override
-	public Future<Channel<byte[]>> connect(SocketAddress remoteAddress) throws IOException {
+	/**
+	 * Asynchronous connects to the specified remote address.
+	 * 
+	 * @param remoteAddress
+	 * @return <code>Future</code> instance which is completed when the channel initiated by this call succeeds or fails.
+	 */
+	public Future<Channel<byte[]>> connect(SocketAddress remoteAddress) {
         return connect(remoteAddress, null);
     }
 	
-	@Override
-	public Future<Channel<byte[]>> connect(SocketAddress remoteAddress, SocketAddress localAddress) throws IOException {
+	/**
+	 * Asynchronous connects to the specified remote address and binds to the specified local address.
+	 * 
+	 * @param remoteAddress
+	 * @param localAddress
+	 * @return <code>Future</code> instance which is completed when the channel initiated by this call succeeds or fails.
+	 */
+	public Future<Channel<byte[]>> connect(SocketAddress remoteAddress, SocketAddress localAddress) {
 		if (!this.selectable) {
 			throw new IllegalStateException("The connector is already shutdown.");
 		}
@@ -146,25 +161,12 @@ abstract public class NioConnector extends NioReactor implements IoConnector {
 		return connectByProtocol(remoteAddress, localAddress);
 	}
 	
-	@Override
 	public void shutdown() {
 		this.selectable = false;
 		this.shutdown = true;
 		this.selector.wakeup();
 	}
 	
-	@Override
-	public IoConnectorX x() {
-		NioConnectorX x = new NioConnectorX();
-		IoReactorX rx = super.x();
-		x.setNewChannelCount(rx.newChannelCount());
-		x.setFlushingChannelCount(rx.flushingChannelCount());
-		x.setClosingChannelCount(rx.closingChannelCount());
-		x.setAliveChannelCount(rx.aliveChannelCount());
-		xByProtocol(x);
-		return x;
-	}
+	abstract protected Future<Channel<byte[]>> connectByProtocol(SocketAddress remoteAddress, SocketAddress localAddress);
 	
-	abstract protected Future<Channel<byte[]>> connectByProtocol(SocketAddress remoteAddress, SocketAddress localAddress) throws IOException;
-	abstract protected void xByProtocol(NioConnectorX x);
 }

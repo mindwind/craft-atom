@@ -23,7 +23,6 @@ public class HttpConstants {
 	
     
 	/**
-	 * <pre>
 	 * NULL              "\0";     
 	 * Carriage Return   "\r"      
 	 * Line Feed         "\n"      
@@ -37,7 +36,6 @@ public class HttpConstants {
 	 * Ampersand         "&"       
 	 * Plus Sign         "+"       
 	 * Percent Sign      "%" 
-	 * </pre>
 	 */      
 	public static final byte NUL          = 0 ;           
 	public static final byte CR           = 13;           

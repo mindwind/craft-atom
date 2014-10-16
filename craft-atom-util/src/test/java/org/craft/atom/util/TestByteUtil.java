@@ -43,48 +43,19 @@ public class TestByteUtil {
 	}
 	
 	@Test
-	public void testBytesShort() {
-		short s = 28543;
-		Assert.assertEquals(s, ByteUtil.bytes2short(ByteUtil.short2bytes(s)));
-		s = -18120;
-		Assert.assertEquals(s, ByteUtil.bytes2short(ByteUtil.short2bytes(s)));
-		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> bytes-short. ", CaseCounter.incr(2)));
+	public void testMakeIntFromByte2() {
+		byte[] bytes = new byte[] {111, 127};
+		int num = ByteUtil.makeIntFromByte2(bytes);
+		Assert.assertEquals(28543, num);
+		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make int from byte2. ", CaseCounter.incr(1)));
 	}
 	
 	@Test
-	public void testBytesInt() {
-		int i = 1234567;
-		Assert.assertEquals(i, ByteUtil.bytes2int(ByteUtil.int2bytes(i)));
-		i = -1234567;
-		Assert.assertEquals(i, ByteUtil.bytes2int(ByteUtil.int2bytes(i)));
-		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> bytes-int. ", CaseCounter.incr(2)));
-	}
-	
-	@Test
-	public void testBytesLong() {
-		long l = 12345678910L;
-		Assert.assertEquals(l, ByteUtil.bytes2long(ByteUtil.long2bytes(l)));
-		l = -12345678910L;
-		Assert.assertEquals(l, ByteUtil.bytes2long(ByteUtil.long2bytes(l)));
-		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> bytes-long. ", CaseCounter.incr(2)));
-	}
-	
-	@Test
-	public void testBytesFloat() {
-		float f = 1234.5678f;
-		Assert.assertEquals(f, ByteUtil.bytes2float(ByteUtil.float2bytes(f)), 0.0001);
-		f = -1234.5678f;
-		Assert.assertEquals(f, ByteUtil.bytes2float(ByteUtil.float2bytes(f)), 0.0001);
-		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> bytes-float. ", CaseCounter.incr(2)));
-	}
-	
-	@Test
-	public void testBytesDouble() {
-		double d = 12345678.12345678;
-		Assert.assertEquals(d, ByteUtil.bytes2double(ByteUtil.double2bytes(d)), 0.00000001);
-		d = -12345678.12345678;
-		Assert.assertEquals(d, ByteUtil.bytes2double(ByteUtil.double2bytes(d)), 0.00000001);
-		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> bytes-double. ", CaseCounter.incr(2)));
+	public void testMakeIntFromByte4() {
+		byte[] bytes = new byte[] {1, 0, 0, 0};
+		int num = ByteUtil.makeIntFromByte4(bytes);
+		Assert.assertEquals(16777216, num);
+		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make int from byte4. ", CaseCounter.incr(1)));
 	}
 	
 	@Test
@@ -109,28 +80,6 @@ public class TestByteUtil {
 		byte[] out = ByteUtil.split(in, 2, 6);
 		Assert.assertArrayEquals(new byte[] {1, 1, 1, 1}, out);
 		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make split. ", CaseCounter.incr(1)));
-	}
-	
-	
-	// ~ -------------------------------------------------------------------------------------------------------------
-	
-	
-	@Test
-	public void testMakeIntFromByte2() {
-		byte[] bytes = new byte[] {111, 127};
-		@SuppressWarnings("deprecation")
-		int num = ByteUtil.makeIntFromByte2(bytes);
-		Assert.assertEquals(28543, num);
-		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make int from byte2. ", CaseCounter.incr(1)));
-	}
-	
-	@Test
-	public void testMakeIntFromByte4() {
-		byte[] bytes = new byte[] {1, 0, 0, 0};
-		@SuppressWarnings("deprecation")
-		int num = ByteUtil.makeIntFromByte4(bytes);
-		Assert.assertEquals(16777216, num);
-		System.out.println(String.format("[CRAFT-ATOM-UTIL] (^_^)  <%s>  Case -> make int from byte4. ", CaseCounter.incr(1)));
 	}
 	
 }

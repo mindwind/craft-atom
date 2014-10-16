@@ -1,15 +1,11 @@
 package org.craft.atom.protocol.http;
 
-import java.nio.charset.Charset;
 import java.util.List;
 
 import junit.framework.Assert;
 
-import org.craft.atom.protocol.ProtocolDecoder;
-import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
-import org.craft.atom.protocol.http.api.HttpCodecFactory;
-import org.craft.atom.protocol.http.model.HttpCookie;
+import org.craft.atom.protocol.http.model.Cookie;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -25,24 +21,24 @@ public class TestHttpCookieDecoder {
 	private static final Logger LOG = LoggerFactory.getLogger(TestHttpCookieDecoder.class);
 	
 	
-	private ProtocolDecoder<HttpCookie> cookieDecoder    = HttpCodecFactory.newHttpCookieDecoder();
-	private ProtocolEncoder<HttpCookie> encoder          = HttpCodecFactory.newHttpCookieEncoder();
-	private ProtocolDecoder<HttpCookie> setCookieDecoder = HttpCodecFactory.newHttpCookieDecoder(Charset.forName("utf-8"), true);
+	private HttpCookieDecoder cookieDecoder    = new HttpCookieDecoder()    ;
+	private HttpCookieEncoder encoder          = new HttpCookieEncoder()    ;
+	private HttpCookieDecoder setCookieDecoder = new HttpCookieDecoder(true);
 	
 
 	@Test
 	public void testCookie() throws ProtocolException {
 		String cookie1 = "SID=31d4d96e407aad42; lang=en-US";
-		List<HttpCookie> cookies = cookieDecoder.decode(cookie1.getBytes());
+		List<Cookie> cookies = cookieDecoder.decode(cookie1.getBytes());
 		Assert.assertEquals(2, cookies.size());
-		for (HttpCookie cookie : cookies) {
+		for (Cookie cookie : cookies) {
 			LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Encoded cookie={}", new String(encoder.encode(cookie)));
 		}
 		
 		String cookie2 = "test=test123";
 		cookies = cookieDecoder.decode(cookie2.getBytes());
 		Assert.assertEquals(1, cookies.size());
-		for (HttpCookie cookie : cookies) {
+		for (Cookie cookie : cookies) {
 			LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Encoded cookie={}", new String(encoder.encode(cookie)));
 		}
 		System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-HTTP] (^_^)  <%s>  Case -> test cookie. ", CaseCounter.incr(2)));
@@ -51,16 +47,16 @@ public class TestHttpCookieDecoder {
 	@Test
 	public void testSetCookie() throws ProtocolException {
 		String setCookie1 = "SID=31d4d96e407aad42; Domain=example.com; Path=/";
-		List<HttpCookie> cookies = setCookieDecoder.decode(setCookie1.getBytes());
+		List<Cookie> cookies = setCookieDecoder.decode(setCookie1.getBytes());
 		Assert.assertEquals(1, cookies.size());
-		for (HttpCookie cookie : cookies) {
+		for (Cookie cookie : cookies) {
 			LOG.debug(new String(encoder.encode(cookie)));
 		}
 		
 		String setCookie2 = "SID=31d4d96e407aad42; Domain=example.com; Path=/chat; HttpOnly; Secure; Expires=Wed, 09 Jun 2021 10:18:14 GMT; Max-Age=86400; test=extensionTest";
 		cookies = setCookieDecoder.decode(setCookie2.getBytes());
 		Assert.assertEquals(1, cookies.size());
-		for (HttpCookie cookie : cookies) {
+		for (Cookie cookie : cookies) {
 			Assert.assertEquals("SID", cookie.getName());
 			Assert.assertEquals("31d4d96e407aad42", cookie.getValue());
 			Assert.assertEquals("example.com", cookie.getDomain());

@@ -5,9 +5,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
-import org.craft.atom.protocol.ProtocolDecoder;
 import org.craft.atom.protocol.ProtocolException;
-import org.craft.atom.protocol.textline.api.TextLineCodecFactory;
 import org.craft.atom.test.CaseCounter;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,12 +23,13 @@ public class TestTextLineDecoder {
 	private static final Charset UTF_8 = Charset.forName("utf-8");
 	
 	
-	private ProtocolDecoder<String> decoder;
+	private TextLineDecoder decoder;
 	
 	
 	@Before
 	public void setup() {
-		decoder = TextLineCodecFactory.newTextLineDecoderBuilder(UTF_8, "\n").maxSize(20).build();
+		decoder = new TextLineDecoder();
+		decoder.setMaxSize(20);
 	}
  	
 	@Test

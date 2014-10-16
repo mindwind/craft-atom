@@ -53,7 +53,6 @@ public class TextLineEncoder extends AbstractProtocolEncoder implements Protocol
 	
 	@Override
 	public byte[] encode(String str) throws ProtocolException {
-		if (str == null) return null;
 		str += delimiter;
 		byte[] lineBytes = str.getBytes(charset);
 		if (lineBytes.length > maxLineLength) {

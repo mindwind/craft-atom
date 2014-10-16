@@ -1,6 +1,5 @@
 package org.craft.atom.nio;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -29,13 +28,12 @@ public class TestNioTcpConnector {
 	
 	
 	@Test
-	public void testTimeout() throws IOException {
+	public void testTimeout() {
 		IoConnector connector =  NioFactory.newTcpConnector(new NioConnectorHandler());
 		Future<Channel<byte[]>> future = connector.connect("127.0.0.1", AvailablePortFinder.getNextAvailable());
 		
 		try {
-			future.get(200, TimeUnit.MILLISECONDS);
-			Assert.fail();
+			future.get(1, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			
 		} catch (ExecutionException e) {

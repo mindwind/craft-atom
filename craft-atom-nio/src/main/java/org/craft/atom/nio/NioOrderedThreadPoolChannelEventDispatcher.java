@@ -2,7 +2,7 @@ package org.craft.atom.nio;
 
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -10,7 +10,7 @@ import lombok.ToString;
 
 import org.craft.atom.io.ChannelEvent;
 import org.craft.atom.nio.spi.AbstractNioChannelEventDispatcher;
-import org.craft.atom.util.thread.NamedThreadFactory;
+import org.craft.atom.util.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +29,7 @@ public class NioOrderedThreadPoolChannelEventDispatcher extends AbstractNioChann
 	
 	
 	private final BlockingQueue<NioByteChannel> channelQueue;
-	private final ExecutorService               executor    ;
+	private final Executor                      executor    ;
 
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -73,11 +73,6 @@ public class NioOrderedThreadPoolChannelEventDispatcher extends AbstractNioChann
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
 	
-	
-	@Override
-	public void shutdown() { 
-		executor.shutdownNow();
-	}
 	
 	private class Worker implements Runnable {
 		

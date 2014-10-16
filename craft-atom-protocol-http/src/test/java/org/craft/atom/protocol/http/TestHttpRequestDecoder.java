@@ -6,11 +6,8 @@ import java.util.Random;
 
 import junit.framework.Assert;
 
-import org.craft.atom.protocol.ProtocolDecoder;
-import org.craft.atom.protocol.ProtocolEncoder;
 import org.craft.atom.protocol.ProtocolException;
-import org.craft.atom.protocol.http.api.HttpCodecFactory;
-import org.craft.atom.protocol.http.model.HttpCookie;
+import org.craft.atom.protocol.http.model.Cookie;
 import org.craft.atom.protocol.http.model.HttpRequest;
 import org.craft.atom.test.CaseCounter;
 import org.craft.atom.util.StringUtil;
@@ -29,8 +26,8 @@ public class TestHttpRequestDecoder {
 	private static final Logger LOG = LoggerFactory.getLogger(TestHttpRequestDecoder.class);
 	
 	
-	private ProtocolEncoder<HttpRequest> encoder                  ;
-	private ProtocolDecoder<HttpRequest> decoder                  ;
+	private HttpRequestEncoder encoder                            ;
+	private HttpRequestDecoder decoder                            ;
 	private Charset            charset  = Charset.forName("utf-8");
 	
 	
@@ -39,8 +36,8 @@ public class TestHttpRequestDecoder {
 	
 	@Before
 	public void before() {
-		encoder = HttpCodecFactory.newHttpRequestEncoder();
-		decoder = HttpCodecFactory.newHttpRequestDecoder();
+		encoder = new HttpRequestEncoder();
+		decoder = new HttpRequestDecoder();
 	}
 	
 	@Test 
@@ -161,10 +158,10 @@ public class TestHttpRequestDecoder {
 		Assert.assertEquals(1, reqs.size());
 		
 		HttpRequest request = reqs.get(0);
-		List<HttpCookie> cookies = request.getCookies();
+		List<Cookie> cookies = request.getCookies();
 		Assert.assertEquals(3, cookies.size());
 		
-		for (HttpCookie cookie : cookies) {
+		for (Cookie cookie : cookies) {
 			LOG.debug("[CRAFT-ATOM-PROTOCOL-HTTP] Cookie http string={}", cookie.toHttpString());
 		}
 		System.out.println(String.format("[CRAFT-ATOM-PROTOCOL-HTTP] (^_^)  <%s>  Case -> test one request with cookie. ", CaseCounter.incr(2)));

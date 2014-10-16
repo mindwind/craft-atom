@@ -1,6 +1,7 @@
 package org.craft.atom.io;
 
 
+
 /**
  * Abstracts reactor model, base api interface.
  * 
@@ -19,7 +20,7 @@ public interface IoReactor {
 	void shutdown();
 	
 	/**
-     * Returns the io handler associates with the reactor
+     * Returns the handler associates with the reactor
      */
 	IoHandler getHandler();
 	

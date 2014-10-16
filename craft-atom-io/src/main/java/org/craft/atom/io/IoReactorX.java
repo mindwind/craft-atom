@@ -1,32 +1,33 @@
 package org.craft.atom.io;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
- * The x-ray of {@link IoReactor}
- * 
  * @author mindwind
- * @version 1.0, Oct 15, 2014
+ * @version 1.0, Dec 24, 2013
  */
-public interface IoReactorX {
+@ToString
+public class IoReactorX implements Serializable {
+
+
+	private static final long serialVersionUID = 5772691776878955554L;
 
 	
-	/**
-	 * @return current alive channel count.
-	 */
-	int aliveChannelCount();
+	@Getter @Setter protected boolean              isSelectable                                       ;
+	@Getter @Setter protected List<IoProcessorX>   ioProcessorXList  = new ArrayList<IoProcessorX>(0) ;
+	@Getter @Setter protected Set<Channel<byte[]>> aliveChannels     = new HashSet<Channel<byte[]>>(0);
+
 	
-	/**
-	 * @return current new channel to be processed count.
-	 */
-	int newChannelCount();
-	
-	/**
-	 * @return current flushing channel count.
-	 */
-	int flushingChannelCount();
-	
-	/**
-	 * @return current closing channel count.
-	 */
-	int closingChannelCount();
+	public void add(IoProcessorX ipx) {
+		ioProcessorXList.add(ipx);
+	}
 	
 }

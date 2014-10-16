@@ -10,7 +10,6 @@ import java.nio.channels.SocketChannel;
 import lombok.ToString;
 
 import org.craft.atom.io.IoHandler;
-import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.api.NioAcceptorConfig;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
@@ -88,6 +87,7 @@ public class NioTcpAcceptor extends NioAcceptor {
 	@Override
 	protected void bindByProtocol(SocketAddress address) throws IOException {
 		ServerSocketChannel ssc = ServerSocketChannel.open();
+
 		ssc.configureBlocking(false);
 		ServerSocket ss = ssc.socket();
 		ss.setReuseAddress(config.isReuseAddress());
@@ -106,39 +106,21 @@ public class NioTcpAcceptor extends NioAcceptor {
 		SocketChannel sc = null;
 		try {
 			sc = ssc.accept();
-			if (sc == null)              {            return null; }
-			if (isChannelSizeOverflow()) { close(sc); return null; }
-			
+			if (sc == null) {
+				return null;
+			}
 			sc.configureBlocking(false);
 			NioByteChannel channel = new NioTcpByteChannel(sc, config, predictorFactory.newPredictor(config.getMinReadBufferSize(), config.getDefaultReadBufferSize(), config.getMaxReadBufferSize()), dispatcher);
-			NioProcessor processor = pool.pick(channel);
-			processor.setProtocol(IoProtocol.TCP);
-			channel.setProcessor(processor);
-			processor.add(channel);
 			return channel;
 		} catch (IOException e) {
-			close(sc);
+			if (sc != null) {
+				try {
+					sc.close();
+				} catch (IOException ex) {
+					LOG.error("[CRAFT-ATOM-NIO] Close exception", ex);
+				}
+			}
 			throw e;
-		}
-	}
-	
-	private boolean isChannelSizeOverflow() throws IOException {
-		int currentChannelSize = x().aliveChannelCount();
-		int allowChannelSize = config.getChannelSize();
-		if (currentChannelSize >= allowChannelSize) {
-			LOG.warn("[CRAFT-ATOM-NIO] Channel size overflow, |allowChannelSize={}, currentChannelSize={}|", allowChannelSize, currentChannelSize);
-			return true;
-		}
-		return false;
-	}
-	
-	private void close(SocketChannel sc) {
-		if (sc == null) { return; }
-		
-		try {
-			sc.close();
-		} catch (IOException ex) {
-			LOG.error("[CRAFT-ATOM-NIO] Close exception", ex);
 		}
 	}
 

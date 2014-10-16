@@ -22,14 +22,14 @@ import org.craft.atom.protocol.http.model.HttpVersion;
 /**
  * A {@link ProtocolDecoder} which decodes bytes into {@code HttpRequest} object, default charset is utf-8.
  * <br>
- * Not thread safe.
+ * Not thread safe
  * 
  * @author mindwind
  * @version 1.0, Feb 2, 2013
  */
 @ToString(callSuper = true)
 public class HttpRequestDecoder extends HttpDecoder<HttpRequest> implements ProtocolDecoder<HttpRequest> {
-	
+
 	public HttpRequestDecoder() {
 		super();
 	}
@@ -54,9 +54,7 @@ public class HttpRequestDecoder extends HttpDecoder<HttpRequest> implements Prot
 		this.maxSize = maxRequestSize;
 	}
 	
-	
 	// ~ ------------------------------------------------------------------------------------------------------------
-	
 	
 	@Override
 	public List<HttpRequest> decode(byte[] bytes) throws ProtocolException {
@@ -83,7 +81,7 @@ public class HttpRequestDecoder extends HttpDecoder<HttpRequest> implements Prot
 
 	private List<HttpRequest> decode0(byte[] bytes) throws ProtocolException, IOException {
 		List<HttpRequest> reqs = new ArrayList<HttpRequest>();
-		adapt();
+		reset();
 		buf.append(bytes);
 		
 		while (searchIndex < buf.length()) {
@@ -143,7 +141,7 @@ public class HttpRequestDecoder extends HttpDecoder<HttpRequest> implements Prot
 				state4END(reqs);
 				break;
 			default:
-				throw new IllegalStateException("Invalid decoder state!");
+				throw new IllegalStateException("invalid decoder state!");
 			}
 		}
 		

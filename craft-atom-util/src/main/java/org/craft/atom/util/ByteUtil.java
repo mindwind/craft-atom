@@ -195,6 +195,54 @@ public class ByteUtil {
 	}
 
 	/**
+	 * Reads an int from 2 bytes of the given array at offset 0.
+	 * 
+	 * @param b
+	 *            the byte array to read
+	 * @return the int value
+	 */
+	public static final int makeIntFromByte2(byte[] b) {
+		return makeIntFromByte2(b, 0);
+	}
+
+	/**
+	 * Reads an int from 2 bytes of the given array at the given offset.
+	 * 
+	 * @param b
+	 *            the byte array to read
+	 * @param offset
+	 *            the offset at which to start
+	 * @return the int value
+	 */
+	public static final int makeIntFromByte2(byte[] b, int offset) {
+		return (b[offset] & 0xff) << 8 | (b[offset + 1] & 0xff);
+	}
+
+	/**
+	 * Reads an int from 4 bytes of the given array at offset 0.
+	 * 
+	 * @param b
+	 *            the byte array to read
+	 * @return the int value
+	 */
+	public static final int makeIntFromByte4(byte[] b) {
+		return makeIntFromByte4(b, 0);
+	}
+
+	/**
+	 * Reads an int from 4 bytes of the given array at the given offset.
+	 * 
+	 * @param b
+	 *            the byte array to read
+	 * @param offset
+	 *            the offset at which to start
+	 * @return the int value
+	 */
+	public static final int makeIntFromByte4(byte[] b, int offset) {
+		return b[offset] << 24 | (b[offset + 1] & 0xff) << 16 | (b[offset + 2] & 0xff) << 8 | (b[offset + 3] & 0xff);
+	}
+
+	/**
 	 * Returns a new byte array between start and end index.
 	 * 
 	 * @param bytes
@@ -203,7 +251,7 @@ public class ByteUtil {
 	 *            the start index, inclusive.
 	 * @param end
 	 *            the ending index, exclusive.
-	 * @return splited byte array
+	 * @return split byte array
 	 */
 	public static byte[] split(byte[] bytes, int start, int end) {
 		if (bytes == null) {
@@ -369,283 +417,6 @@ public class ByteUtil {
 	 */
 	public static boolean isEmpty(byte[] bytes) {
 		return bytes == null || bytes.length == 0;
-	}
-	
-	/**
-	 * Get a short from 2 bytes of the given array at offset 0.
-	 * 
-	 * @param  b byte array
-	 * @return a short
-	 */
-	public static final short bytes2short(byte[] b) {
-		return bytes2short(b, 0);
-	}
-	
-	/**
-	 * Get a short from 2 bytes of the given array at specific offset.
-	 * 
-	 * @param b   byte array
-	 * @param off offset of the byte array
-	 * @return a short
-	 */
-	public static final short bytes2short(byte[] b, int off) {
-		return (short) ((b[off] & 0xff) << 8 | (b[off + 1] & 0xff));
-	}
-	
-	/**
-	 * Get a byte array from a short.
-	 * 
-	 * @param  s short
-	 * @return a byte array
-	 */
-	public static final byte[] short2bytes(short s) {
-		byte[] b = { 0, 0 };
-		short2bytes(s, b, 0);
-		return b;
-	}
-	
-	/**
-	 * Set a byte array at specific offset from a short.
-	 * 
-	 * @param s   short
-	 * @param b   byte array
-	 * @param off offset
-	 */
-	public static void short2bytes(short s, byte[] b, int off) {
-		b[off + 1] = (byte) s;
-		b[off + 0] = (byte) (s >>> 8);
-	}
-	
-	/**
-	 * Get a int from 4 bytes of the given array at offset 0.
-	 * 
-	 * @param b byte array
-	 * @return a short
-	 */
-	public static final int bytes2int(byte[] b) {
-		return bytes2int(b, 0);
-	}
-	
-	/**
-	 * Get a int from 4 bytes of the given array at specific offset.
-	 * 
-	 * @param b byte array
-	 * @param off offset of the byte array
-	 * @return a short
-	 */
-	public static final int bytes2int(byte[] b, int off) {
-		return b[off] << 24 | (b[off + 1] & 0xff) << 16 | (b[off + 2] & 0xff) << 8 | (b[off + 3] & 0xff);
-	}
-	
-	/**
-	 * Get a byte array from an int.
-	 * 
-	 * @param  i int
-	 * @return a byte array
-	 */
-	public static final byte[] int2bytes(int i) {
-		byte[] b = { 0, 0, 0, 0 };
-		int2bytes(i, b, 0);
-		return b;
-	}
-	
-	/**
-	 * Set a byte array at specific offset from an int.
-	 * 
-	 * @param i   int
-	 * @param b   byte array
-	 * @param off offset
-	 */
-	public static void int2bytes(int i, byte[] b, int off) {
-		b[off + 3] = (byte)  i;
-		b[off + 2] = (byte) (i >>> 8);
-		b[off + 1] = (byte) (i >>> 16);
-		b[off + 0] = (byte) (i >>> 24);
-	}
-	
-	/**
-	 * Get a long from 8 bytes of the given array at offset 0.
-	 * 
-	 * @param b byte array
-	 * @return a short
-	 */
-	public static final long bytes2long(byte[] b) {
-		return bytes2long(b, 0);
-	}
-	
-	/**
-	 * Get a long from 8 bytes of the given array at specific offset.
-	 * 
-	 * @param b byte array
-	 * @param off offset of the byte array
-	 * @return a short
-	 */
-	public static final long bytes2long(byte[] b, int off) {
-		return (((long) b[off]) << 56 | ((long) (b[off + 1] & 0xff)) << 48 | ((long) (b[off + 2]) & 0xff) << 40 | ((long) (b[off + 3]) & 0xff) << 32 | (((long) b[off + 4]) & 0xff) << 24 | (((long) b[off + 5]) & 0xff) << 16 | (((long) b[off + 6]) & 0xff) << 8 | (((long) b[off + 7]) & 0xff));
-	}
-	
-	/**
-	 * Get a byte array from a long.
-	 * 
-	 * @param  l long
-	 * @return a byte array
-	 */
-	public static final byte[] long2bytes(long l) {
-		byte[] b = { 0, 0, 0, 0, 0, 0, 0, 0 };
-		long2bytes(l, b, 0);
-		return b;
-	}
-	
-	/**
-	 * Set a byte array at specific offset from a long.
-	 * 
-	 * @param l long
-	 * @param b byte array
-	 * @param off offset
-	 */
-	public static void long2bytes(long l, byte[] b, int off) {
-		b[off + 7] = (byte)  l;
-		b[off + 6] = (byte) (l >>> 8);
-		b[off + 5] = (byte) (l >>> 16);
-		b[off + 4] = (byte) (l >>> 24);
-		b[off + 3] = (byte) (l >>> 32);
-		b[off + 2] = (byte) (l >>> 40);
-		b[off + 1] = (byte) (l >>> 48);
-		b[off + 0] = (byte) (l >>> 56);
-	}
-	
-	/**
-	 * Get a float from 4 bytes of the given array.
-	 * 
-	 * @param b byte array.
-	 * @return a float.
-	 */
-	public static float bytes2float(byte[] b) {
-		return bytes2float(b, 0);
-	}
-
-	/**
-	 * Get a float from 4 bytes of the given array at specific offset.
-	 * 
-	 * @param b byte array.
-	 * @param off offset.
-	 * @return a float.
-	 */
-	public static float bytes2float(byte[] b, int off) {
-		int i = b[off] << 24 | (b[off + 1] & 0xff) << 16 | (b[off + 2] & 0xff) << 8 | (b[off + 3] & 0xff);
-		return Float.intBitsToFloat(i);
-	}
-	
-	/**
-	 * Get a byte array from a float.
-	 * 
-	 * @param f float
-	 * @return a byte array
-	 */
-	public static final byte[] float2bytes(float f) {
-		byte[] b = { 0, 0, 0, 0 };
-		float2bytes(f, b, 0);
-		return b;
-	}
-	
-	/**
-	 * Set a byte array at specific offset from a float.
-	 * 
-	 * @param f   float
-	 * @param b   byte array
-	 * @param off offset
-	 */
-	public static void float2bytes(float f, byte[] b, int off) {
-		int i = Float.floatToIntBits(f);
-		b[off + 3] = (byte)  i;
-		b[off + 2] = (byte) (i >>> 8);
-		b[off + 1] = (byte) (i >>> 16);
-		b[off + 0] = (byte) (i >>> 24);
-	}
-	
-	/**
-	 * Get a double from 8 bytes of the given array.
-	 * 
-	 * @param b byte array.
-	 * @return a double.
-	 */
-	public static double bytes2double(byte[] b) {
-		return bytes2double(b, 0);
-	}
-
-	/**
-	 * Get a double from 8 bytes of the given array at specific offset.
-	 * 
-	 * @param b byte array.
-	 * @param off offset.
-	 * @return a double.
-	 */
-	public static double bytes2double(byte[] b, int off) {
-		long l = (((long) b[off]) << 56 | ((long) (b[off + 1] & 0xff)) << 48 | ((long) (b[off + 2]) & 0xff) << 40 | ((long) (b[off + 3]) & 0xff) << 32 | (((long) b[off + 4]) & 0xff) << 24 | (((long) b[off + 5]) & 0xff) << 16 | (((long) b[off + 6]) & 0xff) << 8 | (((long) b[off + 7]) & 0xff));
-		return Double.longBitsToDouble(l);
-	}
-	
-	/**
-	 * Get a byte array from a double.
-	 * 
-	 * @param d double
-	 * @return a byte array
-	 */
-	public static final byte[] double2bytes(double d) {
-		byte[] b = { 0, 0, 0, 0, 0, 0, 0, 0 };
-		double2bytes(d, b, 0);
-		return b;
-	}
-	
-	/**
-	 * Set a byte array at specific offset from a double.
-	 * 
-	 * @param d   double
-	 * @param b   byte array
-	 * @param off offset
-	 */
-	public static void double2bytes(double d, byte[] b, int off) {
-		long l = Double.doubleToLongBits(d);
-		b[off + 7] = (byte)  l;
-		b[off + 6] = (byte) (l >>> 8);
-		b[off + 5] = (byte) (l >>> 16);
-		b[off + 4] = (byte) (l >>> 24);
-		b[off + 3] = (byte) (l >>> 32);
-		b[off + 2] = (byte) (l >>> 40);
-		b[off + 1] = (byte) (l >>> 48);
-		b[off + 0] = (byte) (l >>> 56);
-	}
-	
-	
-	// ~ -------------------------------------------------------------------------------------------------------------
-	
-	
-	/**
-	 * @deprecated replace by {@link #bytes2short(byte[])}
-	 */
-	public static final int makeIntFromByte2(byte[] b) {
-		return makeIntFromByte2(b, 0);
-	}
-
-	/**
-	 * @deprecated replace by {@link #bytes2short(byte[], off)}
-	 */
-	public static final int makeIntFromByte2(byte[] b, int off) {
-		return (b[off] & 0xff) << 8 | (b[off + 1] & 0xff);
-	}
-
-	/**
-	 * @deprecated replace by {@link #bytes2int(byte[])}
-	 */
-	public static final int makeIntFromByte4(byte[] b) {
-		return makeIntFromByte4(b, 0);
-	}
-
-	/**
-	 * @deprecated replace by {@link #bytes2int(byte[], off)}
-	 */
-	public static final int makeIntFromByte4(byte[] b, int off) {
-		return b[off] << 24 | (b[off + 1] & 0xff) << 16 | (b[off + 2] & 0xff) << 8 | (b[off + 3] & 0xff);
 	}
 
 	private ByteUtil() {

@@ -10,7 +10,7 @@ import org.craft.atom.redis.DefaultShardedRedis;
 import org.craft.atom.redis.spi.Sharded;
 
 /**
- * An object that creates new redis instance on demand.
+ * Redis Factory
  * 
  * @author mindwind
  * @version 1.0, Jun 28, 2013

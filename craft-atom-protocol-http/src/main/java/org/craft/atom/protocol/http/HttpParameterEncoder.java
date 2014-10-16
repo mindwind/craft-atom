@@ -5,7 +5,6 @@ import static org.craft.atom.protocol.http.HttpConstants.S_EQUAL_SIGN;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,17 +27,9 @@ import org.craft.atom.protocol.ProtocolException;
  */
 @ToString(callSuper = true)
 public class HttpParameterEncoder extends AbstractProtocolCodec implements ProtocolEncoder<Map<String, List<String>>> {
-	
-	
-	public HttpParameterEncoder() {}
-	
-	public HttpParameterEncoder(Charset charset) {
-		this.charset = charset;
-	}
 
 	@Override
 	public byte[] encode(Map<String, List<String>> paras) throws ProtocolException {
-		if (paras == null) return null;
 		StringBuilder buf = new StringBuilder();
 		Set<Entry<String, List<String>>> entrys = paras.entrySet();
 		for (Entry<String, List<String>> entry : entrys) {

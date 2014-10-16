@@ -11,17 +11,17 @@
 	</appender>
 	
 	<category name="org.craft.atom.nio" additivity="false">
-		<priority value="error" />
+		<priority value="info" />
 		<appender-ref ref="console" />
 	</category>
 	
 	<category name="org.craft.atom.io" additivity="false">
-		<priority value="error" />
+		<priority value="info" />
 		<appender-ref ref="console" />
 	</category>
 
 	<root>
-		<priority value="error" />
+		<priority value="warn" />
 		<appender-ref ref="console" />
 	</root>
 </log4j:configuration>

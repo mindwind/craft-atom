@@ -45,11 +45,11 @@ import org.craft.atom.util.GzipUtil;
  * @see HttpRequestDecoder
  * @see HttpResponseDecoder
  */
-@ToString(callSuper = true)
+@ToString(callSuper = true, of = { "state", "maxLineLength" })
 abstract public class HttpDecoder<T extends HttpMessage> extends AbstractProtocolDecoder {
 	
 	
-	
+	protected static final int START                          = 0;
 	protected static final int METHOD                         = 11;
 	protected static final int REQUEST_URI                    = 12;
 	protected static final int STATUS_CODE                    = 21;
@@ -68,9 +68,10 @@ abstract public class HttpDecoder<T extends HttpMessage> extends AbstractProtoco
 	protected static final int ENTITY_CHUNKED_TRAILER_NAME    = 56;
 	protected static final int ENTITY_CHUNKED_TRAILER_VALUE   = 57;
 	protected static final int ENTITY_ENCODING                = 58;
-	
+	protected static final int END                            = -1;
 	
 	@Getter @Setter protected int             maxLineLength = defaultBufferSize;
+	@Getter         protected int             state         = START            ;
 	@Getter         protected int             trailerSize                      ;
 	@Getter         protected HttpHeader      header                           ;
 	@Getter         protected HttpEntity      entity                           ;
@@ -81,22 +82,6 @@ abstract public class HttpDecoder<T extends HttpMessage> extends AbstractProtoco
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
-	
-	
-	@Override
-	public void reset() {
-		super.reset();
-		maxLineLength = defaultBufferSize;
-		stateIndex    = 0                ;
-		state         = START            ;
-		trailerSize   = 0                ;
-		header        = null             ;
-		entity        = null             ;
-		chunk         = null             ;
-		contentType   = null             ;
-		chunkExtName  = null             ;
-		httpMessage   = null             ;
-	}
 	
 	
 	protected void state4END(List<T> httpMessages) throws ProtocolException {
@@ -435,7 +420,7 @@ abstract public class HttpDecoder<T extends HttpMessage> extends AbstractProtoco
 		state = HEADER_VALUE_PREFIX;
 	}
 	
-	protected void adapt() {
+	protected void reset() {
 		if (splitIndex > 0 && splitIndex < buf.length()) {
 			byte[] tailBytes = buf.array(splitIndex, buf.length());
 			buf.clear();

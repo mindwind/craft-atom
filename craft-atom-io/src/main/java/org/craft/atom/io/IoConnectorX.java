@@ -1,22 +1,35 @@
 package org.craft.atom.io;
 
+import java.io.Serializable;
+import java.nio.channels.SocketChannel;
+import java.util.HashSet;
+import java.util.Set;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
- * The x-ray of {@link IoConnector}
- * 
  * @author mindwind
- * @version 1.0, Oct 15, 2014
+ * @version 1.0, Dec 24, 2013
  */
-public interface IoConnectorX extends IoReactorX {
+@ToString(callSuper = true)
+public class IoConnectorX extends IoReactorX implements Serializable {
+	
+	
+	private static final long serialVersionUID = 6549663964261987160L;
 
 	
-	/**
-	 * @return current connecting channel count.
-	 */
-	int connectingChannelCount();
+	@Getter @Setter private Set<SocketChannel> connectingChannels    = new HashSet<SocketChannel>();
+	@Getter @Setter private Set<SocketChannel> disconnectingChannels = new HashSet<SocketChannel>();
 	
-	/**
-	 * @return current disconnecting channel count.
-	 */
-	int disconnectingChannelCount();
+	
+	public void addConnectingChannel(SocketChannel sc) {
+		connectingChannels.add(sc);
+	}
+	
+	public void addDisconnectingChannel(SocketChannel sc) {
+		disconnectingChannels.add(sc);
+	}
 	
 }

@@ -7,7 +7,6 @@ import java.nio.channels.SelectableChannel;
 import java.nio.channels.SelectionKey;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -16,7 +15,6 @@ import lombok.ToString;
 import org.craft.atom.io.AbstractIoByteChannel;
 import org.craft.atom.io.ChannelEvent;
 import org.craft.atom.io.ChannelState;
-import org.craft.atom.io.IllegalChannelStateException;
 import org.craft.atom.nio.spi.NioBufferSizePredictor;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
 
@@ -72,25 +70,23 @@ abstract public class NioByteChannel extends AbstractIoByteChannel {
 	}
 
 	@Override
-	public boolean write(byte[] data) throws IllegalChannelStateException {
-		if (isClosed())   { throw new IllegalChannelStateException("Channel is closed"); }
-		if (isClosing())  { throw new IllegalChannelStateException("Channel is closing"); }
-		if (isPaused())   { throw new IllegalChannelStateException("Channel is paused"); }
-		if (data == null) { return false; }
+	public boolean write(byte[] data) {
+		if (!isValid()) {
+			throw new IllegalStateException(String.format("Channel state<%s> is invalid, channel=" + this.toString(), state));
+		}
+		if (data == null) {
+			return false;
+		}
+		
+		if (isPaused()) {
+			// channel paused, reject I/O operation
+			return false;
+		}
 		
 		setLastIoTime(System.currentTimeMillis());
 		getWriteBufferQueue().add(ByteBuffer.wrap(data));
 		processor.flush(this);
 		return true;
-	}
-	
-	@Override
-	public Queue<byte[]> getWriteQueue() {
-		Queue<byte[]> q = new LinkedBlockingQueue<byte[]>();
-		for (ByteBuffer buf : writeBufferQueue) {
-			q.add(buf.array());
-		}
-		return q;
 	}
 	
 	@Override

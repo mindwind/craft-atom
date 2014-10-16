@@ -10,7 +10,6 @@ public interface ProtocolEncoder<P> {
 	
 	/**
 	 * Encodes higher-level protocol objects into binary data.
-	 * If input <tt>null</tt> output <tt>null</tt>
 	 * 
 	 * @param protocolObject
 	 * @return byte array

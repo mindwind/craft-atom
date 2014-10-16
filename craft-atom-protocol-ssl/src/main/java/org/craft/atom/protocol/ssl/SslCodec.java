@@ -23,26 +23,23 @@ import org.craft.atom.util.buffer.AdaptiveByteBuffer;
  * 
  * @author mindwind
  * @version 1.0, Oct 17, 2013
- * @deprecated replaced by {@code org.craft.atom.protocol.ssl.api.SslCodec}
  */
 public class SslCodec {
 	
 	
 	/** 
-	 * <pre>
-	 * Field description 
+	 * Field description <br>
 	 * 
-	 * wantClientAuth     : Set true if the engine will <em>request</em> client authentication.This option is only useful to engines in the server mode. 
-	 * needClientAuth     : Set true if the engine will <em>require</em> client authentication.This option is only useful to engines in the server mode. 
-	 * clientMode         : Set true if the engine is set to use client mode when handshaking. 
-	 * enabledCipherSuites: The cipher suites to be enabled when {@link SSLEngine} is initialized. <tt>null</tt> means use {@link SSLEngine}'s default.
-	 * enabledProtocols   : The protocols to be enabled when {@link SSLEngine} is initialized.<tt>null</tt> means use {@link SSLEngine}'s default. 
-	 * inNetBuffer        : Encrypted data from the net. 
-	 * outNetBuffer       : Encrypted data to be written to the net. 
-	 * appBuffer          : Application cleartext data to be read by application 
-	 * emptyBuffer        : Empty buffer used during initial handshake and close operations. 
-	 * handshakeComplete  : A flag set to true when a SSL Handshake has been completed. 
-	 * </pre>
+	 * wantClientAuth     : Set true if the engine will <em>request</em> client authentication.This option is only useful to engines in the server mode. <br>
+	 * needClientAuth     : Set true if the engine will <em>require</em> client authentication.This option is only useful to engines in the server mode. <br>
+	 * clientMode         : Set true if the engine is set to use client mode when handshaking. <br>
+	 * enabledCipherSuites: The cipher suites to be enabled when {@link SSLEngine} is initialized. <tt>null</tt> means use {@link SSLEngine}'s default. <br>
+	 * enabledProtocols   : The protocols to be enabled when {@link SSLEngine} is initialized.<tt>null</tt> means use {@link SSLEngine}'s default. <br>
+	 * inNetBuffer        : Encrypted data from the net. <br>
+	 * outNetBuffer       : Encrypted data to be written to the net. <br>
+	 * appBuffer          : Application cleartext data to be read by application <br>
+	 * emptyBuffer        : Empty buffer used during initial handshake and close operations. <br>
+	 * handshakeComplete  : A flag set to true when a SSL Handshake has been completed. <br>
 	 */
 	@Getter @Setter private       boolean                         wantClientAuth                                      ;   
 	@Getter @Setter private       boolean                         needClientAuth                                      ;    

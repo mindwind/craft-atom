@@ -18,10 +18,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.ToString;
 
+import org.craft.atom.io.Channel;
 import org.craft.atom.io.IoAcceptor;
 import org.craft.atom.io.IoAcceptorX;
 import org.craft.atom.io.IoHandler;
-import org.craft.atom.io.IoReactorX;
+import org.craft.atom.io.IoProcessorX;
+import org.craft.atom.io.IoProtocol;
 import org.craft.atom.nio.api.NioAcceptorConfig;
 import org.craft.atom.nio.spi.NioBufferSizePredictorFactory;
 import org.craft.atom.nio.spi.NioChannelEventDispatcher;
@@ -123,7 +125,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	 * @param otherLocalAddresses
 	 */
 	public NioAcceptor(IoHandler handler, NioAcceptorConfig config, SocketAddress firstLocalAddress, SocketAddress... otherLocalAddresses) {
-		this(handler, config, new NioOrderedDirectChannelEventDispatcher(config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory(), firstLocalAddress, otherLocalAddresses);
+		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(config.getExecutorSize(), config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory(), firstLocalAddress, otherLocalAddresses);
 	}
 	
 	/**
@@ -173,7 +175,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	 * @param handler
 	 */
 	public NioAcceptor(IoHandler handler) {
-		this(handler, new NioAcceptorConfig(), new NioOrderedDirectChannelEventDispatcher(), new NioAdaptiveBufferSizePredictorFactory());
+		this(handler, new NioAcceptorConfig(), new NioOrderedThreadPoolChannelEventDispatcher(), new NioAdaptiveBufferSizePredictorFactory());
 	}
 	
 	/**
@@ -183,7 +185,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	 * @param config
 	 */
 	public NioAcceptor(IoHandler handler, NioAcceptorConfig config) {
-		this(handler, config, new NioOrderedDirectChannelEventDispatcher(config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory());
+		this(handler, config, new NioOrderedThreadPoolChannelEventDispatcher(config.getExecutorSize(), config.getTotalEventSize()), new NioAdaptiveBufferSizePredictorFactory());
 	}
 	
 	/**
@@ -226,7 +228,7 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	 * 
 	 * @throws IOException
 	 */
-	private void init() throws IOException {
+	public void init() throws IOException {
 		selector = Selector.open();
 		selectable = true;
 		new AcceptThread().start();
@@ -362,7 +364,10 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		
 		// close acceptor selector
 		this.selector.close();
-		super.shutdown();
+		
+		// shutdown all the processor in the pool
+		pool.shutdown();
+
 		LOG.debug("[CRAFT-ATOM-NIO] Shutdown acceptor successful");
 	}
 	
@@ -442,7 +447,13 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 		while (it.hasNext()) {
 			SelectionKey key = it.next();
 			it.remove();
-			acceptByProtocol(key);
+			NioByteChannel channel = acceptByProtocol(key);
+			if (channel != null) {
+				NioProcessor processor = pool.pick(channel);
+				processor.setProtocol(IoProtocol.TCP);
+				channel.setProcessor(processor);
+				processor.add(channel);
+			}
 		}
 	}
 	
@@ -483,11 +494,11 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 				} catch (ClosedSelectorException e) {
 					LOG.error("[CRAFT-ATOM-NIO] Closed selector exception", e);
 					break;
-				} catch (Exception e) {
-					LOG.error("[CRAFT-ATOM-NIO] Unexpected exception", e);
+				} catch (Throwable t) {
+					LOG.error("[CRAFT-ATOM-NIO] Unexpected exception", t);
 					try {
 						Thread.sleep(1000);
-					} catch (InterruptedException ie) {}
+					} catch (InterruptedException e) {}
 				}
 			}
 			
@@ -502,16 +513,18 @@ abstract public class NioAcceptor extends NioReactor implements IoAcceptor {
 	
 	@Override
 	public IoAcceptorX x() {
-		NioAcceptorX x = new NioAcceptorX();
-		x.setWaitBindAddresses(new HashSet<SocketAddress>(bindAddresses));
-		x.setWaitUnbindAddresses(new HashSet<SocketAddress>(unbindAddresses));
-		x.setBoundAddresses(new HashSet<SocketAddress>(boundmap.keySet()));
-		IoReactorX rx = super.x();
-		x.setNewChannelCount(rx.newChannelCount());
-		x.setFlushingChannelCount(rx.flushingChannelCount());
-		x.setClosingChannelCount(rx.closingChannelCount());
-		x.setAliveChannelCount(rx.aliveChannelCount());
-		return x;
+		IoAcceptorX iax = new IoAcceptorX();
+		iax.setSelectable(selectable);
+		iax.setWaitBindAddresses(new HashSet<SocketAddress>(bindAddresses));
+		iax.setWaitUnbindAddresses(new HashSet<SocketAddress>(unbindAddresses));
+		iax.setBoundAddresses(new HashSet<SocketAddress>(boundmap.keySet()));
+		iax.setAliveChannels(new HashSet<Channel<byte[]>>(pool.getIdleTimer().aliveChannels()));
+		NioProcessor[] nps = pool.getPool();
+		for (NioProcessor np : nps) {
+			IoProcessorX ipx = np.x();
+			iax.add(ipx);
+		}
+		return iax;
 	}
 
 }

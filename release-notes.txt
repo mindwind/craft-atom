@@ -11,22 +11,106 @@ CRITICAL: There is a critical bug affecting MOST USERS. Upgrade ASAP.
 
 
 
-
-
-craft-atom 3.0.0
+craft-atom 2.1.2
 -----------------------------------------------------------------------------------------------------------------------
-* all
-  [IMPROVE]  - rename package name.
-  
-* craft-atom-rpc
-* craft-atom-protocol-rpc
-  [NEW]      - rpc support
-  
-* craft-atom-nio
-  [FIX]      - just handle `Exception` not `Throwable`, so `IoHandler` broke backwards compatibility.
-  [IMPROVE]  - x api ajust, it is incompatible with previous 2.x version.
-  
-* craft-atom-util
-  [IMPROVE]  - move 'NamedThreadFactory' to thread package
-  [NEW]      - 'MonitoringExecutorService' interface and implementor
+UPGRADE URGENCY: LOW
 
+* craft-atom-redis
+  [FIX]      - java doc warning.
+  [NEW]      - api for shard redis, return specific shard by shard key.
+
+
+
+
+craft-atom 2.1.1
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: LOW
+
+* craft-atom-redis
+  [IMPROVE]  - log format.
+  [IMPROVE]  - upgrade jedis to version 2.5.1.
+  [IMPROVE]  - use long replace int for PEXPIRE api.
+  [NEW]      - BITPOS api.
+  [NEW]      - PFADD api.
+
+
+
+
+craft-atom 2.1.0
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: LOW
+
+* craft-atom-redis
+  [NEW]      - *SCAN command api.
+  [NEW]      - PUBSUB command api.
+  [IMPROVE]  - upgrade jedis to 2.4.2 version.
+  
+  
+
+
+craft-atom 2.0.4
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: LOW
+
+* craft-atom-redis
+  [IMPROVE]  - add master slave redis reading and writing separation, so read from slave and write still on master.
+  [NEW]      - add new nio builder for easy use.
+
+
+
+
+
+craft-atom 2.0.3
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: HIGH
+
+* craft-atom-redis
+  [FIX]      - issue #1  https://github.com/mindwind/craft-atom/issues/1
+  
+
+
+
+
+craft-atom 2.0.2
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: HIGH
+
+* craft-atom
+  [IMPROVE]  - unify logger and format
+
+* craft-atom-nio
+  [NEW]      - jmx MXBean support
+  [FIX]      - file descriptor leak.
+
+
+
+
+
+craft-atom 2.0.1
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: LOW
+
+* craft-atom
+  [IMPROVE]  - change group id as me.mindwind as a real domain name under my control
+  [IMPROVE]  - using slf4j replace commons-logging as the default log api
+
+
+
+
+
+craft-atom 2.0.0 
+-----------------------------------------------------------------------------------------------------------------------
+UPGRADE URGENCY: CRITICAL
+
+* craft-atom-redis
+  [FIX]      - finally return the broken resource to the jedis pool, when JedisConnectionException occurs.
+
+* craft-atom-nio
+  [IMPROVE]  - refactor nio design and implementation, provide more clean and consistent api and better performance.
+  [FIX]      - idle timer oom issue.
+  [FIX]      - acceptor handle null accept right.
+  [FIX]      - clean api. 
+  
+* craft-atom-protocol-http
+  [FIX]      - http protocol header model, use list instead of map, because header name can be repeatable.
+  [NEW]      - http protocol entity content type definition.

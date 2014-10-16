@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import org.craft.atom.protocol.AbstractProtocolDecoder;
@@ -24,9 +25,9 @@ import org.craft.atom.protocol.ProtocolExceptionType;
 public class TextLineDecoder extends AbstractProtocolDecoder implements ProtocolDecoder<String> {
 	
 	
-	@Getter private String delimiter      = "\n"                       ;
-	        private byte[] delimiterBytes = delimiter.getBytes(charset);
-	        private int    delimiterLen   = delimiterBytes.length      ;
+	@Getter @Setter private String delimiter      = "\n"                       ;
+	                private byte[] delimiterBytes = delimiter.getBytes(charset);
+	                private int    delimiterLen   = delimiterBytes.length      ;
 	
 	
 	// ~ ------------------------------------------------------------------------------------------------------------
@@ -53,9 +54,9 @@ public class TextLineDecoder extends AbstractProtocolDecoder implements Protocol
 		buf.reset(defaultBufferSize);
 	}
 
-	public TextLineDecoder(Charset charset, String delimiter, int defaultBufferSize, int maxSize) {
+	public TextLineDecoder(Charset charset, String delimiter, int defaultBufferSize, int maxLineLength) {
 		this(charset, delimiter, defaultBufferSize);
-		this.maxSize = maxSize;
+		this.maxSize = maxLineLength;
 	}
 	
 	
@@ -65,7 +66,7 @@ public class TextLineDecoder extends AbstractProtocolDecoder implements Protocol
 	@Override
 	public List<String> decode(byte[] bytes) throws ProtocolException {
 		List<String> strs = new ArrayList<String>();
-		adapt();
+		reset();
 		buf.append(bytes);
 		
 		while (searchIndex < buf.length()) {
@@ -88,12 +89,6 @@ public class TextLineDecoder extends AbstractProtocolDecoder implements Protocol
 		}
 		
 		return strs;
-	}
-
-	public void setDelimiter(String delimiter) {
-		this.delimiter      = delimiter;
-		this.delimiterBytes = delimiter.getBytes(charset);
-		this.delimiterLen   = delimiterBytes.length;
 	}
 
 }

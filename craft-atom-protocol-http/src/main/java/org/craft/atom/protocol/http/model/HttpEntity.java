@@ -8,8 +8,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Represents a http entity.<br>
- * An entity that can be sent or received with a HTTP message, 
+ * Represents an http entity.<br>
+ * An entity that can be sent or received with an HTTP message, 
  * but not all messages contain entity, it is optional.
  * The entity contains a block of arbitrary data.
  * 

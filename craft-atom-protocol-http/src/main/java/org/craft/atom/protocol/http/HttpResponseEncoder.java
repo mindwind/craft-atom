@@ -28,9 +28,8 @@ public class HttpResponseEncoder extends HttpEncoder implements ProtocolEncoder<
 	}
 
 	@Override
-	public byte[] encode(HttpResponse response) throws ProtocolException {
-		if (response == null) return null;
-		String httpString = response.toHttpString(charset);
+	public byte[] encode(HttpResponse resonpse) throws ProtocolException {
+		String httpString = resonpse.toHttpString(charset);
 		return httpString.getBytes(charset);
 	}
 

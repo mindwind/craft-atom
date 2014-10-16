@@ -1,6 +1,5 @@
 package org.craft.atom.io;
 
-import java.io.IOException;
 import java.net.SocketAddress;
 import java.util.concurrent.Future;
 
@@ -18,18 +17,16 @@ public interface IoConnector extends IoReactor, IoConnectorMBean {
 	 * @param ip
 	 * @param port
 	 * @return <code>Future</code> instance which is completed when the channel initiated by this call succeeds or fails.
-	 * @throws IOException If some other I/O error occurs
 	 */
-	Future<Channel<byte[]>> connect(String ip, int port) throws IOException;
+	Future<Channel<byte[]>> connect(String ip, int port);
 	
 	/**
 	 * Connects to the specified remote address.
 	 * 
 	 * @param remoteAddress
 	 * @return <code>Future</code> instance which is completed when the channel initiated by this call succeeds or fails.
-	 * @throws IOException If some other I/O error occurs
 	 */
-	Future<Channel<byte[]>> connect(SocketAddress remoteAddress) throws IOException;
+	Future<Channel<byte[]>> connect(SocketAddress remoteAddress);
 	
 	
 	/**
@@ -38,7 +35,6 @@ public interface IoConnector extends IoReactor, IoConnectorMBean {
 	 * @param remoteAddress
 	 * @param localAddress
 	 * @return <code>Future</code> instance which is completed when the channel initiated by this call succeeds or fails.
-	 * @throws IOException If some other I/O error occurs
 	 */
-	Future<Channel<byte[]>> connect(SocketAddress remoteAddress, SocketAddress localAddress) throws IOException;
+	Future<Channel<byte[]>> connect(SocketAddress remoteAddress, SocketAddress localAddress);
 }
