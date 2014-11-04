@@ -41,8 +41,8 @@ public class SerialA {
 	
 	
 	// temp
-	@Getter @Setter private String t1 = "vvvvvv";
-//	@Getter @Setter private Long   t2 = 111111L ;
+	@Getter @Setter public String t1 = "111111";
+	@Getter @Setter public String t2 = "222222" ;
 	
 	
 	// ~ -------------------------------------------------------------------------------------------------------------
