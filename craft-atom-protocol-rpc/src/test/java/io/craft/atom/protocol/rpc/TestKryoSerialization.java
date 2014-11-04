@@ -5,8 +5,6 @@ import io.craft.atom.protocol.rpc.model.RpcBody;
 import io.craft.atom.protocol.rpc.model.RpcMethod;
 import io.craft.atom.test.CaseCounter;
 
-import java.lang.reflect.Field;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
