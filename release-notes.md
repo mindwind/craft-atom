@@ -2,7 +2,7 @@
 # Release notes of craft-atom
 
 
-## Upgrade urgency levels:  
+## Upgrade urgency levels
 
 `LOW`     : No need to upgrade unless there are new features you want to use.  
 `MODERATE`: Program an upgrade, but it's not urgent.  
