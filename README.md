@@ -28,8 +28,8 @@ That is great!
 
 _NOTICE:_  
   1. _Please add unit tests in order to prove your modification works smoothly._
-  2. _And please make sure your modification passes all unit tests._
-  3. _Respect coding style of craft._  
+  2. _Please make sure your modification passes all unit tests._
+  3. _Please respect coding style of craft._  
 
 Thanks for helping!
 
