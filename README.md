@@ -1,4 +1,4 @@
-![craft-atom](http://craftcode.io/images/craft-logo.png)  
+# ![craft-atom](http://craftcode.io/images/craft-logo.png)
 A crafted and elegant atomic component library for java. It is a maven multi-module java projects, each module is a crafted and atomic java library for specific feature.
 
 
@@ -29,7 +29,8 @@ That is great!
 __NOTICE:__  
   1. _Please add unit tests in order to prove your modification works smoothly._
   2. _And please make sure your modification passes all unit tests._
-  3. _Respect the project coding style._
+  3. _Respect coding style of craft._  
+
 Thanks for helping!
 
 ## License
