@@ -26,7 +26,7 @@ That is great!
   * Use [Github](http://github.com) issues to report bugs or for detailed feature requests.
   * [Fork](https://help.github.com/articles/fork-a-repo/) and create a topic branch, add your feature last post a [pull request](https://help.github.com/articles/using-pull-requests/) on github.
 
-__NOTICE:__  
+_NOTICE:_  
   1. _Please add unit tests in order to prove your modification works smoothly._
   2. _And please make sure your modification passes all unit tests._
   3. _Respect coding style of craft._  
