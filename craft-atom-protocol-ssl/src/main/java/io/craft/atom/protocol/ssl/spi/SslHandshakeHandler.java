@@ -1,7 +1,7 @@
 package io.craft.atom.protocol.ssl.spi;
 
 /**
- * The handshake handler for {@link SslCodec} 
+ * The handshake handler for {@code SslCodec}
  * 
  * @author mindwind
  * @version 1.0, Oct 18, 2013
