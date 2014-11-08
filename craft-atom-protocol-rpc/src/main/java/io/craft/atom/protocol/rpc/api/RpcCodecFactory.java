@@ -8,7 +8,7 @@ import io.craft.atom.protocol.rpc.model.RpcMessage;
 
 
 /**
- * RPC codec factory, which provides static factory method to create {@link ProtocolEncoder<RpcMessage>} and {@link ProtocolDecoder<RpcMessage>} instance.
+ * RPC codec factory, which provides static factory method to create {@link ProtocolEncoder} and {@link ProtocolDecoder} instance.
  * 
  * @author mindwind
  * @version 1.0, Aug 5, 2014

@@ -106,7 +106,7 @@ public final class RpcContext {
     /**
      * Get future object for asynchronous invocation.
      * 
-     * @return
+     * @return future instance.
      */
 	@SuppressWarnings("unchecked")
 	public <T> Future<T> getFuture() {

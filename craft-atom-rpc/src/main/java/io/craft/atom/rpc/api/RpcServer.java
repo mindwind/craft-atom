@@ -51,7 +51,7 @@ public interface RpcServer extends RpcServerMBean {
 	 * @param rpcObject     implementor object of rpc interface
 	 * @param rpcParameter  behavioral parameter
 	 */
-	void export(String rcpId, Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter);
+	void export(String rpcId, Class<?> rpcInterface, Object rpcObject, RpcParameter rpcParameter);
 	
 	/**
 	 * Export rpc interface with specific id. Only the specific method in the interface is exported.

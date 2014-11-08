@@ -2459,7 +2459,7 @@ public interface RedisCommand {
      * 
 	 * @param key
 	 * @param elements
-	 * @return
+	 * @return  1 if at least 1 HyperLogLog internal register was altered. 0 otherwise.
 	 */
 	Long pfadd(String key, String... elements);
 	

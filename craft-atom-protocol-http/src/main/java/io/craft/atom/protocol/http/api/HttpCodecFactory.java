@@ -18,7 +18,7 @@ import java.util.Map;
 
 
 /**
- * HTTP codec factory, which provides static factory method and builder to create {@link ProtocolEncoder<HttpRequest>} instance
+ * HTTP codec factory, which provides static factory method and builder to create {@link ProtocolEncoder} instance
  * 
  * @author mindwind
  * @version 1.0, Aug 5, 2014

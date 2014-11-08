@@ -628,7 +628,7 @@ public class ByteUtil {
 	}
 
 	/**
-	 * @deprecated replace by {@link #bytes2short(byte[], off)}
+	 * @deprecated replace by {@link #bytes2short(byte[], int)}
 	 */
 	public static final int makeIntFromByte2(byte[] b, int off) {
 		return (b[off] & 0xff) << 8 | (b[off + 1] & 0xff);
@@ -642,7 +642,7 @@ public class ByteUtil {
 	}
 
 	/**
-	 * @deprecated replace by {@link #bytes2int(byte[], off)}
+	 * @deprecated replace by {@link #bytes2int(byte[], int)}
 	 */
 	public static final int makeIntFromByte4(byte[] b, int off) {
 		return b[off] << 24 | (b[off + 1] & 0xff) << 16 | (b[off + 2] & 0xff) << 8 | (b[off + 3] & 0xff);

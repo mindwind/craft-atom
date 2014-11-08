@@ -9,7 +9,7 @@ import java.nio.charset.Charset;
 
 
 /**
- * TextLine codec factory, which provides static factory method to create {@link ProtocolEncoder<String>} and {@link ProtocolDecoder<String>}.
+ * TextLine codec factory, which provides static factory method to create {@link ProtocolEncoder} and {@link ProtocolDecoder}.
  * 
  * @author mindwind
  * @version 1.0, Aug 4, 2014
