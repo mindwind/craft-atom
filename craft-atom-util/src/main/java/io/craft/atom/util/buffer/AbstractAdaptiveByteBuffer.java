@@ -314,7 +314,12 @@ public abstract class AbstractAdaptiveByteBuffer extends AdaptiveByteBuffer {
             if (newCapacity >>> 1 < minCapacity) {
                 break;
             }
+            
             newCapacity >>>= 1;
+            
+            if (minCapacity == 0) {
+                break;
+            }
         }
 
         newCapacity = Math.max(minCapacity, newCapacity);

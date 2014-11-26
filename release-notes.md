@@ -12,6 +12,13 @@
 ------------------------------------------------------------------------------
 
 
+## craft-atom 3.0.1
+
+  * craft-atom-util
+    [FIX]      - AdaptiveByteBuffer.shink() infinite loop on some cases.
+
+
+
 
 ## craft-atom 3.0.0
 
