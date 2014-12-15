@@ -1,9 +1,0 @@
-
-craft-atom-redis
------------------------------------------------------------------------------------------------------------------------
-NEW     - CLIENT PAUSE
-NEW     - ZLEXCOUNT
-NEW     - ZRANGEBYLEX
-NEW     - ZREMRANGEBYLEX
-NEW     - ROLE
-IMPROVE - upgrade jedis to newest version 2.6.0 
