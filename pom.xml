@@ -67,32 +67,7 @@
 		<v.lombok>1.12.2</v.lombok>
 		<v.kryo>2.24.0</v.kryo>
 	</properties>
-
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${v.junit}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>${v.lombok}</version>
-			<scope>provided</scope>
-		</dependency>
-	</dependencies>
-
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -123,6 +98,31 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${v.junit}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${v.lombok}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -145,8 +145,7 @@
 						<attach>true</attach>
 					</configuration>
 				</plugin>
-				<!-- add this for get rid of warning maven-enforcer-plugin (goal "enforce") 
-					is ignored by m2e -->
+				<!-- add this for get rid of warning maven-enforcer-plugin (goal "enforce") is ignored by m2e -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -241,7 +240,7 @@
 			<id>mindwind</id>
 			<name>mindwind</name>
 			<email>mindwind.me@gmail.com</email>
-			<url>http://craftcode.io</url>
+			<url>http://mindwind.me</url>
 			<roles>
 				<role>developer</role>
 			</roles>
