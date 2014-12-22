@@ -41,7 +41,9 @@ public class RpcMethod implements Serializable {
 		this.parameters = parameters;
 	}
 	
+	
 	// ~ -------------------------------------------------------------------------------------------------------------
+	
 	
 	public void setParameterTypes(Class<?>... parameterTypes) {
 		this.parameterTypes = parameterTypes;
