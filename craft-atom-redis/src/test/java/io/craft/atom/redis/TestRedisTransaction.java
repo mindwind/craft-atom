@@ -4,6 +4,7 @@ import io.craft.atom.redis.api.RedisTransaction;
 import io.craft.atom.test.CaseCounter;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -526,6 +527,29 @@ public class TestRedisTransaction extends AbstractRedisTests {
 		Assert.assertEquals(new Long(3), l.get(42));
 		Assert.assertEquals(new Long(3), l.get(43));
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test transaction sorted sets. ", CaseCounter.incr(61)));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testTransactionZrangebylex() {
+		redis1.zadd(key, 0, "a");
+		redis1.zadd(key, 0, "b");
+		redis1.zadd(key, 0, "c");
+		redis1.zadd(key, 0, "d");
+		redis1.zadd(key, 0, "e");
+		redis1.zadd(key, 0, "f");
+		redis1.zadd(key, 0, "g");
+		
+		RedisTransaction t = redis1.multi();
+		t.zrangebylex(key, "-", "[c");
+		List<Object> l = redis1.exec(t);
+		Set<String> set = ( Set<String>) l.get(0);
+		Assert.assertEquals(3, set.size());
+		Iterator<String> it = set.iterator();
+		Assert.assertEquals("a", it.next());
+		Assert.assertEquals("b", it.next());
+		Assert.assertEquals("c", it.next());
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test transaction zrangebylex. ", CaseCounter.incr(4)));
 	}
 	
 	@Test
