@@ -1026,6 +1026,11 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public Long zrem(String key, String... members) {
 		return master().zrem(key, members);
 	}
+	
+	@Override
+	public Long zremrangebylex(String key, String min, String max) {
+		return master().zremrangebylex(key, min, max);
+	}
 
 	@Override
 	public Long zremrangebyrank(String key, long start, long stop) {

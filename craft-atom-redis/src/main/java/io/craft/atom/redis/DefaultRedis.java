@@ -1920,6 +1920,15 @@ public class DefaultRedis implements Redis {
 	private Long zrem0(Jedis j, String key, String... members) {
 		return j.zrem(key, members);
 	}
+	
+	@Override
+	public Long zremrangebylex(String key, String min, String max) {
+		return (Long) executeCommand(CommandEnum.ZREMRANGEBYLEX, key, min, max);
+	}
+	
+	private Long zremrangebylex(Jedis j, String key, String min, String max) {
+		return j.zremrangeByLex(key, min, max);
+	}
 
 	@Override
 	public Long zremrangebyrank(String key, long start, long stop) {
@@ -3252,6 +3261,8 @@ public class DefaultRedis implements Redis {
 				return zrank0(j, (String) args[0], (String) args[1]);
 			case ZREM:
 				return zrem0(j, (String) args[0], (String[]) args[1]);
+			case ZREMRANGEBYLEX:
+				return zremrangebylex(j, (String) args[0], (String) args[1], (String) args[2]);
 			case ZREMRANGEBYRANK:
 				return zremrangebyrank0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case ZREMRANGEBYSCORE:

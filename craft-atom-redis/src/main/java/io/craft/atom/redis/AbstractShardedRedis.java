@@ -855,6 +855,11 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Long zrem(String shardkey, String key, String... members) {
 		return sharded.shard(shardkey).zrem(key, members);
 	}
+	
+	@Override
+	public Long zremrangebylex(String shardkey, String key, String min, String max) {
+		return sharded.shard(shardkey).zremrangebylex(key, min, max);
+	}
 
 	@Override
 	public Long zremrangebyrank(String shardkey, String key, long start, long stop) {

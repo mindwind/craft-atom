@@ -1556,6 +1556,15 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		executeCommand(CommandEnum.ZREM, key, members);
 	}
 	
+	@Override
+	public void zremrangebylex(String key, String min, String max) {
+		executeCommand(CommandEnum.ZREMRANGEBYLEX, key, min, max);
+	}
+	
+	private void zremrangebylex0(String key, String min, String max) {
+		t.zremrangeByLex(key, min, max);
+	}
+	
 	private void zrem0(String key, String... members) {
 		t.zrem(key, members);
 	}
@@ -2080,6 +2089,8 @@ public class DefaultRedisTransaction implements RedisTransaction {
 				zrank0((String) args[0], (String) args[1]); break;
 			case ZREM:
 				zrem0((String) args[0], (String[]) args[1]); break;
+			case ZREMRANGEBYLEX:
+				zremrangebylex0((String) args[0], (String) args[1], (String) args[2]); break;
 			case ZREMRANGEBYRANK:
 				zremrangebyrank0((String) args[0], (Long) args[1], (Long) args[2]); break;
 			case ZREMRANGEBYSCORE:

@@ -206,6 +206,7 @@ public interface ShardedRedisCommand {
 	Set<String> zrangebylex(String shardkey, String key, String min, String max, int offset, int count);
 	Long zrank(String shardkey, String key, String member);
 	Long zrem(String shardkey, String key, String... members);
+	Long zremrangebylex(String shardkey, String key, String min, String max);
 	Long zremrangebyrank(String shardkey, String key, long start, long stop);
 	Long zremrangebyscore(String shardkey, String key, double min, double max);
 	Long zremrangebyscore(String shardkey, String key, String min, String max);

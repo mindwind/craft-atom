@@ -2359,6 +2359,22 @@ public interface RedisCommand {
 	Long zrem(String key, String... members);
 	
 	/**
+	 * Available since 2.8.9<br>
+     * Time complexity: O(log(N)+M) with N being the number of elements in the sorted set and M the number of elements removed by the operation.
+     * <p>
+     * When all the elements in a sorted set are inserted with the same score, in order to force lexicographical ordering, 
+     * this command removes all elements in the sorted set stored at key between the lexicographical range specified by min and max.
+     * The meaining of min and max are the same of the ZRANGEBYLEX command. 
+     * Similarly, this command actually returns the same elements that ZRANGEBYLEX would return if called with the same min and max arguments.
+     * 
+	 * @param key
+	 * @param min
+	 * @param max
+	 * @return the number of elements removed.
+	 */
+	Long zremrangebylex(String key, String min, String max);
+	
+	/**
 	 * Available since 2.0.0<br>
 	 * Time complexity: O(log(N)+M) with N being the number of elements in the sorted set and M the number of elements removed by the operation.<br>
 	 * 
