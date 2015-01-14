@@ -12,6 +12,14 @@
 ------------------------------------------------------------------------------
 
 
+## craft-atom 3.1.0
+  * craft-atom-redis
+    [IMPROVE]  - upgrade jedis dependency to 2.6.2
+    [NEW]      - ZLEXCOUNT command
+    [NEW]      - ZRANGEBYLEX command
+    [NEW]      - ZREMRANGEBYLEX command
+
+
 ## craft-atom 3.0.1
 
   * craft-atom-util
