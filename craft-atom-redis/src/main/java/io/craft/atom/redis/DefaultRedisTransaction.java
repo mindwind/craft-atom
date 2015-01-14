@@ -1531,6 +1531,16 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	private void zrangebyscorewithscores_offset_count_string(String key, String min, String max, int offset, int count) {
 		t.zrangeByScoreWithScores(key, min, max, offset, count);
 	}
+	
+	@Override
+	public void zrangebylex(String key, String min, String max) {
+		t.zrangeByLex(key, min, max);
+	}
+	
+	@Override
+	public void zrangebylex(String key, String min, String max, int offset, int count) {
+		t.zrangeByLex(key, min, max, offset, count);
+	}
 
 	@Override
 	public void zrank(String key, String member) {
@@ -2062,6 +2072,10 @@ public class DefaultRedisTransaction implements RedisTransaction {
 				zrangebyscorewithscores_offset_count((String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]); break;
 			case ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING:
 				zrangebyscorewithscores_offset_count_string((String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]); break;
+			case ZRANGEBYLEX:
+				
+			case ZRANGEBYLEX_OFFSET_COUNT:
+				
 			case ZRANK:
 				zrank0((String) args[0], (String) args[1]); break;
 			case ZREM:

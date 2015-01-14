@@ -202,6 +202,8 @@ public interface ShardedRedisCommand {
 	Map<String, Double> zrangebyscorewithscores(String shardkey, String key, String min, String max);
 	Map<String, Double> zrangebyscorewithscores(String shardkey, String key, double min, double max, int offset, int count);
 	Map<String, Double> zrangebyscorewithscores(String shardkey, String key, String min, String max, int offset, int count);
+	Set<String> zrangebylex(String shardkey, String key, String min, String max);
+	Set<String> zrangebylex(String shardkey, String key, String min, String max, int offset, int count);
 	Long zrank(String shardkey, String key, String member);
 	Long zrem(String shardkey, String key, String... members);
 	Long zremrangebyrank(String shardkey, String key, long start, long stop);

@@ -198,6 +198,8 @@ public interface RedisTransaction {
 	void zrangebyscorewithscores(String key, String min, String max);
 	void zrangebyscorewithscores(String key, double min, double max, int offset, int count);
 	void zrangebyscorewithscores(String key, String min, String max, int offset, int count);
+	void zrangebylex(String key, String min, String max);
+	void zrangebylex(String key, String min, String max, int offset, int count);
 	void zrank(String key, String member);
 	void zrem(String key, String... members);
 	void zremrangebyrank(String key, long start, long stop);

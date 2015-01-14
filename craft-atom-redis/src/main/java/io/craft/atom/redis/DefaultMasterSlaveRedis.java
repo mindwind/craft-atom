@@ -954,7 +954,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public Long zlexcount(String key, String min, String max) {
-			return readSlave ? firstSlave().zlexcount(key, min, max) : master().zlexcount(key, min, max);
+		return readSlave ? firstSlave().zlexcount(key, min, max) : master().zlexcount(key, min, max);
 	}
 
 	@Override
@@ -1005,6 +1005,16 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	@Override
 	public Map<String, Double> zrangebyscorewithscores(String key, String min, String max, int offset, int count) {
 		return readSlave ? firstSlave().zrangebyscorewithscores(key, min, max, offset, count) : master().zrangebyscorewithscores(key, min, max, offset, count);
+	}
+	
+	@Override
+	public Set<String> zrangebylex(String key, String min, String max) {
+		return readSlave ? firstSlave().zrangebylex(key, min, max) : master().zrangebylex(key, min, max);
+	}
+
+	@Override
+	public Set<String> zrangebylex(String key, String min, String max, int offset, int count) {
+		return readSlave ? firstSlave().zrangebylex(key, min, max, offset, count) : master().zrangebylex(key, min, max, offset, count);
 	}
 
 	@Override

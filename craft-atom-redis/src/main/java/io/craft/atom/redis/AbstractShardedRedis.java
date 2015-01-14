@@ -835,6 +835,16 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Map<String, Double> zrangebyscorewithscores(String shardkey, String key, String min, String max, int offset, int count) {
 		return sharded.shard(shardkey).zrangebyscorewithscores(key, min, max, offset, count);
 	}
+	
+	@Override
+	public Set<String> zrangebylex(String shardkey, String key, String min, String max) {
+		return sharded.shard(shardkey).zrangebylex(key, min, max);
+	}
+	
+	@Override
+	public Set<String> zrangebylex(String shardkey, String key, String min, String max, int offset, int count) {
+		return sharded.shard(shardkey).zrangebylex(key, min, max, offset, count);
+	}
 
 	@Override
 	public Long zrank(String shardkey, String key, String member) {

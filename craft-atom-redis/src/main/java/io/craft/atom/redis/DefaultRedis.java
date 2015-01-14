@@ -1884,6 +1884,24 @@ public class DefaultRedis implements Redis {
 		Map<String, Double> map = convert4zrangewithscores(set);
 		return map;
 	}
+	
+	@Override
+	public Set<String> zrangebylex(String key, String min, String max) {
+		return (Set<String>) executeCommand(CommandEnum.ZRANGEBYLEX, key, min, max);
+	}
+	
+	private Set<String> zrangebylex(Jedis j, String key, String min, String max) {
+		return j.zrangeByLex(key, min, max);
+	}
+	
+	@Override
+	public Set<String> zrangebylex(String key, String min, String max, int offset, int count) {
+		return (Set<String>) executeCommand(CommandEnum.ZRANGEBYLEX, key, min, max, offset, count);
+	}
+	
+	private Set<String> zrangebylex(Jedis j, String key, String min, String max, int offset, int count) {
+		return j.zrangeByLex(key, min, max, offset, count);
+	}
 
 	@Override
 	public Long zrank(String key, String member) {
@@ -3226,6 +3244,10 @@ public class DefaultRedis implements Redis {
 				return zrangebyscorewithscores_offset_count(j, (String) args[0], (Double) args[1], (Double) args[2], (Integer) args[3], (Integer) args[4]);
 			case ZRANGEBYSCORE_WITHSCORES_OFFSET_COUNT_STRING:
 				return zrangebyscorewithscores_offset_count_string(j, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
+			case ZRANGEBYLEX:
+				return zrangebylex(j, (String) args[0], (String) args[1], (String) args[2]);
+			case ZRANGEBYLEX_OFFSET_COUNT:
+				return zrangebylex(j, (String) args[0], (String) args[1], (String) args[2], (Integer) args[3], (Integer) args[4]);
 			case ZRANK:
 				return zrank0(j, (String) args[0], (String) args[1]);
 			case ZREM:
