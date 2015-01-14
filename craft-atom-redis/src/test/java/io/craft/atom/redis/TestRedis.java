@@ -1496,6 +1496,31 @@ public class TestRedis extends AbstractRedisTests {
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test zlexcount. ", CaseCounter.incr(5)));
 	}
 	
+	@Test
+	public void testZrangebylex() {
+		redis1.zadd(key, 0, "a");
+		redis1.zadd(key, 0, "b");
+		redis1.zadd(key, 0, "c");
+		redis1.zadd(key, 0, "d");
+		redis1.zadd(key, 0, "e");
+		redis1.zadd(key, 0, "f");
+		redis1.zadd(key, 0, "g");
+		
+		Set<String> set = redis1.zrangebylex(key, "-", "[c");
+		Assert.assertEquals(3, set.size());
+		Iterator<String> it = set.iterator();
+		Assert.assertEquals("a", it.next());
+		Assert.assertEquals("b", it.next());
+		Assert.assertEquals("c", it.next());
+		
+		set = redis1.zrangebylex(key, "[aaa", "(g", 2, 2);
+		Assert.assertEquals(2, set.size());
+		it = set.iterator();
+		Assert.assertEquals("d", it.next());
+		Assert.assertEquals("e", it.next());
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test zrangebylex. ", CaseCounter.incr(7)));
+	}
+	
 	
 	// ~ -------------------------------------------------------------------------------------------------- HyperLogLog
 	

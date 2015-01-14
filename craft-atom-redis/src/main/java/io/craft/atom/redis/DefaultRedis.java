@@ -1896,7 +1896,7 @@ public class DefaultRedis implements Redis {
 	
 	@Override
 	public Set<String> zrangebylex(String key, String min, String max, int offset, int count) {
-		return (Set<String>) executeCommand(CommandEnum.ZRANGEBYLEX, key, min, max, offset, count);
+		return (Set<String>) executeCommand(CommandEnum.ZRANGEBYLEX_OFFSET_COUNT, key, min, max, offset, count);
 	}
 	
 	private Set<String> zrangebylex(Jedis j, String key, String min, String max, int offset, int count) {
