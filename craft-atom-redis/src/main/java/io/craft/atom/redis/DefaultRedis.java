@@ -1720,6 +1720,7 @@ public class DefaultRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private Long zinterstore_weights(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
@@ -1746,6 +1747,7 @@ public class DefaultRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS_MAX, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private Long zinterstore_weights_max(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
@@ -1758,6 +1760,7 @@ public class DefaultRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS_MIN, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private Long zinterstore_weights_min(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
@@ -2068,6 +2071,7 @@ public class DefaultRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private Long zunionstore_weights(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
@@ -2080,6 +2084,7 @@ public class DefaultRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS_MAX, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private Long zunionstore_weights_max(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
@@ -2092,6 +2097,7 @@ public class DefaultRedis implements Redis {
 		return (Long) executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS_MIN, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private Long zunionstore_weights_min(Jedis j, String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];

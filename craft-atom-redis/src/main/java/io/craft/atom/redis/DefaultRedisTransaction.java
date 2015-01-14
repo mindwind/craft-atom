@@ -1385,6 +1385,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void zinterstore_weights(String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
@@ -1411,6 +1412,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS_MAX, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void zinterstore_weights_max(String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
@@ -1423,6 +1425,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		executeCommand(CommandEnum.ZINTERSTORE_WEIGHTS_MIN, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void zinterstore_weights_min(String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
@@ -1705,6 +1708,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void zunionstore_weights(String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
@@ -1717,6 +1721,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS_MAX, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void zunionstore_weights_max(String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
@@ -1729,6 +1734,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		executeCommand(CommandEnum.ZUNIONSTORE_WEIGHTS_MIN, destination, weightkeys);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void zunionstore_weights_min(String destination, Map<String, Integer> weightkeys) {
 		Object[] objs = convert4zstore(weightkeys);
 		String[] keys = (String[]) objs[0];
