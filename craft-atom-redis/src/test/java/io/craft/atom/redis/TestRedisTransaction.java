@@ -570,6 +570,25 @@ public class TestRedisTransaction extends AbstractRedisTests {
 	}
 	
 	@Test
+	public void testTransactionZremrangebylex() {
+		redis1.zadd(key, 0, "a");
+		redis1.zadd(key, 0, "b");
+		redis1.zadd(key, 0, "c");
+		redis1.zadd(key, 0, "d");
+		redis1.zadd(key, 0, "e");
+		redis1.zadd(key, 0, "f");
+		redis1.zadd(key, 0, "g");
+		redis1.zadd(key, 0, "x");
+		redis1.zadd(key, 0, "z");
+		
+		RedisTransaction t = redis1.multi();
+		t.zremrangebylex(key, "[b", "[o");
+		List<Object> l = redis1.exec(t);
+		Assert.assertEquals(6, ((Long) l.get(0)).longValue());
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test transaction zremrangebylex. ", CaseCounter.incr(1)));
+	}
+	
+	@Test
 	public void testTransactionPublish() {
 		RedisTransaction t = redis1.multi();
 		t.publish("channel", "abc");

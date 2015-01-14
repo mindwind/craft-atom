@@ -1521,6 +1521,23 @@ public class TestRedis extends AbstractRedisTests {
 		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test zrangebylex. ", CaseCounter.incr(7)));
 	}
 	
+	@Test
+	public void testZremrangebylex() {
+		redis1.zadd(key, 0, "a");
+		redis1.zadd(key, 0, "b");
+		redis1.zadd(key, 0, "c");
+		redis1.zadd(key, 0, "d");
+		redis1.zadd(key, 0, "e");
+		redis1.zadd(key, 0, "f");
+		redis1.zadd(key, 0, "g");
+		redis1.zadd(key, 0, "x");
+		redis1.zadd(key, 0, "z");
+		
+		long num = redis1.zremrangebylex(key, "[b", "[o");
+		Assert.assertEquals(6, num);
+		System.out.println(String.format("[CRAFT-ATOM-REDIS] (^_^)  <%s>  Case -> test zremrangebylex. ", CaseCounter.incr(1)));
+	}
+	
 	
 	// ~ -------------------------------------------------------------------------------------------------- HyperLogLog
 	
