@@ -191,6 +191,7 @@ public interface ShardedRedisCommand {
 	Long zinterstore(String shardkey, String destination, Map<String, Integer> weightkeys);
 	Long zinterstoremax(String shardkey, String destination, Map<String, Integer> weightkeys);
 	Long zinterstoremin(String shardkey, String destination, Map<String, Integer> weightkeys);
+	Long zlexcount(String shardkey, String key, String min, String max);
 	Set<String> zrange(String shardkey, String key, long start, long stop);
 	Map<String, Double> zrangewithscores(String shardkey, String key, long start, long stop);
 	Set<String> zrangebyscore(String shardkey, String key, double min, double max);

@@ -23,19 +23,19 @@ import lombok.ToString;
  */
 @ToString
 public abstract class AbstractShardedRedis<R extends RedisCommand> implements ShardedRedisCommand {
-	
-	
+
+
 	protected Sharded<R> sharded;
-	
-	
+
+
 	// ~ --------------------------------------------------------------------------------------------------------- Keys
-	
-	
+
+
 	@Override
 	public Long del(String shardkey, String... keys) {
 		return sharded.shard(shardkey).del(keys);
 	}
-	
+
 	@Override
 	public byte[] dump(String shardkey, String key) {
 		return sharded.shard(shardkey).dump(key);
@@ -45,7 +45,7 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Boolean exists(String shardkey, String key) {
 		return sharded.shard(shardkey).exists(key);
 	}
-	
+
 	@Override
 	public Long expire(String shardkey, String key, int seconds) {
 		return sharded.shard(shardkey).expire(key, seconds);
@@ -235,10 +235,10 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public String type(String shardkey, String key) {
 		return sharded.shard(shardkey).type(key);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------------ Strings
-	
+
 
 	@Override
 	public Long append(String shardkey, String key, String value) {
@@ -249,7 +249,7 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Long bitcount(String shardkey, String key) {
 		return sharded.shard(shardkey).bitcount(key);
 	}
-	
+
 	@Override
 	public Long bitcount(String shardkey, String key, long start, long end) {
 		return sharded.shard(shardkey).bitcount(key, start, end);
@@ -274,12 +274,12 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Long bitxor(String shardkey, String destkey, String... keys) {
 		return sharded.shard(shardkey).bitxor(destkey, keys);
 	}
-	
+
 	@Override
 	public Long bitpos(String shardkey, String key, boolean value) {
 		return sharded.shard(shardkey).bitpos(key, value);
 	}
-	
+
 	@Override
 	public Long bitpos(String shardkey, String key, boolean value, long start) {
 		return sharded.shard(shardkey).bitpos(key, value, start);
@@ -409,10 +409,10 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Long strlen(String shardkey, String key) {
 		return sharded.shard(shardkey).strlen(key);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------------ Hashes
-	
+
 
 	@Override
 	public Long hdel(String shardkey, String key, String... fields) {
@@ -478,7 +478,7 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public List<String> hvals(String shardkey, String key) {
 		return sharded.shard(shardkey).hvals(key);
 	}
-	
+
 	@Override
 	public ScanResult<Entry<String, String>> hscan(String shardkey, String key, String cursor) {
 		return sharded.shard(shardkey).hscan(key, cursor);
@@ -498,10 +498,10 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public ScanResult<Entry<String, String>> hscan(String shardkey, String key, String cursor, String pattern, int count) {
 		return sharded.shard(shardkey).hscan(key, cursor, pattern, count);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
-	
+
 
 	@Override
 	public String blpop(String shardkey, String key) {
@@ -622,10 +622,10 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Long rpushx(String shardkey, String key, String value) {
 		return sharded.shard(shardkey).rpushx(key, value);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------------- Sets
-	
+
 
 	@Override
 	public Long sadd(String shardkey, String key, String... members) {
@@ -691,7 +691,7 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Long srem(String shardkey, String key, String... members) {
 		return sharded.shard(shardkey).srem(key, members);
 	}
-	
+
 	@Override
 	public Set<String> sunion(String shardkey, String... keys) {
 		return sharded.shard(shardkey).sunion(keys);
@@ -701,7 +701,7 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Long sunionstore(String shardkey, String destination, String... keys) {
 		return sharded.shard(shardkey).sunionstore(destination, keys);
 	}
-	
+
 	@Override
 	public ScanResult<String> sscan(String shardkey, String key, String cursor) {
 		return sharded.shard(shardkey).sscan(key, cursor);
@@ -721,10 +721,10 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public ScanResult<String> sscan(String shardkey, String key, String cursor, String pattern, int count) {
 		return sharded.shard(shardkey).sscan(key, cursor, pattern, count);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------- Sorted Sets
-	
+
 
 	@Override
 	public Long zadd(String shardkey, String key, double score, String member) {
@@ -779,6 +779,11 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	@Override
 	public Long zinterstoremin(String shardkey, String destination, Map<String, Integer> weightkeys) {
 		return sharded.shard(shardkey).zinterstoremin(destination, weightkeys);
+	}
+
+	@Override
+	public Long zlexcount(String shardkey, String key, String min, String max) {
+		return sharded.shard(shardkey).zlexcount(key, min, max);
 	}
 
 	@Override
@@ -945,7 +950,7 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Long zunionstoremin(String shardkey, String destination, Map<String, Integer> weightkeys) {
 		return sharded.shard(shardkey).zunionstoremin(destination, weightkeys);
 	}
-	
+
 	@Override
 	public ScanResult<Entry<String, Double>> zscan(String shardkey, String key, String cursor) {
 		return sharded.shard(shardkey).zscan(key, cursor);
@@ -965,30 +970,30 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public ScanResult<Entry<String, Double>> zscan(String shardkey, String key, String cursor, String pattern, int count) {
 		return sharded.shard(shardkey).zscan(key, cursor, pattern, count);
 	}
-	
-	
+
+
 	// ~ -------------------------------------------------------------------------------------------------- HyperLogLog
-	
-	
+
+
 	@Override
 	public Long pfadd(String shardkey, String key, String... elements) {
 		return sharded.shard(shardkey).pfadd(key, elements);
 	}
-	
+
 	@Override
 	public Long pfcount(String shardkey, String... keys) {
 		return sharded.shard(shardkey).pfcount(keys);
 	}
-	
+
 	@Override
 	public String pfmerge(String shardkey, String destkey, String... sourcekeys) {
 		return sharded.shard(shardkey).pfmerge(destkey, sourcekeys);
 	}
-	
-	
+
+
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
 
-	
+
 	@Override
 	public RedisPubSub psubscribe(String shardkey, RedisPsubscribeHandler handler, String... patterns) {
 		return sharded.shard(shardkey).psubscribe(handler, patterns);
@@ -1013,7 +1018,7 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public void unsubscribe(String shardkey, RedisPubSub pubsub, String... channels) {
 		sharded.shard(shardkey).unsubscribe(pubsub, channels);
 	}
-	
+
 	@Override
 	public List<String> pubsubchannels(String shardkey, String pattern) {
 		return sharded.shard(shardkey).pubsubchannels(pattern);
@@ -1028,11 +1033,11 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public Map<String, String> pubsubnumsub(String shardkey, String... channels) {
 		return sharded.shard(shardkey).pubsubnumsub(channels);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------ Transactions
 
-	
+
 	@Override
 	public String discard(String shardkey, RedisTransaction t) {
 		return sharded.shard(shardkey).discard(t);
@@ -1057,10 +1062,10 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public String watch(String shardkey, String... keys) {
 		return sharded.shard(shardkey).watch(keys);
 	}
-	
-	
+
+
 	// ~ --------------------------------------------------------------------------------------------------- Scripting
-	
+
 
 	@Override
 	public Object eval(String shardkey, String script) {
@@ -1116,5 +1121,5 @@ public abstract class AbstractShardedRedis<R extends RedisCommand> implements Sh
 	public String scriptload(String shardkey, String script) {
 		return sharded.shard(shardkey).scriptload(script);
 	}
-	
+
 }

@@ -187,6 +187,7 @@ public interface RedisTransaction {
 	void zinterstore(String destination, Map<String, Integer> weightkeys);
 	void zinterstoremax(String destination, Map<String, Integer> weightkeys);
 	void zinterstoremin(String destination, Map<String, Integer> weightkeys);
+	void zlexcount(String key, String min, String max);
 	void zrange(String key, long start, long stop);
 	void zrangewithscores(String key, long start, long stop);
 	void zrangebyscore(String key, double min, double max);

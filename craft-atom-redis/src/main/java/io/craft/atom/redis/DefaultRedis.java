@@ -1769,6 +1769,15 @@ public class DefaultRedis implements Redis {
 	}
 
 	@Override
+	public Long zlexcount(String key, String min, String max) {
+		return (Long) executeCommand(CommandEnum.ZLEXCOUNT, key, min, max);
+	}
+	
+	private Long zlexcount(Jedis j, String key, String min, String max) {
+		return j.zlexcount(key, min, max);
+	}
+
+	@Override
 	public Set<String> zrange(String key, long start, long stop) {
 		return (Set<String>) executeCommand(CommandEnum.ZRANGE, key, start, stop);
 	}
@@ -3195,6 +3204,8 @@ public class DefaultRedis implements Redis {
 				return zinterstore_weights_max(j, (String) args[0], (Map<String, Integer>) args[1]);
 			case ZINTERSTORE_WEIGHTS_MIN:
 				return zinterstore_weights_min(j, (String) args[0], (Map<String, Integer>) args[1]);
+			case ZLEXCOUNT:
+				return zlexcount(j, (String) args[0], (String) args[1], (String) args[2]);
 			case ZRANGE:
 				return zrange0(j, (String) args[0], (Long) args[1], (Long) args[2]);
 			case ZRANGE_WITHSCORES:

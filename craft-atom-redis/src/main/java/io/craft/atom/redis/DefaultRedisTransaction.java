@@ -1432,6 +1432,15 @@ public class DefaultRedisTransaction implements RedisTransaction {
 		int [] weights = (int[]) objs[1];
 		t.zinterstore(destination, new ZParams().weights(weights).aggregate(Aggregate.MIN), keys);
 	}
+	
+	@Override
+	public void zlexcount(String key, String min, String max) {
+		executeCommand(CommandEnum.ZLEXCOUNT, key, min, max);
+	}
+	
+	private void zlexcount0(String key, String min, String max) {
+		t.zlexcount(key, min, max);
+	}
 
 	@Override
 	public void zrange(String key, long start, long stop) {
@@ -2031,6 +2040,8 @@ public class DefaultRedisTransaction implements RedisTransaction {
 				zinterstore_weights_max((String) args[0], (Map<String, Integer>) args[1]); break;
 			case ZINTERSTORE_WEIGHTS_MIN:
 				zinterstore_weights_min((String) args[0], (Map<String, Integer>) args[1]); break;
+			case ZLEXCOUNT:
+				zlexcount0((String) args[0], (String) args[1], (String) args[2]); break;
 			case ZRANGE:
 				zrange0((String) args[0], (Long) args[1], (Long) args[2]); break;
 			case ZRANGE_WITHSCORES:

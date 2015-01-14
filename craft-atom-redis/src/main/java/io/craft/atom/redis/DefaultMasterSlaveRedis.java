@@ -30,55 +30,55 @@ import org.slf4j.LoggerFactory;
  */
 @ToString
 public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
-	
-	
+
+
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultMasterSlaveRedis.class);
-	
-	
+
+
 	private          List<Redis>  chain    ;
 	private volatile int          index    ;
 	private volatile boolean      readSlave;
-	
-	
+
+
 	// ~ ---------------------------------------------------------------------------------------------------------
 
-	
+
 	public DefaultMasterSlaveRedis(List<Redis> chain) {
 		this(chain, 0);
 	}
-	
+
 	public DefaultMasterSlaveRedis(List<Redis> chain, int index) {
 		if (chain == null) {
 			throw new IllegalArgumentException("Master-slave chain list is null.");
 		}
-		
+
 		int size = chain.size();
 		if (size < 2) {
 			throw new IllegalArgumentException("Master-slave chain list must have 2 redis node at lease.");
 		}
-		
+
 		Set<Redis> set = new HashSet<Redis>();
 		set.addAll(chain);
 		if (set.size() != size) {
 			throw new IllegalArgumentException("Invalid master-slave chain, because repeated redis node, chain=" + chain);
 		}
-		
+
 		check(index, size);
-		
+
 		this.chain = chain;
 		this.index = index;
 		rebuild();
 	}
-	
+
 	private void check(int index, int size) {
 		if (index < 0 || index >= size) {
 			throw new IllegalArgumentException("Master index should be in [0," + (size - 1) + "]");
 		}
 	}
-	
-	
+
+
 	// ~ ---------------------------------------------------------------------------------------------------------
-	
+
 
 	@Override
 	public void master(int index) {
@@ -87,7 +87,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	private void master(int index, boolean rebuild) {
 		check(index, chain.size());
-		
+
 		this.index = index;
 		if (rebuild) {
 			rebuild();
@@ -121,21 +121,21 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	private void rebuild() {
 		Redis master = chain.get(index);
 		master.slaveofnoone();
-		
+
 		// after master
 		for (int i = index + 1; i < chain.size(); i++) {
 			Redis m = chain.get(i - 1);
 			Redis s = chain.get(i);
 			link(m, s);
 		}
-		
+
 		// before master except index 0
 		for (int i = 1; i < index; i++) {
 			Redis m = chain.get(i - 1);
 			Redis s = chain.get(i);
 			link(m, s);
 		}
-		
+
 		// index 0
 		if (index != 0) {
 			Redis m = chain.get(chain.size() - 1);
@@ -149,7 +149,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		index = 0;
 		rebuild();
 	}
-	
+
 	private void link(Redis m, Redis s) {
 		try {
 			s.slaveof(m.host(), m.port());
@@ -157,26 +157,26 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 			LOG.warn("[CRAFT-ATOM-REDIS] {} slaveof {} failed", s.toString(), m.toString());
 		}
 	}
-	
+
 	private Redis firstSlave() {
 		int slaveIndex = (index + 1) % chain.size();
 		return chain.get(slaveIndex);
 	}
-	
+
 	@Override
 	public void enableReadSlave() {
 		this.readSlave = true;
 	}
-	
+
 	@Override
 	public void disableReadSlave() {
 		this.readSlave = false;
 	}
-	
-	
+
+
 	// ~ --------------------------------------------------------------------------------------------------------- Keys
 
-	
+
 	@Override
 	public Long del(String... keys) {
 		return master().del(keys);
@@ -381,7 +381,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public String type(String key) {
 		return readSlave ? firstSlave().type(key) : master().type(key);
 	}
-	
+
 	@Override
 	public ScanResult<String> scan(String cursor) {
 		return readSlave ? firstSlave().scan(cursor) : master().scan(cursor);
@@ -401,10 +401,10 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public ScanResult<String> scan(String cursor, String pattern, int count) {
 		return readSlave ? firstSlave().scan(cursor, pattern, count) : master().scan(cursor, pattern, count);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------------ Strings
-	
+
 
 	@Override
 	public Long append(String key, String value) {
@@ -440,12 +440,12 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public Long bitxor(String destkey, String... keys) {
 		return master().bitxor(destkey, keys);
 	}
-	
+
 	@Override
 	public Long bitpos(String key, boolean value) {
 		return readSlave ? firstSlave().bitpos(key, value) : master().bitpos(key, value);
 	}
-	
+
 	@Override
 	public Long bitpos(String key, boolean value, long start) {
 		return readSlave ? firstSlave().bitpos(key, value, start) : master().bitpos(key, value, start);
@@ -575,10 +575,10 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public Long strlen(String key) {
 		return readSlave ? firstSlave().strlen(key) : master().strlen(key);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------------ Hashes
-	
+
 
 	@Override
 	public Long hdel(String key, String... fields) {
@@ -644,7 +644,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public List<String> hvals(String key) {
 		return readSlave ? firstSlave().hvals(key) : master().hvals(key);
 	}
-	
+
 	@Override
 	public ScanResult<Entry<String, String>> hscan(String key, String cursor) {
 		return readSlave ? firstSlave().hscan(key, cursor) : master().hscan(key, cursor);
@@ -664,10 +664,10 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public ScanResult<Entry<String, String>> hscan(String key, String cursor, String pattern, int count) {
 		return readSlave ? firstSlave().hscan(key, cursor, pattern, count) : master().hscan(key, cursor, pattern, count);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------------- Lists
-	
+
 
 	@Override
 	public String blpop(String key) {
@@ -788,10 +788,10 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public Long rpushx(String key, String value) {
 		return master().rpushx(key, value);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------------- Sets
-	
+
 
 	@Override
 	public Long sadd(String key, String... members) {
@@ -867,7 +867,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public Long sunionstore(String destination, String... keys) {
 		return master().sunionstore(destination, keys);
 	}
-	
+
 	@Override
 	public ScanResult<String> sscan(String key, String cursor) {
 		return readSlave ? firstSlave().sscan(key, cursor) : master().sscan(key, cursor);
@@ -887,16 +887,16 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public ScanResult<String> sscan(String key, String cursor, String pattern, int count) {
 		return readSlave ? firstSlave().sscan(key, cursor, pattern, count) : master().sscan(key, cursor, pattern, count);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------- Sorted Sets
-	
+
 
 	@Override
 	public Long zadd(String key, double score, String member) {
 		return master().zadd(key, score, member);
 	}
-	
+
 	@Override
 	public Long zadd(String key, Map<String, Double> scoremembers) {
 		return master().zadd(key, scoremembers);
@@ -950,6 +950,11 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	@Override
 	public Long zinterstoremin(String destination, Map<String, Integer> weightkeys) {
 		return master().zinterstoremin(destination, weightkeys);
+	}
+
+	@Override
+	public Long zlexcount(String key, String min, String max) {
+			return readSlave ? firstSlave().zlexcount(key, min, max) : master().zlexcount(key, min, max);
 	}
 
 	@Override
@@ -1116,7 +1121,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public Long zunionstoremin(String destination, Map<String, Integer> weightkeys) {
 		return master().zunionstoremin(destination, weightkeys);
 	}
-	
+
 	@Override
 	public ScanResult<Entry<String, Double>> zscan(String key, String cursor) {
 		return readSlave ? firstSlave().zscan(key, cursor) : master().zscan(key, cursor);
@@ -1136,29 +1141,29 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public ScanResult<Entry<String, Double>> zscan(String key, String cursor, String pattern, int count) {
 		return readSlave ? firstSlave().zscan(key, cursor, pattern, count) : master().zscan(key, cursor, pattern, count);
 	}
-	
-	
+
+
 	// ~ -------------------------------------------------------------------------------------------------- HyperLogLog
-	
-	
+
+
 	@Override
 	public Long pfadd(String key, String... elements) {
 		return master().pfadd(key, elements);
 	}
-	
+
 	@Override
 	public Long pfcount(String... keys) {
 		return master().pfcount(keys);
 	}
-	
+
 	@Override
 	public String pfmerge(String destkey, String... sourcekeys) {
 		return master().pfmerge(destkey, sourcekeys);
 	}
-	
-	
+
+
 	// ~ ----------------------------------------------------------------------------------------------------- Pub/Sub
-	
+
 
 	@Override
 	public RedisPubSub psubscribe(RedisPsubscribeHandler handler, String... patterns) {
@@ -1172,9 +1177,9 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public void punsubscribe(RedisPubSub pubsub, String... patterns) {
-		if (readSlave) 
+		if (readSlave)
 			firstSlave().punsubscribe(pubsub, patterns);
-		else 
+		else
 			master().punsubscribe(pubsub, patterns);
 	}
 
@@ -1185,15 +1190,15 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 
 	@Override
 	public void unsubscribe(RedisPubSub pubsub, String... channels) {
-		if (readSlave) 
+		if (readSlave)
 			firstSlave().unsubscribe(pubsub, channels);
-		else 
+		else
 			master().unsubscribe(pubsub, channels);
 	}
-	
+
 	@Override
 	public List<String> pubsubchannels(String pattern) {
-		return readSlave ? firstSlave().pubsubchannels(pattern) : master().pubsubchannels(pattern); 
+		return readSlave ? firstSlave().pubsubchannels(pattern) : master().pubsubchannels(pattern);
 	}
 
 	@Override
@@ -1205,10 +1210,10 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public Map<String, String> pubsubnumsub(String... channels) {
 		return readSlave ? firstSlave().pubsubnumsub(channels) : master().pubsubnumsub(channels);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------ Transactions
-	
+
 
 	@Override
 	public String discard(RedisTransaction t) {
@@ -1234,10 +1239,10 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public String watch(String... keys) {
 		return master().watch(keys);
 	}
-	
-	
+
+
 	// ~ --------------------------------------------------------------------------------------------------- Scripting
-	
+
 
 	@Override
 	public Object eval(String script) {
@@ -1293,10 +1298,10 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public String scriptload(String script) {
 		return master().scriptload(script);
 	}
-	
-	
+
+
 	// ~ ------------------------------------------------------------------------------------------------- Connection
-	
+
 
 	@Override
 	public String auth(String password) {
@@ -1323,10 +1328,10 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 		return master().select(index);
 	}
 
-	
+
 	// ~ ------------------------------------------------------------------------------------------------------ Server
-	
-	
+
+
 	@Override
 	public String bgrewriteaof() {
 		return master().bgrewriteaof();
