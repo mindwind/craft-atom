@@ -2651,11 +2651,16 @@ public class DefaultRedis implements Redis {
 
 	@Override
 	public String clientkill(String ip, int port) {
-		return (String) executeCommand(CommandEnum.CLIENT_KILL, ip, port);
+		return (String) executeCommand(CommandEnum.CLIENT_KILL, ip + ":" + port);
 	}
 	
-	private String clientkill0(Jedis j, String ip, int port) {
-		return j.clientKill(ip + ":" + port);
+	@Override
+	public String clientkill(String client) {
+		return (String) executeCommand(CommandEnum.CLIENT_KILL, client);
+	}
+	
+	private String clientkill0(Jedis j, String client) {
+		return j.clientKill(client);
 	}
 
 	@Override
@@ -3374,7 +3379,7 @@ public class DefaultRedis implements Redis {
 			case BGSAVE:
 				return bgsave0(j);
 			case CLIENT_KILL:
-				return clientkill0(j, (String) args[0], (Integer) args[1]);
+				return clientkill0(j, (String) args[0]);
 			case CLIENT_LIST:
 				return clientlist0(j);
 			case CLIENT_GETNAME:

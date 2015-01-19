@@ -1366,6 +1366,11 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	public String clientkill(String ip, int port) {
 		return master().clientkill(ip, port);
 	}
+	
+	@Override
+	public String clientkill(String client) {
+		return master().clientkill(client);
+	}
 
 	@Override
 	public List<String> clientlist() {
