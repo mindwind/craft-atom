@@ -51,6 +51,7 @@ public class TestNioTimeout {
 	    	IoAcceptor acceptor = builder.ioTimeoutInMillis(50).build();
 			acceptor.bind(port);
 		} catch (Throwable t) {
+			t.printStackTrace();
 			Assert.fail();
 		}
 		
