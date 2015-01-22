@@ -12,15 +12,17 @@
 ------------------------------------------------------------------------------
 
 
-## craft-atom 3.1.0
+## craft-atom 3.1.0  UPGRADE URGENCY: LOW
+
   * craft-atom-redis
     [IMPROVE]  - upgrade jedis dependency to 2.6.2
     [NEW]      - ZLEXCOUNT command
     [NEW]      - ZRANGEBYLEX command
     [NEW]      - ZREMRANGEBYLEX command
+    [NEW]      - CLIENT KILL new form added
 
 
-## craft-atom 3.0.1
+## craft-atom 3.0.1  UPGRADE URGENCY: MODERATE
 
   * craft-atom-util
     [FIX]      - AdaptiveByteBuffer.shink() infinite loop on some cases.
@@ -28,7 +30,7 @@
 
 
 
-## craft-atom 3.0.0
+## craft-atom 3.0.0  UPGRADE URGENCY: LOW
 
   * all  
     [IMPROVE]  - rename package name and groupId.
