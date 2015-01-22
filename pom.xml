@@ -10,7 +10,7 @@
 
 	<groupId>io.craftcode</groupId>
 	<artifactId>craft-atom</artifactId>
-	<version>3.0.2-SNAPSHOT</version>
+	<version>3.1.0</version>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
 	<description>A crafted and atomic component library for java</description>
