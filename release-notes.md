@@ -12,8 +12,9 @@
 ------------------------------------------------------------------------------
 
 
-## craft-atom 3.1.0  UPGRADE URGENCY: LOW
-
+## craft-atom 3.1.0
+UPGRADE URGENCY: LOW
+This release mostly adds some commands for redis module.
   * craft-atom-redis
     [IMPROVE]  - upgrade jedis dependency to 2.6.2
     [NEW]      - ZLEXCOUNT command
@@ -22,16 +23,18 @@
     [NEW]      - CLIENT KILL new form added
 
 
-## craft-atom 3.0.1  UPGRADE URGENCY: MODERATE
 
+## craft-atom 3.0.1
+UPGRADE URGENCY: MODERATE
+This release mostly fix a small bug for util module
   * craft-atom-util
     [FIX]      - AdaptiveByteBuffer.shink() infinite loop on some cases.
 
 
 
-
-## craft-atom 3.0.0  UPGRADE URGENCY: LOW
-
+## craft-atom 3.0.0
+UPGRADE URGENCY: LOW
+This release mostly a brand new version, it is not compatible for version 2.
   * all  
     [IMPROVE]  - rename package name and groupId.
 
