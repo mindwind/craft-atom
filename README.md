@@ -18,7 +18,7 @@ Use it as a maven dependency:
 <dependency>
     <groupId>io.craftcode</groupId>
     <artifactId>craft-atom-xxx</artifactId>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
     <type>jar</type>
 </dependency>
 ```
