@@ -2,7 +2,7 @@ package io.craft.atom.redis;
 
 import io.craft.atom.redis.api.MasterSlaveRedis;
 import io.craft.atom.redis.api.Redis;
-import io.craft.atom.redis.api.RedisConnectionException;
+import io.craft.atom.redis.api.RedisException;
 import io.craft.atom.redis.api.RedisPubSub;
 import io.craft.atom.redis.api.RedisTransaction;
 import io.craft.atom.redis.api.ScanResult;
@@ -153,7 +153,7 @@ public class DefaultMasterSlaveRedis implements MasterSlaveRedis {
 	private void link(Redis m, Redis s) {
 		try {
 			s.slaveof(m.host(), m.port());
-		} catch (RedisConnectionException e) {
+		} catch (RedisException e) {
 			LOG.warn("[CRAFT-ATOM-REDIS] {} slaveof {} failed", s.toString(), m.toString());
 		}
 	}
