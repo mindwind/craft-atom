@@ -11,6 +11,14 @@
 
 ------------------------------------------------------------------------------
 
+## Atom 3.1.1
+UPGRADE URGENCY: HIGH
+This release just fix a bug for master slave redis switch.
+
+### Atom-redis
+  * [FIX] issue #5
+
+------------------------------------------------------------------------------
 
 ## Atom 3.1.0
 UPGRADE URGENCY: LOW
@@ -23,7 +31,7 @@ This release mostly adds some commands for redis module.
   * [NEW]     - ZREMRANGEBYLEX command
   * [NEW]     - CLIENT KILL new form added
 
-
+------------------------------------------------------------------------------
 
 ## Atom 3.0.1
 UPGRADE URGENCY: MODERATE
@@ -32,7 +40,7 @@ This release mostly fix a small bug for util module
 ### Atom-util
   * [FIX] - AdaptiveByteBuffer.shink() infinite loop on some cases.
 
-
+------------------------------------------------------------------------------
 
 ## Atom 3.0.0
 UPGRADE URGENCY: LOW
