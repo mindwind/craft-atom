@@ -9,6 +9,19 @@
 `HIGH`    : There is a critical bug that may affect a subset of users. Upgrade!  
 `CRITICAL`: There is a critical bug affecting MOST USERS. Upgrade ASAP.  
 
+
+------------------------------------------------------------------------------
+
+## Atom 3.1.2
+UPGRADE URGENCY: MODERATE
+This release just upgrade some third party dependency.
+
+### Atom-redis
+  * [IMPROVE] Upgrade jedis to version 2.7.2, close issue #2
+
+### Atom-protocol-rpc
+  * [IMPROVE] Upgrade kryo to version 3.0.2, close issue #4
+
 ------------------------------------------------------------------------------
 
 ## Atom 3.1.1
