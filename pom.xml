@@ -63,7 +63,7 @@
 		<v.junit>4.8.2</v.junit>
 		<v.jedis>2.7.2</v.jedis>
 		<v.lombok>1.12.2</v.lombok>
-		<v.kryo>2.24.0</v.kryo>
+		<v.kryo>3.0.2</v.kryo>
 	</properties>
 
 	<dependencyManagement>
