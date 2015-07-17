@@ -1,5 +1,5 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -61,11 +61,11 @@
 		<v.slf4j>1.7.5</v.slf4j>
 		<v.log4j>1.2.17</v.log4j>
 		<v.junit>4.8.2</v.junit>
-		<v.jedis>2.6.2</v.jedis>
+		<v.jedis>2.7.2</v.jedis>
 		<v.lombok>1.12.2</v.lombok>
 		<v.kryo>2.24.0</v.kryo>
 	</properties>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
