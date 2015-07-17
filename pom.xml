@@ -64,6 +64,7 @@
 		<v.jedis>2.7.2</v.jedis>
 		<v.lombok>1.12.2</v.lombok>
 		<v.kryo>3.0.2</v.kryo>
+		<v.reflectasm>1.11.0</v.reflectasm>
 	</properties>
 
 	<dependencyManagement>
@@ -89,9 +90,14 @@
 				<version>${v.jedis}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.esotericsoftware.kryo</groupId>
+				<groupId>com.esotericsoftware</groupId>
 				<artifactId>kryo</artifactId>
 				<version>${v.kryo}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.esotericsoftware</groupId>
+				<artifactId>reflectasm</artifactId>
+				<version>${v.reflectasm}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

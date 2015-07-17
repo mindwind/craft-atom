@@ -69,7 +69,7 @@ public class TestShardedRedis extends AbstractRedisTests {
 				String v = sj.get(key);
 				Assert.assertEquals(value, v);
 			} finally {
-				shardedPool.returnResource(sj);
+				sj.close();
 			}
 		}
 		

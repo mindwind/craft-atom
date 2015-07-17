@@ -757,7 +757,7 @@ public class DefaultRedisTransaction implements RedisTransaction {
 	}
 	
 	private void psetex0(String key, int milliseconds, String value) {
-		t.psetex(key, milliseconds, value);
+		t.psetex(key, (long) milliseconds, value);
 	}
 
 	@Override

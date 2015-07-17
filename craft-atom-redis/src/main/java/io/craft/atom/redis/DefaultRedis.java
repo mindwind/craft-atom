@@ -958,7 +958,7 @@ public class DefaultRedis implements Redis {
 	}
 	
 	private String psetex0(Jedis j, String key, int milliseconds, String value) {
-		return j.psetex(key, milliseconds, value);
+		return j.psetex(key, (long) milliseconds, value);
 	}
 
 	@Override
@@ -3448,9 +3448,6 @@ public class DefaultRedis implements Redis {
 		unbind();
 		
 		if (e instanceof JedisConnectionException) {
-			if (j != null) {
-				pool.returnBrokenResource(j);
-			}
 			return new RedisConnectionException(String.format("Connect to redis server<host=%s, port=%s> failed.", host, port), e);
 		}
 		
@@ -3477,7 +3474,7 @@ public class DefaultRedis implements Redis {
 			return;
 		} else {
 			if (j != null) {
-				pool.returnResource(j);
+				j.close();
 			}
 		}
 	}
