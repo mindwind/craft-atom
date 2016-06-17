@@ -3,14 +3,11 @@
 .classpath
 *.prefs
 *.class
+*.iml
 */target
+target/*
 */bin
 */checkout
-
-target/javadoc-bundle-options/javadoc-options-javadoc-resources.xml
-
 *.backup
-
 *.versionsBackup
-
-target/*
+.idea/*
