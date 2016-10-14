@@ -1,4 +1,4 @@
-![craft-atom](http://craftcode.io/images/craft-logo.png)  
+![craft-atom](http://mindwind.github.io/craft-page/images/craft-logo.png)  
 A crafted and elegant atomic component library for Java. It is a maven multi-module java projects, each module is a crafted and atomic java library for specific feature.
 
 This README is just a fast "quick start" document.
